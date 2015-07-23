@@ -21,6 +21,7 @@ public class GuiImageButton extends GuiButton {
     public void drawButton(Minecraft mc, int mouseX, int mouseY) {
         boolean isHovered = this.enabled && this.visible && mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
         mc.renderEngine.bindTexture(texture);
+        GL11.glColor4f(1f, 1f, 1f, 1f);
         drawTexturedModalRect(xPosition, yPosition, texCoordX, texCoordY + (isHovered ? 16 : 0), 16, 16);
     }
 }

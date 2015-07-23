@@ -23,6 +23,7 @@ public class TinkersConstructTweakProvider implements TweakProvider {
         try {
             Class clazz = Class.forName("tconstruct.tools.inventory.CraftingStationContainer");
             craftMatrixField = clazz.getField("craftMatrix");
+            isLoaded = true;
         } catch (ClassNotFoundException ignored) {
         } catch (NoSuchFieldException ignored) {}
     }

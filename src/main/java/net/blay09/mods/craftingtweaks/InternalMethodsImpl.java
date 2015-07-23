@@ -1,5 +1,7 @@
 package net.blay09.mods.craftingtweaks;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.blay09.mods.craftingtweaks.api.DefaultProvider;
 import net.blay09.mods.craftingtweaks.api.InternalMethods;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
@@ -20,16 +22,19 @@ public class InternalMethodsImpl implements InternalMethods {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public GuiButton createBalanceButton(int id, int x, int y) {
         return new GuiTweakButton(x, y, 48, 0, GuiTweakButton.TweakOption.Balance, id);
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public GuiButton createRotateButton(int id, int x, int y) {
         return new GuiTweakButton(x, y, 16, 0, GuiTweakButton.TweakOption.Rotate, id);
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public GuiButton createClearButton(int id, int x, int y) {
         return new GuiTweakButton(x, y, 32, 0, GuiTweakButton.TweakOption.Clear, id);
     }
