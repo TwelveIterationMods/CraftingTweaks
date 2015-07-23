@@ -1,6 +1,7 @@
 package net.blay09.mods.craftingtweaks.api;
 
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.inventory.Container;
 
 public class CraftingTweaksAPI {
 
@@ -8,6 +9,10 @@ public class CraftingTweaksAPI {
 
     public static void setupAPI(InternalMethods internalMethods) {
         CraftingTweaksAPI.internalMethods = internalMethods;
+    }
+
+    public static void registerProvider(Class<? extends Container> containerClass, TweakProvider provider) {
+        internalMethods.registerProvider(containerClass, provider);
     }
 
     public static DefaultProvider createDefaultProvider() {

@@ -2,10 +2,17 @@ package net.blay09.mods.craftingtweaks;
 
 import net.blay09.mods.craftingtweaks.api.DefaultProvider;
 import net.blay09.mods.craftingtweaks.api.InternalMethods;
+import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.blay09.mods.craftingtweaks.client.GuiTweakButton;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.inventory.Container;
 
 public class InternalMethodsImpl implements InternalMethods {
+
+    @Override
+    public void registerProvider(Class<? extends Container> containerClass, TweakProvider provider) {
+        CraftingTweaks.instance.registerProvider(containerClass, provider);
+    }
 
     @Override
     public DefaultProvider createDefaultProvider() {
