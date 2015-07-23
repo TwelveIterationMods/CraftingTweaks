@@ -1,10 +1,13 @@
 package net.blay09.mods.craftingtweaks.provider;
 
+import com.google.common.collect.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
+
+import java.util.List;
 
 public abstract class DefaultProvider implements TweakProvider {
 
@@ -21,7 +24,38 @@ public abstract class DefaultProvider implements TweakProvider {
     }
 
     protected void balanceGridDefault(EntityPlayer entityPlayer, Container container, IInventory craftMatrix) {
-
+        ArrayListMultimap<String, ItemStack> itemMap = ArrayListMultimap.create();
+        Multiset<String> itemCount = HashMultiset.create();
+        for(int i = 0; i < craftMatrix.getSizeInventory(); i++) {
+            ItemStack itemStack = craftMatrix.getStackInSlot(i);
+            if(itemStack != null && itemStack.getMaxStackSize() > 1) {
+                String key = itemStack.getUnlocalizedName() + "@" + itemStack.getItemDamage();
+                itemMap.put(key, itemStack);
+                itemCount.add(key, itemStack.stackSize);
+            }
+        }
+        for(String key : itemMap.keySet()) {
+            List<ItemStack> balanceList = itemMap.get(key);
+            int totalCount = itemCount.count(key);
+            int countPerStack = totalCount / balanceList.size();
+            int restCount = totalCount % balanceList.size();
+            for(ItemStack itemStack : balanceList) {
+                itemStack.stackSize = countPerStack;
+            }
+            int idx = 0;
+            while(restCount > 0) {
+                ItemStack itemStack = balanceList.get(idx);
+                if(itemStack.stackSize < itemStack.getMaxStackSize()) {
+                    itemStack.stackSize++;
+                    restCount--;
+                }
+                idx++;
+                if(idx >= balanceList.size()) {
+                    idx = 0;
+                }
+            }
+        }
+        container.detectAndSendChanges();
     }
 
     protected void rotateGridDefault(EntityPlayer entityPlayer, Container container, IInventory craftMatrix) {
