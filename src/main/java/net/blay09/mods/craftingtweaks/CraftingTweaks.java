@@ -6,6 +6,7 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import net.blay09.mods.craftingtweaks.net.NetworkHandler;
+import net.blay09.mods.craftingtweaks.provider.TinkersConstructTweakProvider;
 import net.blay09.mods.craftingtweaks.provider.TweakProvider;
 import net.blay09.mods.craftingtweaks.provider.VanillaTweakProvider;
 import net.minecraft.inventory.Container;
@@ -33,6 +34,18 @@ public class CraftingTweaks {
         NetworkHandler.init();
 
         providerMap.put(ContainerWorkbench.class, new VanillaTweakProvider());
+        registerProvider("tconstruct.tools.inventory.CraftingStationContainer", new TinkersConstructTweakProvider());
+    }
+
+    public void registerProvider(Class clazz, TweakProvider provider) {
+        providerMap.put(clazz, provider);
+    }
+
+    public void registerProvider(String className, TweakProvider provider) {
+        try {
+            Class clazz = Class.forName(className);
+            providerMap.put(clazz, provider);
+        } catch (ClassNotFoundException ignored) {}
     }
 
     public TweakProvider getProvider(Container container) {
