@@ -3,6 +3,7 @@ package net.blay09.mods.craftingtweaks.client;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 
 public class GuiImageButton extends GuiButton {
 
