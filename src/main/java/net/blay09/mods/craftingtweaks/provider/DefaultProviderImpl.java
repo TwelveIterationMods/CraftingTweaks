@@ -1,6 +1,7 @@
 package net.blay09.mods.craftingtweaks.provider;
 
 import com.google.common.collect.*;
+import net.blay09.mods.craftingtweaks.api.DefaultProvider;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
@@ -9,9 +10,10 @@ import net.minecraft.item.ItemStack;
 
 import java.util.List;
 
-public abstract class DefaultProvider implements TweakProvider {
+public class DefaultProviderImpl implements DefaultProvider {
 
-    protected void clearGridDefault(EntityPlayer entityPlayer, Container container, IInventory craftMatrix) {
+    @Override
+    public void clearGrid(EntityPlayer entityPlayer, Container container, IInventory craftMatrix) {
         for(int i = 0; i < craftMatrix.getSizeInventory(); i++) {
             ItemStack itemStack = craftMatrix.getStackInSlot(i);
             if(itemStack != null) {
@@ -23,7 +25,8 @@ public abstract class DefaultProvider implements TweakProvider {
         }
     }
 
-    protected void balanceGridDefault(EntityPlayer entityPlayer, Container container, IInventory craftMatrix) {
+    @Override
+    public void balanceGrid(EntityPlayer entityPlayer, Container container, IInventory craftMatrix) {
         ArrayListMultimap<String, ItemStack> itemMap = ArrayListMultimap.create();
         Multiset<String> itemCount = HashMultiset.create();
         for(int i = 0; i < craftMatrix.getSizeInventory(); i++) {
@@ -58,7 +61,8 @@ public abstract class DefaultProvider implements TweakProvider {
         container.detectAndSendChanges();
     }
 
-    protected void rotateGridDefault(EntityPlayer entityPlayer, Container container, IInventory craftMatrix) {
+    @Override
+    public void rotateGrid(EntityPlayer entityPlayer, Container container, IInventory craftMatrix) {
         IInventory matrixClone = new InventoryBasic("", false, craftMatrix.getSizeInventory());
         for(int i = 0; i < matrixClone.getSizeInventory(); i++) {
             matrixClone.setInventorySlotContents(i, craftMatrix.getStackInSlot(i));
@@ -72,7 +76,7 @@ public abstract class DefaultProvider implements TweakProvider {
         container.detectAndSendChanges();
     }
 
-    protected int rotateSlotId(int i) {
+    private int rotateSlotId(int i) {
         switch(i) {
             case 0: return 1;
             case 1: return 2;

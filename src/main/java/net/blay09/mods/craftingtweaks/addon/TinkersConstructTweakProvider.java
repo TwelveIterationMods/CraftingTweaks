@@ -1,13 +1,21 @@
-package net.blay09.mods.craftingtweaks.provider;
+package net.blay09.mods.craftingtweaks.addon;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
+import net.blay09.mods.craftingtweaks.api.DefaultProvider;
+import net.blay09.mods.craftingtweaks.api.TweakProvider;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 
 import java.lang.reflect.Field;
+import java.util.List;
 
-public class TinkersConstructTweakProvider extends DefaultProvider {
+public class TinkersConstructTweakProvider implements TweakProvider {
 
+    private final DefaultProvider defaultProvider = CraftingTweaksAPI.createDefaultProvider();
     private Field craftMatrixField;
 
     public TinkersConstructTweakProvider() {
@@ -22,7 +30,7 @@ public class TinkersConstructTweakProvider extends DefaultProvider {
     public void clearGrid(EntityPlayer entityPlayer, Container container) {
         try {
             IInventory craftMatrix = (IInventory) craftMatrixField.get(container);
-            clearGridDefault(entityPlayer, container, craftMatrix);
+            defaultProvider.clearGrid(entityPlayer, container, craftMatrix);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -33,7 +41,7 @@ public class TinkersConstructTweakProvider extends DefaultProvider {
     public void rotateGrid(EntityPlayer entityPlayer, Container container) {
         try {
             IInventory craftMatrix = (IInventory) craftMatrixField.get(container);
-            rotateGridDefault(entityPlayer, container, craftMatrix);
+            defaultProvider.rotateGrid(entityPlayer, container, craftMatrix);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -43,10 +51,19 @@ public class TinkersConstructTweakProvider extends DefaultProvider {
     public void balanceGrid(EntityPlayer entityPlayer, Container container) {
         try {
             IInventory craftMatrix = (IInventory) craftMatrixField.get(container);
-            balanceGridDefault(entityPlayer, container, craftMatrix);
+            defaultProvider.balanceGrid(entityPlayer, container, craftMatrix);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void initGui(GuiContainer guiContainer, List buttonList) {
+        final int paddingTop = 16;
+        buttonList.add(CraftingTweaksAPI.createRotateButton(0, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop));
+        buttonList.add(CraftingTweaksAPI.createBalanceButton(0, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop + 17));
+        buttonList.add(CraftingTweaksAPI.createClearButton(0, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop + 34));
     }
 
 }

@@ -5,10 +5,22 @@ import io.netty.buffer.ByteBuf;
 
 public class MessageRotate implements IMessage {
 
-    @Override
-    public void fromBytes(ByteBuf buf) {}
+    private int id;
+
+    public MessageRotate() {}
+
+    public MessageRotate(int id) {
+        this.id = id;
+    }
 
     @Override
-    public void toBytes(ByteBuf buf) {}
+    public void fromBytes(ByteBuf buf) {
+        id = buf.readByte();
+    }
+
+    @Override
+    public void toBytes(ByteBuf buf) {
+        buf.writeByte(id);
+    }
 
 }

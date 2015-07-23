@@ -5,10 +5,22 @@ import io.netty.buffer.ByteBuf;
 
 public class MessageBalance implements IMessage {
 
-    @Override
-    public void fromBytes(ByteBuf buf) {}
+    private int id;
+
+    public MessageBalance() {}
+
+    public MessageBalance(int id) {
+        this.id = id;
+    }
 
     @Override
-    public void toBytes(ByteBuf buf) {}
+    public void fromBytes(ByteBuf buf) {
+        id = buf.readByte();
+    }
+
+    @Override
+    public void toBytes(ByteBuf buf) {
+        buf.writeByte(id);
+    }
 
 }

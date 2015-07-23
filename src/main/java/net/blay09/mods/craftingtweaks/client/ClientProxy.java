@@ -11,7 +11,7 @@ import net.blay09.mods.craftingtweaks.net.MessageBalance;
 import net.blay09.mods.craftingtweaks.net.MessageClear;
 import net.blay09.mods.craftingtweaks.net.MessageRotate;
 import net.blay09.mods.craftingtweaks.net.NetworkHandler;
-import net.blay09.mods.craftingtweaks.provider.TweakProvider;
+import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -25,9 +25,6 @@ public class ClientProxy extends CommonProxy {
     private boolean wasRotated;
     private boolean wasCleared;
     private boolean wasBalanced;
-    private GuiButton btnRotate;
-    private GuiButton btnBalance;
-    private GuiButton btnClear;
 
     @Override
     public void init(FMLInitializationEvent event) {
@@ -43,7 +40,7 @@ public class ClientProxy extends CommonProxy {
             if (container != null) {
                 if (Keyboard.isKeyDown(Keyboard.KEY_R)) {
                     if (!wasRotated) {
-                        NetworkHandler.instance.sendToServer(new MessageRotate());
+                        NetworkHandler.instance.sendToServer(new MessageRotate(0));
                         wasRotated = true;
                     }
                 } else {
@@ -52,7 +49,7 @@ public class ClientProxy extends CommonProxy {
 
                 if (Keyboard.isKeyDown(Keyboard.KEY_C)) {
                     if (!wasCleared) {
-                        NetworkHandler.instance.sendToServer(new MessageClear());
+                        NetworkHandler.instance.sendToServer(new MessageClear(0));
                         wasCleared = true;
                     }
                 } else {
@@ -61,7 +58,7 @@ public class ClientProxy extends CommonProxy {
 
                 if (Keyboard.isKeyDown(Keyboard.KEY_B)) {
                     if (!wasBalanced) {
-                        NetworkHandler.instance.sendToServer(new MessageBalance());
+                        NetworkHandler.instance.sendToServer(new MessageBalance(0));
                         wasBalanced = true;
                     }
                 } else {
@@ -77,28 +74,28 @@ public class ClientProxy extends CommonProxy {
             GuiContainer guiContainer = (GuiContainer) event.gui;
             TweakProvider provider = CraftingTweaks.instance.getProvider(guiContainer.inventorySlots);
             if(provider != null) {
-                int paddingTop = 16;
-                btnRotate = new GuiImageButton(-1, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop, 16, 0);
-                event.buttonList.add(btnRotate);
-                btnBalance = new GuiImageButton(-2, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop + 17, 48, 0);
-                event.buttonList.add(btnBalance);
-                btnClear = new GuiImageButton(-2, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop + 34, 32, 0);
-                event.buttonList.add(btnClear);
+                provider.initGui(guiContainer, event.buttonList);
             }
         }
     }
 
     @SubscribeEvent
     public void onActionPerformed(GuiScreenEvent.ActionPerformedEvent event) {
-        if(event.button == btnRotate) {
-            NetworkHandler.instance.sendToServer(new MessageRotate());
-            event.setCanceled(true);
-        } else if(event.button == btnClear) {
-            NetworkHandler.instance.sendToServer(new MessageClear());
-            event.setCanceled(true);
-        } else if(event.button == btnBalance) {
-            NetworkHandler.instance.sendToServer(new MessageBalance());
-            event.setCanceled(true);
+        if(event.button instanceof GuiTweakButton) {
+            switch(((GuiTweakButton) event.button).getTweakOption()) {
+                case Rotate:
+                    NetworkHandler.instance.sendToServer(new MessageRotate(((GuiTweakButton) event.button).getTweakId()));
+                    event.setCanceled(true);
+                    break;
+                case Balance:
+                    NetworkHandler.instance.sendToServer(new MessageBalance(((GuiTweakButton) event.button).getTweakId()));
+                    event.setCanceled(true);
+                    break;
+                case Clear:
+                    NetworkHandler.instance.sendToServer(new MessageClear(((GuiTweakButton) event.button).getTweakId()));
+                    event.setCanceled(true);
+                    break;
+            }
         }
     }
 

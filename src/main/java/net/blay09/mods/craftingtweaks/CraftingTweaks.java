@@ -5,10 +5,13 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import net.blay09.mods.craftingtweaks.addon.AppliedEnergistics2TweakProvider;
+import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
 import net.blay09.mods.craftingtweaks.net.NetworkHandler;
-import net.blay09.mods.craftingtweaks.provider.TinkersConstructTweakProvider;
-import net.blay09.mods.craftingtweaks.provider.TweakProvider;
-import net.blay09.mods.craftingtweaks.provider.VanillaTweakProvider;
+import net.blay09.mods.craftingtweaks.addon.TinkersConstructTweakProvider;
+import net.blay09.mods.craftingtweaks.api.TweakProvider;
+import net.blay09.mods.craftingtweaks.provider.VanillaTweakProviderImpl;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ContainerWorkbench;
 
@@ -28,13 +31,19 @@ public class CraftingTweaks {
     private final Map<Class<? extends Container>, TweakProvider> providerMap = Maps.newHashMap();
 
     @EventHandler
+    public void preInit(FMLPreInitializationEvent event) {
+        CraftingTweaksAPI.setupAPI(new InternalMethodsImpl());
+    }
+
+    @EventHandler
     public void init(FMLInitializationEvent event) {
         proxy.init(event);
 
         NetworkHandler.init();
 
-        providerMap.put(ContainerWorkbench.class, new VanillaTweakProvider());
+        providerMap.put(ContainerWorkbench.class, new VanillaTweakProviderImpl());
         registerProvider("tconstruct.tools.inventory.CraftingStationContainer", new TinkersConstructTweakProvider());
+        registerProvider("appeng.container.implementations.ContainerCraftingTerm", new AppliedEnergistics2TweakProvider());
     }
 
     public void registerProvider(Class<? extends Container> clazz, TweakProvider provider) {
