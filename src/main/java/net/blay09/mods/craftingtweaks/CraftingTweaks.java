@@ -60,6 +60,9 @@ public class CraftingTweaks {
         if(Loader.isModLoaded("Natura")) {
             registerProvider("mods.natura.gui.WorkbenchContainer", new NaturaTweakProvider());
         }
+        if(Loader.isModLoaded("Thaumcraft")) {
+            registerProvider("thaumcraft.common.container.ContainerArcaneWorkbench", new ThaumCraft4TweakProvider());
+        }
     }
 
     public void registerProvider(Class<? extends Container> clazz, TweakProvider provider) {

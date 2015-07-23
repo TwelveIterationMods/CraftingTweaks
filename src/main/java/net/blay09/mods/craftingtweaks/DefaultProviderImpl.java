@@ -76,7 +76,7 @@ public class DefaultProviderImpl implements DefaultProvider {
         container.detectAndSendChanges();
     }
 
-    private int rotateSlotId(int i) {
+    public static int rotateSlotId(int i) {
         switch(i) {
             case 0: return 1;
             case 1: return 2;
