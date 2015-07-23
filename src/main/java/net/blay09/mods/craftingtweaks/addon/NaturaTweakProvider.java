@@ -13,15 +13,15 @@ import net.minecraft.inventory.IInventory;
 import java.lang.reflect.Field;
 import java.util.List;
 
-public class TinkersConstructTweakProvider implements TweakProvider {
+public class NaturaTweakProvider implements TweakProvider {
 
     private final DefaultProvider defaultProvider = CraftingTweaksAPI.createDefaultProvider();
     private boolean isLoaded;
     private Field craftMatrixField;
 
-    public TinkersConstructTweakProvider() {
+    public NaturaTweakProvider() {
         try {
-            Class clazz = Class.forName("tconstruct.tools.inventory.CraftingStationContainer");
+            Class clazz = Class.forName("mods.natura.gui.WorkbenchContainer");
             craftMatrixField = clazz.getField("craftMatrix");
             isLoaded = true;
         } catch (ClassNotFoundException ignored) {

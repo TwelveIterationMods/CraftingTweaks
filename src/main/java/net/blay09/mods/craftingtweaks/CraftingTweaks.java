@@ -1,10 +1,12 @@
 package net.blay09.mods.craftingtweaks;
 
 import com.google.common.collect.Maps;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import net.blay09.mods.craftingtweaks.addon.*;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
@@ -38,12 +40,26 @@ public class CraftingTweaks {
         proxy.init(event);
 
         NetworkHandler.init();
+    }
 
+    @EventHandler
+    public void postInit(FMLPostInitializationEvent event) {
         providerMap.put(ContainerWorkbench.class, new VanillaTweakProviderImpl());
-        registerProvider("tconstruct.tools.inventory.CraftingStationContainer", new TinkersConstructTweakProvider());
-        registerProvider("appeng.container.implementations.ContainerCraftingTerm", new AppliedEnergistics2TweakProvider());
-        registerProvider("com.brandon3055.draconicevolution.common.container.ContainerDraconiumChest", new DraconicEvolutionTweakProvider());
-        registerProvider("vswe.production.gui.container.ContainerTable", new StevesWorkshopTweakProvider());
+        if(Loader.isModLoaded("TConstruct")) {
+            registerProvider("tconstruct.tools.inventory.CraftingStationContainer", new TinkersConstructTweakProvider());
+        }
+        if(Loader.isModLoaded("appliedenergistics2")) {
+            registerProvider("appeng.container.implementations.ContainerCraftingTerm", new AppliedEnergistics2TweakProvider());
+        }
+        if(Loader.isModLoaded("DraconicEvolution")) {
+            registerProvider("com.brandon3055.draconicevolution.common.container.ContainerDraconiumChest", new DraconicEvolutionTweakProvider());
+        }
+        if(Loader.isModLoaded("StevesWorkshop")) {
+            registerProvider("vswe.production.gui.container.ContainerTable", new StevesWorkshopTweakProvider());
+        }
+        if(Loader.isModLoaded("Natura")) {
+            registerProvider("mods.natura.gui.WorkbenchContainer", new NaturaTweakProvider());
+        }
     }
 
     public void registerProvider(Class<? extends Container> clazz, TweakProvider provider) {
