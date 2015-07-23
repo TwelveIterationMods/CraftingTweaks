@@ -3,7 +3,6 @@ package net.blay09.mods.craftingtweaks;
 import net.blay09.mods.craftingtweaks.api.DefaultProvider;
 import net.blay09.mods.craftingtweaks.api.InternalMethods;
 import net.blay09.mods.craftingtweaks.client.GuiTweakButton;
-import net.blay09.mods.craftingtweaks.provider.DefaultProviderImpl;
 import net.minecraft.client.gui.GuiButton;
 
 public class InternalMethodsImpl implements InternalMethods {

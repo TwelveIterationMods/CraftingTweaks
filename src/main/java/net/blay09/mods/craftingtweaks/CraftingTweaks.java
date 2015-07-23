@@ -7,11 +7,12 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import net.blay09.mods.craftingtweaks.addon.AppliedEnergistics2TweakProvider;
+import net.blay09.mods.craftingtweaks.addon.DraconicEvolutionTweakProvider;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
 import net.blay09.mods.craftingtweaks.net.NetworkHandler;
 import net.blay09.mods.craftingtweaks.addon.TinkersConstructTweakProvider;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
-import net.blay09.mods.craftingtweaks.provider.VanillaTweakProviderImpl;
+import net.blay09.mods.craftingtweaks.addon.VanillaTweakProviderImpl;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ContainerWorkbench;
 
@@ -44,6 +45,7 @@ public class CraftingTweaks {
         providerMap.put(ContainerWorkbench.class, new VanillaTweakProviderImpl());
         registerProvider("tconstruct.tools.inventory.CraftingStationContainer", new TinkersConstructTweakProvider());
         registerProvider("appeng.container.implementations.ContainerCraftingTerm", new AppliedEnergistics2TweakProvider());
+        registerProvider("com.brandon3055.draconicevolution.common.container.ContainerDraconiumChest", new DraconicEvolutionTweakProvider());
     }
 
     public void registerProvider(Class<? extends Container> clazz, TweakProvider provider) {

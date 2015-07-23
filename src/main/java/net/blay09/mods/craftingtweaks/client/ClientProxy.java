@@ -69,7 +69,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     @SubscribeEvent
-    public void onInitGui(GuiScreenEvent.InitGuiEvent event) {
+    public void onInitGui(GuiScreenEvent.InitGuiEvent.Post event) {
         if(event.gui instanceof GuiContainer) {
             GuiContainer guiContainer = (GuiContainer) event.gui;
             TweakProvider provider = CraftingTweaks.instance.getProvider(guiContainer.inventorySlots);

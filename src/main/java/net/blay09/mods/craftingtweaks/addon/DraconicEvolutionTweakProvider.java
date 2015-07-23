@@ -13,14 +13,14 @@ import net.minecraft.inventory.IInventory;
 import java.lang.reflect.Field;
 import java.util.List;
 
-public class TinkersConstructTweakProvider implements TweakProvider {
+public class DraconicEvolutionTweakProvider implements TweakProvider {
 
     private final DefaultProvider defaultProvider = CraftingTweaksAPI.createDefaultProvider();
     private Field craftMatrixField;
 
-    public TinkersConstructTweakProvider() {
+    public DraconicEvolutionTweakProvider() {
         try {
-            Class clazz = Class.forName("tconstruct.tools.inventory.CraftingStationContainer");
+            Class clazz = Class.forName("com.brandon3055.draconicevolution.common.container.ContainerDraconiumChest");
             craftMatrixField = clazz.getField("craftMatrix");
         } catch (ClassNotFoundException ignored) {
         } catch (NoSuchFieldException ignored) {}
@@ -60,10 +60,11 @@ public class TinkersConstructTweakProvider implements TweakProvider {
     @Override
     @SideOnly(Side.CLIENT)
     public void initGui(GuiContainer guiContainer, List buttonList) {
-        final int paddingTop = 16;
-        buttonList.add(CraftingTweaksAPI.createRotateButton(0, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop));
-        buttonList.add(CraftingTweaksAPI.createBalanceButton(0, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop + 18));
-        buttonList.add(CraftingTweaksAPI.createClearButton(0, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop + 36));
+        final int paddingBottom = 24;
+        final int paddingRight = 36;
+        buttonList.add(CraftingTweaksAPI.createRotateButton(0, guiContainer.guiLeft + guiContainer.xSize - paddingRight - 36, guiContainer.guiTop + guiContainer.ySize - paddingBottom));
+        buttonList.add(CraftingTweaksAPI.createBalanceButton(0, guiContainer.guiLeft + guiContainer.xSize - paddingRight - 18, guiContainer.guiTop + guiContainer.ySize - paddingBottom));
+        buttonList.add(CraftingTweaksAPI.createClearButton(0, guiContainer.guiLeft + guiContainer.xSize - paddingRight, guiContainer.guiTop + guiContainer.ySize - paddingBottom));
     }
 
 }

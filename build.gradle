@@ -35,7 +35,7 @@ idea {
 }
 
 dependencies {
-    compile "appeng:appliedenergistics2:rv2-stable-10:dev"
+    //compile "appeng:appliedenergistics2:rv2-stable-10:dev"
 }
 
 processResources
@@ -61,6 +61,10 @@ processResources
 jar {
     from sourceSets.api.output
     appendix "mc" + minecraft.version
+
+    manifest {
+        attributes 'FMLAT': 'craftingtweaks_at.cfg'
+    }
 }
 
 

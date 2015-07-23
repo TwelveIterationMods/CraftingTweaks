@@ -1,4 +1,4 @@
-package net.blay09.mods.craftingtweaks.provider;
+package net.blay09.mods.craftingtweaks;
 
 import com.google.common.collect.*;
 import net.blay09.mods.craftingtweaks.api.DefaultProvider;
