@@ -7,6 +7,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import net.blay09.mods.craftingtweaks.CommonProxy;
 import net.blay09.mods.craftingtweaks.CraftingTweaks;
+import net.blay09.mods.craftingtweaks.net.MessageBalance;
 import net.blay09.mods.craftingtweaks.net.MessageClear;
 import net.blay09.mods.craftingtweaks.net.MessageRotate;
 import net.blay09.mods.craftingtweaks.net.NetworkHandler;
@@ -23,7 +24,9 @@ public class ClientProxy extends CommonProxy {
 
     private boolean wasRotated;
     private boolean wasCleared;
+    private boolean wasBalanced;
     private GuiButton btnRotate;
+    private GuiButton btnBalance;
     private GuiButton btnClear;
 
     @Override
@@ -55,6 +58,15 @@ public class ClientProxy extends CommonProxy {
                 } else {
                     wasCleared = false;
                 }
+
+                if (Keyboard.isKeyDown(Keyboard.KEY_B)) {
+                    if (!wasBalanced) {
+                        NetworkHandler.instance.sendToServer(new MessageBalance());
+                        wasBalanced = true;
+                    }
+                } else {
+                    wasBalanced = false;
+                }
             }
         }
     }
@@ -68,7 +80,9 @@ public class ClientProxy extends CommonProxy {
                 int paddingTop = 16;
                 btnRotate = new GuiImageButton(-1, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop, 16, 0);
                 event.buttonList.add(btnRotate);
-                btnClear = new GuiImageButton(-2, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop + 17, 32, 0);
+                btnBalance = new GuiImageButton(-2, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop + 17, 48, 0);
+                event.buttonList.add(btnBalance);
+                btnClear = new GuiImageButton(-2, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop + 34, 32, 0);
                 event.buttonList.add(btnClear);
             }
         }
@@ -81,6 +95,9 @@ public class ClientProxy extends CommonProxy {
             event.setCanceled(true);
         } else if(event.button == btnClear) {
             NetworkHandler.instance.sendToServer(new MessageClear());
+            event.setCanceled(true);
+        } else if(event.button == btnBalance) {
+            NetworkHandler.instance.sendToServer(new MessageBalance());
             event.setCanceled(true);
         }
     }

@@ -12,6 +12,7 @@ public class NetworkHandler {
     public static void init() {
         instance.registerMessage(HandlerRotate.class, MessageRotate.class, 0, Side.SERVER);
         instance.registerMessage(HandlerClear.class, MessageClear.class, 1, Side.SERVER);
+        instance.registerMessage(HandlerBalance.class, MessageBalance.class, 2, Side.SERVER);
     }
 
 }

@@ -21,7 +21,7 @@ public abstract class DefaultProvider implements TweakProvider {
     }
 
     protected void balanceGridDefault(EntityPlayer entityPlayer, Container container, IInventory craftMatrix) {
-        
+
     }
 
     protected void rotateGridDefault(EntityPlayer entityPlayer, Container container, IInventory craftMatrix) {

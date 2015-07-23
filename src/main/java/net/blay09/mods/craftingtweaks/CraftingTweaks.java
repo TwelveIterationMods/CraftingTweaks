@@ -25,7 +25,7 @@ public class CraftingTweaks {
     @SidedProxy(clientSide = "net.blay09.mods.craftingtweaks.client.ClientProxy", serverSide = "net.blay09.mods.craftingtweaks.CommonProxy")
     public static CommonProxy proxy;
 
-    private Map<Class, TweakProvider> providerMap = Maps.newHashMap();
+    private final Map<Class<? extends Container>, TweakProvider> providerMap = Maps.newHashMap();
 
     @EventHandler
     public void init(FMLInitializationEvent event) {
@@ -37,14 +37,17 @@ public class CraftingTweaks {
         registerProvider("tconstruct.tools.inventory.CraftingStationContainer", new TinkersConstructTweakProvider());
     }
 
-    public void registerProvider(Class clazz, TweakProvider provider) {
+    public void registerProvider(Class<? extends Container> clazz, TweakProvider provider) {
         providerMap.put(clazz, provider);
     }
 
+    @SuppressWarnings("unchecked")
     public void registerProvider(String className, TweakProvider provider) {
         try {
             Class clazz = Class.forName(className);
-            providerMap.put(clazz, provider);
+            if(Container.class.isAssignableFrom(clazz)) {
+                providerMap.put(clazz, provider);
+            }
         } catch (ClassNotFoundException ignored) {}
     }
 
@@ -54,7 +57,7 @@ public class CraftingTweaks {
                 return providerMap.get(clazz);
             }
         }
-        for(Class clazz : providerMap.keySet()) {
+        for(Class<? extends Container> clazz : providerMap.keySet()) {
             if(clazz.isAssignableFrom(container.getClass())) {
                 return providerMap.get(clazz);
             }
