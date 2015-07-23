@@ -6,21 +6,22 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
 
-public abstract class DefaultProvider extends TweakProvider {
+public abstract class DefaultProvider implements TweakProvider {
 
     protected void clearGridDefault(EntityPlayer entityPlayer, Container container, IInventory craftMatrix) {
         for(int i = 0; i < craftMatrix.getSizeInventory(); i++) {
             ItemStack itemStack = craftMatrix.getStackInSlot(i);
             if(itemStack != null) {
-                if (!entityPlayer.inventory.addItemStackToInventory(itemStack)) {
-                    if (entityPlayer.dropPlayerItemWithRandomChoice(itemStack, false) == null) {
-                        continue;
-                    }
+                if (entityPlayer.inventory.addItemStackToInventory(itemStack)) {
+                    craftMatrix.setInventorySlotContents(i, null);
                 }
             }
-            craftMatrix.setInventorySlotContents(i, null);
             container.detectAndSendChanges();
         }
+    }
+
+    protected void balanceGridDefault(EntityPlayer entityPlayer, Container container, IInventory craftMatrix) {
+        
     }
 
     protected void rotateGridDefault(EntityPlayer entityPlayer, Container container, IInventory craftMatrix) {

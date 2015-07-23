@@ -39,4 +39,14 @@ public class TinkersConstructTweakProvider extends DefaultProvider {
         }
     }
 
+    @Override
+    public void balanceGrid(EntityPlayer entityPlayer, Container container) {
+        try {
+            IInventory craftMatrix = (IInventory) craftMatrixField.get(container);
+            balanceGridDefault(entityPlayer, container, craftMatrix);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

@@ -18,4 +18,9 @@ public class VanillaTweakProvider extends DefaultProvider {
         rotateGridDefault(entityPlayer, container, workbench.craftMatrix);
     }
 
+    @Override
+    public void balanceGrid(EntityPlayer entityPlayer, Container container) {
+        ContainerWorkbench workbench = (ContainerWorkbench) container;
+        balanceGridDefault(entityPlayer, container, workbench.craftMatrix);
+    }
 }
