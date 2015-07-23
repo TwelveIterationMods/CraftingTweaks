@@ -11,9 +11,10 @@ import java.util.List;
 
 public interface TweakProvider {
 
-    void clearGrid(EntityPlayer entityPlayer, Container container);
-    void rotateGrid(EntityPlayer entityPlayer, Container container);
-    void balanceGrid(EntityPlayer entityPlayer, Container container);
+    boolean isLoaded();
+    void clearGrid(EntityPlayer entityPlayer, Container container, int id);
+    void rotateGrid(EntityPlayer entityPlayer, Container container, int id);
+    void balanceGrid(EntityPlayer entityPlayer, Container container, int id);
 
     @SideOnly(Side.CLIENT)
     void initGui(GuiContainer guiContainer, List buttonList);

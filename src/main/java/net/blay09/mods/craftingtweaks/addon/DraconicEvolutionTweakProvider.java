@@ -16,18 +16,25 @@ import java.util.List;
 public class DraconicEvolutionTweakProvider implements TweakProvider {
 
     private final DefaultProvider defaultProvider = CraftingTweaksAPI.createDefaultProvider();
+    private boolean isLoaded;
     private Field craftMatrixField;
 
     public DraconicEvolutionTweakProvider() {
         try {
             Class clazz = Class.forName("com.brandon3055.draconicevolution.common.container.ContainerDraconiumChest");
             craftMatrixField = clazz.getField("craftMatrix");
+            isLoaded = true;
         } catch (ClassNotFoundException ignored) {
         } catch (NoSuchFieldException ignored) {}
     }
 
     @Override
-    public void clearGrid(EntityPlayer entityPlayer, Container container) {
+    public boolean isLoaded() {
+        return isLoaded;
+    }
+
+    @Override
+    public void clearGrid(EntityPlayer entityPlayer, Container container, int id) {
         try {
             IInventory craftMatrix = (IInventory) craftMatrixField.get(container);
             defaultProvider.clearGrid(entityPlayer, container, craftMatrix);
@@ -38,7 +45,7 @@ public class DraconicEvolutionTweakProvider implements TweakProvider {
     }
 
     @Override
-    public void rotateGrid(EntityPlayer entityPlayer, Container container) {
+    public void rotateGrid(EntityPlayer entityPlayer, Container container, int id) {
         try {
             IInventory craftMatrix = (IInventory) craftMatrixField.get(container);
             defaultProvider.rotateGrid(entityPlayer, container, craftMatrix);
@@ -48,7 +55,7 @@ public class DraconicEvolutionTweakProvider implements TweakProvider {
     }
 
     @Override
-    public void balanceGrid(EntityPlayer entityPlayer, Container container) {
+    public void balanceGrid(EntityPlayer entityPlayer, Container container, int id) {
         try {
             IInventory craftMatrix = (IInventory) craftMatrixField.get(container);
             defaultProvider.balanceGrid(entityPlayer, container, craftMatrix);

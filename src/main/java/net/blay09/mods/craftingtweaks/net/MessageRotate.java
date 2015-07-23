@@ -5,7 +5,7 @@ import io.netty.buffer.ByteBuf;
 
 public class MessageRotate implements IMessage {
 
-    private int id;
+    public int id;
 
     public MessageRotate() {}
 

@@ -5,7 +5,7 @@ import io.netty.buffer.ByteBuf;
 
 public class MessageBalance implements IMessage {
 
-    private int id;
+    public int id;
 
     public MessageBalance() {}
 

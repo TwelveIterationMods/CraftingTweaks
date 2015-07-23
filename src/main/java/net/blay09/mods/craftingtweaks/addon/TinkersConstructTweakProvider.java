@@ -16,6 +16,7 @@ import java.util.List;
 public class TinkersConstructTweakProvider implements TweakProvider {
 
     private final DefaultProvider defaultProvider = CraftingTweaksAPI.createDefaultProvider();
+    private boolean isLoaded;
     private Field craftMatrixField;
 
     public TinkersConstructTweakProvider() {
@@ -27,7 +28,12 @@ public class TinkersConstructTweakProvider implements TweakProvider {
     }
 
     @Override
-    public void clearGrid(EntityPlayer entityPlayer, Container container) {
+    public boolean isLoaded() {
+        return isLoaded;
+    }
+
+    @Override
+    public void clearGrid(EntityPlayer entityPlayer, Container container, int id) {
         try {
             IInventory craftMatrix = (IInventory) craftMatrixField.get(container);
             defaultProvider.clearGrid(entityPlayer, container, craftMatrix);
@@ -38,7 +44,7 @@ public class TinkersConstructTweakProvider implements TweakProvider {
     }
 
     @Override
-    public void rotateGrid(EntityPlayer entityPlayer, Container container) {
+    public void rotateGrid(EntityPlayer entityPlayer, Container container, int id) {
         try {
             IInventory craftMatrix = (IInventory) craftMatrixField.get(container);
             defaultProvider.rotateGrid(entityPlayer, container, craftMatrix);
@@ -48,7 +54,7 @@ public class TinkersConstructTweakProvider implements TweakProvider {
     }
 
     @Override
-    public void balanceGrid(EntityPlayer entityPlayer, Container container) {
+    public void balanceGrid(EntityPlayer entityPlayer, Container container, int id) {
         try {
             IInventory craftMatrix = (IInventory) craftMatrixField.get(container);
             defaultProvider.balanceGrid(entityPlayer, container, craftMatrix);

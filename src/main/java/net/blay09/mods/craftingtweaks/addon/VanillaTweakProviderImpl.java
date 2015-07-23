@@ -17,19 +17,24 @@ public class VanillaTweakProviderImpl implements TweakProvider {
     private final DefaultProvider defaultProvider = CraftingTweaksAPI.createDefaultProvider();
 
     @Override
-    public void clearGrid(EntityPlayer entityPlayer, Container container) {
+    public boolean isLoaded() {
+        return true;
+    }
+
+    @Override
+    public void clearGrid(EntityPlayer entityPlayer, Container container, int id) {
         ContainerWorkbench workbench = (ContainerWorkbench) container;
         defaultProvider.clearGrid(entityPlayer, container, workbench.craftMatrix);
     }
 
     @Override
-    public void rotateGrid(EntityPlayer entityPlayer, Container container) {
+    public void rotateGrid(EntityPlayer entityPlayer, Container container, int id) {
         ContainerWorkbench workbench = (ContainerWorkbench) container;
         defaultProvider.rotateGrid(entityPlayer, container, workbench.craftMatrix);
     }
 
     @Override
-    public void balanceGrid(EntityPlayer entityPlayer, Container container) {
+    public void balanceGrid(EntityPlayer entityPlayer, Container container, int id) {
         ContainerWorkbench workbench = (ContainerWorkbench) container;
         defaultProvider.balanceGrid(entityPlayer, container, workbench.craftMatrix);
     }

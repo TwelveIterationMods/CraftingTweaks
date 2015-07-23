@@ -18,26 +18,36 @@ import java.util.List;
 public class AppliedEnergistics2TweakProvider implements TweakProvider {
 
     private final DefaultProvider defaultProvider = CraftingTweaksAPI.createDefaultProvider();
+    private boolean isLoaded;
     private Field partCraftingTerminalField;
-    private Method craftMatrixMethod;
+    private Method getInventoryByName;
 
     public AppliedEnergistics2TweakProvider() {
         try {
-            Class clazz = Class.forName("appeng.container.implementations.ContainerCraftingTerm");
-            partCraftingTerminalField = clazz.getField("ct");
-            Class ctClass = Class.forName("appeng.parts.reporting.PartCraftingTerminal");
-            craftMatrixMethod = ctClass.getMethod("getInventoryByName", String.class);
-
-        } catch (ClassNotFoundException ignored) {
-        } catch (NoSuchFieldException ignored) {
-        } catch (NoSuchMethodException ignored) {}
+            Class containerClass = Class.forName("appeng.container.implementations.ContainerCraftingTerm");
+            partCraftingTerminalField = containerClass.getField("ct");
+            Class partCraftingTerminalClass = Class.forName("appeng.parts.reporting.PartCraftingTerminal");
+            getInventoryByName = partCraftingTerminalClass.getMethod("getInventoryByName", String.class);
+            isLoaded = true;
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public void clearGrid(EntityPlayer entityPlayer, Container container) {
+    public boolean isLoaded() {
+        return isLoaded;
+    }
+
+    @Override
+    public void clearGrid(EntityPlayer entityPlayer, Container container, int id) {
         try {
             Object ct = partCraftingTerminalField.get(container);
-            IInventory craftMatrix = (IInventory) craftMatrixMethod.invoke(ct, "crafting");
+            IInventory craftMatrix = (IInventory) getInventoryByName.invoke(ct, "crafting");
             if(craftMatrix != null) {
                 defaultProvider.clearGrid(entityPlayer, container, craftMatrix);
             }
@@ -49,10 +59,10 @@ public class AppliedEnergistics2TweakProvider implements TweakProvider {
     }
 
     @Override
-    public void rotateGrid(EntityPlayer entityPlayer, Container container) {
+    public void rotateGrid(EntityPlayer entityPlayer, Container container, int id) {
         try {
             Object ct = partCraftingTerminalField.get(container);
-            IInventory craftMatrix = (IInventory) craftMatrixMethod.invoke(ct, "crafting");
+            IInventory craftMatrix = (IInventory) getInventoryByName.invoke(ct, "crafting");
             if(craftMatrix != null) {
                 defaultProvider.rotateGrid(entityPlayer, container, craftMatrix);
             }
@@ -64,10 +74,10 @@ public class AppliedEnergistics2TweakProvider implements TweakProvider {
     }
 
     @Override
-    public void balanceGrid(EntityPlayer entityPlayer, Container container) {
+    public void balanceGrid(EntityPlayer entityPlayer, Container container, int id) {
         try {
             Object ct = partCraftingTerminalField.get(container);
-            IInventory craftMatrix = (IInventory) craftMatrixMethod.invoke(ct, "crafting");
+            IInventory craftMatrix = (IInventory) getInventoryByName.invoke(ct, "crafting");
             if(craftMatrix != null) {
                 defaultProvider.balanceGrid(entityPlayer, container, craftMatrix);
             }

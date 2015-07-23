@@ -6,13 +6,10 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import net.blay09.mods.craftingtweaks.addon.AppliedEnergistics2TweakProvider;
-import net.blay09.mods.craftingtweaks.addon.DraconicEvolutionTweakProvider;
+import net.blay09.mods.craftingtweaks.addon.*;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
 import net.blay09.mods.craftingtweaks.net.NetworkHandler;
-import net.blay09.mods.craftingtweaks.addon.TinkersConstructTweakProvider;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
-import net.blay09.mods.craftingtweaks.addon.VanillaTweakProviderImpl;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ContainerWorkbench;
 
@@ -46,20 +43,25 @@ public class CraftingTweaks {
         registerProvider("tconstruct.tools.inventory.CraftingStationContainer", new TinkersConstructTweakProvider());
         registerProvider("appeng.container.implementations.ContainerCraftingTerm", new AppliedEnergistics2TweakProvider());
         registerProvider("com.brandon3055.draconicevolution.common.container.ContainerDraconiumChest", new DraconicEvolutionTweakProvider());
+        registerProvider("vswe.production.gui.container.ContainerTable", new StevesWorkshopTweakProvider());
     }
 
     public void registerProvider(Class<? extends Container> clazz, TweakProvider provider) {
-        providerMap.put(clazz, provider);
+        if(provider.isLoaded()) {
+            providerMap.put(clazz, provider);
+        }
     }
 
     @SuppressWarnings("unchecked")
     public void registerProvider(String className, TweakProvider provider) {
-        try {
-            Class clazz = Class.forName(className);
-            if(Container.class.isAssignableFrom(clazz)) {
-                providerMap.put(clazz, provider);
-            }
-        } catch (ClassNotFoundException ignored) {}
+        if(provider.isLoaded()) {
+            try {
+                Class clazz = Class.forName(className);
+                if (Container.class.isAssignableFrom(clazz)) {
+                    providerMap.put(clazz, provider);
+                }
+            } catch (ClassNotFoundException ignored) {}
+        }
     }
 
     public TweakProvider getProvider(Container container) {
