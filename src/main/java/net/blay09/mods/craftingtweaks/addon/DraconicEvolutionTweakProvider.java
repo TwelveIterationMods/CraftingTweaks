@@ -68,7 +68,7 @@ public class DraconicEvolutionTweakProvider implements TweakProvider {
     @SideOnly(Side.CLIENT)
     public void initGui(GuiContainer guiContainer, List buttonList) {
         final int paddingBottom = 24;
-        final int paddingRight = 36;
+        final int paddingRight = 38;
         buttonList.add(CraftingTweaksAPI.createRotateButton(0, guiContainer.guiLeft + guiContainer.xSize - paddingRight - 36, guiContainer.guiTop + guiContainer.ySize - paddingBottom));
         buttonList.add(CraftingTweaksAPI.createBalanceButton(0, guiContainer.guiLeft + guiContainer.xSize - paddingRight - 18, guiContainer.guiTop + guiContainer.ySize - paddingBottom));
         buttonList.add(CraftingTweaksAPI.createClearButton(0, guiContainer.guiLeft + guiContainer.xSize - paddingRight, guiContainer.guiTop + guiContainer.ySize - paddingBottom));
