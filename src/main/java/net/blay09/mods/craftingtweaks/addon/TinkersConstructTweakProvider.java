@@ -72,4 +72,10 @@ public class TinkersConstructTweakProvider implements TweakProvider {
         buttonList.add(CraftingTweaksAPI.createClearButton(0, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop + 36));
     }
 
+    @Override
+    @SideOnly(Side.CLIENT)
+    public boolean areHotkeysEnabled(EntityPlayer entityPlayer, Container container) {
+        return true;
+    }
+
 }

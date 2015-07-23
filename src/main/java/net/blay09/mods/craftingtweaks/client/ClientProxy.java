@@ -4,6 +4,7 @@ import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.InputEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import net.blay09.mods.craftingtweaks.CommonProxy;
 import net.blay09.mods.craftingtweaks.CraftingTweaks;
@@ -22,10 +23,6 @@ import org.lwjgl.input.Keyboard;
 
 public class ClientProxy extends CommonProxy {
 
-    private boolean wasRotated;
-    private boolean wasCleared;
-    private boolean wasBalanced;
-
     @Override
     public void init(FMLInitializationEvent event) {
         FMLCommonHandler.instance().bus().register(this);
@@ -33,36 +30,25 @@ public class ClientProxy extends CommonProxy {
     }
 
     @SubscribeEvent
-    public void onTick(TickEvent.ClientTickEvent event) {
+    public void onKeyInput(InputEvent.KeyInputEvent event) {
+        if(!Keyboard.getEventKeyState()) {
+            return;
+        }
         EntityPlayer entityPlayer = FMLClientHandler.instance().getClientPlayerEntity();
         if(entityPlayer != null) {
             Container container = entityPlayer.openContainer;
             if (container != null) {
-                if (Keyboard.isKeyDown(Keyboard.KEY_R)) {
-                    if (!wasRotated) {
+                TweakProvider provider = CraftingTweaks.instance.getProvider(container);
+                if(provider != null && provider.areHotkeysEnabled(entityPlayer, container)) {
+                    if (Keyboard.getEventKey() == Keyboard.KEY_R) {
                         NetworkHandler.instance.sendToServer(new MessageRotate(0));
-                        wasRotated = true;
                     }
-                } else {
-                    wasRotated = false;
-                }
-
-                if (Keyboard.isKeyDown(Keyboard.KEY_C)) {
-                    if (!wasCleared) {
+                    if (Keyboard.getEventKey() == Keyboard.KEY_C) {
                         NetworkHandler.instance.sendToServer(new MessageClear(0));
-                        wasCleared = true;
                     }
-                } else {
-                    wasCleared = false;
-                }
-
-                if (Keyboard.isKeyDown(Keyboard.KEY_B)) {
-                    if (!wasBalanced) {
+                    if (Keyboard.isKeyDown(Keyboard.KEY_B)) {
                         NetworkHandler.instance.sendToServer(new MessageBalance(0));
-                        wasBalanced = true;
                     }
-                } else {
-                    wasBalanced = false;
                 }
             }
         }

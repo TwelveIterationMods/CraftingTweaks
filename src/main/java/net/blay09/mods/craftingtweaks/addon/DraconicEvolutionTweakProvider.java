@@ -74,4 +74,10 @@ public class DraconicEvolutionTweakProvider implements TweakProvider {
         buttonList.add(CraftingTweaksAPI.createClearButton(0, guiContainer.guiLeft + guiContainer.xSize - paddingRight, guiContainer.guiTop + guiContainer.ySize - paddingBottom));
     }
 
+    @Override
+    @SideOnly(Side.CLIENT)
+    public boolean areHotkeysEnabled(EntityPlayer entityPlayer, Container container) {
+        return true;
+    }
+
 }

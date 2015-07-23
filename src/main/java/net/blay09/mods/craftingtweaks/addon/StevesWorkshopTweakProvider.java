@@ -1,5 +1,7 @@
 package net.blay09.mods.craftingtweaks.addon;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
 import net.blay09.mods.craftingtweaks.api.DefaultProvider;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
@@ -142,4 +144,9 @@ public class StevesWorkshopTweakProvider implements TweakProvider {
         }
     }
 
+    @Override
+    @SideOnly(Side.CLIENT)
+    public boolean areHotkeysEnabled(EntityPlayer entityPlayer, Container container) {
+        return true;
+    }
 }

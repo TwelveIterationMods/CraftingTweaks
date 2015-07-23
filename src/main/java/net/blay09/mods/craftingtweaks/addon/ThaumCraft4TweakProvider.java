@@ -3,6 +3,8 @@ package net.blay09.mods.craftingtweaks.addon;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.blay09.mods.craftingtweaks.DefaultProviderImpl;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
@@ -124,4 +126,11 @@ public class ThaumCraft4TweakProvider implements TweakProvider {
         buttonList.add(CraftingTweaksAPI.createBalanceButton(0, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop + 18));
         buttonList.add(CraftingTweaksAPI.createClearButton(0, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop + 36));
     }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public boolean areHotkeysEnabled(EntityPlayer entityPlayer, Container container) {
+        return true;
+    }
+
 }
