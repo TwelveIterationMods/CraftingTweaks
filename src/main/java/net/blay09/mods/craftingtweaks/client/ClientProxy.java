@@ -2,6 +2,7 @@ package net.blay09.mods.craftingtweaks.client;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -43,14 +44,19 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void postInit(FMLPostInitializationEvent event) {
-        try {
-            Class neiLayoutManagerClass = Class.forName("codechicken.nei.LayoutManager");
-            neiSearchField = neiLayoutManagerClass.getField("searchField");
-            Class textFieldClass = Class.forName("codechicken.nei.TextField");
-            focused = textFieldClass.getMethod("focused");
-        } catch (ClassNotFoundException ignored) {
-        } catch (NoSuchMethodException ignored) {
-        } catch (NoSuchFieldException ignored) {
+        if(Loader.isModLoaded("NotEnoughItems")) {
+            try {
+                Class neiLayoutManagerClass = Class.forName("codechicken.nei.LayoutManager");
+                neiSearchField = neiLayoutManagerClass.getField("searchField");
+                Class textFieldClass = Class.forName("codechicken.nei.TextField");
+                focused = textFieldClass.getMethod("focused");
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -95,10 +101,12 @@ public class ClientProxy extends CommonProxy {
     }
 
     public boolean areHotkeysEnabled() {
-        if(neiSearchField != null) {
+        if(neiSearchField != null && focused != null) {
             try {
                 Object searchField = neiSearchField.get(null);
-                return !(Boolean) focused.invoke(searchField);
+                if(searchField != null) {
+                    return !(Boolean) focused.invoke(searchField);
+                }
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             } catch (InvocationTargetException e) {
