@@ -27,6 +27,7 @@ public class ThaumCraft4TweakProvider implements TweakProvider {
         try {
             Class containerClass = Class.forName("thaumcraft.common.container.ContainerArcaneWorkbench");
             tileEntityField = containerClass.getDeclaredField("tileEntity");
+            tileEntityField.setAccessible(true);
             isLoaded = true;
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -121,10 +122,11 @@ public class ThaumCraft4TweakProvider implements TweakProvider {
 
     @Override
     public void initGui(GuiContainer guiContainer, List buttonList) {
-        final int paddingTop = 16;
-        buttonList.add(CraftingTweaksAPI.createRotateButton(0, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop));
-        buttonList.add(CraftingTweaksAPI.createBalanceButton(0, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop + 18));
-        buttonList.add(CraftingTweaksAPI.createClearButton(0, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop + 36));
+        final int paddingTop = 32;
+        final int paddingLeft = 4;
+        buttonList.add(CraftingTweaksAPI.createRotateButton(0, guiContainer.guiLeft - 16 + paddingLeft, guiContainer.guiTop + paddingTop));
+        buttonList.add(CraftingTweaksAPI.createBalanceButton(0, guiContainer.guiLeft - 16 + paddingLeft, guiContainer.guiTop + paddingTop + 18));
+        buttonList.add(CraftingTweaksAPI.createClearButton(0, guiContainer.guiLeft - 16 + paddingLeft, guiContainer.guiTop + paddingTop + 36));
     }
 
     @Override

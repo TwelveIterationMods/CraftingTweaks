@@ -30,23 +30,20 @@ public class ClientProxy extends CommonProxy {
     }
 
     @SubscribeEvent
-    public void onKeyInput(InputEvent.KeyInputEvent event) {
-        if(!Keyboard.getEventKeyState()) {
-            return;
-        }
+    public void onClientTick(TickEvent.ClientTickEvent event) {
         EntityPlayer entityPlayer = FMLClientHandler.instance().getClientPlayerEntity();
         if(entityPlayer != null) {
             Container container = entityPlayer.openContainer;
             if (container != null) {
                 TweakProvider provider = CraftingTweaks.instance.getProvider(container);
-                if(provider != null && provider.areHotkeysEnabled(entityPlayer, container)) {
-                    if (Keyboard.getEventKey() == Keyboard.KEY_R) {
+                if(provider != null) {
+                    if (Keyboard.isKeyDown(Keyboard.KEY_R) && provider.areHotkeysEnabled(entityPlayer, container)) {
                         NetworkHandler.instance.sendToServer(new MessageRotate(0));
                     }
-                    if (Keyboard.getEventKey() == Keyboard.KEY_C) {
+                    if (Keyboard.isKeyDown(Keyboard.KEY_C)&& provider.areHotkeysEnabled(entityPlayer, container)) {
                         NetworkHandler.instance.sendToServer(new MessageClear(0));
                     }
-                    if (Keyboard.isKeyDown(Keyboard.KEY_B)) {
+                    if (Keyboard.isKeyDown(Keyboard.KEY_B) && provider.areHotkeysEnabled(entityPlayer, container)) {
                         NetworkHandler.instance.sendToServer(new MessageBalance(0));
                     }
                 }
