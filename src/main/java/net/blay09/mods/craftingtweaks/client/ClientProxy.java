@@ -3,6 +3,7 @@ package net.blay09.mods.craftingtweaks.client;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.InputEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
@@ -21,16 +22,36 @@ import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Keyboard;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 public class ClientProxy extends CommonProxy {
 
     private boolean wasRotated;
     private boolean wasCleared;
     private boolean wasBalanced;
 
+    private Field neiSearchField;
+    private Method focused;
+
     @Override
     public void init(FMLInitializationEvent event) {
         FMLCommonHandler.instance().bus().register(this);
         MinecraftForge.EVENT_BUS.register(this);
+    }
+
+    @Override
+    public void postInit(FMLPostInitializationEvent event) {
+        try {
+            Class neiLayoutManagerClass = Class.forName("codechicken.nei.LayoutManager");
+            neiSearchField = neiLayoutManagerClass.getField("searchField");
+            Class textFieldClass = Class.forName("codechicken.nei.TextField");
+            focused = textFieldClass.getMethod("focused");
+        } catch (ClassNotFoundException ignored) {
+        } catch (NoSuchMethodException ignored) {
+        } catch (NoSuchFieldException ignored) {
+        }
     }
 
     @SubscribeEvent
@@ -39,6 +60,9 @@ public class ClientProxy extends CommonProxy {
         if(entityPlayer != null) {
             Container container = entityPlayer.openContainer;
             if (container != null) {
+                if(!areHotkeysEnabled()) {
+                    return;
+                }
                 TweakProvider provider = CraftingTweaks.instance.getProvider(container);
                 if(provider != null) {
                     if (Keyboard.isKeyDown(Keyboard.KEY_R)) {
@@ -68,6 +92,20 @@ public class ClientProxy extends CommonProxy {
                 }
             }
         }
+    }
+
+    public boolean areHotkeysEnabled() {
+        if(neiSearchField != null) {
+            try {
+                Object searchField = neiSearchField.get(null);
+                return !(Boolean) focused.invoke(searchField);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        }
+        return true;
     }
 
     @SubscribeEvent

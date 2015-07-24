@@ -44,6 +44,8 @@ public class CraftingTweaks {
 
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
+        proxy.postInit(event);
+
         providerMap.put(ContainerWorkbench.class, new VanillaTweakProviderImpl());
         if(Loader.isModLoaded("TConstruct")) {
             registerProvider("tconstruct.tools.inventory.CraftingStationContainer", new TinkersConstructTweakProvider());

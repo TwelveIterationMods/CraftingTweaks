@@ -69,7 +69,7 @@ public class ThaumCraft4TweakProvider implements TweakProvider {
 
     @Override
     public void initGui(GuiContainer guiContainer, List buttonList) {
-        final int paddingTop = 32;
+        final int paddingTop = 46;
         final int paddingLeft = 4;
         buttonList.add(CraftingTweaksAPI.createRotateButton(0, guiContainer.guiLeft - 16 + paddingLeft, guiContainer.guiTop + paddingTop));
         buttonList.add(CraftingTweaksAPI.createBalanceButton(0, guiContainer.guiLeft - 16 + paddingLeft, guiContainer.guiTop + paddingTop + 18));
