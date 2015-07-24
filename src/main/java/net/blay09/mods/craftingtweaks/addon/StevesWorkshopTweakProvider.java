@@ -23,6 +23,7 @@ public class StevesWorkshopTweakProvider implements TweakProvider {
     private Method getMainPage;
     private Method getCraftingList;
     private Field inventoryCraftingField;
+    private Method isEnabled;
     private Field xField;
     private Field yField;
 
@@ -37,6 +38,7 @@ public class StevesWorkshopTweakProvider implements TweakProvider {
             Class unitCraftingClass = Class.forName("vswe.production.page.unit.UnitCrafting");
             inventoryCraftingField = unitCraftingClass.getDeclaredField("inventoryCrafting");
             inventoryCraftingField.setAccessible(true);
+            isEnabled = unitCraftingClass.getMethod("isEnabled");
             Class unitClass = Class.forName("vswe.production.page.unit.Unit");
             xField = unitClass.getDeclaredField("x");
             xField.setAccessible(true);
@@ -119,23 +121,26 @@ public class StevesWorkshopTweakProvider implements TweakProvider {
 
     @Override
     public void initGui(GuiContainer guiContainer, List buttonList) {
-        if(!isLoaded) {
-            return;
-        }
         Container container = guiContainer.inventorySlots;
         try {
-            final int paddingLeft = 4;
-            final int paddingTop = 62;
+            final int paddingTop = 4;
             Object tileEntity = getTable.invoke(container);
             Object mainPage = getMainPage.invoke(tileEntity);
             List craftingList = (List) getCraftingList.invoke(mainPage);
             for(int i = 0; i < craftingList.size(); i++) {
                 Object unitCrafting = craftingList.get(i);
-                int x = xField.getInt(unitCrafting);
-                int y = yField.getInt(unitCrafting);
-                buttonList.add(CraftingTweaksAPI.createRotateButton(i, guiContainer.guiLeft + x + paddingLeft, guiContainer.guiTop + y + paddingTop));
-                buttonList.add(CraftingTweaksAPI.createBalanceButton(i, guiContainer.guiLeft + x + paddingLeft + 18, guiContainer.guiTop + y + paddingTop));
-                buttonList.add(CraftingTweaksAPI.createClearButton(i, guiContainer.guiLeft + x + paddingLeft + 36, guiContainer.guiTop + y + paddingTop));
+                if((Boolean) isEnabled.invoke(unitCrafting)) {
+                    int x = xField.getInt(unitCrafting);
+                    int y = yField.getInt(unitCrafting);
+                    if(guiContainer.guiLeft + x < guiContainer.width / 2) {
+                        x = guiContainer.guiLeft - 16;
+                    } else {
+                        x = guiContainer.guiLeft + guiContainer.xSize;
+                    }
+                    buttonList.add(CraftingTweaksAPI.createRotateButton(i, x, guiContainer.guiTop + y + paddingTop));
+                    buttonList.add(CraftingTweaksAPI.createBalanceButton(i, x, guiContainer.guiTop + y + paddingTop + 18));
+                    buttonList.add(CraftingTweaksAPI.createClearButton(i, x, guiContainer.guiTop + y + paddingTop + 36));
+                }
             }
         } catch (IllegalAccessException e) {
             e.printStackTrace();
