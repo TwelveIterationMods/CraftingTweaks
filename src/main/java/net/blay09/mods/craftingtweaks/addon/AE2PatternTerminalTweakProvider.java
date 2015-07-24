@@ -19,23 +19,23 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
-public class AppliedEnergistics2TweakProvider implements TweakProvider {
+public class AE2PatternTerminalTweakProvider implements TweakProvider {
 
     private final DefaultProvider defaultProvider = CraftingTweaksAPI.createDefaultProvider();
     private boolean isLoaded;
-    private Field partCraftingTerminalField;
+    private Field partPatternTerminalField;
     private Method getInventoryByName;
 
     private Field searchFieldField;
     private Field craftingGridOffsetXField;
     private Field craftingGridOffsetYField;
 
-    public AppliedEnergistics2TweakProvider() {
+    public AE2PatternTerminalTweakProvider() {
         try {
-            Class containerClass = Class.forName("appeng.container.implementations.ContainerCraftingTerm");
-            partCraftingTerminalField = containerClass.getField("ct");
-            Class partCraftingTerminalClass = Class.forName("appeng.parts.reporting.PartCraftingTerminal");
-            getInventoryByName = partCraftingTerminalClass.getMethod("getInventoryByName", String.class);
+            Class containerClass = Class.forName("appeng.container.implementations.ContainerPatternTerm");
+            partPatternTerminalField = containerClass.getField("ct");
+            Class partPatternTerminalClass = Class.forName("appeng.parts.reporting.PartPatternTerminal");
+            getInventoryByName = partPatternTerminalClass.getMethod("getInventoryByName", String.class);
 
             if(FMLCommonHandler.instance().getSide() == Side.CLIENT) {
                 Class guiScreenClass = Class.forName("appeng.client.gui.implementations.GuiMEMonitorable");
@@ -63,11 +63,12 @@ public class AppliedEnergistics2TweakProvider implements TweakProvider {
     @Override
     public void clearGrid(EntityPlayer entityPlayer, Container container, int id) {
         try {
-            Object ct = partCraftingTerminalField.get(container);
+            Object ct = partPatternTerminalField.get(container);
             IInventory craftMatrix = (IInventory) getInventoryByName.invoke(ct, "crafting");
-            if(craftMatrix != null) {
-                defaultProvider.clearGrid(entityPlayer, container, craftMatrix);
+            for(int i = 0; i < craftMatrix.getSizeInventory(); i++) {
+                craftMatrix.setInventorySlotContents(i, null);
             }
+            container.detectAndSendChanges();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
@@ -78,7 +79,7 @@ public class AppliedEnergistics2TweakProvider implements TweakProvider {
     @Override
     public void rotateGrid(EntityPlayer entityPlayer, Container container, int id) {
         try {
-            Object ct = partCraftingTerminalField.get(container);
+            Object ct = partPatternTerminalField.get(container);
             IInventory craftMatrix = (IInventory) getInventoryByName.invoke(ct, "crafting");
             if(craftMatrix != null) {
                 defaultProvider.rotateGrid(entityPlayer, container, craftMatrix);
@@ -91,29 +92,16 @@ public class AppliedEnergistics2TweakProvider implements TweakProvider {
     }
 
     @Override
-    public void balanceGrid(EntityPlayer entityPlayer, Container container, int id) {
-        try {
-            Object ct = partCraftingTerminalField.get(container);
-            IInventory craftMatrix = (IInventory) getInventoryByName.invoke(ct, "crafting");
-            if(craftMatrix != null) {
-                defaultProvider.balanceGrid(entityPlayer, container, craftMatrix);
-            }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
-    }
+    public void balanceGrid(EntityPlayer entityPlayer, Container container, int id) {}
 
     @Override
     @SideOnly(Side.CLIENT)
     public void initGui(GuiContainer guiContainer, List buttonList) {
         try {
-            int offsetX = craftingGridOffsetXField.getInt(null) + 2;
-            int offsetY = craftingGridOffsetYField.getInt(null) + 6;
+            int offsetX = craftingGridOffsetXField.getInt(null) + 79;
+            int offsetY = craftingGridOffsetYField.getInt(null) + 42;
             buttonList.add(CraftingTweaksAPI.createRotateButton(0, guiContainer.guiLeft + offsetX, guiContainer.guiTop + offsetY));
-            buttonList.add(CraftingTweaksAPI.createBalanceButton(0, guiContainer.guiLeft + offsetX, guiContainer.guiTop + offsetY + 18));
-            buttonList.add(CraftingTweaksAPI.createClearButton(0, guiContainer.guiLeft + offsetX, guiContainer.guiTop + offsetY + 36));
+            buttonList.add(CraftingTweaksAPI.createClearButton(0, guiContainer.guiLeft + offsetX + 17, guiContainer.guiTop + offsetY));
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }

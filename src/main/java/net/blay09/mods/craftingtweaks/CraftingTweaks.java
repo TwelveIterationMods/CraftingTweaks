@@ -49,7 +49,8 @@ public class CraftingTweaks {
             registerProvider("tconstruct.tools.inventory.CraftingStationContainer", new TinkersConstructTweakProvider());
         }
         if(Loader.isModLoaded("appliedenergistics2")) {
-            registerProvider("appeng.container.implementations.ContainerCraftingTerm", new AppliedEnergistics2TweakProvider());
+            registerProvider("appeng.container.implementations.ContainerCraftingTerm", new AE2CraftingTerminalTweakProvider());
+            registerProvider("appeng.container.implementations.ContainerPatternTerm", new AE2PatternTerminalTweakProvider());
         }
         if(Loader.isModLoaded("DraconicEvolution")) {
             registerProvider("com.brandon3055.draconicevolution.common.container.ContainerDraconiumChest", new DraconicEvolutionTweakProvider());
