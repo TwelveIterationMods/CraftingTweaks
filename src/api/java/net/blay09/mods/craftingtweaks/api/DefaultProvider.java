@@ -6,8 +6,12 @@ import net.minecraft.inventory.IInventory;
 
 public interface DefaultProvider {
 
+    RotationHandler getRotationHandler();
     void rotateGrid(EntityPlayer entityPlayer, Container container, IInventory craftMatrix);
+    void rotateGrid(EntityPlayer entityPlayer, Container container, IInventory craftMatrix, int start, int size, RotationHandler rotationHandler);
     void clearGrid(EntityPlayer entityPlayer, Container container, IInventory craftMatrix);
+    void clearGrid(EntityPlayer entityPlayer, Container container, IInventory craftMatrix, int start, int size);
     void balanceGrid(EntityPlayer entityPlayer, Container container, IInventory craftMatrix);
+    void balanceGrid(EntityPlayer entityPlayer, Container container, IInventory craftMatrix, int start, int size);
 
 }

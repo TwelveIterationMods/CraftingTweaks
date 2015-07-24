@@ -23,6 +23,10 @@ import org.lwjgl.input.Keyboard;
 
 public class ClientProxy extends CommonProxy {
 
+    private boolean wasRotated;
+    private boolean wasCleared;
+    private boolean wasBalanced;
+
     @Override
     public void init(FMLInitializationEvent event) {
         FMLCommonHandler.instance().bus().register(this);
@@ -37,14 +41,29 @@ public class ClientProxy extends CommonProxy {
             if (container != null) {
                 TweakProvider provider = CraftingTweaks.instance.getProvider(container);
                 if(provider != null) {
-                    if (Keyboard.isKeyDown(Keyboard.KEY_R) && provider.areHotkeysEnabled(entityPlayer, container)) {
-                        NetworkHandler.instance.sendToServer(new MessageRotate(0));
+                    if (Keyboard.isKeyDown(Keyboard.KEY_R)) {
+                        if(!wasRotated && provider.areHotkeysEnabled(entityPlayer, container)) {
+                            NetworkHandler.instance.sendToServer(new MessageRotate(0));
+                            wasRotated = true;
+                        }
+                    } else {
+                        wasRotated = false;
                     }
-                    if (Keyboard.isKeyDown(Keyboard.KEY_C)&& provider.areHotkeysEnabled(entityPlayer, container)) {
-                        NetworkHandler.instance.sendToServer(new MessageClear(0));
+                    if (Keyboard.isKeyDown(Keyboard.KEY_C)) {
+                        if(!wasCleared && provider.areHotkeysEnabled(entityPlayer, container)) {
+                            NetworkHandler.instance.sendToServer(new MessageClear(0));
+                            wasCleared = true;
+                        }
+                    } else {
+                        wasCleared = false;
                     }
-                    if (Keyboard.isKeyDown(Keyboard.KEY_B) && provider.areHotkeysEnabled(entityPlayer, container)) {
-                        NetworkHandler.instance.sendToServer(new MessageBalance(0));
+                    if (Keyboard.isKeyDown(Keyboard.KEY_B) ) {
+                        if(!wasBalanced && provider.areHotkeysEnabled(entityPlayer, container)) {
+                            NetworkHandler.instance.sendToServer(new MessageBalance(0));
+                            wasBalanced = true;
+                        }
+                    } else {
+                        wasBalanced = false;
                     }
                 }
             }

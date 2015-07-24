@@ -2,6 +2,7 @@ package net.blay09.mods.craftingtweaks;
 
 import com.google.common.collect.*;
 import net.blay09.mods.craftingtweaks.api.DefaultProvider;
+import net.blay09.mods.craftingtweaks.api.RotationHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
@@ -12,9 +13,36 @@ import java.util.List;
 
 public class DefaultProviderImpl implements DefaultProvider {
 
+    private static final RotationHandler rotationHandler = new RotationHandler() {
+        @Override
+        public boolean ignoreSlotId(int slotId) {
+            return slotId == 4;
+        }
+
+        @Override
+        public int rotateSlotId(int slotId) {
+            switch(slotId) {
+                case 0: return 1;
+                case 1: return 2;
+                case 2: return 5;
+                case 5: return 8;
+                case 8: return 7;
+                case 7: return 6;
+                case 6: return 3;
+                case 3: return 0;
+            }
+            return 0;
+        }
+    };
+
     @Override
     public void clearGrid(EntityPlayer entityPlayer, Container container, IInventory craftMatrix) {
-        for(int i = 0; i < craftMatrix.getSizeInventory(); i++) {
+        clearGrid(entityPlayer, container, craftMatrix, 0, craftMatrix.getSizeInventory());
+    }
+
+    @Override
+    public void clearGrid(EntityPlayer entityPlayer, Container container, IInventory craftMatrix, int start, int size) {
+        for(int i = start; i < size; i++) {
             ItemStack itemStack = craftMatrix.getStackInSlot(i);
             if(itemStack != null) {
                 if (entityPlayer.inventory.addItemStackToInventory(itemStack)) {
@@ -27,9 +55,14 @@ public class DefaultProviderImpl implements DefaultProvider {
 
     @Override
     public void balanceGrid(EntityPlayer entityPlayer, Container container, IInventory craftMatrix) {
+        balanceGrid(entityPlayer, container, craftMatrix, 0, craftMatrix.getSizeInventory());
+    }
+
+    @Override
+    public void balanceGrid(EntityPlayer entityPlayer, Container container, IInventory craftMatrix, int start, int size) {
         ArrayListMultimap<String, ItemStack> itemMap = ArrayListMultimap.create();
         Multiset<String> itemCount = HashMultiset.create();
-        for(int i = 0; i < craftMatrix.getSizeInventory(); i++) {
+        for(int i = start; i < size; i++) {
             ItemStack itemStack = craftMatrix.getStackInSlot(i);
             if(itemStack != null && itemStack.getMaxStackSize() > 1) {
                 String key = itemStack.getUnlocalizedName() + "@" + itemStack.getItemDamage();
@@ -63,31 +96,26 @@ public class DefaultProviderImpl implements DefaultProvider {
 
     @Override
     public void rotateGrid(EntityPlayer entityPlayer, Container container, IInventory craftMatrix) {
+        rotateGrid(entityPlayer, container, craftMatrix, 0, craftMatrix.getSizeInventory(), rotationHandler);
+    }
+
+    @Override
+    public void rotateGrid(EntityPlayer entityPlayer, Container container, IInventory craftMatrix, int start, int size, RotationHandler rotationHandler) {
         IInventory matrixClone = new InventoryBasic("", false, craftMatrix.getSizeInventory());
-        for(int i = 0; i < matrixClone.getSizeInventory(); i++) {
+        for(int i = start; i < size; i++) {
             matrixClone.setInventorySlotContents(i, craftMatrix.getStackInSlot(i));
         }
-        for(int i = 0; i < craftMatrix.getSizeInventory(); i++) {
-            if(i == 4) {
+        for(int i = start; i < size; i++) {
+            if(rotationHandler.ignoreSlotId(i)) {
                 continue;
             }
-            craftMatrix.setInventorySlotContents(rotateSlotId(i), matrixClone.getStackInSlot(i));
+            craftMatrix.setInventorySlotContents(rotationHandler.rotateSlotId(i), matrixClone.getStackInSlot(i));
         }
         container.detectAndSendChanges();
     }
 
-    public static int rotateSlotId(int i) {
-        switch(i) {
-            case 0: return 1;
-            case 1: return 2;
-            case 2: return 5;
-            case 5: return 8;
-            case 8: return 7;
-            case 7: return 6;
-            case 6: return 3;
-            case 3: return 0;
-        }
-        return 0;
+    @Override
+    public RotationHandler getRotationHandler() {
+        return rotationHandler;
     }
-
 }

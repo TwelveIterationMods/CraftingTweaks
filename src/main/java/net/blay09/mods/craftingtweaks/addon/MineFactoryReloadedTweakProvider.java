@@ -1,7 +1,5 @@
 package net.blay09.mods.craftingtweaks.addon;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
 import net.blay09.mods.craftingtweaks.api.DefaultProvider;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
@@ -13,17 +11,17 @@ import net.minecraft.inventory.IInventory;
 import java.lang.reflect.Field;
 import java.util.List;
 
-public class ThaumCraft4TweakProvider implements TweakProvider {
+public class MineFactoryReloadedTweakProvider implements TweakProvider {
 
     private final DefaultProvider defaultProvider = CraftingTweaksAPI.createDefaultProvider();
-    private Field tileEntityField;
     private boolean isLoaded;
+    private Field crafterField;
 
-    public ThaumCraft4TweakProvider() {
+    public MineFactoryReloadedTweakProvider() {
         try {
-            Class containerClass = Class.forName("thaumcraft.common.container.ContainerArcaneWorkbench");
-            tileEntityField = containerClass.getDeclaredField("tileEntity");
-            tileEntityField.setAccessible(true);
+            Class clazz = Class.forName("powercrystals.minefactoryreloaded.gui.container.ContainerLiquiCrafter");
+            crafterField = clazz.getDeclaredField("_crafter");
+            crafterField.setAccessible(true);
             isLoaded = true;
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -40,8 +38,11 @@ public class ThaumCraft4TweakProvider implements TweakProvider {
     @Override
     public void clearGrid(EntityPlayer entityPlayer, Container container, int id) {
         try {
-            IInventory craftMatrix = (IInventory) tileEntityField.get(container);
-            defaultProvider.clearGrid(entityPlayer, container, craftMatrix, 0, 9);
+            IInventory craftMatrix = (IInventory) crafterField.get(container);
+            for(int i = 0; i < 9; i++) {
+                craftMatrix.setInventorySlotContents(i, null);
+            }
+            container.detectAndSendChanges();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -50,7 +51,7 @@ public class ThaumCraft4TweakProvider implements TweakProvider {
     @Override
     public void rotateGrid(EntityPlayer entityPlayer, Container container, int id) {
         try {
-            IInventory craftMatrix = (IInventory) tileEntityField.get(container);
+            IInventory craftMatrix = (IInventory) crafterField.get(container);
             defaultProvider.rotateGrid(entityPlayer, container, craftMatrix, 0, 9, defaultProvider.getRotationHandler());
         } catch (IllegalAccessException e) {
             e.printStackTrace();
@@ -59,25 +60,16 @@ public class ThaumCraft4TweakProvider implements TweakProvider {
 
     @Override
     public void balanceGrid(EntityPlayer entityPlayer, Container container, int id) {
-        try {
-            IInventory craftMatrix = (IInventory) tileEntityField.get(container);
-            defaultProvider.balanceGrid(entityPlayer, container, craftMatrix, 0, 9);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        return;
     }
 
     @Override
     public void initGui(GuiContainer guiContainer, List buttonList) {
-        final int paddingTop = 32;
-        final int paddingLeft = 4;
-        buttonList.add(CraftingTweaksAPI.createRotateButton(0, guiContainer.guiLeft - 16 + paddingLeft, guiContainer.guiTop + paddingTop));
-        buttonList.add(CraftingTweaksAPI.createBalanceButton(0, guiContainer.guiLeft - 16 + paddingLeft, guiContainer.guiTop + paddingTop + 18));
-        buttonList.add(CraftingTweaksAPI.createClearButton(0, guiContainer.guiLeft - 16 + paddingLeft, guiContainer.guiTop + paddingTop + 36));
+        buttonList.add(CraftingTweaksAPI.createRotateButton(0, guiContainer.width / 2 - 18, guiContainer.height / 2 - 48));
+        buttonList.add(CraftingTweaksAPI.createClearButton(0, guiContainer.width / 2 + 2, guiContainer.height / 2 - 48));
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
     public boolean areHotkeysEnabled(EntityPlayer entityPlayer, Container container) {
         return true;
     }

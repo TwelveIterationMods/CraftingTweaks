@@ -63,6 +63,9 @@ public class CraftingTweaks {
         if(Loader.isModLoaded("Thaumcraft")) {
             registerProvider("thaumcraft.common.container.ContainerArcaneWorkbench", new ThaumCraft4TweakProvider());
         }
+        if(Loader.isModLoaded("MineFactoryReloaded")) {
+            registerProvider("powercrystals.minefactoryreloaded.gui.container.ContainerLiquiCrafter", new MineFactoryReloadedTweakProvider());
+        }
     }
 
     public void registerProvider(Class<? extends Container> clazz, TweakProvider provider) {

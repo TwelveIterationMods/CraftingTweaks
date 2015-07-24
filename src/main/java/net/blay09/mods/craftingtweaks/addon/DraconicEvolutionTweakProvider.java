@@ -24,8 +24,11 @@ public class DraconicEvolutionTweakProvider implements TweakProvider {
             Class clazz = Class.forName("com.brandon3055.draconicevolution.common.container.ContainerDraconiumChest");
             craftMatrixField = clazz.getField("craftMatrix");
             isLoaded = true;
-        } catch (ClassNotFoundException ignored) {
-        } catch (NoSuchFieldException ignored) {}
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -41,7 +44,6 @@ public class DraconicEvolutionTweakProvider implements TweakProvider {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-
     }
 
     @Override
