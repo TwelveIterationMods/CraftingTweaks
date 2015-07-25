@@ -69,6 +69,11 @@ public class CraftingTweaks {
         if(Loader.isModLoaded("MineFactoryReloaded")) {
             registerProvider("powercrystals.minefactoryreloaded.gui.container.ContainerLiquiCrafter", new MineFactoryReloadedTweakProvider());
         }
+        if(Loader.isModLoaded("Forestry")) {
+            registerProvider("forestry.factory.gui.ContainerWorktable", new ForestryWorktableTweakProvider());
+            registerProvider("forestry.factory.gui.ContainerCarpenter", new ForestryCarpenterTweakProvider());
+            registerProvider("forestry.factory.gui.ContainerFabricator", new ForestryFabricatorTweakProvider());
+        }
     }
 
     public void registerProvider(Class<? extends Container> clazz, TweakProvider provider) {
