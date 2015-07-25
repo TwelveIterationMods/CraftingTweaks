@@ -74,6 +74,10 @@ public class CraftingTweaks {
             registerProvider("forestry.factory.gui.ContainerCarpenter", new ForestryCarpenterTweakProvider());
             registerProvider("forestry.factory.gui.ContainerFabricator", new ForestryFabricatorTweakProvider());
         }
+        if(Loader.isModLoaded("Railcraft")) {
+            registerProvider("mods.railcraft.common.gui.containers.ContainerRollingMachine", new RailcraftRollingMachineTweakProvider());
+            registerProvider("mods.railcraft.common.gui.containers.ContainerWorkCart", new RailcraftWorkCartTweakProvider());
+        }
     }
 
     public void registerProvider(Class<? extends Container> clazz, TweakProvider provider) {
