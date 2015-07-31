@@ -81,6 +81,10 @@ public class CraftingTweaks {
         if(Loader.isModLoaded("BuildCraft|Factory")) {
             registerProvider("buildcraft.factory.gui.ContainerAutoWorkbench", new BuildcraftTweakProvider());
         }
+        if(Loader.isModLoaded("RotaryCraft")) {
+            registerProvider("Reika.RotaryCraft.Containers.ContainerHandCraft", new RotaryCraftDefaultTweakProvider("Reika.RotaryCraft.Containers.ContainerHandCraft"));
+            registerProvider("Reika.RotaryCraft.Containers.ContainerCraftingPattern", new RotaryCraftDefaultTweakProvider("Reika.RotaryCraft.Containers.ContainerCraftingPattern"));
+        }
     }
 
     public void registerProvider(Class<? extends Container> clazz, TweakProvider provider) {
