@@ -88,6 +88,9 @@ public class CraftingTweaks {
         if(Loader.isModLoaded("TwilightForest")) {
             registerProvider("twilightforest.uncrafting.ContainerTFUncrafting", new TwilightForestTweakProvider());
         }
+        if(Loader.isModLoaded("terrafirmacraft")) {
+            registerProvider("com.bioxx.tfc.Containers.ContainerWorkbench", new TerraFirmaCraftTweakProvider());
+        }
     }
 
     public void registerProvider(Class<? extends Container> clazz, TweakProvider provider) {
