@@ -112,6 +112,9 @@ public class CraftingTweaks {
     }
 
     public TweakProvider getProvider(Container container) {
+        if(container == null) {
+            return null;
+        }
         for(Class clazz : providerMap.keySet()) {
             if(container.getClass() == clazz) {
                 return providerMap.get(clazz);
