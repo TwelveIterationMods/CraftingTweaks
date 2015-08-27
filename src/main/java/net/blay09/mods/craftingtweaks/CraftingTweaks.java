@@ -91,6 +91,13 @@ public class CraftingTweaks {
         if(Loader.isModLoaded("terrafirmacraft")) {
             registerProvider("com.bioxx.tfc.Containers.ContainerWorkbench", new TerraFirmaCraftTweakProvider());
         }
+        if(Loader.isModLoaded("ganyssurface")) {
+            registerProvider("ganymedes01.ganyssurface.inventory.ContainerWorkTable", new GanysWorktableTweakProvider());
+            registerProvider("ganymedes01.ganyssurface.inventory.ContainerDualWorkTable", new GanysDualWorktableTweakProvider());
+        }
+        if(Loader.isModLoaded("jacb")) {
+            registerProvider("tv.vanhal.jacb.gui.BenchContainer", new JACBTweakProvider());
+        }
     }
 
     public void registerProvider(Class<? extends Container> clazz, TweakProvider provider) {
