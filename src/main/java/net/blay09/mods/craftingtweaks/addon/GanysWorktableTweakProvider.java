@@ -22,7 +22,7 @@ public class GanysWorktableTweakProvider implements TweakProvider {
     public GanysWorktableTweakProvider() {
         try {
             Class clazz = Class.forName("ganymedes01.ganyssurface.inventory.ContainerWorkTable");
-            craftMatrixField = clazz.getField("matrix");
+            craftMatrixField = clazz.getDeclaredField("matrix");
             craftMatrixField.setAccessible(true);
             isLoaded = true;
         } catch (ClassNotFoundException ignored) {

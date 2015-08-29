@@ -22,9 +22,9 @@ public class GanysDualWorktableTweakProvider implements TweakProvider {
     public GanysDualWorktableTweakProvider() {
         try {
             Class clazz = Class.forName("ganymedes01.ganyssurface.inventory.ContainerDualWorkTable");
-            craftMatrixField[0] = clazz.getField("matrixLeft");
+            craftMatrixField[0] = clazz.getDeclaredField("matrixLeft");
             craftMatrixField[0].setAccessible(true);
-            craftMatrixField[1] = clazz.getField("matrixRight");
+            craftMatrixField[1] = clazz.getDeclaredField("matrixRight");
             craftMatrixField[1].setAccessible(true);
             isLoaded = true;
         } catch (ClassNotFoundException ignored) {
