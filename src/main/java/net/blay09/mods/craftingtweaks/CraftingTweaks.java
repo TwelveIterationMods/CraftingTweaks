@@ -100,6 +100,9 @@ public class CraftingTweaks {
         if(Loader.isModLoaded("jacb")) {
             registerProvider("tv.vanhal.jacb.gui.BenchContainer", new JACBTweakProvider());
         }
+        if(Loader.isModLoaded("bluepower")) {
+            registerProvider("com.bluepowermod.container.ContainerProjectTable", new BluePowerTweakProvider());
+        }
     }
 
     public void registerProvider(Class<? extends Container> clazz, TweakProvider provider) {
