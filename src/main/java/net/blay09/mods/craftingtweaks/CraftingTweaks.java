@@ -13,6 +13,7 @@ import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
 import net.blay09.mods.craftingtweaks.net.NetworkHandler;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.ContainerPlayer;
 import net.minecraft.inventory.ContainerWorkbench;
 
 import java.util.Map;
@@ -89,8 +90,10 @@ public class CraftingTweaks {
             registerProvider("twilightforest.uncrafting.ContainerTFUncrafting", new TwilightForestTweakProvider());
         }
         if(Loader.isModLoaded("terrafirmacraft")) {
-            registerProvider("com.bioxx.tfc.Containers.ContainerWorkbench", new TerraFirmaCraftTweakProvider());
+            registerProvider("com.bioxx.tfc.Containers.ContainerWorkbench", new TerraFirmaCraftOldTweakProvider());
+            registerProvider("com.bioxx.tfc.Containers.ContainerPlayerTFC", new TerraFirmaCraftTweakProvider());
         }
+        registerProvider(ContainerPlayer.class, new TerraFirmaCraftTweakProvider());
         if(Loader.isModLoaded("ganyssurface")) {
             registerProvider("ganymedes01.ganyssurface.inventory.ContainerWorkTable", new GanysWorktableTweakProvider());
             registerProvider("ganymedes01.ganyssurface.inventory.ContainerDualWorkTable", new GanysDualWorktableTweakProvider());
