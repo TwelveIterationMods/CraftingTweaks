@@ -93,7 +93,6 @@ public class CraftingTweaks {
             registerProvider("com.bioxx.tfc.Containers.ContainerWorkbench", new TerraFirmaCraftOldTweakProvider());
             registerProvider("com.bioxx.tfc.Containers.ContainerPlayerTFC", new TerraFirmaCraftTweakProvider());
         }
-        registerProvider(ContainerPlayer.class, new TerraFirmaCraftTweakProvider());
         if(Loader.isModLoaded("ganyssurface")) {
             registerProvider("ganymedes01.ganyssurface.inventory.ContainerWorkTable", new GanysWorktableTweakProvider());
             registerProvider("ganymedes01.ganyssurface.inventory.ContainerDualWorkTable", new GanysDualWorktableTweakProvider());
