@@ -63,7 +63,7 @@ public class ThermalExpansionTweakProvider implements TweakProvider {
     @SideOnly(Side.CLIENT)
     public void initGui(GuiContainer guiContainer, List buttonList) {
         final int paddingTop = 16 + 18 + 3;
-        buttonList.add(CraftingTweaksAPI.createRotateButton(0, guiContainer.width / 2 + 12, guiContainer.guiTop + paddingTop));
+        buttonList.add(CraftingTweaksAPI.createRotateButton(0, guiContainer.width / 2 + 9, guiContainer.guiTop + paddingTop));
     }
 
     @Override
