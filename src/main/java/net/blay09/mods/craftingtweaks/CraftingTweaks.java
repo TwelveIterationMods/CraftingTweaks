@@ -106,6 +106,9 @@ public class CraftingTweaks {
         if(Loader.isModLoaded("BiblioCraft")) {
             registerProvider("jds.bibliocraft.blocks.ContainerFancyWorkbench", new BiblioCraftTweakProvider());
         }
+        if(Loader.isModLoaded("ThermalExpansion")) {
+            registerProvider("cofh.thermalexpansion.gui.container.device.ContainerWorkbench", new ThermalExpansionTweakProvider());
+        }
     }
 
     public void registerProvider(Class<? extends Container> clazz, TweakProvider provider) {

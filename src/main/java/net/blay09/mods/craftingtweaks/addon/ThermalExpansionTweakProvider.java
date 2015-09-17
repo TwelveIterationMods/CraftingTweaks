@@ -13,23 +13,19 @@ import net.minecraft.inventory.IInventory;
 import java.lang.reflect.Field;
 import java.util.List;
 
-public class BluePowerTweakProvider implements TweakProvider {
+public class ThermalExpansionTweakProvider implements TweakProvider {
 
     private final DefaultProvider defaultProvider = CraftingTweaksAPI.createDefaultProvider();
     private boolean isLoaded;
-    private Field craftingGridField;
+    private Field craftMatrixField;
 
-    public BluePowerTweakProvider() {
+    public ThermalExpansionTweakProvider() {
         try {
-            Class containerClass = Class.forName("com.bluepowermod.container.ContainerProjectTable");
-            craftingGridField = containerClass.getDeclaredField("craftingGrid");
-            craftingGridField.setAccessible(true);
+            Class clazz = Class.forName("cofh.thermalexpansion.gui.container.device.ContainerWorkbench");
+            craftMatrixField = clazz.getField("craftMatrix");
             isLoaded = true;
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        }
+        } catch (ClassNotFoundException ignored) {
+        } catch (NoSuchFieldException ignored) {}
     }
 
     @Override
@@ -40,8 +36,11 @@ public class BluePowerTweakProvider implements TweakProvider {
     @Override
     public void clearGrid(EntityPlayer entityPlayer, Container container, int id) {
         try {
-            IInventory craftMatrix = (IInventory) craftingGridField.get(container);
-            defaultProvider.clearGrid(entityPlayer, container, craftMatrix);
+            IInventory craftMatrix = (IInventory) craftMatrixField.get(container);
+            for(int i = 0; i < craftMatrix.getSizeInventory(); i++) {
+                craftMatrix.setInventorySlotContents(i, null);
+            }
+            container.detectAndSendChanges();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -50,7 +49,7 @@ public class BluePowerTweakProvider implements TweakProvider {
     @Override
     public void rotateGrid(EntityPlayer entityPlayer, Container container, int id) {
         try {
-            IInventory craftMatrix = (IInventory) craftingGridField.get(container);
+            IInventory craftMatrix = (IInventory) craftMatrixField.get(container);
             defaultProvider.rotateGrid(entityPlayer, container, craftMatrix);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
@@ -58,21 +57,13 @@ public class BluePowerTweakProvider implements TweakProvider {
     }
 
     @Override
-    public void balanceGrid(EntityPlayer entityPlayer, Container container, int id) {
-        try {
-            IInventory craftMatrix = (IInventory) craftingGridField.get(container);
-            defaultProvider.balanceGrid(entityPlayer, container, craftMatrix);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-    }
+    public void balanceGrid(EntityPlayer entityPlayer, Container container, int id) {}
 
     @Override
     @SideOnly(Side.CLIENT)
     public void initGui(GuiContainer guiContainer, List buttonList) {
-        final int paddingTop = 16 + 18 + 2;
-        buttonList.add(CraftingTweaksAPI.createRotateButton(0, guiContainer.guiLeft + 14, guiContainer.guiTop + paddingTop));
-        buttonList.add(CraftingTweaksAPI.createBalanceButton(0, guiContainer.guiLeft + 14, guiContainer.guiTop + paddingTop + 18));
+        final int paddingTop = 16 + 18 + 3;
+        buttonList.add(CraftingTweaksAPI.createRotateButton(0, guiContainer.width / 2 + 12, guiContainer.guiTop + paddingTop));
     }
 
     @Override
