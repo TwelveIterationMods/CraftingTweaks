@@ -70,9 +70,9 @@ public class BiblioCraftTweakProvider implements TweakProvider {
     @SideOnly(Side.CLIENT)
     public void initGui(GuiContainer guiContainer, List buttonList) {
         final int paddingTop = 16;
-        buttonList.add(CraftingTweaksAPI.createRotateButton(0, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop));
-        buttonList.add(CraftingTweaksAPI.createBalanceButton(0, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop + 18));
-        buttonList.add(CraftingTweaksAPI.createClearButton(0, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop + 36));
+        buttonList.add(CraftingTweaksAPI.createRotateButton(0, guiContainer.width / 2 - 48, guiContainer.guiTop + paddingTop));
+        buttonList.add(CraftingTweaksAPI.createBalanceButton(0, guiContainer.width / 2 - 48, guiContainer.guiTop + paddingTop + 18));
+        buttonList.add(CraftingTweaksAPI.createClearButton(0, guiContainer.width / 2 - 48, guiContainer.guiTop + paddingTop + 36));
     }
 
     @Override
