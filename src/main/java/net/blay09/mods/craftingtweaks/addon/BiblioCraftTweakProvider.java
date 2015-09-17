@@ -40,10 +40,7 @@ public class BiblioCraftTweakProvider implements TweakProvider {
     public void clearGrid(EntityPlayer entityPlayer, Container container, int id) {
         try {
             IInventory craftMatrix = (IInventory) playerCraftMatrixField.get(container);
-            for(int i = 0; i < craftMatrix.getSizeInventory(); i++) {
-                craftMatrix.setInventorySlotContents(i, null);
-            }
-            container.detectAndSendChanges();
+            defaultProvider.clearGrid(entityPlayer, container, craftMatrix);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
