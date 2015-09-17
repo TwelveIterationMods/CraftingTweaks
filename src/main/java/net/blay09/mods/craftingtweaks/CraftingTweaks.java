@@ -103,6 +103,9 @@ public class CraftingTweaks {
         if(Loader.isModLoaded("bluepower")) {
             registerProvider("com.bluepowermod.container.ContainerProjectTable", new BluePowerTweakProvider());
         }
+        if(Loader.isModLoaded("BiblioCraft")) {
+            registerProvider("jds.bibliocraft.blocks.ContainerFancyWorkbench", new BiblioCraftTweakProvider());
+        }
     }
 
     public void registerProvider(Class<? extends Container> clazz, TweakProvider provider) {
