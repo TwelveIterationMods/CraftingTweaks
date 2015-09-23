@@ -109,6 +109,9 @@ public class CraftingTweaks {
         if(Loader.isModLoaded("ThermalExpansion")) {
             registerProvider("cofh.thermalexpansion.gui.container.device.ContainerWorkbench", new ThermalExpansionTweakProvider());
         }
+        if(Loader.isModLoaded("Backpack")) {
+            registerProvider("de.eydamos.backpack.inventory.container.ContainerWorkbenchBackpack", new BackpacksTweakProvider());
+        }
     }
 
     public void registerProvider(Class<? extends Container> clazz, TweakProvider provider) {
