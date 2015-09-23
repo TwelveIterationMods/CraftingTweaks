@@ -132,4 +132,8 @@ public class AE2CraftingTerminalTweakProvider implements TweakProvider {
         return false;
     }
 
+    @Override
+    public String getModId() {
+        return "appliedenergistics2";
+    }
 }

@@ -90,4 +90,8 @@ public class BuildcraftTweakProvider implements TweakProvider {
         return true;
     }
 
+    @Override
+    public String getModId() {
+        return "BuildCraft|Factory";
+    }
 }

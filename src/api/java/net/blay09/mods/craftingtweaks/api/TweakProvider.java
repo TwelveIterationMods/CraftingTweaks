@@ -20,4 +20,6 @@ public interface TweakProvider {
     void initGui(GuiContainer guiContainer, List buttonList);
     @SideOnly(Side.CLIENT)
     boolean areHotkeysEnabled(EntityPlayer entityPlayer, Container container);
+
+    String getModId();
 }

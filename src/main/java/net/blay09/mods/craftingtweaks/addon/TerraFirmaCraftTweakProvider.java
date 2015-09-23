@@ -77,4 +77,8 @@ public class TerraFirmaCraftTweakProvider implements TweakProvider {
         return true;
     }
 
+    @Override
+    public String getModId() {
+        return "terrafirmacraft";
+    }
 }

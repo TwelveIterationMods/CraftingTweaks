@@ -78,4 +78,8 @@ public class TwilightForestTweakProvider implements TweakProvider {
         return true;
     }
 
+    @Override
+    public String getModId() {
+        return "TwilightForest";
+    }
 }

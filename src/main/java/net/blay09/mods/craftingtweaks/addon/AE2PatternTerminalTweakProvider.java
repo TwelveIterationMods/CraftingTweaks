@@ -120,4 +120,8 @@ public class AE2PatternTerminalTweakProvider implements TweakProvider {
         return false;
     }
 
+    @Override
+    public String getModId() {
+        return "appliedenergistics2";
+    }
 }

@@ -79,4 +79,8 @@ public class GanysWorktableTweakProvider implements TweakProvider {
         return true;
     }
 
+    @Override
+    public String getModId() {
+        return "ganyssurface";
+    }
 }

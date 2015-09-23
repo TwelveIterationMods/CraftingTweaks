@@ -81,4 +81,8 @@ public class BluePowerTweakProvider implements TweakProvider {
         return true;
     }
 
+    @Override
+    public String getModId() {
+        return "bluepower";
+    }
 }

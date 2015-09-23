@@ -82,4 +82,8 @@ public class DraconicEvolutionTweakProvider implements TweakProvider {
         return true;
     }
 
+    @Override
+    public String getModId() {
+        return "DraconicEvolution";
+    }
 }

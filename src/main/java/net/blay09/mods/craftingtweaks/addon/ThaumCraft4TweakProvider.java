@@ -82,4 +82,8 @@ public class ThaumCraft4TweakProvider implements TweakProvider {
         return true;
     }
 
+    @Override
+    public String getModId() {
+        return "Thaumcraft";
+    }
 }

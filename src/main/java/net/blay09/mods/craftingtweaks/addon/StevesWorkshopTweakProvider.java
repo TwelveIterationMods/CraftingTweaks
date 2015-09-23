@@ -154,4 +154,9 @@ public class StevesWorkshopTweakProvider implements TweakProvider {
     public boolean areHotkeysEnabled(EntityPlayer entityPlayer, Container container) {
         return true;
     }
+
+    @Override
+    public String getModId() {
+        return "StevesWorkshop";
+    }
 }

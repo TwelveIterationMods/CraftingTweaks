@@ -73,4 +73,9 @@ public class RailcraftRollingMachineTweakProvider implements TweakProvider {
     public boolean areHotkeysEnabled(EntityPlayer entityPlayer, Container container) {
         return true;
     }
+
+    @Override
+    public String getModId() {
+        return "Railcraft";
+    }
 }

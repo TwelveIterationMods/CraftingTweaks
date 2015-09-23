@@ -81,29 +81,32 @@ public class ClientProxy extends CommonProxy {
                 }
                 TweakProvider provider = CraftingTweaks.instance.getProvider(container);
                 if(provider != null) {
-                    if (keyRotate.getKeyCode() > 0 && Keyboard.isKeyDown(keyRotate.getKeyCode())) {
-                        if(!wasRotated && provider.areHotkeysEnabled(entityPlayer, container)) {
-                            NetworkHandler.instance.sendToServer(new MessageRotate(0));
-                            wasRotated = true;
+                    CraftingTweaks.ModSupportState config = CraftingTweaks.instance.getModSupportState(provider.getModId());
+                    if(config == CraftingTweaks.ModSupportState.Enabled || config == CraftingTweaks.ModSupportState.HotkeysOnly) {
+                        if (keyRotate.getKeyCode() > 0 && Keyboard.isKeyDown(keyRotate.getKeyCode())) {
+                            if (!wasRotated && provider.areHotkeysEnabled(entityPlayer, container)) {
+                                NetworkHandler.instance.sendToServer(new MessageRotate(0));
+                                wasRotated = true;
+                            }
+                        } else {
+                            wasRotated = false;
                         }
-                    } else {
-                        wasRotated = false;
-                    }
-                    if (keyClear.getKeyCode() > 0 && Keyboard.isKeyDown(keyClear.getKeyCode())) {
-                        if(!wasCleared && provider.areHotkeysEnabled(entityPlayer, container)) {
-                            NetworkHandler.instance.sendToServer(new MessageClear(0));
-                            wasCleared = true;
+                        if (keyClear.getKeyCode() > 0 && Keyboard.isKeyDown(keyClear.getKeyCode())) {
+                            if (!wasCleared && provider.areHotkeysEnabled(entityPlayer, container)) {
+                                NetworkHandler.instance.sendToServer(new MessageClear(0));
+                                wasCleared = true;
+                            }
+                        } else {
+                            wasCleared = false;
                         }
-                    } else {
-                        wasCleared = false;
-                    }
-                    if (keyBalance.getKeyCode() > 0 && Keyboard.isKeyDown(keyBalance.getKeyCode()) ) {
-                        if(!wasBalanced && provider.areHotkeysEnabled(entityPlayer, container)) {
-                            NetworkHandler.instance.sendToServer(new MessageBalance(0));
-                            wasBalanced = true;
+                        if (keyBalance.getKeyCode() > 0 && Keyboard.isKeyDown(keyBalance.getKeyCode())) {
+                            if (!wasBalanced && provider.areHotkeysEnabled(entityPlayer, container)) {
+                                NetworkHandler.instance.sendToServer(new MessageBalance(0));
+                                wasBalanced = true;
+                            }
+                        } else {
+                            wasBalanced = false;
                         }
-                    } else {
-                        wasBalanced = false;
                     }
                 }
             }
@@ -132,7 +135,10 @@ public class ClientProxy extends CommonProxy {
             GuiContainer guiContainer = (GuiContainer) event.gui;
             TweakProvider provider = CraftingTweaks.instance.getProvider(guiContainer.inventorySlots);
             if(provider != null) {
-                provider.initGui(guiContainer, event.buttonList);
+                CraftingTweaks.ModSupportState config = CraftingTweaks.instance.getModSupportState(provider.getModId());
+                if(config == CraftingTweaks.ModSupportState.Enabled || config == CraftingTweaks.ModSupportState.ButtonsOnly) {
+                    provider.initGui(guiContainer, event.buttonList);
+                }
             }
         }
     }
