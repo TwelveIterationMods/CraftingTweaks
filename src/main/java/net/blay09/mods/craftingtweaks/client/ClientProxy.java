@@ -1,6 +1,7 @@
 package net.blay09.mods.craftingtweaks.client;
 
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -17,6 +18,7 @@ import net.blay09.mods.craftingtweaks.net.NetworkHandler;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraftforge.client.event.GuiScreenEvent;
@@ -33,6 +35,10 @@ public class ClientProxy extends CommonProxy {
     private boolean wasCleared;
     private boolean wasBalanced;
 
+    private final KeyBinding keyRotate = new KeyBinding("key.craftingtweaks.rotate", Keyboard.KEY_R, "key.categories.craftingtweaks");
+    private KeyBinding keyBalance = new KeyBinding("key.craftingtweaks.balance", Keyboard.KEY_B, "key.categories.craftingtweaks");
+    private KeyBinding keyClear = new KeyBinding("key.craftingtweaks.clear", Keyboard.KEY_C, "key.categories.craftingtweaks");
+
     private Field neiSearchField;
     private Method focused;
 
@@ -40,6 +46,10 @@ public class ClientProxy extends CommonProxy {
     public void init(FMLInitializationEvent event) {
         FMLCommonHandler.instance().bus().register(this);
         MinecraftForge.EVENT_BUS.register(this);
+
+        ClientRegistry.registerKeyBinding(keyRotate);
+        ClientRegistry.registerKeyBinding(keyBalance);
+        ClientRegistry.registerKeyBinding(keyClear);
     }
 
     @Override
@@ -71,7 +81,7 @@ public class ClientProxy extends CommonProxy {
                 }
                 TweakProvider provider = CraftingTweaks.instance.getProvider(container);
                 if(provider != null) {
-                    if (Keyboard.isKeyDown(Keyboard.KEY_R)) {
+                    if (keyRotate.getKeyCode() > 0 && Keyboard.isKeyDown(keyRotate.getKeyCode())) {
                         if(!wasRotated && provider.areHotkeysEnabled(entityPlayer, container)) {
                             NetworkHandler.instance.sendToServer(new MessageRotate(0));
                             wasRotated = true;
@@ -79,7 +89,7 @@ public class ClientProxy extends CommonProxy {
                     } else {
                         wasRotated = false;
                     }
-                    if (Keyboard.isKeyDown(Keyboard.KEY_C)) {
+                    if (keyClear.getKeyCode() > 0 && Keyboard.isKeyDown(keyClear.getKeyCode())) {
                         if(!wasCleared && provider.areHotkeysEnabled(entityPlayer, container)) {
                             NetworkHandler.instance.sendToServer(new MessageClear(0));
                             wasCleared = true;
@@ -87,7 +97,7 @@ public class ClientProxy extends CommonProxy {
                     } else {
                         wasCleared = false;
                     }
-                    if (Keyboard.isKeyDown(Keyboard.KEY_B) ) {
+                    if (keyBalance.getKeyCode() > 0 && Keyboard.isKeyDown(keyBalance.getKeyCode()) ) {
                         if(!wasBalanced && provider.areHotkeysEnabled(entityPlayer, container)) {
                             NetworkHandler.instance.sendToServer(new MessageBalance(0));
                             wasBalanced = true;
