@@ -13,7 +13,6 @@ import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
 import net.blay09.mods.craftingtweaks.net.NetworkHandler;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.ContainerPlayer;
 import net.minecraft.inventory.ContainerWorkbench;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -24,16 +23,16 @@ import java.util.Map;
 public class CraftingTweaks {
 
     public enum ModSupportState {
-        Enabled,
-        ButtonsOnly,
-        HotkeysOnly,
-        Disabled;
+        ENABLED,
+        BUTTONS_ONLY,
+        HOTKEYS_ONLY,
+        DISABLED;
 
         public static ModSupportState fromName(String name) {
             try {
-                return valueOf(name);
+                return valueOf(name.toUpperCase());
             } catch (IllegalArgumentException e) {
-                return Enabled;
+                return ENABLED;
             }
         }
 
@@ -64,34 +63,34 @@ public class CraftingTweaks {
     public void preInit(FMLPreInitializationEvent event) {
         CraftingTweaksAPI.setupAPI(new InternalMethodsImpl());
 
-        configMap.put("minecraft", ModSupportState.Enabled);
-        configMap.put("TConstruct", ModSupportState.Enabled);
-        configMap.put("appliedenergistics2", ModSupportState.Enabled);
-        configMap.put("DraconicEvolution", ModSupportState.Enabled);
-        configMap.put("StevesWorkshop", ModSupportState.Enabled);
-        configMap.put("Natura", ModSupportState.Enabled);
-        configMap.put("Thaumcraft", ModSupportState.Enabled);
-        configMap.put("MineFactoryReloaded", ModSupportState.Enabled);
-        configMap.put("Forestry", ModSupportState.Enabled);
-        configMap.put("Railcraft", ModSupportState.Enabled);
-        configMap.put("BuildCraft|Factory", ModSupportState.Enabled);
-        configMap.put("RotaryCraft", ModSupportState.Enabled);
-        configMap.put("RotaryCraft", ModSupportState.Enabled);
-        configMap.put("TwilightForest", ModSupportState.Enabled);
-        configMap.put("terrafirmacraft", ModSupportState.Enabled);
-        configMap.put("ganyssurface", ModSupportState.Enabled);
-        configMap.put("jacb", ModSupportState.Enabled);
-        configMap.put("bluepower", ModSupportState.Enabled);
-        configMap.put("BiblioCraft", ModSupportState.Enabled);
-        configMap.put("ThermalExpansion", ModSupportState.Enabled);
-        configMap.put("Backpack", ModSupportState.Enabled);
-
+        configMap.put("minecraft", ModSupportState.ENABLED);
+        configMap.put("TConstruct", ModSupportState.ENABLED);
+        configMap.put("appliedenergistics2", ModSupportState.ENABLED);
+        configMap.put("DraconicEvolution", ModSupportState.ENABLED);
+        configMap.put("StevesWorkshop", ModSupportState.ENABLED);
+        configMap.put("Natura", ModSupportState.ENABLED);
+        configMap.put("Thaumcraft", ModSupportState.ENABLED);
+        configMap.put("MineFactoryReloaded", ModSupportState.ENABLED);
+        configMap.put("Forestry", ModSupportState.ENABLED);
+        configMap.put("Railcraft", ModSupportState.ENABLED);
+        configMap.put("BuildCraft|Factory", ModSupportState.ENABLED);
+        configMap.put("RotaryCraft", ModSupportState.ENABLED);
+        configMap.put("RotaryCraft", ModSupportState.ENABLED);
+        configMap.put("TwilightForest", ModSupportState.ENABLED);
+        configMap.put("terrafirmacraft", ModSupportState.ENABLED);
+        configMap.put("ganyssurface", ModSupportState.ENABLED);
+        configMap.put("jacb", ModSupportState.ENABLED);
+        configMap.put("bluepower", ModSupportState.ENABLED);
+        configMap.put("BiblioCraft", ModSupportState.ENABLED);
+        configMap.put("ThermalExpansion", ModSupportState.ENABLED);
+        configMap.put("Backpack", ModSupportState.ENABLED);
 
         config = new Configuration(event.getSuggestedConfigurationFile());
-        config.setCategoryComment("addons", "Here you can control whether support for a mod should be enabled, buttonsonly, hotkeysonly or disabled. For Vanilla Minecraft, see the option 'minecraft'. Mods are identified by their mod ids.");
+        config.setCategoryComment("addons", "Here you can control whether support for a mod should be enabled, buttons_only, hotkeys_only or disabled. For Vanilla Minecraft, see the option 'minecraft'. Mods are identified by their mod ids.");
+        config.getString("minecraft", "addons", ModSupportState.ENABLED.name().toLowerCase(), "", ModSupportState.getValidValues());
         // Load all options (including those from non-included addons)
         for(Property property : config.getCategory("addons").values()) {
-            configMap.put(property.getName(), ModSupportState.fromName(config.getString(property.getName(), "addons", ModSupportState.Enabled.name().toLowerCase(), "", ModSupportState.getValidValues())));
+            configMap.put(property.getName(), ModSupportState.fromName(config.getString(property.getName(), "addons", ModSupportState.ENABLED.name().toLowerCase(), "", ModSupportState.getValidValues())));
         }
     }
 
@@ -148,7 +147,7 @@ public class CraftingTweaks {
 
     @SuppressWarnings("unchecked")
     public void registerProvider(String className, TweakProvider provider) {
-        config.getString(provider.getModId(), "addons", ModSupportState.Enabled.name().toLowerCase(), "", ModSupportState.getValidValues());
+        config.getString(provider.getModId(), "addons", ModSupportState.ENABLED.name().toLowerCase(), "", ModSupportState.getValidValues());
         if(Loader.isModLoaded(provider.getModId()) && provider.isLoaded()) {
             try {
                 Class clazz = Class.forName(className);

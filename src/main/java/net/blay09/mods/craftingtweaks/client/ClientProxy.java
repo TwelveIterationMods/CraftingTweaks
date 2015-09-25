@@ -7,7 +7,6 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.InputEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import net.blay09.mods.craftingtweaks.CommonProxy;
 import net.blay09.mods.craftingtweaks.CraftingTweaks;
@@ -16,7 +15,6 @@ import net.blay09.mods.craftingtweaks.net.MessageClear;
 import net.blay09.mods.craftingtweaks.net.MessageRotate;
 import net.blay09.mods.craftingtweaks.net.NetworkHandler;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
@@ -82,7 +80,7 @@ public class ClientProxy extends CommonProxy {
                 TweakProvider provider = CraftingTweaks.instance.getProvider(container);
                 if(provider != null) {
                     CraftingTweaks.ModSupportState config = CraftingTweaks.instance.getModSupportState(provider.getModId());
-                    if(config == CraftingTweaks.ModSupportState.Enabled || config == CraftingTweaks.ModSupportState.HotkeysOnly) {
+                    if(config == CraftingTweaks.ModSupportState.ENABLED || config == CraftingTweaks.ModSupportState.HOTKEYS_ONLY) {
                         if (keyRotate.getKeyCode() > 0 && Keyboard.isKeyDown(keyRotate.getKeyCode())) {
                             if (!wasRotated && provider.areHotkeysEnabled(entityPlayer, container)) {
                                 NetworkHandler.instance.sendToServer(new MessageRotate(0));
@@ -136,7 +134,7 @@ public class ClientProxy extends CommonProxy {
             TweakProvider provider = CraftingTweaks.instance.getProvider(guiContainer.inventorySlots);
             if(provider != null) {
                 CraftingTweaks.ModSupportState config = CraftingTweaks.instance.getModSupportState(provider.getModId());
-                if(config == CraftingTweaks.ModSupportState.Enabled || config == CraftingTweaks.ModSupportState.ButtonsOnly) {
+                if(config == CraftingTweaks.ModSupportState.ENABLED || config == CraftingTweaks.ModSupportState.BUTTONS_ONLY) {
                     provider.initGui(guiContainer, event.buttonList);
                 }
             }
