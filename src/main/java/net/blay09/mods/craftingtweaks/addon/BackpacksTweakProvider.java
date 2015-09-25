@@ -38,7 +38,10 @@ public class BackpacksTweakProvider implements TweakProvider {
     public void clearGrid(EntityPlayer entityPlayer, Container container, int id) {
         try {
             IInventory craftMatrix = (IInventory) craftingGridField.get(container);
-            defaultProvider.clearGrid(entityPlayer, container, craftMatrix);
+            for(int i = 0; i < 9; i++) {
+                craftMatrix.setInventorySlotContents(i, null);
+            }
+            container.detectAndSendChanges();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -55,22 +58,13 @@ public class BackpacksTweakProvider implements TweakProvider {
     }
 
     @Override
-    public void balanceGrid(EntityPlayer entityPlayer, Container container, int id) {
-        try {
-            IInventory craftMatrix = (IInventory) craftingGridField.get(container);
-            defaultProvider.balanceGrid(entityPlayer, container, craftMatrix);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-    }
+    public void balanceGrid(EntityPlayer entityPlayer, Container container, int id) {}
 
     @Override
     @SideOnly(Side.CLIENT)
     public void initGui(GuiContainer guiContainer, List buttonList) {
         final int paddingTop = 16;
-        buttonList.add(CraftingTweaksAPI.createRotateButton(0, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop));
-        buttonList.add(CraftingTweaksAPI.createBalanceButton(0, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop + 18));
-        buttonList.add(CraftingTweaksAPI.createClearButton(0, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop + 36));
+        buttonList.add(CraftingTweaksAPI.createRotateButton(0, guiContainer.guiLeft + 16, guiContainer.guiTop + paddingTop + 18));
     }
 
     @Override
