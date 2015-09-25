@@ -64,7 +64,7 @@ public class BackpacksTweakProvider implements TweakProvider {
     @SideOnly(Side.CLIENT)
     public void initGui(GuiContainer guiContainer, List buttonList) {
         final int paddingTop = 16;
-        buttonList.add(CraftingTweaksAPI.createRotateButton(0, guiContainer.guiLeft + 16, guiContainer.guiTop + paddingTop + 18));
+        buttonList.add(CraftingTweaksAPI.createRotateButton(0, guiContainer.guiLeft + 8, guiContainer.guiTop + paddingTop + 19));
     }
 
     @Override
