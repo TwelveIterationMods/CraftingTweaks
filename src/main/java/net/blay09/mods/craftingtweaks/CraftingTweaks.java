@@ -90,7 +90,7 @@ public class CraftingTweaks {
         config.getString("minecraft", "addons", ModSupportState.ENABLED.name().toLowerCase(), "", ModSupportState.getValidValues());
         // Load all options (including those from non-included addons)
         for(Property property : config.getCategory("addons").values()) {
-            configMap.put(property.getName(), ModSupportState.fromName(config.getString(property.getName(), "addons", ModSupportState.ENABLED.name().toLowerCase(), "", ModSupportState.getValidValues())));
+            configMap.put(property.getName(), ModSupportState.fromName(config.getString(property.getName(), "addons", ModSupportState.ENABLED.name().toLowerCase(), "enabled, buttons_only, hotkeys_only or disabled", ModSupportState.getValidValues())));
         }
     }
 
@@ -147,7 +147,7 @@ public class CraftingTweaks {
 
     @SuppressWarnings("unchecked")
     public void registerProvider(String className, TweakProvider provider) {
-        config.getString(provider.getModId(), "addons", ModSupportState.ENABLED.name().toLowerCase(), "", ModSupportState.getValidValues());
+        config.getString(provider.getModId(), "addons", ModSupportState.ENABLED.name().toLowerCase(), "enabled, buttons_only, hotkeys_only or disabled", ModSupportState.getValidValues());
         if(Loader.isModLoaded(provider.getModId()) && provider.isLoaded()) {
             try {
                 Class clazz = Class.forName(className);
