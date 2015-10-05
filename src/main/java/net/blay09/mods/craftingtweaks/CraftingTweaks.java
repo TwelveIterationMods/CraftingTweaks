@@ -132,6 +132,7 @@ public class CraftingTweaks {
         registerProvider("jds.bibliocraft.blocks.ContainerFancyWorkbench", new BiblioCraftTweakProvider());
         registerProvider("cofh.thermalexpansion.gui.container.device.ContainerWorkbench", new ThermalExpansionTweakProvider());
         registerProvider("de.eydamos.backpack.inventory.container.ContainerWorkbenchBackpack", new BackpacksTweakProvider());
+        registerProvider("fox.spiteful.avaritia.gui.ContainerExtremeCrafting", new AvaritiaTweakProvider());
 
         config.save();
     }
