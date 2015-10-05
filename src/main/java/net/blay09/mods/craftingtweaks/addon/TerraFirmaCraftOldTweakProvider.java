@@ -16,21 +16,20 @@ import java.util.List;
 public class TerraFirmaCraftOldTweakProvider implements TweakProvider {
 
     private final DefaultProvider defaultProvider = CraftingTweaksAPI.createDefaultProvider();
-    private boolean isLoaded;
     private Field craftMatrixField;
 
-    public TerraFirmaCraftOldTweakProvider() {
+    @Override
+    public boolean load() {
         try {
             Class clazz = Class.forName("com.bioxx.tfc.Containers.ContainerWorkbench");
             craftMatrixField = clazz.getField("craftMatrix");
-            isLoaded = true;
-        } catch (ClassNotFoundException ignored) {
-        } catch (NoSuchFieldException ignored) {}
-    }
-
-    @Override
-    public boolean isLoaded() {
-        return isLoaded;
+            return true;
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     @Override

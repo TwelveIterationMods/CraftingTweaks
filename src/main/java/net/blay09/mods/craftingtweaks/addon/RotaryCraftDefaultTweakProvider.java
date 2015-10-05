@@ -16,25 +16,26 @@ import java.util.List;
 public class RotaryCraftDefaultTweakProvider implements TweakProvider {
 
     private final DefaultProvider defaultProvider = CraftingTweaksAPI.createDefaultProvider();
-    private boolean isLoaded;
+    private final String className;
     private Field craftMatrixField;
 
     public RotaryCraftDefaultTweakProvider(String className) {
+        this.className = className;
+    }
+
+    @Override
+    public boolean load() {
         try {
             Class clazz = Class.forName(className);
             craftMatrixField = clazz.getDeclaredField("craftMatrix");
             craftMatrixField.setAccessible(true);
-            isLoaded = true;
+            return true;
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public boolean isLoaded() {
-        return isLoaded;
+        return false;
     }
 
     @Override

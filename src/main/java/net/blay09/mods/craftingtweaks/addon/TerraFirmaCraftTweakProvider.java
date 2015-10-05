@@ -38,7 +38,7 @@ public class TerraFirmaCraftTweakProvider implements TweakProvider {
     };
 
     @Override
-    public boolean isLoaded() {
+    public boolean load() {
         return true;
     }
 

@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface TweakProvider {
 
-    boolean isLoaded();
+    boolean load();
     void clearGrid(EntityPlayer entityPlayer, Container container, int id);
     void rotateGrid(EntityPlayer entityPlayer, Container container, int id);
     void balanceGrid(EntityPlayer entityPlayer, Container container, int id);

@@ -16,22 +16,21 @@ import java.util.List;
 public class GanysWorktableTweakProvider implements TweakProvider {
 
     private final DefaultProvider defaultProvider = CraftingTweaksAPI.createDefaultProvider();
-    private boolean isLoaded;
     private Field craftMatrixField;
 
-    public GanysWorktableTweakProvider() {
+    @Override
+    public boolean load() {
         try {
             Class clazz = Class.forName("ganymedes01.ganyssurface.inventory.ContainerWorkTable");
             craftMatrixField = clazz.getDeclaredField("matrix");
             craftMatrixField.setAccessible(true);
-            isLoaded = true;
-        } catch (ClassNotFoundException ignored) {
-        } catch (NoSuchFieldException ignored) {}
-    }
-
-    @Override
-    public boolean isLoaded() {
-        return isLoaded;
+            return true;
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     @Override

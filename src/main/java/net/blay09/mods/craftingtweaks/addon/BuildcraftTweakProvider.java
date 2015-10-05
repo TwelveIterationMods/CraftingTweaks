@@ -18,28 +18,24 @@ import java.util.List;
 public class BuildcraftTweakProvider implements TweakProvider {
 
     private final DefaultProvider defaultProvider = CraftingTweaksAPI.createDefaultProvider();
-    private boolean isLoaded;
     private Field tileEntityField;
     private Field craftMatrixField;
 
-    public BuildcraftTweakProvider() {
+    @Override
+    public boolean load() {
         try {
             Class containerClass = Class.forName("buildcraft.factory.gui.ContainerAutoWorkbench");
             tileEntityField = containerClass.getDeclaredField("tile");
             tileEntityField.setAccessible(true);
             Class tileClass = Class.forName("buildcraft.factory.TileAutoWorkbench");
             craftMatrixField = tileClass.getField("craftMatrix");
-            isLoaded = true;
+            return true;
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public boolean isLoaded() {
-        return isLoaded;
+        return false;
     }
 
     @Override

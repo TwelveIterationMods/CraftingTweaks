@@ -16,25 +16,21 @@ import java.util.List;
 public class BluePowerTweakProvider implements TweakProvider {
 
     private final DefaultProvider defaultProvider = CraftingTweaksAPI.createDefaultProvider();
-    private boolean isLoaded;
     private Field craftingGridField;
 
-    public BluePowerTweakProvider() {
+    @Override
+    public boolean load() {
         try {
             Class containerClass = Class.forName("com.bluepowermod.container.ContainerProjectTable");
             craftingGridField = containerClass.getDeclaredField("craftingGrid");
             craftingGridField.setAccessible(true);
-            isLoaded = true;
+            return true;
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public boolean isLoaded() {
-        return isLoaded;
+        return false;
     }
 
     @Override

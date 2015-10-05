@@ -22,7 +22,6 @@ import java.util.List;
 public class AE2PatternTerminalTweakProvider implements TweakProvider {
 
     private final DefaultProvider defaultProvider = CraftingTweaksAPI.createDefaultProvider();
-    private boolean isLoaded;
     private Field partPatternTerminalField;
     private Method getInventoryByName;
 
@@ -30,7 +29,8 @@ public class AE2PatternTerminalTweakProvider implements TweakProvider {
     private Field craftingGridOffsetXField;
     private Field craftingGridOffsetYField;
 
-    public AE2PatternTerminalTweakProvider() {
+    @Override
+    public boolean load() {
         try {
             Class containerClass = Class.forName("appeng.container.implementations.ContainerPatternTerm");
             partPatternTerminalField = containerClass.getField("ct");
@@ -44,8 +44,7 @@ public class AE2PatternTerminalTweakProvider implements TweakProvider {
                 craftingGridOffsetXField = guiScreenClass.getField("CraftingGridOffsetX");
                 craftingGridOffsetYField = guiScreenClass.getField("CraftingGridOffsetY");
             }
-
-            isLoaded = true;
+            return true;
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (NoSuchFieldException e) {
@@ -53,11 +52,7 @@ public class AE2PatternTerminalTweakProvider implements TweakProvider {
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public boolean isLoaded() {
-        return isLoaded;
+        return false;
     }
 
     @Override

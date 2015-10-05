@@ -16,24 +16,19 @@ import java.util.List;
 public class RailcraftWorkCartTweakProvider implements TweakProvider {
 
     private final DefaultProvider defaultProvider = CraftingTweaksAPI.createDefaultProvider();
-    private boolean isLoaded;
     private Field craftMatrixField;
 
-    public RailcraftWorkCartTweakProvider() {
+    public boolean load() {
         try {
             Class clazz = Class.forName("mods.railcraft.common.gui.containers.ContainerWorkCart");
             craftMatrixField = clazz.getField("craftMatrix");
-            isLoaded = true;
+            return true;
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public boolean isLoaded() {
-        return isLoaded;
+        return false;
     }
 
     @Override

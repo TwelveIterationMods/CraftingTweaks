@@ -17,7 +17,7 @@ public class VanillaTweakProviderImpl implements TweakProvider {
     private final DefaultProvider defaultProvider = CraftingTweaksAPI.createDefaultProvider();
 
     @Override
-    public boolean isLoaded() {
+    public boolean load() {
         return true;
     }
 

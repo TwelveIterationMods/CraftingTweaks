@@ -18,7 +18,6 @@ import java.util.List;
 public class StevesWorkshopTweakProvider implements TweakProvider {
 
     private final DefaultProvider defaultProvider = CraftingTweaksAPI.createDefaultProvider();
-    private boolean isLoaded;
     private Method getTable;
     private Method getMainPage;
     private Method getCraftingList;
@@ -27,7 +26,8 @@ public class StevesWorkshopTweakProvider implements TweakProvider {
     private Field xField;
     private Field yField;
 
-    public StevesWorkshopTweakProvider() {
+    @Override
+    public boolean load() {
         try {
             Class containerClass = Class.forName("vswe.production.gui.container.ContainerTable");
             getTable = containerClass.getMethod("getTable");
@@ -44,7 +44,7 @@ public class StevesWorkshopTweakProvider implements TweakProvider {
             xField.setAccessible(true);
             yField = unitClass.getDeclaredField("y");
             yField.setAccessible(true);
-            isLoaded = true;
+            return true;
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (NoSuchFieldException e) {
@@ -52,11 +52,7 @@ public class StevesWorkshopTweakProvider implements TweakProvider {
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public boolean isLoaded() {
-        return isLoaded;
+        return false;
     }
 
     @Override

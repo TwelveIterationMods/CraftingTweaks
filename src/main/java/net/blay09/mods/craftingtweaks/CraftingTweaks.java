@@ -140,7 +140,7 @@ public class CraftingTweaks {
         if(!provider.getModId().equals("minecraft") && !Loader.isModLoaded(provider.getModId())) {
             return;
         }
-        if(provider.isLoaded()) {
+        if(provider.load()) {
             providerMap.put(clazz, provider);
         }
     }
@@ -148,13 +148,16 @@ public class CraftingTweaks {
     @SuppressWarnings("unchecked")
     public void registerProvider(String className, TweakProvider provider) {
         config.getString(provider.getModId(), "addons", ModSupportState.ENABLED.name().toLowerCase(), "enabled, buttons_only, hotkeys_only or disabled", ModSupportState.getValidValues());
-        if(Loader.isModLoaded(provider.getModId()) && provider.isLoaded()) {
-            try {
-                Class clazz = Class.forName(className);
-                if (Container.class.isAssignableFrom(clazz)) {
-                    providerMap.put(clazz, provider);
+        if(Loader.isModLoaded(provider.getModId())) {
+            if(provider.load()) {
+                try {
+                    Class clazz = Class.forName(className);
+                    if (Container.class.isAssignableFrom(clazz)) {
+                        providerMap.put(clazz, provider);
+                    }
+                } catch (ClassNotFoundException ignored) {
                 }
-            } catch (ClassNotFoundException ignored) {}
+            }
         }
     }
 

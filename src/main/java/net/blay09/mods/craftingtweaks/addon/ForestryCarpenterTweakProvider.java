@@ -19,18 +19,18 @@ import java.util.List;
 public class ForestryCarpenterTweakProvider implements TweakProvider {
 
     private final DefaultProvider defaultProvider = CraftingTweaksAPI.createDefaultProvider();
-    private boolean isLoaded;
     private Field tileEntityField;
     private Method getCraftingInventory;
 
-    public ForestryCarpenterTweakProvider() {
+    @Override
+    public boolean load() {
         try {
             Class containerClass = Class.forName("forestry.core.gui.ContainerTile");
             tileEntityField = containerClass.getDeclaredField("tile");
             tileEntityField.setAccessible(true);
             Class tileClass = Class.forName("forestry.factory.gadgets.MachineCarpenter");
             getCraftingInventory = tileClass.getMethod("getCraftingInventory");
-            isLoaded = true;
+            return true;
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (NoSuchFieldException e) {
@@ -38,11 +38,7 @@ public class ForestryCarpenterTweakProvider implements TweakProvider {
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public boolean isLoaded() {
-        return isLoaded;
+        return false;
     }
 
     @Override

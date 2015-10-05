@@ -17,24 +17,20 @@ public class ThaumCraft4TweakProvider implements TweakProvider {
 
     private final DefaultProvider defaultProvider = CraftingTweaksAPI.createDefaultProvider();
     private Field tileEntityField;
-    private boolean isLoaded;
 
-    public ThaumCraft4TweakProvider() {
+    @Override
+    public boolean load() {
         try {
             Class containerClass = Class.forName("thaumcraft.common.container.ContainerArcaneWorkbench");
             tileEntityField = containerClass.getDeclaredField("tileEntity");
             tileEntityField.setAccessible(true);
-            isLoaded = true;
+            return true;
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public boolean isLoaded() {
-        return isLoaded;
+        return false;
     }
 
     @Override
