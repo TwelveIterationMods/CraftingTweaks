@@ -59,9 +59,9 @@ public class AvaritiaTweakProvider implements TweakProvider {
     @Override
     @SideOnly(Side.CLIENT)
     public void initGui(GuiContainer guiContainer, List buttonList) {
-        final int paddingTop = 16;
+        final int paddingTop = 17;
         buttonList.add(CraftingTweaksAPI.createBalanceButton(0, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop));
-        buttonList.add(CraftingTweaksAPI.createClearButton(0, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop));
+        buttonList.add(CraftingTweaksAPI.createClearButton(0, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop + 18));
     }
 
     @Override
