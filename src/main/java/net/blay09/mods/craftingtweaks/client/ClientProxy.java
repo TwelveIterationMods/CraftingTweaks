@@ -15,6 +15,8 @@ import net.blay09.mods.craftingtweaks.net.MessageClear;
 import net.blay09.mods.craftingtweaks.net.MessageRotate;
 import net.blay09.mods.craftingtweaks.net.NetworkHandler;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,16 +28,19 @@ import org.lwjgl.input.Keyboard;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Iterator;
 
 public class ClientProxy extends CommonProxy {
 
     private boolean wasRotated;
     private boolean wasCleared;
     private boolean wasBalanced;
+    private boolean wasToggleButtons;
 
     private final KeyBinding keyRotate = new KeyBinding("key.craftingtweaks.rotate", Keyboard.KEY_R, "key.categories.craftingtweaks");
-    private KeyBinding keyBalance = new KeyBinding("key.craftingtweaks.balance", Keyboard.KEY_B, "key.categories.craftingtweaks");
-    private KeyBinding keyClear = new KeyBinding("key.craftingtweaks.clear", Keyboard.KEY_C, "key.categories.craftingtweaks");
+    private final KeyBinding keyBalance = new KeyBinding("key.craftingtweaks.balance", Keyboard.KEY_B, "key.categories.craftingtweaks");
+    private final KeyBinding keyClear = new KeyBinding("key.craftingtweaks.clear", Keyboard.KEY_C, "key.categories.craftingtweaks");
+    private final KeyBinding keyToggleButtons = new KeyBinding("key.craftingtweaks.toggleButtons", 0, "key.categories.craftingtweaks");
 
     private Field neiSearchField;
     private Method focused;
@@ -48,6 +53,7 @@ public class ClientProxy extends CommonProxy {
         ClientRegistry.registerKeyBinding(keyRotate);
         ClientRegistry.registerKeyBinding(keyBalance);
         ClientRegistry.registerKeyBinding(keyClear);
+        ClientRegistry.registerKeyBinding(keyToggleButtons);
     }
 
     @Override
@@ -106,12 +112,35 @@ public class ClientProxy extends CommonProxy {
                             wasBalanced = false;
                         }
                     }
+                    GuiScreen guiScreen = Minecraft.getMinecraft().currentScreen;
+                    if(guiScreen instanceof GuiContainer) {
+                        // Toggle Buttons Key should work regardless of hotkey settings
+                        if (keyToggleButtons.getKeyCode() > 0 && Keyboard.isKeyDown(keyToggleButtons.getKeyCode())) {
+                            if (!wasToggleButtons && provider.areHotkeysEnabled(entityPlayer, container)) {
+                                CraftingTweaks.hideButtons = !CraftingTweaks.hideButtons;
+                                if (CraftingTweaks.hideButtons) {
+                                    Iterator it = guiScreen.buttonList.iterator();
+                                    while (it.hasNext()) {
+                                        if (it.next() instanceof GuiTweakButton) {
+                                            it.remove();
+                                        }
+                                    }
+                                } else {
+                                    initGui((GuiContainer) guiScreen);
+                                }
+                                CraftingTweaks.saveConfig();
+                                wasToggleButtons = true;
+                            }
+                        } else {
+                            wasToggleButtons = false;
+                        }
+                    }
                 }
             }
         }
     }
 
-    public boolean areHotkeysEnabled() {
+    private boolean areHotkeysEnabled() {
         if(neiSearchField != null && focused != null) {
             try {
                 Object searchField = neiSearchField.get(null);
@@ -127,16 +156,21 @@ public class ClientProxy extends CommonProxy {
         return true;
     }
 
+    private void initGui(GuiContainer guiContainer) {
+        TweakProvider provider = CraftingTweaks.instance.getProvider(guiContainer.inventorySlots);
+        if(provider != null) {
+            CraftingTweaks.ModSupportState config = CraftingTweaks.instance.getModSupportState(provider.getModId());
+            if(config == CraftingTweaks.ModSupportState.ENABLED || config == CraftingTweaks.ModSupportState.BUTTONS_ONLY) {
+                provider.initGui(guiContainer, guiContainer.buttonList);
+            }
+        }
+    }
+
     @SubscribeEvent
     public void onInitGui(GuiScreenEvent.InitGuiEvent.Post event) {
-        if(event.gui instanceof GuiContainer) {
-            GuiContainer guiContainer = (GuiContainer) event.gui;
-            TweakProvider provider = CraftingTweaks.instance.getProvider(guiContainer.inventorySlots);
-            if(provider != null) {
-                CraftingTweaks.ModSupportState config = CraftingTweaks.instance.getModSupportState(provider.getModId());
-                if(config == CraftingTweaks.ModSupportState.ENABLED || config == CraftingTweaks.ModSupportState.BUTTONS_ONLY) {
-                    provider.initGui(guiContainer, event.buttonList);
-                }
+        if(!CraftingTweaks.hideButtons) {
+            if (event.gui instanceof GuiContainer) {
+                initGui((GuiContainer) event.gui);
             }
         }
     }

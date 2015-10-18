@@ -74,6 +74,8 @@ public class CraftingTweaks {
     private final Map<String, ModSupportState> configMap = Maps.newHashMap();
     private final Map<Class<? extends Container>, TweakProvider> providerMap = Maps.newHashMap();
 
+    public static boolean hideButtons;
+
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         CraftingTweaksAPI.setupAPI(new InternalMethodsImpl());
@@ -101,6 +103,7 @@ public class CraftingTweaks {
         configMap.put("Backpack", ModSupportState.ENABLED);
 
         config = new Configuration(event.getSuggestedConfigurationFile());
+        hideButtons = config.getBoolean("hideButtons", "general", false, "This option is toggled by the 'Toggle Buttons' key that can be defined in the Controls settings.");
         config.setCategoryComment("addons", "Here you can control whether support for a mod should be enabled, buttons_only, hotkeys_only or disabled. For Vanilla Minecraft, see the option 'minecraft'. Mods are identified by their mod ids.");
         config.getString("minecraft", "addons", ModSupportState.ENABLED.name().toLowerCase(), "", ModSupportState.getValidValues());
         // Load all options (including those from non-included addons)
@@ -196,6 +199,11 @@ public class CraftingTweaks {
 
     public ModSupportState getModSupportState(String modId) {
         return configMap.get(modId);
+    }
+
+    public static void saveConfig() {
+        config.get("general", "hideButtons", false, "This option is toggled by the 'Toggle Buttons' key that can be defined in the Controls settings.").set(hideButtons);
+        config.save();
     }
 
 }
