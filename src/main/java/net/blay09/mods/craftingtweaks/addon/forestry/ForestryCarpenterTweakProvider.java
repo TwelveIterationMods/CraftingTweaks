@@ -1,4 +1,4 @@
-package net.blay09.mods.craftingtweaks.addon;
+package net.blay09.mods.craftingtweaks.addon.forestry;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -11,23 +11,30 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 
-public class RailcraftRollingMachineTweakProvider implements TweakProvider {
+public class ForestryCarpenterTweakProvider implements TweakProvider {
 
     private final DefaultProvider defaultProvider = CraftingTweaksAPI.createDefaultProvider();
-    private Field craftMatrixField;
+    private Field tileEntityField;
+    private Method getCraftingInventory;
 
     @Override
     public boolean load() {
         try {
-            Class clazz = Class.forName("mods.railcraft.common.gui.containers.ContainerRollingMachine");
-            craftMatrixField = clazz.getDeclaredField("craftMatrix");
-            craftMatrixField.setAccessible(true);
+            Class containerClass = Class.forName("forestry.core.gui.ContainerTile");
+            tileEntityField = containerClass.getDeclaredField("tile");
+            tileEntityField.setAccessible(true);
+            Class tileClass = Class.forName("forestry.factory.tiles.TileCarpenter");
+            getCraftingInventory = tileClass.getMethod("getCraftingInventory");
             return true;
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
         return false;
@@ -36,9 +43,14 @@ public class RailcraftRollingMachineTweakProvider implements TweakProvider {
     @Override
     public void clearGrid(EntityPlayer entityPlayer, Container container, int id) {
         try {
-            IInventory craftMatrix = (IInventory) craftMatrixField.get(container);
-            defaultProvider.clearGrid(entityPlayer, container, craftMatrix);
+            IInventory craftMatrix = (IInventory) getCraftingInventory.invoke(tileEntityField.get(container));
+            for(int i = 0; i < 9; i++) {
+                craftMatrix.setInventorySlotContents(i, null);
+            }
+            container.detectAndSendChanges();
         } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
     }
@@ -46,9 +58,11 @@ public class RailcraftRollingMachineTweakProvider implements TweakProvider {
     @Override
     public void rotateGrid(EntityPlayer entityPlayer, Container container, int id) {
         try {
-            IInventory craftMatrix = (IInventory) craftMatrixField.get(container);
-            defaultProvider.rotateGrid(entityPlayer, container, craftMatrix);
+            IInventory craftMatrix = (IInventory) getCraftingInventory.invoke(tileEntityField.get(container));
+            defaultProvider.rotateGrid(entityPlayer, container, craftMatrix, 0, 9, defaultProvider.getRotationHandler());
         } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
     }
@@ -59,9 +73,9 @@ public class RailcraftRollingMachineTweakProvider implements TweakProvider {
     @Override
     @SideOnly(Side.CLIENT)
     public void initGui(GuiContainer guiContainer, List buttonList) {
-        final int paddingTop = 16;
-        buttonList.add(CraftingTweaksAPI.createRotateButton(0, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop));
-        buttonList.add(CraftingTweaksAPI.createClearButton(0, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop + 18));
+        final int paddingTop = 73;
+        buttonList.add(CraftingTweaksAPI.createRotateButton(0, guiContainer.guiLeft + 19, guiContainer.guiTop + paddingTop));
+        buttonList.add(CraftingTweaksAPI.createClearButton(0, guiContainer.guiLeft + 37, guiContainer.guiTop + paddingTop));
     }
 
     @Override
@@ -72,6 +86,6 @@ public class RailcraftRollingMachineTweakProvider implements TweakProvider {
 
     @Override
     public String getModId() {
-        return "Railcraft";
+        return "Forestry";
     }
 }

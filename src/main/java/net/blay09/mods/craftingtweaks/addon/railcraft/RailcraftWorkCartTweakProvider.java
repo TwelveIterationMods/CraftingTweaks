@@ -1,4 +1,4 @@
-package net.blay09.mods.craftingtweaks.addon;
+package net.blay09.mods.craftingtweaks.addon.railcraft;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;

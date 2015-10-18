@@ -1,4 +1,4 @@
-package net.blay09.mods.craftingtweaks.addon;
+package net.blay09.mods.craftingtweaks.addon.ganyssurface;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -13,7 +13,7 @@ import net.minecraft.inventory.IInventory;
 import java.lang.reflect.Field;
 import java.util.List;
 
-public class TerraFirmaCraftOldTweakProvider implements TweakProvider {
+public class GanysWorktableTweakProvider implements TweakProvider {
 
     private final DefaultProvider defaultProvider = CraftingTweaksAPI.createDefaultProvider();
     private Field craftMatrixField;
@@ -21,8 +21,9 @@ public class TerraFirmaCraftOldTweakProvider implements TweakProvider {
     @Override
     public boolean load() {
         try {
-            Class clazz = Class.forName("com.bioxx.tfc.Containers.ContainerWorkbench");
-            craftMatrixField = clazz.getField("craftMatrix");
+            Class clazz = Class.forName("ganymedes01.ganyssurface.inventory.ContainerWorkTable");
+            craftMatrixField = clazz.getDeclaredField("matrix");
+            craftMatrixField.setAccessible(true);
             return true;
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -79,6 +80,6 @@ public class TerraFirmaCraftOldTweakProvider implements TweakProvider {
 
     @Override
     public String getModId() {
-        return "terrafirmacraft";
+        return "ganyssurface";
     }
 }

@@ -24,7 +24,7 @@ apply plugin: 'forge'
 apply plugin: 'maven'
 
 version = "1.0." + BUILD_NUMBER
-group= "net.blay09.mods.craftingtweaks"
+group= "net.blay09.mods"
 archivesBaseName = "craftingtweaks"
 
 minecraft {

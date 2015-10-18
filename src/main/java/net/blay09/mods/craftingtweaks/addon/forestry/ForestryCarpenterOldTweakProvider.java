@@ -1,4 +1,4 @@
-package net.blay09.mods.craftingtweaks.addon;
+package net.blay09.mods.craftingtweaks.addon.forestry;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -16,7 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
-public class ForestryCarpenterTweakProvider implements TweakProvider {
+public class ForestryCarpenterOldTweakProvider implements TweakProvider {
 
     private final DefaultProvider defaultProvider = CraftingTweaksAPI.createDefaultProvider();
     private Field tileEntityField;
@@ -31,12 +31,9 @@ public class ForestryCarpenterTweakProvider implements TweakProvider {
             Class tileClass = Class.forName("forestry.factory.gadgets.MachineCarpenter");
             getCraftingInventory = tileClass.getMethod("getCraftingInventory");
             return true;
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException ignored) {
+        } catch (NoSuchFieldException ignored) {
+        } catch (NoSuchMethodException ignored) {
         }
         return false;
     }

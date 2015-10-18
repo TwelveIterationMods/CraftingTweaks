@@ -1,4 +1,4 @@
-package net.blay09.mods.craftingtweaks.addon;
+package net.blay09.mods.craftingtweaks.addon.terrafirmacraft;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -13,19 +13,16 @@ import net.minecraft.inventory.IInventory;
 import java.lang.reflect.Field;
 import java.util.List;
 
-public class GanysDualWorktableTweakProvider implements TweakProvider {
+public class TerraFirmaCraftOldTweakProvider implements TweakProvider {
 
     private final DefaultProvider defaultProvider = CraftingTweaksAPI.createDefaultProvider();
-    private Field[] craftMatrixField = new Field[2];
+    private Field craftMatrixField;
 
     @Override
     public boolean load() {
         try {
-            Class clazz = Class.forName("ganymedes01.ganyssurface.inventory.ContainerDualWorkTable");
-            craftMatrixField[0] = clazz.getDeclaredField("matrixLeft");
-            craftMatrixField[0].setAccessible(true);
-            craftMatrixField[1] = clazz.getDeclaredField("matrixRight");
-            craftMatrixField[1].setAccessible(true);
+            Class clazz = Class.forName("com.bioxx.tfc.Containers.ContainerWorkbench");
+            craftMatrixField = clazz.getField("craftMatrix");
             return true;
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -38,7 +35,7 @@ public class GanysDualWorktableTweakProvider implements TweakProvider {
     @Override
     public void clearGrid(EntityPlayer entityPlayer, Container container, int id) {
         try {
-            IInventory craftMatrix = (IInventory) craftMatrixField[id].get(container);
+            IInventory craftMatrix = (IInventory) craftMatrixField.get(container);
             defaultProvider.clearGrid(entityPlayer, container, craftMatrix);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
@@ -48,7 +45,7 @@ public class GanysDualWorktableTweakProvider implements TweakProvider {
     @Override
     public void rotateGrid(EntityPlayer entityPlayer, Container container, int id) {
         try {
-            IInventory craftMatrix = (IInventory) craftMatrixField[id].get(container);
+            IInventory craftMatrix = (IInventory) craftMatrixField.get(container);
             defaultProvider.rotateGrid(entityPlayer, container, craftMatrix);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
@@ -58,7 +55,7 @@ public class GanysDualWorktableTweakProvider implements TweakProvider {
     @Override
     public void balanceGrid(EntityPlayer entityPlayer, Container container, int id) {
         try {
-            IInventory craftMatrix = (IInventory) craftMatrixField[id].get(container);
+            IInventory craftMatrix = (IInventory) craftMatrixField.get(container);
             defaultProvider.balanceGrid(entityPlayer, container, craftMatrix);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
@@ -72,9 +69,6 @@ public class GanysDualWorktableTweakProvider implements TweakProvider {
         buttonList.add(CraftingTweaksAPI.createRotateButton(0, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop));
         buttonList.add(CraftingTweaksAPI.createBalanceButton(0, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop + 18));
         buttonList.add(CraftingTweaksAPI.createClearButton(0, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop + 36));
-        buttonList.add(CraftingTweaksAPI.createRotateButton(1, guiContainer.guiLeft + guiContainer.xSize, guiContainer.guiTop + paddingTop));
-        buttonList.add(CraftingTweaksAPI.createBalanceButton(1, guiContainer.guiLeft + guiContainer.xSize, guiContainer.guiTop + paddingTop + 18));
-        buttonList.add(CraftingTweaksAPI.createClearButton(1, guiContainer.guiLeft + guiContainer.xSize, guiContainer.guiTop + paddingTop + 36));
     }
 
     @Override
@@ -85,6 +79,6 @@ public class GanysDualWorktableTweakProvider implements TweakProvider {
 
     @Override
     public String getModId() {
-        return "ganyssurface";
+        return "terrafirmacraft";
     }
 }

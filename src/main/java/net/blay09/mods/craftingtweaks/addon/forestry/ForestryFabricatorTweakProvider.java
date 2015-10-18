@@ -1,4 +1,4 @@
-package net.blay09.mods.craftingtweaks.addon;
+package net.blay09.mods.craftingtweaks.addon.forestry;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -27,7 +27,7 @@ public class ForestryFabricatorTweakProvider implements TweakProvider {
             Class containerClass = Class.forName("forestry.core.gui.ContainerTile");
             tileEntityField = containerClass.getDeclaredField("tile");
             tileEntityField.setAccessible(true);
-            Class tileClass = Class.forName("forestry.factory.gadgets.MachineFabricator");
+            Class tileClass = Class.forName("forestry.factory.tiles.TileFabricator");
             getCraftingInventory = tileClass.getMethod("getCraftingInventory");
             return true;
         } catch (ClassNotFoundException e) {

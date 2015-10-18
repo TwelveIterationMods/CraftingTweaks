@@ -9,6 +9,18 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import net.blay09.mods.craftingtweaks.addon.*;
+import net.blay09.mods.craftingtweaks.addon.appliedenergistics2.AE2CraftingTerminalTweakProvider;
+import net.blay09.mods.craftingtweaks.addon.appliedenergistics2.AE2PatternTerminalTweakProvider;
+import net.blay09.mods.craftingtweaks.addon.forestry.ForestryAddon;
+import net.blay09.mods.craftingtweaks.addon.forestry.ForestryCarpenterOldTweakProvider;
+import net.blay09.mods.craftingtweaks.addon.forestry.ForestryFabricatorTweakProvider;
+import net.blay09.mods.craftingtweaks.addon.forestry.ForestryWorktableTweakProvider;
+import net.blay09.mods.craftingtweaks.addon.ganyssurface.GanysDualWorktableTweakProvider;
+import net.blay09.mods.craftingtweaks.addon.ganyssurface.GanysWorktableTweakProvider;
+import net.blay09.mods.craftingtweaks.addon.railcraft.RailcraftRollingMachineTweakProvider;
+import net.blay09.mods.craftingtweaks.addon.railcraft.RailcraftWorkCartTweakProvider;
+import net.blay09.mods.craftingtweaks.addon.terrafirmacraft.TerraFirmaCraftOldTweakProvider;
+import net.blay09.mods.craftingtweaks.addon.terrafirmacraft.TerraFirmaCraftTweakProvider;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
 import net.blay09.mods.craftingtweaks.net.NetworkHandler;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
@@ -16,6 +28,8 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ContainerWorkbench;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Map;
 
@@ -46,6 +60,7 @@ public class CraftingTweaks {
         }
     }
 
+    public static final Logger logger = LogManager.getLogger();
     public static final String MOD_ID = "craftingtweaks";
 
     @Mod.Instance
@@ -114,9 +129,9 @@ public class CraftingTweaks {
         registerProvider("mods.natura.gui.WorkbenchContainer", new NaturaTweakProvider());
         registerProvider("thaumcraft.common.container.ContainerArcaneWorkbench", new ThaumCraft4TweakProvider());
         registerProvider("powercrystals.minefactoryreloaded.gui.container.ContainerLiquiCrafter", new MineFactoryReloadedTweakProvider());
-        registerProvider("forestry.factory.gui.ContainerWorktable", new ForestryWorktableTweakProvider());
-        registerProvider("forestry.factory.gui.ContainerCarpenter", new ForestryCarpenterTweakProvider());
-        registerProvider("forestry.factory.gui.ContainerFabricator", new ForestryFabricatorTweakProvider());
+
+        new ForestryAddon();
+
         registerProvider("mods.railcraft.common.gui.containers.ContainerRollingMachine", new RailcraftRollingMachineTweakProvider());
         registerProvider("mods.railcraft.common.gui.containers.ContainerWorkCart", new RailcraftWorkCartTweakProvider());
         registerProvider("buildcraft.factory.gui.ContainerAutoWorkbench", new BuildcraftTweakProvider());
