@@ -2,6 +2,7 @@ package net.blay09.mods.craftingtweaks.addon;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.blay09.mods.craftingtweaks.CraftingTweaks;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
 import net.blay09.mods.craftingtweaks.api.DefaultProvider;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
@@ -51,6 +52,12 @@ public class StevesWorkshopTweakProvider implements TweakProvider {
             e.printStackTrace();
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
+        } catch (NoClassDefFoundError e) {
+            // We need to catch this because a missing SideOnly annotation inside Steve's Workshop's PageMain class makes Reflection of the class impossible on dedicated servers
+            // We could get into an ASM mess to fix this ... or we could just not and let the user know.
+            CraftingTweaks.logger.error("Steve's Workshop integration is unavailable on dedicated servers due to technical limitations.");
+            CraftingTweaks.logger.error("Feel free to ask its developer nicely about adding support.");
+            CraftingTweaks.logger.error("Alternatively, a fork of said mod called Ewy's Workshop will provide proper support.");
         }
         return false;
     }
