@@ -33,7 +33,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Map;
 
-@Mod(modid = CraftingTweaks.MOD_ID, name = "Crafting Tweaks")
+@Mod(modid = CraftingTweaks.MOD_ID, name = "Crafting Tweaks", acceptableRemoteVersions = "*")
 public class CraftingTweaks {
 
     public enum ModSupportState {

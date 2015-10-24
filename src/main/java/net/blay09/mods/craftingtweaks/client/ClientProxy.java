@@ -8,12 +8,10 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.common.network.FMLNetworkEvent;
 import net.blay09.mods.craftingtweaks.CommonProxy;
 import net.blay09.mods.craftingtweaks.CraftingTweaks;
-import net.blay09.mods.craftingtweaks.net.MessageBalance;
-import net.blay09.mods.craftingtweaks.net.MessageClear;
-import net.blay09.mods.craftingtweaks.net.MessageRotate;
-import net.blay09.mods.craftingtweaks.net.NetworkHandler;
+import net.blay09.mods.craftingtweaks.net.*;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -21,6 +19,7 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Keyboard;
@@ -31,6 +30,10 @@ import java.lang.reflect.Method;
 import java.util.Iterator;
 
 public class ClientProxy extends CommonProxy {
+
+    private static final int HELLO_TIMEOUT = 20 * 60;
+    private int helloTimeout;
+    private boolean isEnabled;
 
     private boolean wasRotated;
     private boolean wasCleared;
@@ -47,6 +50,7 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void init(FMLInitializationEvent event) {
+        super.init(event);
         FMLCommonHandler.instance().bus().register(this);
         MinecraftForge.EVENT_BUS.register(this);
 
@@ -58,6 +62,7 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void postInit(FMLPostInitializationEvent event) {
+        super.postInit(event);
         if(Loader.isModLoaded("NotEnoughItems")) {
             try {
                 Class neiLayoutManagerClass = Class.forName("codechicken.nei.LayoutManager");
@@ -75,9 +80,25 @@ public class ClientProxy extends CommonProxy {
     }
 
     @SubscribeEvent
+    public void connectedToServer(FMLNetworkEvent.ClientConnectedToServerEvent event) {
+        helloTimeout = HELLO_TIMEOUT;
+        isEnabled = false;
+    }
+
+    @SubscribeEvent
     public void onClientTick(TickEvent.ClientTickEvent event) {
         EntityPlayer entityPlayer = FMLClientHandler.instance().getClientPlayerEntity();
         if(entityPlayer != null) {
+            if(helloTimeout > 0) {
+                helloTimeout--;
+                if (helloTimeout <= 0) {
+                    entityPlayer.addChatMessage(new ChatComponentText("This server does not have Crafting Tweaks installed. It will be disabled."));
+                    isEnabled = false;
+                }
+            }
+            if(!isEnabled) {
+                return;
+            }
             Container container = entityPlayer.openContainer;
             if (container != null) {
                 if(!areHotkeysEnabled()) {
@@ -168,7 +189,7 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public void onInitGui(GuiScreenEvent.InitGuiEvent.Post event) {
-        if(!CraftingTweaks.hideButtons) {
+        if(isEnabled && !CraftingTweaks.hideButtons) {
             if (event.gui instanceof GuiContainer) {
                 initGui((GuiContainer) event.gui);
             }
@@ -177,7 +198,7 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public void onActionPerformed(GuiScreenEvent.ActionPerformedEvent event) {
-        if(event.button instanceof GuiTweakButton) {
+        if(isEnabled && event.button instanceof GuiTweakButton) {
             switch(((GuiTweakButton) event.button).getTweakOption()) {
                 case Rotate:
                     NetworkHandler.instance.sendToServer(new MessageRotate(((GuiTweakButton) event.button).getTweakId()));
@@ -195,4 +216,10 @@ public class ClientProxy extends CommonProxy {
         }
     }
 
+    @Override
+    public void receivedHello(EntityPlayer entityPlayer) {
+        super.receivedHello(entityPlayer);
+        helloTimeout = 0;
+        isEnabled = true;
+    }
 }
