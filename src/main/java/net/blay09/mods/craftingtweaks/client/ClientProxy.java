@@ -31,7 +31,7 @@ import java.util.Iterator;
 
 public class ClientProxy extends CommonProxy {
 
-    private static final int HELLO_TIMEOUT = 20 * 60;
+    private static final int HELLO_TIMEOUT = 20 * 10;
     private int helloTimeout;
     private boolean isEnabled;
 
