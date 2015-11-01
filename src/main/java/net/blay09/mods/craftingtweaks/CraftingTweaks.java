@@ -198,7 +198,12 @@ public class CraftingTweaks {
     }
 
     public ModSupportState getModSupportState(String modId) {
-        return configMap.get(modId);
+        ModSupportState suportState = configMap.get(modId);
+        if(suportState == null) {
+            suportState = ModSupportState.ENABLED;
+            configMap.put(modId, suportState);
+        }
+        return suportState;
     }
 
     public static void saveConfig() {
