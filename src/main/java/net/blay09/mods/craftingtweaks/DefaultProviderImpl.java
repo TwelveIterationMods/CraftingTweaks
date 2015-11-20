@@ -95,6 +95,60 @@ public class DefaultProviderImpl implements DefaultProvider {
     }
 
     @Override
+    public ItemStack putIntoGrid(EntityPlayer entityPlayer, Container container, IInventory craftMatrix, ItemStack itemStack, int index) {
+        ItemStack craftStack = craftMatrix.getStackInSlot(index);
+        if(craftStack != null) {
+            if(craftStack.isItemEqual(itemStack) && ItemStack.areItemStackTagsEqual(craftStack, itemStack)) {
+                int spaceLeft = Math.min(craftMatrix.getInventoryStackLimit(), craftStack.getMaxStackSize()) - craftStack.stackSize;
+                if(spaceLeft > 0) {
+                    ItemStack splitStack = itemStack.splitStack(Math.min(spaceLeft, itemStack.stackSize));
+                    craftStack.stackSize += splitStack.stackSize;
+                    if(itemStack.stackSize <= 0) {
+                        return null;
+                    }
+                }
+            }
+        } else {
+            ItemStack transferStack = itemStack.splitStack(Math.min(itemStack.stackSize, craftMatrix.getInventoryStackLimit()));
+            craftMatrix.setInventorySlotContents(index, transferStack);
+        }
+        if(itemStack.stackSize <= 0) {
+            return null;
+        }
+        return itemStack;
+    }
+
+    @Override
+    public ItemStack transferIntoGrid(EntityPlayer entityPlayer, Container container, IInventory craftMatrix, ItemStack itemStack) {
+        int firstEmptySlot = -1;
+        for(int i = 0; i < craftMatrix.getSizeInventory(); i++) {
+            ItemStack craftStack = craftMatrix.getStackInSlot(i);
+            if(craftStack != null) {
+                if(craftStack.isItemEqual(itemStack) && ItemStack.areItemStackTagsEqual(craftStack, itemStack)) {
+                    int spaceLeft = Math.min(craftMatrix.getInventoryStackLimit(), craftStack.getMaxStackSize()) - craftStack.stackSize;
+                    if(spaceLeft > 0) {
+                        ItemStack splitStack = itemStack.splitStack(Math.min(spaceLeft, itemStack.stackSize));
+                        craftStack.stackSize += splitStack.stackSize;
+                        if(itemStack.stackSize <= 0) {
+                            return null;
+                        }
+                    }
+                }
+            } else if(firstEmptySlot == -1) {
+                firstEmptySlot = i;
+            }
+        }
+        if(itemStack.stackSize > 0 && firstEmptySlot != -1) {
+            ItemStack transferStack = itemStack.splitStack(Math.min(itemStack.stackSize, craftMatrix.getInventoryStackLimit()));
+            craftMatrix.setInventorySlotContents(firstEmptySlot, transferStack);
+        }
+        if(itemStack.stackSize <= 0) {
+            return null;
+        }
+        return itemStack;
+    }
+
+    @Override
     public void rotateGrid(EntityPlayer entityPlayer, Container container, IInventory craftMatrix) {
         rotateGrid(entityPlayer, container, craftMatrix, 0, craftMatrix.getSizeInventory(), rotationHandler);
     }
