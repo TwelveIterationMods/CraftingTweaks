@@ -11,6 +11,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ContainerPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -40,6 +41,21 @@ public class TerraFirmaCraftTweakProvider implements TweakProvider {
     @Override
     public boolean load() {
         return true;
+    }
+
+    @Override
+    public ItemStack transferIntoGrid(EntityPlayer entityPlayer, Container container, int id, ItemStack itemStack) {
+        return defaultProvider.transferIntoGrid(entityPlayer, container, ((ContainerPlayer) container).craftMatrix, itemStack);
+    }
+
+    @Override
+    public ItemStack putIntoGrid(EntityPlayer entityPlayer, Container container, int id, ItemStack itemStack, int index) {
+        return defaultProvider.putIntoGrid(entityPlayer, container, ((ContainerPlayer) container).craftMatrix, itemStack, index);
+    }
+
+    @Override
+    public IInventory getCraftMatrix(EntityPlayer entityPlayer, Container container, int id) {
+        return ((ContainerPlayer) container).craftMatrix;
     }
 
     @Override

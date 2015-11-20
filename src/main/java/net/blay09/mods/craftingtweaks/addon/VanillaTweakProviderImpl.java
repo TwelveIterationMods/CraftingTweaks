@@ -9,6 +9,8 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ContainerWorkbench;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 
 import java.util.List;
 
@@ -19,6 +21,24 @@ public class VanillaTweakProviderImpl implements TweakProvider {
     @Override
     public boolean load() {
         return true;
+    }
+
+    @Override
+    public ItemStack transferIntoGrid(EntityPlayer entityPlayer, Container container, int id, ItemStack itemStack) {
+        ContainerWorkbench workbench = (ContainerWorkbench) container;
+        return defaultProvider.transferIntoGrid(entityPlayer, container, workbench.craftMatrix, itemStack);
+    }
+
+    @Override
+    public ItemStack putIntoGrid(EntityPlayer entityPlayer, Container container, int id, ItemStack itemStack, int index) {
+        ContainerWorkbench workbench = (ContainerWorkbench) container;
+        return defaultProvider.putIntoGrid(entityPlayer, container, workbench.craftMatrix, itemStack, index);
+    }
+
+    @Override
+    public IInventory getCraftMatrix(EntityPlayer entityPlayer, Container container, int id) {
+        ContainerWorkbench workbench = (ContainerWorkbench) container;
+        return workbench.craftMatrix;
     }
 
     @Override

@@ -10,6 +10,7 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -60,6 +61,66 @@ public class StevesWorkshopTweakProvider implements TweakProvider {
             CraftingTweaks.logger.error("Alternatively, a fork of said mod called Ewy's Workshop will provide proper support.");
         }
         return false;
+    }
+
+    @Override
+    public ItemStack transferIntoGrid(EntityPlayer entityPlayer, Container container, int id, ItemStack itemStack) {
+        try {
+            Object tileEntity = getTable.invoke(container);
+            Object mainPage = getMainPage.invoke(tileEntity);
+            List craftingList = (List) getCraftingList.invoke(mainPage);
+            if(id < craftingList.size()) {
+                Object unitCrafting = craftingList.get(id);
+                IInventory inventoryCrafting = (IInventory) inventoryCraftingField.get(unitCrafting);
+                if (inventoryCrafting != null) {
+                    return defaultProvider.transferIntoGrid(entityPlayer, container, inventoryCrafting, itemStack);
+                }
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return itemStack;
+    }
+
+    @Override
+    public ItemStack putIntoGrid(EntityPlayer entityPlayer, Container container, int id, ItemStack itemStack, int index) {
+        try {
+            Object tileEntity = getTable.invoke(container);
+            Object mainPage = getMainPage.invoke(tileEntity);
+            List craftingList = (List) getCraftingList.invoke(mainPage);
+            if(id < craftingList.size()) {
+                Object unitCrafting = craftingList.get(id);
+                IInventory inventoryCrafting = (IInventory) inventoryCraftingField.get(unitCrafting);
+                if (inventoryCrafting != null) {
+                    return defaultProvider.putIntoGrid(entityPlayer, container, inventoryCrafting, itemStack, index);
+                }
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return itemStack;
+    }
+
+    @Override
+    public IInventory getCraftMatrix(EntityPlayer entityPlayer, Container container, int id) {
+        try {
+            Object tileEntity = getTable.invoke(container);
+            Object mainPage = getMainPage.invoke(tileEntity);
+            List craftingList = (List) getCraftingList.invoke(mainPage);
+            if(id < craftingList.size()) {
+                Object unitCrafting = craftingList.get(id);
+                return (IInventory) inventoryCraftingField.get(unitCrafting);
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override

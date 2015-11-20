@@ -10,6 +10,7 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -39,6 +40,44 @@ public class ForestryWorktableTweakProvider implements TweakProvider {
             e.printStackTrace();
         }
         return false;
+    }
+
+    @Override
+    public ItemStack transferIntoGrid(EntityPlayer entityPlayer, Container container, int id, ItemStack itemStack) {
+        try {
+            IInventory craftMatrix = (IInventory) getCraftingInventory.invoke(tileEntityField.get(container));
+            return defaultProvider.transferIntoGrid(entityPlayer, container, craftMatrix, itemStack);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return itemStack;
+    }
+
+    @Override
+    public ItemStack putIntoGrid(EntityPlayer entityPlayer, Container container, int id, ItemStack itemStack, int index) {
+        try {
+            IInventory craftMatrix = (IInventory) getCraftingInventory.invoke(tileEntityField.get(container));
+            return defaultProvider.putIntoGrid(entityPlayer, container, craftMatrix, itemStack, index);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return itemStack;
+    }
+
+    @Override
+    public IInventory getCraftMatrix(EntityPlayer entityPlayer, Container container, int id) {
+        try {
+            return (IInventory) getCraftingInventory.invoke(tileEntityField.get(container));
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override
