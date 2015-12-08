@@ -28,22 +28,16 @@ group= "net.blay09.mods"
 archivesBaseName = "craftingtweaks"
 
 minecraft {
-    version = "1.7.10-10.13.4.1492-1.7.10"
-    runDir = "eclipse"
+    version = "1.7.10-10.13.4.1566-1.7.10"
+    runDir = "run"
+	
+	mappings = "stable_12"
 }
 
 idea {
     module {
         inheritOutputDirs = true
     }
-}
-
-configurations {
-    deployerJars
-}
-
-dependencies {
-    deployerJars "org.apache.maven.wagon:wagon-ftp:2.2"
 }
 
 processResources
@@ -99,11 +93,8 @@ artifacts {
 
 
 uploadArchives {
-    dependsOn 'reobf'
     repositories {
         mavenDeployer {
-            configuration = configurations.deployerJars
-
             repository(url: MAVEN_REPO) {
                 authentication(userName: MAVEN_USERNAME, password: MAVEN_PASSWORD)
             }
