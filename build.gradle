@@ -1,7 +1,16 @@
-plugins {
-    id "net.minecraftforge.gradle.forge" version "2.0.2"
+buildscript {
+    repositories {
+        jcenter()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
+    }
 }
-
+apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'maven'
 
 def BUILD_NUMBER = System.getenv("BUILD_NUMBER") ?: "0"
@@ -9,12 +18,12 @@ def MAVEN_REPO = System.getenv("MAVEN_REPO") ?: ""
 def MAVEN_USERNAME = System.getenv("MAVEN_USERNAME") ?: ""
 def MAVEN_PASSWORD = System.getenv("MAVEN_PASSWORD") ?: ""
 
-version = "2.0." + BUILD_NUMBER
+version = "3.0." + BUILD_NUMBER
 group = "net.blay09.mods"
 archivesBaseName = "craftingtweaks"
 
 minecraft {
-    version = "1.8-11.14.4.1577"
+    version = "1.8.8-11.15.0.1637-1.8.8"
     runDir = "run"
     
     mappings = "stable_18"
