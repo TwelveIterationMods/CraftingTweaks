@@ -1,7 +1,7 @@
 package net.blay09.mods.craftingtweaks.net;
 
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import io.netty.buffer.ByteBuf;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 public class MessageHello implements IMessage {
 

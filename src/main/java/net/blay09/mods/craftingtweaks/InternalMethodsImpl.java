@@ -1,13 +1,13 @@
 package net.blay09.mods.craftingtweaks;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.blay09.mods.craftingtweaks.api.DefaultProvider;
 import net.blay09.mods.craftingtweaks.api.InternalMethods;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.blay09.mods.craftingtweaks.client.GuiTweakButton;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.inventory.Container;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class InternalMethodsImpl implements InternalMethods {
 

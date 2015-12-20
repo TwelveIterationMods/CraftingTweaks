@@ -1,7 +1,5 @@
-package net.blay09.mods.craftingtweaks.addon.ganyssurface;
+package net.blay09.mods.craftingtweaks.addon;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
 import net.blay09.mods.craftingtweaks.api.DefaultProvider;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
@@ -10,21 +8,26 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.lang.reflect.Field;
 import java.util.List;
 
-public class GanysWorktableTweakProvider implements TweakProvider {
+public class ThaumCraft5TweakProvider implements TweakProvider {
 
     private final DefaultProvider defaultProvider = CraftingTweaksAPI.createDefaultProvider();
-    private Field craftMatrixField;
+    private Field tileEntityField;
+    private Field inventoryField;
 
     @Override
     public boolean load() {
         try {
-            Class clazz = Class.forName("ganymedes01.ganyssurface.inventory.ContainerWorkTable");
-            craftMatrixField = clazz.getDeclaredField("matrix");
-            craftMatrixField.setAccessible(true);
+            Class containerClass = Class.forName("thaumcraft.common.container.ContainerArcaneWorkbench");
+            tileEntityField = containerClass.getDeclaredField("tileEntity");
+            tileEntityField.setAccessible(true);
+            Class tileEntityClass = Class.forName("thaumcraft.common.tiles.crafting.TileArcaneWorkbench");
+            inventoryField = tileEntityClass.getField("inventory");
             return true;
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -37,7 +40,7 @@ public class GanysWorktableTweakProvider implements TweakProvider {
     @Override
     public ItemStack transferIntoGrid(EntityPlayer entityPlayer, Container container, int id, ItemStack itemStack) {
         try {
-            IInventory craftMatrix = (IInventory) craftMatrixField.get(container);
+            IInventory craftMatrix = (IInventory) inventoryField.get(tileEntityField.get(container));
             return defaultProvider.transferIntoGrid(entityPlayer, container, craftMatrix, itemStack);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
@@ -48,7 +51,7 @@ public class GanysWorktableTweakProvider implements TweakProvider {
     @Override
     public ItemStack putIntoGrid(EntityPlayer entityPlayer, Container container, int id, ItemStack itemStack, int index) {
         try {
-            IInventory craftMatrix = (IInventory) craftMatrixField.get(container);
+            IInventory craftMatrix = (IInventory) inventoryField.get(tileEntityField.get(container));
             return defaultProvider.putIntoGrid(entityPlayer, container, craftMatrix, itemStack, index);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
@@ -59,7 +62,7 @@ public class GanysWorktableTweakProvider implements TweakProvider {
     @Override
     public IInventory getCraftMatrix(EntityPlayer entityPlayer, Container container, int id) {
         try {
-            return (IInventory) craftMatrixField.get(container);
+            return (IInventory) inventoryField.get(tileEntityField.get(container));
         } catch (IllegalAccessException e) {
             e.printStackTrace();
             return null;
@@ -69,8 +72,8 @@ public class GanysWorktableTweakProvider implements TweakProvider {
     @Override
     public void clearGrid(EntityPlayer entityPlayer, Container container, int id) {
         try {
-            IInventory craftMatrix = (IInventory) craftMatrixField.get(container);
-            defaultProvider.clearGrid(entityPlayer, container, craftMatrix);
+            IInventory craftMatrix = (IInventory) inventoryField.get(tileEntityField.get(container));
+            defaultProvider.clearGrid(entityPlayer, container, craftMatrix, 0, 9);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -79,8 +82,8 @@ public class GanysWorktableTweakProvider implements TweakProvider {
     @Override
     public void rotateGrid(EntityPlayer entityPlayer, Container container, int id) {
         try {
-            IInventory craftMatrix = (IInventory) craftMatrixField.get(container);
-            defaultProvider.rotateGrid(entityPlayer, container, craftMatrix);
+            IInventory craftMatrix = (IInventory) inventoryField.get(tileEntityField.get(container));
+            defaultProvider.rotateGrid(entityPlayer, container, craftMatrix, 0, 9, defaultProvider.getRotationHandler());
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -89,20 +92,20 @@ public class GanysWorktableTweakProvider implements TweakProvider {
     @Override
     public void balanceGrid(EntityPlayer entityPlayer, Container container, int id) {
         try {
-            IInventory craftMatrix = (IInventory) craftMatrixField.get(container);
-            defaultProvider.balanceGrid(entityPlayer, container, craftMatrix);
+            IInventory craftMatrix = (IInventory) inventoryField.get(tileEntityField.get(container));
+            defaultProvider.balanceGrid(entityPlayer, container, craftMatrix, 0, 9);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
     public void initGui(GuiContainer guiContainer, List buttonList) {
-        final int paddingTop = 16;
-        buttonList.add(CraftingTweaksAPI.createRotateButton(0, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop));
-        buttonList.add(CraftingTweaksAPI.createBalanceButton(0, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop + 18));
-        buttonList.add(CraftingTweaksAPI.createClearButton(0, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop + 36));
+        final int paddingTop = 46;
+        final int paddingLeft = 4;
+        buttonList.add(CraftingTweaksAPI.createRotateButton(0, guiContainer.guiLeft - 16 + paddingLeft, guiContainer.guiTop + paddingTop));
+        buttonList.add(CraftingTweaksAPI.createBalanceButton(0, guiContainer.guiLeft - 16 + paddingLeft, guiContainer.guiTop + paddingTop + 18));
+        buttonList.add(CraftingTweaksAPI.createClearButton(0, guiContainer.guiLeft - 16 + paddingLeft, guiContainer.guiTop + paddingTop + 36));
     }
 
     @Override
@@ -113,6 +116,6 @@ public class GanysWorktableTweakProvider implements TweakProvider {
 
     @Override
     public String getModId() {
-        return "ganyssurface";
+        return "Thaumcraft";
     }
 }

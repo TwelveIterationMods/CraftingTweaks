@@ -1,9 +1,9 @@
 package net.blay09.mods.craftingtweaks.net;
 
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import cpw.mods.fml.relauncher.Side;
 import net.blay09.mods.craftingtweaks.CraftingTweaks;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.relauncher.Side;
 
 public class NetworkHandler {
 
@@ -16,6 +16,7 @@ public class NetworkHandler {
         instance.registerMessage(HandlerBalance.class, MessageBalance.class, 2, Side.SERVER);
         instance.registerMessage(HandlerHello.class, MessageHello.class, 3, Side.SERVER);
         instance.registerMessage(HandlerHello.class, MessageHello.class, 4, Side.CLIENT);
+        instance.registerMessage(HandlerTransferStack.class, MessageTransferStack.class, 5, Side.SERVER);
     }
 
 }

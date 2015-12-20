@@ -1,26 +1,7 @@
 package net.blay09.mods.craftingtweaks;
 
 import com.google.common.collect.Maps;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import net.blay09.mods.craftingtweaks.addon.*;
-import net.blay09.mods.craftingtweaks.addon.appliedenergistics2.AE2CraftingTerminalTweakProvider;
-import net.blay09.mods.craftingtweaks.addon.appliedenergistics2.AE2PatternTerminalTweakProvider;
-import net.blay09.mods.craftingtweaks.addon.forestry.ForestryAddon;
-import net.blay09.mods.craftingtweaks.addon.forestry.ForestryCarpenterOldTweakProvider;
-import net.blay09.mods.craftingtweaks.addon.forestry.ForestryFabricatorTweakProvider;
-import net.blay09.mods.craftingtweaks.addon.forestry.ForestryWorktableTweakProvider;
-import net.blay09.mods.craftingtweaks.addon.ganyssurface.GanysDualWorktableTweakProvider;
-import net.blay09.mods.craftingtweaks.addon.ganyssurface.GanysWorktableTweakProvider;
-import net.blay09.mods.craftingtweaks.addon.railcraft.RailcraftRollingMachineTweakProvider;
-import net.blay09.mods.craftingtweaks.addon.railcraft.RailcraftWorkCartTweakProvider;
-import net.blay09.mods.craftingtweaks.addon.terrafirmacraft.TerraFirmaCraftOldTweakProvider;
-import net.blay09.mods.craftingtweaks.addon.terrafirmacraft.TerraFirmaCraftTweakProvider;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
 import net.blay09.mods.craftingtweaks.net.NetworkHandler;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
@@ -28,6 +9,12 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ContainerWorkbench;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -76,7 +63,7 @@ public class CraftingTweaks {
 
     public static boolean hideButtons;
 
-    @EventHandler
+    @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         CraftingTweaksAPI.setupAPI(new InternalMethodsImpl());
 
@@ -112,45 +99,21 @@ public class CraftingTweaks {
         }
     }
 
-    @EventHandler
+    @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         proxy.init(event);
 
         NetworkHandler.init();
     }
 
-    @EventHandler
+    @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
         proxy.postInit(event);
 
         providerMap.put(ContainerWorkbench.class, new VanillaTweakProviderImpl());
-        registerProvider("tconstruct.tools.inventory.CraftingStationContainer", new TinkersConstructTweakProvider());
-        registerProvider("appeng.container.implementations.ContainerCraftingTerm", new AE2CraftingTerminalTweakProvider());
-        registerProvider("appeng.container.implementations.ContainerPatternTerm", new AE2PatternTerminalTweakProvider());
-        registerProvider("com.brandon3055.draconicevolution.common.container.ContainerDraconiumChest", new DraconicEvolutionTweakProvider());
-        registerProvider("vswe.production.gui.container.ContainerTable", new StevesWorkshopTweakProvider());
-        registerProvider("mods.natura.gui.WorkbenchContainer", new NaturaTweakProvider());
-        registerProvider("thaumcraft.common.container.ContainerArcaneWorkbench", new ThaumCraft4TweakProvider());
-        registerProvider("powercrystals.minefactoryreloaded.gui.container.ContainerLiquiCrafter", new MineFactoryReloadedTweakProvider());
-
-        new ForestryAddon();
-
-        registerProvider("mods.railcraft.common.gui.containers.ContainerRollingMachine", new RailcraftRollingMachineTweakProvider());
-        registerProvider("mods.railcraft.common.gui.containers.ContainerWorkCart", new RailcraftWorkCartTweakProvider());
-        registerProvider("buildcraft.factory.gui.ContainerAutoWorkbench", new BuildcraftTweakProvider());
-        registerProvider("Reika.RotaryCraft.Containers.ContainerHandCraft", new RotaryCraftDefaultTweakProvider("Reika.RotaryCraft.Containers.ContainerHandCraft"));
-        registerProvider("Reika.RotaryCraft.Containers.ContainerCraftingPattern", new RotaryCraftDefaultTweakProvider("Reika.RotaryCraft.Containers.ContainerCraftingPattern"));
-        registerProvider("twilightforest.uncrafting.ContainerTFUncrafting", new TwilightForestTweakProvider());
-        registerProvider("com.bioxx.tfc.Containers.ContainerWorkbench", new TerraFirmaCraftOldTweakProvider());
-        registerProvider("com.bioxx.tfc.Containers.ContainerPlayerTFC", new TerraFirmaCraftTweakProvider());
-        registerProvider("ganymedes01.ganyssurface.inventory.ContainerWorkTable", new GanysWorktableTweakProvider());
-        registerProvider("ganymedes01.ganyssurface.inventory.ContainerDualWorkTable", new GanysDualWorktableTweakProvider());
+        registerProvider("thaumcraft.common.container.ContainerArcaneWorkbench", new ThaumCraft5TweakProvider());
         registerProvider("tv.vanhal.jacb.gui.BenchContainer", new JACBTweakProvider());
-        registerProvider("com.bluepowermod.container.ContainerProjectTable", new BluePowerTweakProvider());
-        registerProvider("jds.bibliocraft.blocks.ContainerFancyWorkbench", new BiblioCraftTweakProvider());
-        registerProvider("cofh.thermalexpansion.gui.container.device.ContainerWorkbench", new ThermalExpansionTweakProvider());
         registerProvider("de.eydamos.backpack.inventory.container.ContainerWorkbenchBackpack", new BackpacksTweakProvider());
-        registerProvider("fox.spiteful.avaritia.gui.ContainerExtremeCrafting", new AvaritiaTweakProvider());
 
         config.save();
     }

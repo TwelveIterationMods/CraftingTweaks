@@ -1,14 +1,5 @@
 package net.blay09.mods.craftingtweaks.client;
 
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.client.registry.ClientRegistry;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent;
-import cpw.mods.fml.common.network.FMLNetworkEvent;
 import net.blay09.mods.craftingtweaks.CommonProxy;
 import net.blay09.mods.craftingtweaks.CraftingTweaks;
 import net.blay09.mods.craftingtweaks.net.*;
@@ -19,9 +10,19 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.Slot;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import org.lwjgl.input.Keyboard;
 
 import java.lang.reflect.Field;
@@ -44,9 +45,11 @@ public class ClientProxy extends CommonProxy {
     private final KeyBinding keyBalance = new KeyBinding("key.craftingtweaks.balance", Keyboard.KEY_B, "key.categories.craftingtweaks");
     private final KeyBinding keyClear = new KeyBinding("key.craftingtweaks.clear", Keyboard.KEY_C, "key.categories.craftingtweaks");
     private final KeyBinding keyToggleButtons = new KeyBinding("key.craftingtweaks.toggleButtons", 0, "key.categories.craftingtweaks");
+    private KeyBinding keyTransferStack;
 
     private Field neiSearchField;
     private Method focused;
+    private Slot mouseSlot;
 
     @Override
     public void init(FMLInitializationEvent event) {
@@ -58,6 +61,7 @@ public class ClientProxy extends CommonProxy {
         ClientRegistry.registerKeyBinding(keyBalance);
         ClientRegistry.registerKeyBinding(keyClear);
         ClientRegistry.registerKeyBinding(keyToggleButtons);
+        keyTransferStack = Minecraft.getMinecraft().gameSettings.keyBindForward;
     }
 
     @Override
@@ -83,6 +87,26 @@ public class ClientProxy extends CommonProxy {
     public void connectedToServer(FMLNetworkEvent.ClientConnectedToServerEvent event) {
         helloTimeout = HELLO_TIMEOUT;
         isEnabled = false;
+    }
+
+    @SubscribeEvent
+    public void onGuiClick(GuiScreenEvent.MouseInputEvent.Pre event) {
+        EntityPlayer entityPlayer = FMLClientHandler.instance().getClientPlayerEntity();
+        if(entityPlayer != null) {
+            Container container = entityPlayer.openContainer;
+            if (container != null) {
+                if (!areHotkeysEnabled()) {
+                    return;
+                }
+                TweakProvider provider = CraftingTweaks.instance.getProvider(container);
+                if (keyTransferStack.getKeyCode() > 0 && Keyboard.isKeyDown(keyTransferStack.getKeyCode())) {
+                    if (mouseSlot != null && provider.areHotkeysEnabled(entityPlayer, container)) {
+                        NetworkHandler.instance.sendToServer(new MessageTransferStack(0, mouseSlot.slotNumber));
+                        event.setCanceled(true);
+                    }
+                }
+            }
+        }
     }
 
     @SubscribeEvent
@@ -193,6 +217,15 @@ public class ClientProxy extends CommonProxy {
             if (event.gui instanceof GuiContainer) {
                 initGui((GuiContainer) event.gui);
             }
+        }
+    }
+
+    @SubscribeEvent
+    public void onDrawScreen(GuiScreenEvent.DrawScreenEvent.Post event) {
+        if(event.gui instanceof GuiContainer) {
+            mouseSlot = ((GuiContainer) event.gui).getSlotAtPosition(event.mouseX, event.mouseY);
+        } else {
+            mouseSlot = null;
         }
     }
 

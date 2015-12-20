@@ -1,6 +1,5 @@
 package net.blay09.mods.craftingtweaks.client;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.blay09.mods.craftingtweaks.CraftingTweaks;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.minecraft.client.Minecraft;
@@ -8,6 +7,7 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.List;
 
