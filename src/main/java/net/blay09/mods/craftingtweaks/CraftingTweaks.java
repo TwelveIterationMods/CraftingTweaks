@@ -1,6 +1,7 @@
 package net.blay09.mods.craftingtweaks;
 
 import com.google.common.collect.Maps;
+import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -8,13 +9,12 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.blay09.mods.craftingtweaks.addon.*;
 import net.blay09.mods.craftingtweaks.addon.appliedenergistics2.AE2CraftingTerminalTweakProvider;
 import net.blay09.mods.craftingtweaks.addon.appliedenergistics2.AE2PatternTerminalTweakProvider;
 import net.blay09.mods.craftingtweaks.addon.forestry.ForestryAddon;
-import net.blay09.mods.craftingtweaks.addon.forestry.ForestryCarpenterOldTweakProvider;
-import net.blay09.mods.craftingtweaks.addon.forestry.ForestryFabricatorTweakProvider;
-import net.blay09.mods.craftingtweaks.addon.forestry.ForestryWorktableTweakProvider;
 import net.blay09.mods.craftingtweaks.addon.ganyssurface.GanysDualWorktableTweakProvider;
 import net.blay09.mods.craftingtweaks.addon.ganyssurface.GanysWorktableTweakProvider;
 import net.blay09.mods.craftingtweaks.addon.railcraft.RailcraftRollingMachineTweakProvider;
@@ -26,10 +26,12 @@ import net.blay09.mods.craftingtweaks.net.NetworkHandler;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ContainerWorkbench;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lwjgl.input.Mouse;
 
 import java.util.Map;
 
@@ -209,6 +211,16 @@ public class CraftingTweaks {
     public static void saveConfig() {
         config.get("general", "hideButtons", false, "This option is toggled by the 'Toggle Buttons' key that can be defined in the Controls settings.").set(hideButtons);
         config.save();
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static boolean onGuiClick(int mouseX, int mouseY, int button) {
+        if(Mouse.getEventButtonState()) {
+            GuiClickEvent event = new GuiClickEvent(FMLClientHandler.instance().getClient().currentScreen, mouseX, mouseY, button);
+            MinecraftForge.EVENT_BUS.post(event);
+            return event.isCanceled();
+        }
+        return false;
     }
 
 }

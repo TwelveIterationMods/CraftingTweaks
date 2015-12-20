@@ -16,6 +16,7 @@ public class NetworkHandler {
         instance.registerMessage(HandlerBalance.class, MessageBalance.class, 2, Side.SERVER);
         instance.registerMessage(HandlerHello.class, MessageHello.class, 3, Side.SERVER);
         instance.registerMessage(HandlerHello.class, MessageHello.class, 4, Side.CLIENT);
+        instance.registerMessage(HandlerTransferStack.class, MessageTransferStack.class, 5, Side.SERVER);
     }
 
 }
