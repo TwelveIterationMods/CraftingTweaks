@@ -99,10 +99,12 @@ public class ClientProxy extends CommonProxy {
                     return;
                 }
                 TweakProvider provider = CraftingTweaks.instance.getProvider(container);
-                if (keyTransferStack.getKeyCode() > 0 && Keyboard.isKeyDown(keyTransferStack.getKeyCode())) {
-                    if (mouseSlot != null && provider.areHotkeysEnabled(entityPlayer, container)) {
-                        NetworkHandler.instance.sendToServer(new MessageTransferStack(0, mouseSlot.slotNumber));
-                        event.setCanceled(true);
+                if(provider != null) {
+                    if (keyTransferStack.getKeyCode() > 0 && Keyboard.isKeyDown(keyTransferStack.getKeyCode())) {
+                        if (mouseSlot != null && provider.areHotkeysEnabled(entityPlayer, container)) {
+                            NetworkHandler.instance.sendToServer(new MessageTransferStack(0, mouseSlot.slotNumber));
+                            event.setCanceled(true);
+                        }
                     }
                 }
             }
