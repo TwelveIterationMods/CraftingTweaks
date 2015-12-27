@@ -14,14 +14,14 @@ import net.minecraft.item.ItemStack;
 import java.lang.reflect.Field;
 import java.util.List;
 
-public class RailcraftWorkCartTweakProvider implements TweakProvider {
+public class RailcraftWorkCartTweakProviderOld implements TweakProvider {
 
     private final DefaultProvider defaultProvider = CraftingTweaksAPI.createDefaultProvider();
     private Field craftMatrixField;
 
     public boolean load() {
         try {
-            Class clazz = Class.forName("mods.railcraft.common.gui.containers.ContainerCartWork");
+            Class clazz = Class.forName("mods.railcraft.common.gui.containers.ContainerWorkCart");
             craftMatrixField = clazz.getField("craftMatrix");
             return true;
         } catch (ClassNotFoundException e) {

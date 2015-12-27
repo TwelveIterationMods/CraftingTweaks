@@ -4,7 +4,6 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
 import net.blay09.mods.craftingtweaks.api.DefaultProvider;
-import net.blay09.mods.craftingtweaks.api.RotationHandler;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,7 +20,7 @@ public class ForestryWorktableTweakProvider implements TweakProvider {
 
     private final DefaultProvider defaultProvider = CraftingTweaksAPI.createDefaultProvider();
     private Field tileEntityField;
-    private Method getCraftingInventory;
+    private Method getCraftingDisplay;
 
     @Override
     public boolean load() {
@@ -30,7 +29,7 @@ public class ForestryWorktableTweakProvider implements TweakProvider {
             tileEntityField = containerClass.getDeclaredField("tile");
             tileEntityField.setAccessible(true);
             Class tileClass = Class.forName("forestry.factory.tiles.TileWorktable");
-            getCraftingInventory = tileClass.getMethod("getCraftingInventory");
+            getCraftingDisplay = tileClass.getMethod("getCraftingDisplay");
             return true;
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -45,7 +44,7 @@ public class ForestryWorktableTweakProvider implements TweakProvider {
     @Override
     public ItemStack transferIntoGrid(EntityPlayer entityPlayer, Container container, int id, ItemStack itemStack) {
         try {
-            IInventory craftMatrix = (IInventory) getCraftingInventory.invoke(tileEntityField.get(container));
+            IInventory craftMatrix = (IInventory) getCraftingDisplay.invoke(tileEntityField.get(container));
             return defaultProvider.transferIntoGrid(entityPlayer, container, craftMatrix, itemStack);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
@@ -58,7 +57,7 @@ public class ForestryWorktableTweakProvider implements TweakProvider {
     @Override
     public ItemStack putIntoGrid(EntityPlayer entityPlayer, Container container, int id, ItemStack itemStack, int index) {
         try {
-            IInventory craftMatrix = (IInventory) getCraftingInventory.invoke(tileEntityField.get(container));
+            IInventory craftMatrix = (IInventory) getCraftingDisplay.invoke(tileEntityField.get(container));
             return defaultProvider.putIntoGrid(entityPlayer, container, craftMatrix, itemStack, index);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
@@ -71,7 +70,7 @@ public class ForestryWorktableTweakProvider implements TweakProvider {
     @Override
     public IInventory getCraftMatrix(EntityPlayer entityPlayer, Container container, int id) {
         try {
-            return (IInventory) getCraftingInventory.invoke(tileEntityField.get(container));
+            return (IInventory) getCraftingDisplay.invoke(tileEntityField.get(container));
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
@@ -83,7 +82,7 @@ public class ForestryWorktableTweakProvider implements TweakProvider {
     @Override
     public void clearGrid(EntityPlayer entityPlayer, Container container, int id) {
         try {
-            IInventory craftMatrix = (IInventory) getCraftingInventory.invoke(tileEntityField.get(container));
+            IInventory craftMatrix = (IInventory) getCraftingDisplay.invoke(tileEntityField.get(container));
             for(int i = 0; i < craftMatrix.getSizeInventory(); i++) {
                 craftMatrix.setInventorySlotContents(i, null);
             }
@@ -98,7 +97,7 @@ public class ForestryWorktableTweakProvider implements TweakProvider {
     @Override
     public void rotateGrid(EntityPlayer entityPlayer, Container container, int id) {
         try {
-            IInventory craftMatrix = (IInventory) getCraftingInventory.invoke(tileEntityField.get(container));
+            IInventory craftMatrix = (IInventory) getCraftingDisplay.invoke(tileEntityField.get(container));
             defaultProvider.rotateGrid(entityPlayer, container, craftMatrix, 0, craftMatrix.getSizeInventory() - 1, defaultProvider.getRotationHandler());
         } catch (IllegalAccessException e) {
             e.printStackTrace();

@@ -17,8 +17,9 @@ import net.blay09.mods.craftingtweaks.addon.appliedenergistics2.AE2PatternTermin
 import net.blay09.mods.craftingtweaks.addon.forestry.ForestryAddon;
 import net.blay09.mods.craftingtweaks.addon.ganyssurface.GanysDualWorktableTweakProvider;
 import net.blay09.mods.craftingtweaks.addon.ganyssurface.GanysWorktableTweakProvider;
+import net.blay09.mods.craftingtweaks.addon.railcraft.RailcraftAddon;
 import net.blay09.mods.craftingtweaks.addon.railcraft.RailcraftRollingMachineTweakProvider;
-import net.blay09.mods.craftingtweaks.addon.railcraft.RailcraftWorkCartTweakProvider;
+import net.blay09.mods.craftingtweaks.addon.railcraft.RailcraftWorkCartTweakProviderOld;
 import net.blay09.mods.craftingtweaks.addon.terrafirmacraft.TerraFirmaCraftOldTweakProvider;
 import net.blay09.mods.craftingtweaks.addon.terrafirmacraft.TerraFirmaCraftTweakProvider;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
@@ -136,9 +137,8 @@ public class CraftingTweaks {
         registerProvider("powercrystals.minefactoryreloaded.gui.container.ContainerLiquiCrafter", new MineFactoryReloadedTweakProvider());
 
         new ForestryAddon();
+        new RailcraftAddon();
 
-        registerProvider("mods.railcraft.common.gui.containers.ContainerRollingMachine", new RailcraftRollingMachineTweakProvider());
-        registerProvider("mods.railcraft.common.gui.containers.ContainerWorkCart", new RailcraftWorkCartTweakProvider());
         registerProvider("buildcraft.factory.gui.ContainerAutoWorkbench", new BuildcraftTweakProvider());
         registerProvider("Reika.RotaryCraft.Containers.ContainerHandCraft", new RotaryCraftDefaultTweakProvider("Reika.RotaryCraft.Containers.ContainerHandCraft"));
         registerProvider("Reika.RotaryCraft.Containers.ContainerCraftingPattern", new RotaryCraftDefaultTweakProvider("Reika.RotaryCraft.Containers.ContainerCraftingPattern"));
