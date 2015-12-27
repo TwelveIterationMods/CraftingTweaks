@@ -24,6 +24,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -91,19 +92,21 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public void onGuiClick(GuiScreenEvent.MouseInputEvent.Pre event) {
-        EntityPlayer entityPlayer = FMLClientHandler.instance().getClientPlayerEntity();
-        if(entityPlayer != null) {
-            Container container = entityPlayer.openContainer;
-            if (container != null) {
-                if (!areHotkeysEnabled()) {
-                    return;
-                }
-                TweakProvider provider = CraftingTweaks.instance.getProvider(container);
-                if(provider != null) {
-                    if (keyTransferStack.getKeyCode() > 0 && Keyboard.isKeyDown(keyTransferStack.getKeyCode())) {
-                        if (mouseSlot != null && provider.areHotkeysEnabled(entityPlayer, container)) {
-                            NetworkHandler.instance.sendToServer(new MessageTransferStack(0, mouseSlot.slotNumber));
-                            event.setCanceled(true);
+        if(Mouse.getEventButtonState()) {
+            EntityPlayer entityPlayer = FMLClientHandler.instance().getClientPlayerEntity();
+            if (entityPlayer != null) {
+                Container container = entityPlayer.openContainer;
+                if (container != null) {
+                    if (!areHotkeysEnabled()) {
+                        return;
+                    }
+                    TweakProvider provider = CraftingTweaks.instance.getProvider(container);
+                    if (provider != null) {
+                        if (keyTransferStack.getKeyCode() > 0 && Keyboard.isKeyDown(keyTransferStack.getKeyCode())) {
+                            if (mouseSlot != null && provider.areHotkeysEnabled(entityPlayer, container)) {
+                                NetworkHandler.instance.sendToServer(new MessageTransferStack(0, mouseSlot.slotNumber));
+                                event.setCanceled(true);
+                            }
                         }
                     }
                 }
