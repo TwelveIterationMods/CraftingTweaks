@@ -67,6 +67,10 @@ task jarDev(type: Jar) {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     classifier "dev"
     appendix "mc" + minecraft.version
+    
+    manifest {
+        attributes('FMLAT': 'craftingtweaks_at.cfg')
+    }
 }
 
 artifacts {
