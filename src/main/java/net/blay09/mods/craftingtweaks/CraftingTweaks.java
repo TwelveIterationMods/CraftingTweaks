@@ -1,10 +1,13 @@
 package net.blay09.mods.craftingtweaks;
 
 import com.google.common.collect.Maps;
-import net.blay09.mods.craftingtweaks.addon.*;
+import net.blay09.mods.craftingtweaks.addon.BackpacksTweakProvider;
+import net.blay09.mods.craftingtweaks.addon.JACBTweakProvider;
+import net.blay09.mods.craftingtweaks.addon.ThaumCraft5TweakProvider;
+import net.blay09.mods.craftingtweaks.addon.VanillaTweakProviderImpl;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
-import net.blay09.mods.craftingtweaks.net.NetworkHandler;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
+import net.blay09.mods.craftingtweaks.net.NetworkHandler;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ContainerWorkbench;
 import net.minecraftforge.common.config.Configuration;

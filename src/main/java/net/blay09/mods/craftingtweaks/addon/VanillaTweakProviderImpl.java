@@ -3,6 +3,7 @@ package net.blay09.mods.craftingtweaks.addon;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
 import net.blay09.mods.craftingtweaks.api.DefaultProvider;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -61,7 +62,7 @@ public class VanillaTweakProviderImpl implements TweakProvider {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void initGui(GuiContainer guiContainer, List buttonList) {
+    public void initGui(GuiContainer guiContainer, List<GuiButton> buttonList) {
         final int paddingTop = 16;
         buttonList.add(CraftingTweaksAPI.createRotateButton(0, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop));
         buttonList.add(CraftingTweaksAPI.createBalanceButton(0, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop + 18));

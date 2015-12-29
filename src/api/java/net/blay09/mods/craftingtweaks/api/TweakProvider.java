@@ -1,5 +1,6 @@
 package net.blay09.mods.craftingtweaks.api;
 
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -24,7 +25,7 @@ public interface TweakProvider {
     IInventory getCraftMatrix(EntityPlayer entityPlayer, Container container, int id);
 
     @SideOnly(Side.CLIENT)
-    void initGui(GuiContainer guiContainer, List buttonList);
+    void initGui(GuiContainer guiContainer, List<GuiButton> buttonList);
     @SideOnly(Side.CLIENT)
     boolean areHotkeysEnabled(EntityPlayer entityPlayer, Container container);
 

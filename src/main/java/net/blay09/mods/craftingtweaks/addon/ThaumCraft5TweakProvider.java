@@ -3,6 +3,7 @@ package net.blay09.mods.craftingtweaks.addon;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
 import net.blay09.mods.craftingtweaks.api.DefaultProvider;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -100,7 +101,7 @@ public class ThaumCraft5TweakProvider implements TweakProvider {
     }
 
     @Override
-    public void initGui(GuiContainer guiContainer, List buttonList) {
+    public void initGui(GuiContainer guiContainer, List<GuiButton> buttonList) {
         final int paddingTop = 46;
         final int paddingLeft = 4;
         buttonList.add(CraftingTweaksAPI.createRotateButton(0, guiContainer.guiLeft - 16 + paddingLeft, guiContainer.guiTop + paddingTop));

@@ -1,6 +1,8 @@
 package net.blay09.mods.craftingtweaks;
 
-import com.google.common.collect.*;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
 import net.blay09.mods.craftingtweaks.api.DefaultProvider;
 import net.blay09.mods.craftingtweaks.api.RotationHandler;
 import net.minecraft.entity.player.EntityPlayer;
