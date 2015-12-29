@@ -21,8 +21,14 @@ public class HandlerTransferStack implements IMessageHandler<MessageTransferStac
             if (tweakProvider != null) {
                 Slot slot = (Slot) container.inventorySlots.get(message.slotNumber);
                 ItemStack itemStack = slot.getStack();
-                if(itemStack != null) {
+                if(itemStack != null && slot.canTakeStack(entityPlayer)) {
                     ItemStack restStack = tweakProvider.transferIntoGrid(entityPlayer, container, message.id, itemStack);
+                    if(restStack.stackSize != itemStack.stackSize) {
+                        slot.onSlotChange(restStack, itemStack);
+                        ItemStack movedStack = itemStack.copy();
+                        movedStack.stackSize -= restStack.stackSize;
+                        slot.onPickupFromSlot(entityPlayer, movedStack);
+                    }
                     slot.putStack(restStack);
                     container.detectAndSendChanges();
                 }
