@@ -62,35 +62,37 @@ public class ClientProxy extends CommonProxy {
     public void onGuiKeyboardEvent(GuiScreenEvent.KeyboardInputEvent.Pre event) {
         if(Keyboard.getEventKeyState()) {
             EntityPlayer entityPlayer = FMLClientHandler.instance().getClientPlayerEntity();
-            Container container = entityPlayer.openContainer;
-            if (container != null) {
-                TweakProvider provider = CraftingTweaks.instance.getProvider(container);
-                if (provider != null) {
-                    CraftingTweaks.ModSupportState config = CraftingTweaks.instance.getModSupportState(provider.getModId());
-                    if (config == CraftingTweaks.ModSupportState.ENABLED || config == CraftingTweaks.ModSupportState.HOTKEYS_ONLY) {
-                        if (keyRotate.getKeyCode() > 0 && Keyboard.getEventKey() == keyRotate.getKeyCode()) {
-                            NetworkHandler.instance.sendToServer(new MessageRotate(0));
-                        } else if (keyClear.getKeyCode() > 0 && Keyboard.getEventKey() == keyClear.getKeyCode()) {
-                            NetworkHandler.instance.sendToServer(new MessageClear(0));
-                        } else if (keyBalance.getKeyCode() > 0 && Keyboard.getEventKey() == keyBalance.getKeyCode()) {
-                            NetworkHandler.instance.sendToServer(new MessageBalance(0));
-                        }
-                    }
-                    GuiScreen guiScreen = Minecraft.getMinecraft().currentScreen;
-                    if(guiScreen instanceof GuiContainer) {
-                        if (keyToggleButtons.getKeyCode() > 0 && Keyboard.getEventKey() == keyToggleButtons.getKeyCode()) {
-                            CraftingTweaks.hideButtons = !CraftingTweaks.hideButtons;
-                            if (CraftingTweaks.hideButtons) {
-                                Iterator it = guiScreen.buttonList.iterator();
-                                while (it.hasNext()) {
-                                    if (it.next() instanceof GuiTweakButton) {
-                                        it.remove();
-                                    }
-                                }
-                            } else {
-                                initGui((GuiContainer) guiScreen);
+            if(entityPlayer != null) {
+                Container container = entityPlayer.openContainer;
+                if (container != null) {
+                    TweakProvider provider = CraftingTweaks.instance.getProvider(container);
+                    if (provider != null) {
+                        CraftingTweaks.ModSupportState config = CraftingTweaks.instance.getModSupportState(provider.getModId());
+                        if (config == CraftingTweaks.ModSupportState.ENABLED || config == CraftingTweaks.ModSupportState.HOTKEYS_ONLY) {
+                            if (keyRotate.getKeyCode() > 0 && Keyboard.getEventKey() == keyRotate.getKeyCode()) {
+                                NetworkHandler.instance.sendToServer(new MessageRotate(0));
+                            } else if (keyClear.getKeyCode() > 0 && Keyboard.getEventKey() == keyClear.getKeyCode()) {
+                                NetworkHandler.instance.sendToServer(new MessageClear(0));
+                            } else if (keyBalance.getKeyCode() > 0 && Keyboard.getEventKey() == keyBalance.getKeyCode()) {
+                                NetworkHandler.instance.sendToServer(new MessageBalance(0));
                             }
-                            CraftingTweaks.saveConfig();
+                        }
+                        GuiScreen guiScreen = Minecraft.getMinecraft().currentScreen;
+                        if (guiScreen instanceof GuiContainer) {
+                            if (keyToggleButtons.getKeyCode() > 0 && Keyboard.getEventKey() == keyToggleButtons.getKeyCode()) {
+                                CraftingTweaks.hideButtons = !CraftingTweaks.hideButtons;
+                                if (CraftingTweaks.hideButtons) {
+                                    Iterator it = guiScreen.buttonList.iterator();
+                                    while (it.hasNext()) {
+                                        if (it.next() instanceof GuiTweakButton) {
+                                            it.remove();
+                                        }
+                                    }
+                                } else {
+                                    initGui((GuiContainer) guiScreen);
+                                }
+                                CraftingTweaks.saveConfig();
+                            }
                         }
                     }
                 }
