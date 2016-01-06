@@ -52,6 +52,11 @@ public class ClientProxy extends CommonProxy {
         keyTransferStack = Minecraft.getMinecraft().gameSettings.keyBindForward;
     }
 
+    @Override
+    public void addScheduledTask(Runnable runnable) {
+        Minecraft.getMinecraft().addScheduledTask(runnable);
+    }
+
     @SubscribeEvent
     public void connectedToServer(FMLNetworkEvent.ClientConnectedToServerEvent event) {
         helloTimeout = HELLO_TIMEOUT;

@@ -4,6 +4,7 @@ import net.blay09.mods.craftingtweaks.CraftingTweaks;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -11,15 +12,20 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class HandlerRotate implements IMessageHandler<MessageRotate, IMessage> {
 
     @Override
-    public IMessage onMessage(MessageRotate message, MessageContext ctx) {
-        EntityPlayer entityPlayer = ctx.getServerHandler().playerEntity;
-        Container container = entityPlayer.openContainer;
-        if(container != null) {
-            TweakProvider tweakProvider = CraftingTweaks.instance.getProvider(container);
-            if (tweakProvider != null) {
-                tweakProvider.rotateGrid(entityPlayer, container, message.id);
+    public IMessage onMessage(final MessageRotate message, final MessageContext ctx) {
+        CraftingTweaks.proxy.addScheduledTask(new Runnable() {
+            @Override
+            public void run() {
+                EntityPlayer entityPlayer = ctx.getServerHandler().playerEntity;
+                Container container = entityPlayer.openContainer;
+                if(container != null) {
+                    TweakProvider tweakProvider = CraftingTweaks.instance.getProvider(container);
+                    if (tweakProvider != null) {
+                        tweakProvider.rotateGrid(entityPlayer, container, message.id);
+                    }
+                }
             }
-        }
+        });
         return null;
     }
 

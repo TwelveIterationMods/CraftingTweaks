@@ -11,15 +11,20 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class HandlerClear implements IMessageHandler<MessageClear, IMessage> {
 
     @Override
-    public IMessage onMessage(MessageClear message, MessageContext ctx) {
-        EntityPlayer entityPlayer = ctx.getServerHandler().playerEntity;
-        Container container = entityPlayer.openContainer;
-        if(container != null) {
-            TweakProvider tweakProvider = CraftingTweaks.instance.getProvider(container);
-            if (tweakProvider != null) {
-                tweakProvider.clearGrid(entityPlayer, container, message.id);
+    public IMessage onMessage(final MessageClear message, final MessageContext ctx) {
+        CraftingTweaks.proxy.addScheduledTask(new Runnable() {
+            @Override
+            public void run() {
+                EntityPlayer entityPlayer = ctx.getServerHandler().playerEntity;
+                Container container = entityPlayer.openContainer;
+                if(container != null) {
+                    TweakProvider tweakProvider = CraftingTweaks.instance.getProvider(container);
+                    if (tweakProvider != null) {
+                        tweakProvider.clearGrid(entityPlayer, container, message.id);
+                    }
+                }
             }
-        }
+        });
         return null;
     }
 
