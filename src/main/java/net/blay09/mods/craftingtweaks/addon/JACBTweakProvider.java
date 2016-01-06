@@ -8,6 +8,7 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -35,13 +36,13 @@ public class JACBTweakProvider implements TweakProvider {
     }
 
     @Override
-    public ItemStack transferIntoGrid(EntityPlayer entityPlayer, Container container, int id, ItemStack itemStack) {
+    public boolean transferIntoGrid(EntityPlayer entityPlayer, Container container, int id, ItemStack itemStack) {
         try {
             IInventory craftMatrix = (IInventory) craftMatrixField.get(container);
             return defaultProvider.transferIntoGrid(entityPlayer, container, craftMatrix, itemStack);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
-            return itemStack;
+            return false;
         }
     }
 
@@ -94,6 +95,11 @@ public class JACBTweakProvider implements TweakProvider {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public boolean canTransferFrom(EntityPlayer entityPlayer, Container container, int id, Slot slot) {
+        return defaultProvider.canTransferFrom(entityPlayer, container, id, slot);
     }
 
     @Override

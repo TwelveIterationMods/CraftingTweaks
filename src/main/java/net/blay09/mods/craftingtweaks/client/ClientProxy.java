@@ -2,6 +2,7 @@ package net.blay09.mods.craftingtweaks.client;
 
 import net.blay09.mods.craftingtweaks.CommonProxy;
 import net.blay09.mods.craftingtweaks.CraftingTweaks;
+import net.blay09.mods.craftingtweaks.addon.VanillaTweakProviderImpl;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.blay09.mods.craftingtweaks.net.*;
 import net.minecraft.client.Minecraft;

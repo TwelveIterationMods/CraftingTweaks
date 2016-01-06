@@ -5,6 +5,7 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -20,7 +21,8 @@ public interface TweakProvider {
     void rotateGrid(EntityPlayer entityPlayer, Container container, int id);
     void balanceGrid(EntityPlayer entityPlayer, Container container, int id);
 
-    ItemStack transferIntoGrid(EntityPlayer entityPlayer, Container container, int id, ItemStack itemStack);
+    boolean canTransferFrom(EntityPlayer entityPlayer, Container container, int id, Slot slot);
+    boolean transferIntoGrid(EntityPlayer entityPlayer, Container container, int id, ItemStack itemStack);
     ItemStack putIntoGrid(EntityPlayer entityPlayer, Container container, int id, ItemStack itemStack, int index);
     IInventory getCraftMatrix(EntityPlayer entityPlayer, Container container, int id);
 

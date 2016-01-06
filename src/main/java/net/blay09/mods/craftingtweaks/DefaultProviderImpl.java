@@ -9,6 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
 import java.util.List;
@@ -121,7 +122,7 @@ public class DefaultProviderImpl implements DefaultProvider {
     }
 
     @Override
-    public ItemStack transferIntoGrid(EntityPlayer entityPlayer, Container container, IInventory craftMatrix, ItemStack itemStack) {
+    public boolean transferIntoGrid(EntityPlayer entityPlayer, Container container, IInventory craftMatrix, ItemStack itemStack) {
         int firstEmptySlot = -1;
         for(int i = 0; i < craftMatrix.getSizeInventory(); i++) {
             ItemStack craftStack = craftMatrix.getStackInSlot(i);
@@ -132,7 +133,7 @@ public class DefaultProviderImpl implements DefaultProvider {
                         ItemStack splitStack = itemStack.splitStack(Math.min(spaceLeft, itemStack.stackSize));
                         craftStack.stackSize += splitStack.stackSize;
                         if(itemStack.stackSize <= 0) {
-                            return null;
+                            return true;
                         }
                     }
                 }
@@ -143,11 +144,14 @@ public class DefaultProviderImpl implements DefaultProvider {
         if(itemStack.stackSize > 0 && firstEmptySlot != -1) {
             ItemStack transferStack = itemStack.splitStack(Math.min(itemStack.stackSize, craftMatrix.getInventoryStackLimit()));
             craftMatrix.setInventorySlotContents(firstEmptySlot, transferStack);
+            return true;
         }
-        if(itemStack.stackSize <= 0) {
-            return null;
-        }
-        return itemStack;
+        return false;
+    }
+
+    @Override
+    public boolean canTransferFrom(EntityPlayer entityPlayer, Container container, int id, Slot slot) {
+        return slot.inventory == entityPlayer.inventory;
     }
 
     @Override

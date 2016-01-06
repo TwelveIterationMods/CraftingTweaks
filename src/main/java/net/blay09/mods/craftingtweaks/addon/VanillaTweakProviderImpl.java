@@ -9,6 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ContainerWorkbench;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -25,7 +26,7 @@ public class VanillaTweakProviderImpl implements TweakProvider {
     }
 
     @Override
-    public ItemStack transferIntoGrid(EntityPlayer entityPlayer, Container container, int id, ItemStack itemStack) {
+    public boolean transferIntoGrid(EntityPlayer entityPlayer, Container container, int id, ItemStack itemStack) {
         ContainerWorkbench workbench = (ContainerWorkbench) container;
         return defaultProvider.transferIntoGrid(entityPlayer, container, workbench.craftMatrix, itemStack);
     }
@@ -58,6 +59,11 @@ public class VanillaTweakProviderImpl implements TweakProvider {
     public void balanceGrid(EntityPlayer entityPlayer, Container container, int id) {
         ContainerWorkbench workbench = (ContainerWorkbench) container;
         defaultProvider.balanceGrid(entityPlayer, container, workbench.craftMatrix);
+    }
+
+    @Override
+    public boolean canTransferFrom(EntityPlayer entityPlayer, Container container, int id, Slot slot) {
+        return defaultProvider.canTransferFrom(entityPlayer, container, id, slot);
     }
 
     @Override
