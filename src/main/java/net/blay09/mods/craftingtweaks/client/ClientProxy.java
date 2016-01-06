@@ -16,18 +16,14 @@ import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Iterator;
 
 public class ClientProxy extends CommonProxy {
@@ -36,19 +32,12 @@ public class ClientProxy extends CommonProxy {
     private int helloTimeout;
     private boolean isEnabled;
 
-    private boolean wasRotated;
-    private boolean wasCleared;
-    private boolean wasBalanced;
-    private boolean wasToggleButtons;
-
     private final KeyBinding keyRotate = new KeyBinding("key.craftingtweaks.rotate", Keyboard.KEY_R, "key.categories.craftingtweaks");
     private final KeyBinding keyBalance = new KeyBinding("key.craftingtweaks.balance", Keyboard.KEY_B, "key.categories.craftingtweaks");
     private final KeyBinding keyClear = new KeyBinding("key.craftingtweaks.clear", Keyboard.KEY_C, "key.categories.craftingtweaks");
     private final KeyBinding keyToggleButtons = new KeyBinding("key.craftingtweaks.toggleButtons", 0, "key.categories.craftingtweaks");
     private KeyBinding keyTransferStack;
 
-    private Field neiSearchField;
-    private Method focused;
     private Slot mouseSlot;
 
     @Override
@@ -63,45 +52,63 @@ public class ClientProxy extends CommonProxy {
         keyTransferStack = Minecraft.getMinecraft().gameSettings.keyBindForward;
     }
 
-    @Override
-    public void postInit(FMLPostInitializationEvent event) {
-        super.postInit(event);
-        if(Loader.isModLoaded("NotEnoughItems")) {
-            try {
-                Class neiLayoutManagerClass = Class.forName("codechicken.nei.LayoutManager");
-                neiSearchField = neiLayoutManagerClass.getField("searchField");
-                Class textFieldClass = Class.forName("codechicken.nei.TextField");
-                focused = textFieldClass.getMethod("focused");
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            } catch (NoSuchFieldException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     @SubscribeEvent
     public void connectedToServer(FMLNetworkEvent.ClientConnectedToServerEvent event) {
         helloTimeout = HELLO_TIMEOUT;
         isEnabled = false;
     }
 
-    @SubscribeEvent
-    public void onGuiClick(GuiScreenEvent.MouseInputEvent.Pre event) {
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void onGuiKeyboardEvent(GuiScreenEvent.KeyboardInputEvent.Pre event) {
+        if(Keyboard.getEventKeyState()) {
+            EntityPlayer entityPlayer = FMLClientHandler.instance().getClientPlayerEntity();
+            Container container = entityPlayer.openContainer;
+            if (container != null) {
+                TweakProvider provider = CraftingTweaks.instance.getProvider(container);
+                if (provider != null) {
+                    CraftingTweaks.ModSupportState config = CraftingTweaks.instance.getModSupportState(provider.getModId());
+                    if (config == CraftingTweaks.ModSupportState.ENABLED || config == CraftingTweaks.ModSupportState.HOTKEYS_ONLY) {
+                        if (keyRotate.getKeyCode() > 0 && Keyboard.getEventKey() == keyRotate.getKeyCode()) {
+                            NetworkHandler.instance.sendToServer(new MessageRotate(0));
+                        } else if (keyClear.getKeyCode() > 0 && Keyboard.getEventKey() == keyClear.getKeyCode()) {
+                            NetworkHandler.instance.sendToServer(new MessageClear(0));
+                        } else if (keyBalance.getKeyCode() > 0 && Keyboard.getEventKey() == keyBalance.getKeyCode()) {
+                            NetworkHandler.instance.sendToServer(new MessageBalance(0));
+                        }
+                    }
+                    GuiScreen guiScreen = Minecraft.getMinecraft().currentScreen;
+                    if(guiScreen instanceof GuiContainer) {
+                        if (keyToggleButtons.getKeyCode() > 0 && Keyboard.getEventKey() == keyToggleButtons.getKeyCode()) {
+                            CraftingTweaks.hideButtons = !CraftingTweaks.hideButtons;
+                            if (CraftingTweaks.hideButtons) {
+                                Iterator it = guiScreen.buttonList.iterator();
+                                while (it.hasNext()) {
+                                    if (it.next() instanceof GuiTweakButton) {
+                                        it.remove();
+                                    }
+                                }
+                            } else {
+                                initGui((GuiContainer) guiScreen);
+                            }
+                            CraftingTweaks.saveConfig();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void onGuiMouseEvent(GuiScreenEvent.MouseInputEvent.Pre event) {
         if(Mouse.getEventButtonState()) {
             EntityPlayer entityPlayer = FMLClientHandler.instance().getClientPlayerEntity();
             if (entityPlayer != null) {
                 Container container = entityPlayer.openContainer;
                 if (container != null) {
-                    if (!areHotkeysEnabled()) {
-                        return;
-                    }
                     TweakProvider provider = CraftingTweaks.instance.getProvider(container);
                     if (provider != null) {
                         if (keyTransferStack.getKeyCode() > 0 && Keyboard.isKeyDown(keyTransferStack.getKeyCode())) {
-                            if (mouseSlot != null && provider.areHotkeysEnabled(entityPlayer, container)) {
+                            if (mouseSlot != null) {
                                 NetworkHandler.instance.sendToServer(new MessageTransferStack(0, mouseSlot.slotNumber));
                                 event.setCanceled(true);
                             }
@@ -123,85 +130,7 @@ public class ClientProxy extends CommonProxy {
                     isEnabled = false;
                 }
             }
-            if(!isEnabled) {
-                return;
-            }
-            Container container = entityPlayer.openContainer;
-            if (container != null) {
-                if(!areHotkeysEnabled()) {
-                    return;
-                }
-                TweakProvider provider = CraftingTweaks.instance.getProvider(container);
-                if(provider != null) {
-                    CraftingTweaks.ModSupportState config = CraftingTweaks.instance.getModSupportState(provider.getModId());
-                    if(config == CraftingTweaks.ModSupportState.ENABLED || config == CraftingTweaks.ModSupportState.HOTKEYS_ONLY) {
-                        if (keyRotate.getKeyCode() > 0 && Keyboard.isKeyDown(keyRotate.getKeyCode())) {
-                            if (!wasRotated && provider.areHotkeysEnabled(entityPlayer, container)) {
-                                NetworkHandler.instance.sendToServer(new MessageRotate(0));
-                                wasRotated = true;
-                            }
-                        } else {
-                            wasRotated = false;
-                        }
-                        if (keyClear.getKeyCode() > 0 && Keyboard.isKeyDown(keyClear.getKeyCode())) {
-                            if (!wasCleared && provider.areHotkeysEnabled(entityPlayer, container)) {
-                                NetworkHandler.instance.sendToServer(new MessageClear(0));
-                                wasCleared = true;
-                            }
-                        } else {
-                            wasCleared = false;
-                        }
-                        if (keyBalance.getKeyCode() > 0 && Keyboard.isKeyDown(keyBalance.getKeyCode())) {
-                            if (!wasBalanced && provider.areHotkeysEnabled(entityPlayer, container)) {
-                                NetworkHandler.instance.sendToServer(new MessageBalance(0));
-                                wasBalanced = true;
-                            }
-                        } else {
-                            wasBalanced = false;
-                        }
-                    }
-                    GuiScreen guiScreen = Minecraft.getMinecraft().currentScreen;
-                    if(guiScreen instanceof GuiContainer) {
-                        // Toggle Buttons Key should work regardless of hotkey settings
-                        if (keyToggleButtons.getKeyCode() > 0 && Keyboard.isKeyDown(keyToggleButtons.getKeyCode())) {
-                            if (!wasToggleButtons && provider.areHotkeysEnabled(entityPlayer, container)) {
-                                CraftingTweaks.hideButtons = !CraftingTweaks.hideButtons;
-                                if (CraftingTweaks.hideButtons) {
-                                    Iterator it = guiScreen.buttonList.iterator();
-                                    while (it.hasNext()) {
-                                        if (it.next() instanceof GuiTweakButton) {
-                                            it.remove();
-                                        }
-                                    }
-                                } else {
-                                    initGui((GuiContainer) guiScreen);
-                                }
-                                CraftingTweaks.saveConfig();
-                                wasToggleButtons = true;
-                            }
-                        } else {
-                            wasToggleButtons = false;
-                        }
-                    }
-                }
-            }
         }
-    }
-
-    private boolean areHotkeysEnabled() {
-        if(neiSearchField != null && focused != null) {
-            try {
-                Object searchField = neiSearchField.get(null);
-                if(searchField != null) {
-                    return !(Boolean) focused.invoke(searchField);
-                }
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
-        }
-        return true;
     }
 
     private void initGui(GuiContainer guiContainer) {

@@ -110,12 +110,6 @@ public class ThaumCraft5TweakProvider implements TweakProvider {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public boolean areHotkeysEnabled(EntityPlayer entityPlayer, Container container) {
-        return true;
-    }
-
-    @Override
     public String getModId() {
         return "Thaumcraft";
     }

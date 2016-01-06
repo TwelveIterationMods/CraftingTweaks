@@ -71,25 +71,8 @@ public class CraftingTweaks {
         CraftingTweaksAPI.setupAPI(new InternalMethodsImpl());
 
         configMap.put("minecraft", ModSupportState.ENABLED);
-        configMap.put("TConstruct", ModSupportState.ENABLED);
-        configMap.put("appliedenergistics2", ModSupportState.ENABLED);
-        configMap.put("DraconicEvolution", ModSupportState.ENABLED);
-        configMap.put("StevesWorkshop", ModSupportState.ENABLED);
-        configMap.put("Natura", ModSupportState.ENABLED);
         configMap.put("Thaumcraft", ModSupportState.ENABLED);
-        configMap.put("MineFactoryReloaded", ModSupportState.ENABLED);
-        configMap.put("Forestry", ModSupportState.ENABLED);
-        configMap.put("Railcraft", ModSupportState.ENABLED);
-        configMap.put("BuildCraft|Factory", ModSupportState.ENABLED);
-        configMap.put("RotaryCraft", ModSupportState.ENABLED);
-        configMap.put("RotaryCraft", ModSupportState.ENABLED);
-        configMap.put("TwilightForest", ModSupportState.ENABLED);
-        configMap.put("terrafirmacraft", ModSupportState.ENABLED);
-        configMap.put("ganyssurface", ModSupportState.ENABLED);
-        configMap.put("jacb", ModSupportState.ENABLED);
-        configMap.put("bluepower", ModSupportState.ENABLED);
-        configMap.put("BiblioCraft", ModSupportState.ENABLED);
-        configMap.put("ThermalExpansion", ModSupportState.ENABLED);
+        configMap.put("Backpack", ModSupportState.ENABLED);
         configMap.put("Backpack", ModSupportState.ENABLED);
 
         config = new Configuration(event.getSuggestedConfigurationFile());

@@ -26,7 +26,5 @@ public interface TweakProvider {
 
     @SideOnly(Side.CLIENT)
     void initGui(GuiContainer guiContainer, List<GuiButton> buttonList);
-    @SideOnly(Side.CLIENT)
-    boolean areHotkeysEnabled(EntityPlayer entityPlayer, Container container);
 
 }
