@@ -19,6 +19,8 @@ def MAVEN_USERNAME = System.getenv("MAVEN_USERNAME") ?: ""
 def MAVEN_PASSWORD = System.getenv("MAVEN_PASSWORD") ?: ""
 
 version = "3.0." + BUILD_NUMBER
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 group = "net.blay09.mods"
 archivesBaseName = "craftingtweaks"
 

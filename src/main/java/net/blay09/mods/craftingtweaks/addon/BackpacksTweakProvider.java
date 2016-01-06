@@ -28,19 +28,17 @@ public class BackpacksTweakProvider implements TweakProvider {
             craftingGridField = clazz.getDeclaredField("craftingGrid");
             craftingGridField.setAccessible(true);
             return true;
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
+        } catch (ClassNotFoundException | NoSuchFieldException e) {
             e.printStackTrace();
         }
         return false;
     }
 
     @Override
-    public boolean transferIntoGrid(EntityPlayer entityPlayer, Container container, int id, ItemStack itemStack) {
+    public boolean transferIntoGrid(EntityPlayer entityPlayer, Container container, int id, Slot sourceSlot) {
         try {
             IInventory craftMatrix = (IInventory) craftingGridField.get(container);
-            return defaultProvider.transferIntoGrid(entityPlayer, container, craftMatrix, itemStack);
+            return defaultProvider.transferIntoGrid(entityPlayer, container, craftMatrix, sourceSlot);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
             return false;

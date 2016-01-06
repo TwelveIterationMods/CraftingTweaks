@@ -24,6 +24,6 @@ public class GuiImageButton extends GuiButton {
         boolean isHovered = this.enabled && this.visible && mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
         mc.renderEngine.bindTexture(texture);
         GL11.glColor4f(1f, 1f, 1f, 1f);
-        drawTexturedModalRect(xPosition, yPosition, texCoordX, texCoordY + (isHovered ? 16 : 0), 16, 16);
+        drawTexturedModalRect(xPosition, yPosition, texCoordX, enabled ? texCoordY + (isHovered ? 16 : 0) : texCoordY + 32, 16, 16);
     }
 }

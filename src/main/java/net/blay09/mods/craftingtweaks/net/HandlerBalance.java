@@ -12,16 +12,13 @@ public class HandlerBalance implements IMessageHandler<MessageBalance, IMessage>
 
     @Override
     public IMessage onMessage(final MessageBalance message, final MessageContext ctx) {
-        CraftingTweaks.proxy.addScheduledTask(new Runnable() {
-            @Override
-            public void run() {
-                EntityPlayer entityPlayer = ctx.getServerHandler().playerEntity;
-                Container container = entityPlayer.openContainer;
-                if(container != null) {
-                    TweakProvider tweakProvider = CraftingTweaks.instance.getProvider(container);
-                    if (tweakProvider != null) {
-                        tweakProvider.balanceGrid(entityPlayer, container, message.id);
-                    }
+        CraftingTweaks.proxy.addScheduledTask(() -> {
+            EntityPlayer entityPlayer = ctx.getServerHandler().playerEntity;
+            Container container = entityPlayer.openContainer;
+            if(container != null) {
+                TweakProvider tweakProvider = CraftingTweaks.instance.getProvider(container);
+                if (tweakProvider != null) {
+                    tweakProvider.balanceGrid(entityPlayer, container, message.id);
                 }
             }
         });

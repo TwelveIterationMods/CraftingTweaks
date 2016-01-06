@@ -10,12 +10,7 @@ public class HandlerHello implements IMessageHandler<MessageHello, IMessage> {
 
     @Override
     public IMessage onMessage(MessageHello message, final MessageContext ctx) {
-        CraftingTweaks.proxy.addScheduledTask(new Runnable() {
-            @Override
-            public void run() {
-                CraftingTweaks.proxy.receivedHello(ctx.side == Side.SERVER ? ctx.getServerHandler().playerEntity : null);
-            }
-        });
+        CraftingTweaks.proxy.addScheduledTask(() -> CraftingTweaks.proxy.receivedHello(ctx.side == Side.SERVER ? ctx.getServerHandler().playerEntity : null));
         return ctx.side == Side.CLIENT ? new MessageHello(NetworkHandler.PROTOCOL_VERSION) : null;
     }
 

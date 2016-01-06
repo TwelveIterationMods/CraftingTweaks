@@ -2,10 +2,10 @@ package net.blay09.mods.craftingtweaks.client;
 
 import net.blay09.mods.craftingtweaks.CommonProxy;
 import net.blay09.mods.craftingtweaks.CraftingTweaks;
-import net.blay09.mods.craftingtweaks.addon.VanillaTweakProviderImpl;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.blay09.mods.craftingtweaks.net.*;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.settings.KeyBinding;
@@ -31,8 +31,9 @@ public class ClientProxy extends CommonProxy {
 
     private static final int HELLO_TIMEOUT = 20 * 10;
     private int helloTimeout;
-    private boolean isEnabled;
+    private boolean isServerSide;
 
+    private final ClientProvider clientProvider = new ClientProvider();
     private final KeyBinding keyRotate = new KeyBinding("key.craftingtweaks.rotate", Keyboard.KEY_R, "key.categories.craftingtweaks");
     private final KeyBinding keyBalance = new KeyBinding("key.craftingtweaks.balance", Keyboard.KEY_B, "key.categories.craftingtweaks");
     private final KeyBinding keyClear = new KeyBinding("key.craftingtweaks.clear", Keyboard.KEY_C, "key.categories.craftingtweaks");
@@ -40,6 +41,7 @@ public class ClientProxy extends CommonProxy {
     private KeyBinding keyTransferStack;
 
     private Slot mouseSlot;
+    private boolean ignoreMouseUp;
 
     @Override
     public void init(FMLInitializationEvent event) {
@@ -61,7 +63,7 @@ public class ClientProxy extends CommonProxy {
     @SubscribeEvent
     public void connectedToServer(FMLNetworkEvent.ClientConnectedToServerEvent event) {
         helloTimeout = HELLO_TIMEOUT;
-        isEnabled = false;
+        isServerSide = false;
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
@@ -76,9 +78,17 @@ public class ClientProxy extends CommonProxy {
                         CraftingTweaks.ModSupportState config = CraftingTweaks.instance.getModSupportState(provider.getModId());
                         if (config == CraftingTweaks.ModSupportState.ENABLED || config == CraftingTweaks.ModSupportState.HOTKEYS_ONLY) {
                             if (keyRotate.getKeyCode() > 0 && Keyboard.getEventKey() == keyRotate.getKeyCode()) {
-                                NetworkHandler.instance.sendToServer(new MessageRotate(0));
+                                if(isServerSide) {
+                                    NetworkHandler.instance.sendToServer(new MessageRotate(0));
+                                } else {
+                                    clientProvider.rotateGrid(provider, entityPlayer, container, 0);
+                                }
                             } else if (keyClear.getKeyCode() > 0 && Keyboard.getEventKey() == keyClear.getKeyCode()) {
-                                NetworkHandler.instance.sendToServer(new MessageClear(0));
+                                if(isServerSide) {
+                                    NetworkHandler.instance.sendToServer(new MessageClear(0));
+                                } else {
+                                    clientProvider.clearGrid(provider, entityPlayer, container, 0);
+                                }
                             } else if (keyBalance.getKeyCode() > 0 && Keyboard.getEventKey() == keyBalance.getKeyCode()) {
                                 NetworkHandler.instance.sendToServer(new MessageBalance(0));
                             }
@@ -117,13 +127,21 @@ public class ClientProxy extends CommonProxy {
                     if (provider != null) {
                         if (keyTransferStack.getKeyCode() > 0 && Keyboard.isKeyDown(keyTransferStack.getKeyCode())) {
                             if (mouseSlot != null) {
-                                NetworkHandler.instance.sendToServer(new MessageTransferStack(0, mouseSlot.slotNumber));
+                                if(isServerSide) {
+                                    NetworkHandler.instance.sendToServer(new MessageTransferStack(0, mouseSlot.slotNumber));
+                                } else {
+                                    clientProvider.transferIntoGrid(provider, entityPlayer, container, 0, mouseSlot);
+                                    ignoreMouseUp = true;
+                                }
                                 event.setCanceled(true);
                             }
                         }
                     }
                 }
             }
+        } else if(ignoreMouseUp) {
+            event.setCanceled(true);
+            ignoreMouseUp = false;
         }
     }
 
@@ -135,7 +153,7 @@ public class ClientProxy extends CommonProxy {
                 helloTimeout--;
                 if (helloTimeout <= 0) {
                     entityPlayer.addChatMessage(new ChatComponentText("This server does not have Crafting Tweaks installed. It will be disabled."));
-                    isEnabled = false;
+                    isServerSide = false;
                 }
             }
         }
@@ -147,13 +165,22 @@ public class ClientProxy extends CommonProxy {
             CraftingTweaks.ModSupportState config = CraftingTweaks.instance.getModSupportState(provider.getModId());
             if(config == CraftingTweaks.ModSupportState.ENABLED || config == CraftingTweaks.ModSupportState.BUTTONS_ONLY) {
                 provider.initGui(guiContainer, guiContainer.buttonList);
+                if(!isServerSide) {
+                    for(GuiButton button : guiContainer.buttonList) {
+                        if(button instanceof GuiTweakButton) {
+                            if(((GuiTweakButton) button).getTweakOption() == GuiTweakButton.TweakOption.Balance) {
+                                button.enabled = false;
+                            }
+                        }
+                    }
+                }
             }
         }
     }
 
     @SubscribeEvent
     public void onInitGui(GuiScreenEvent.InitGuiEvent.Post event) {
-        if(isEnabled && !CraftingTweaks.hideButtons) {
+        if(!CraftingTweaks.hideButtons) {
             if (event.gui instanceof GuiContainer) {
                 initGui((GuiContainer) event.gui);
             }
@@ -171,18 +198,31 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public void onActionPerformed(GuiScreenEvent.ActionPerformedEvent event) {
-        if(isEnabled && event.button instanceof GuiTweakButton) {
+        if(event.button instanceof GuiTweakButton) {
+            EntityPlayer entityPlayer = FMLClientHandler.instance().getClientPlayerEntity();
+            Container container = entityPlayer.openContainer;
+            TweakProvider provider = CraftingTweaks.instance.getProvider(container);
             switch(((GuiTweakButton) event.button).getTweakOption()) {
                 case Rotate:
-                    NetworkHandler.instance.sendToServer(new MessageRotate(((GuiTweakButton) event.button).getTweakId()));
+                    if(isServerSide) {
+                        NetworkHandler.instance.sendToServer(new MessageRotate(((GuiTweakButton) event.button).getTweakId()));
+                    } else {
+                        clientProvider.rotateGrid(provider, entityPlayer, container, ((GuiTweakButton) event.button).getTweakId());
+                    }
                     event.setCanceled(true);
                     break;
                 case Balance:
-                    NetworkHandler.instance.sendToServer(new MessageBalance(((GuiTweakButton) event.button).getTweakId()));
+                    if(isServerSide) {
+                        NetworkHandler.instance.sendToServer(new MessageBalance(((GuiTweakButton) event.button).getTweakId()));
+                    }
                     event.setCanceled(true);
                     break;
                 case Clear:
-                    NetworkHandler.instance.sendToServer(new MessageClear(((GuiTweakButton) event.button).getTweakId()));
+                    if(isServerSide) {
+                        NetworkHandler.instance.sendToServer(new MessageClear(((GuiTweakButton) event.button).getTweakId()));
+                    } else {
+                        clientProvider.clearGrid(provider, entityPlayer, container, ((GuiTweakButton) event.button).getTweakId());
+                    }
                     event.setCanceled(true);
                     break;
             }
@@ -193,6 +233,6 @@ public class ClientProxy extends CommonProxy {
     public void receivedHello(EntityPlayer entityPlayer) {
         super.receivedHello(entityPlayer);
         helloTimeout = 0;
-        isEnabled = true;
+        isServerSide = true;
     }
 }

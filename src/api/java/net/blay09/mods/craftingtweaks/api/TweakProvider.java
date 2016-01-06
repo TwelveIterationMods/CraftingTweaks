@@ -17,12 +17,22 @@ public interface TweakProvider {
     String getModId();
     boolean load();
 
+    default boolean requiresServerSide() {
+        return true;
+    }
+    default int getCraftingGridStart(int id) {
+        return 1;
+    }
+    default int getCraftingGridSize(int id) {
+        return 9;
+    }
+
     void clearGrid(EntityPlayer entityPlayer, Container container, int id);
     void rotateGrid(EntityPlayer entityPlayer, Container container, int id);
     void balanceGrid(EntityPlayer entityPlayer, Container container, int id);
 
-    boolean canTransferFrom(EntityPlayer entityPlayer, Container container, int id, Slot slot);
-    boolean transferIntoGrid(EntityPlayer entityPlayer, Container container, int id, ItemStack itemStack);
+    boolean canTransferFrom(EntityPlayer entityPlayer, Container container, int id, Slot sourceSlot);
+    boolean transferIntoGrid(EntityPlayer entityPlayer, Container container, int id, Slot sourceSlot);
     ItemStack putIntoGrid(EntityPlayer entityPlayer, Container container, int id, ItemStack itemStack, int index);
     IInventory getCraftMatrix(EntityPlayer entityPlayer, Container container, int id);
 

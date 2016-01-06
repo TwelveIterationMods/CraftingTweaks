@@ -16,6 +16,6 @@ public interface DefaultProvider {
     void balanceGrid(EntityPlayer entityPlayer, Container container, IInventory craftMatrix);
     void balanceGrid(EntityPlayer entityPlayer, Container container, IInventory craftMatrix, int start, int size);
     ItemStack putIntoGrid(EntityPlayer entityPlayer, Container container, IInventory craftMatrix, ItemStack itemStack, int index);
-    boolean transferIntoGrid(EntityPlayer entityPlayer, Container container, IInventory craftMatrix, ItemStack itemStack);
-    boolean canTransferFrom(EntityPlayer entityPlayer, Container container, int id, Slot slot);
+    boolean transferIntoGrid(EntityPlayer entityPlayer, Container container, IInventory craftMatrix, Slot sourceSlot);
+    boolean canTransferFrom(EntityPlayer entityPlayer, Container container, int id, Slot sourceSlot);
 }

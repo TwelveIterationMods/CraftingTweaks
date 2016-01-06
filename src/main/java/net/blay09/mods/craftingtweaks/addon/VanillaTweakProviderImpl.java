@@ -26,9 +26,24 @@ public class VanillaTweakProviderImpl implements TweakProvider {
     }
 
     @Override
-    public boolean transferIntoGrid(EntityPlayer entityPlayer, Container container, int id, ItemStack itemStack) {
+    public boolean requiresServerSide() {
+        return false;
+    }
+
+    @Override
+    public int getCraftingGridStart(int id) {
+        return 1;
+    }
+
+    @Override
+    public int getCraftingGridSize(int id) {
+        return 9;
+    }
+
+    @Override
+    public boolean transferIntoGrid(EntityPlayer entityPlayer, Container container, int id, Slot sourceSlot) {
         ContainerWorkbench workbench = (ContainerWorkbench) container;
-        return defaultProvider.transferIntoGrid(entityPlayer, container, workbench.craftMatrix, itemStack);
+        return defaultProvider.transferIntoGrid(entityPlayer, container, workbench.craftMatrix, sourceSlot);
     }
 
     @Override
@@ -69,10 +84,10 @@ public class VanillaTweakProviderImpl implements TweakProvider {
     @Override
     @SideOnly(Side.CLIENT)
     public void initGui(GuiContainer guiContainer, List<GuiButton> buttonList) {
-        final int paddingTop = 16;
-        buttonList.add(CraftingTweaksAPI.createRotateButton(0, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop));
-        buttonList.add(CraftingTweaksAPI.createBalanceButton(0, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop + 18));
-        buttonList.add(CraftingTweaksAPI.createClearButton(0, guiContainer.guiLeft - 16, guiContainer.guiTop + paddingTop + 36));
+        final int paddingTop = 17;
+        buttonList.add(CraftingTweaksAPI.createRotateButton(0, guiContainer.guiLeft + 10, guiContainer.guiTop + paddingTop));
+        buttonList.add(CraftingTweaksAPI.createBalanceButton(0, guiContainer.guiLeft + 10, guiContainer.guiTop + paddingTop + 18));
+        buttonList.add(CraftingTweaksAPI.createClearButton(0, guiContainer.guiLeft + 10, guiContainer.guiTop + paddingTop + 36));
     }
 
     @Override
