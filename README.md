@@ -43,10 +43,10 @@ The fields are described below:
 * **HideButtons**: If you don't want Crafting Tweak's buttons to show up (but you want the hotkeys to work), set this to true
 * **ButtonOffsetX**: X-Offset to apply to all tweak buttons, relative to the upper left corner of the GuiContainer
 * **ButtonOffsetY**: Y-Offset to apply to all tweak buttons, relative to the upper left corner of the GuiContainer
-* **TweakRotate**: A tag compound containing settings for the rotate tweak (see <Tweak*>)
-* **TweakBalance**: A tag compound containing settings for the balance tweak (see <Tweak*>)
-* **TweakClear**: A tag compound containing settings for the clear tweak (see <Tweak*>)
-* **<Tweak\*>**: Contains the following settings for tweaks:
+* **TweakRotate**: A tag compound containing settings for the rotate tweak (see below)
+* **TweakBalance**: A tag compound containing settings for the balance tweak (see below)
+* **TweakClear**: A tag compound containing settings for the clear tweak (see below)
+* **Tweak...**: Contains the following settings for tweaks:
   * **Enabled**: Set this to false if this tweak should be disabled for this container
   * **ButtonX**: X-Position of the tweak button relative to ButtonOffsetX
   * **ButtonY**: Y-Position of the tweak button relative to ButtonOffsetY
