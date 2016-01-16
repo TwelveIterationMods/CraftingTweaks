@@ -72,7 +72,6 @@ public class CraftingTweaks {
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         CraftingTweaksAPI.setupAPI(new InternalMethodsImpl());
-        FMLInterModComms.sendMessage("craftingtweaks", "RegisterProvider", "");
 
         configMap.put("minecraft", ModSupportState.ENABLED);
         configMap.put("Thaumcraft", ModSupportState.ENABLED);
