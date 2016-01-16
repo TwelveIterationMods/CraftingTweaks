@@ -77,7 +77,7 @@ public class CraftingTweaks {
         configMap.put("minecraft", ModSupportState.ENABLED);
         configMap.put("Thaumcraft", ModSupportState.ENABLED);
         configMap.put("Backpack", ModSupportState.ENABLED);
-        configMap.put("Backpack", ModSupportState.ENABLED);
+        configMap.put("jacb", ModSupportState.ENABLED);
 
         config = new Configuration(event.getSuggestedConfigurationFile());
         hideButtons = config.getBoolean("hideButtons", "general", false, "This option is toggled by the 'Toggle Buttons' key that can be defined in the Controls settings.");

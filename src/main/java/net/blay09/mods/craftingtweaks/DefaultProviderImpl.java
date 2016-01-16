@@ -154,8 +154,13 @@ public class DefaultProviderImpl implements DefaultProvider {
     }
 
     @Override
-    public boolean canTransferFrom(EntityPlayer entityPlayer, Container container, int id, Slot slot) {
+    public boolean canTransferFrom(EntityPlayer entityPlayer, Container container, Slot slot) {
         return slot.inventory == entityPlayer.inventory;
+    }
+
+    @Override
+    public boolean canTransferFrom(EntityPlayer entityPlayer, Container container, int id, Slot slot) {
+        return canTransferFrom(entityPlayer, container, slot);
     }
 
     @Override
