@@ -29,8 +29,8 @@ public class SimpleTweakProviderImpl implements SimpleTweakProvider {
 
     private final String modid;
     private final DefaultProvider defaultProvider = CraftingTweaksAPI.createDefaultProvider();
-    private int gridSlotNumber;
-    private int gridSize;
+    private int gridSlotNumber = 1;
+    private int gridSize = 9;
     private boolean hideButtons;
     private TweakSettings tweakRotate = new TweakSettings(true, -16, 16);
     private TweakSettings tweakBalance = new TweakSettings(true, -16, 16 + 18);

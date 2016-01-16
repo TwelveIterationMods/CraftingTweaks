@@ -4,7 +4,6 @@ import com.google.common.collect.Maps;
 import net.blay09.mods.craftingtweaks.addon.BackpacksTweakProvider;
 import net.blay09.mods.craftingtweaks.addon.JACBTweakProvider;
 import net.blay09.mods.craftingtweaks.addon.ThaumCraft5TweakProvider;
-import net.blay09.mods.craftingtweaks.addon.VanillaTweakProviderImpl;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
 import net.blay09.mods.craftingtweaks.api.SimpleTweakProvider;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
@@ -124,7 +123,11 @@ public class CraftingTweaks {
     public void postInit(FMLPostInitializationEvent event) {
         proxy.postInit(event);
 
-        providerMap.put(ContainerWorkbench.class, new VanillaTweakProviderImpl());
+        SimpleTweakProvider provider = CraftingTweaksAPI.registerSimpleProvider("minecraft", ContainerWorkbench.class);
+        provider.setTweakRotate(true, 10, 17);
+        provider.setTweakBalance(true, 10, 17 + 18);
+        provider.setTweakClear(true, 10, 17 + 18 + 18);
+
         registerProvider("thaumcraft.common.container.ContainerArcaneWorkbench", new ThaumCraft5TweakProvider());
         registerProvider("tv.vanhal.jacb.gui.BenchContainer", new JACBTweakProvider());
         registerProvider("de.eydamos.backpack.inventory.container.ContainerWorkbenchBackpack", new BackpacksTweakProvider());

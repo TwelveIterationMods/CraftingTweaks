@@ -38,7 +38,7 @@ The commented out lines are optional (the example above shows the default value)
 
 The fields are described below:
 * **ContainerClass**: The full class name (including package name) of your container class with the crafting grid.
-* **GridSlotNumber**: The slotNumber of the first slot in the crafting matrix (this is the index within Container.inventorySlots, **NOT** the index within the IInventory)
+* **GridSlotNumber**: The slotNumber of the first slot in the crafting matrix (this is the index within Container.inventorySlots, NOT the index within the IInventory)
 * **GridSize**: The size of the crafting grid (probably 9)
 * **HideButtons**: If you don't want Crafting Tweak's buttons to show up (but you want the hotkeys to work), set this to true
 * **ButtonOffsetX**: X-Offset to apply to all tweak buttons, relative to the upper left corner of the GuiContainer
