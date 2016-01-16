@@ -105,6 +105,9 @@ public class CraftingTweaks {
                 NBTTagCompound clearCompound = tagCompound.getCompoundTag("TweakClear");
                 provider.setTweakBalance(!clearCompound.hasKey("Enabled") || clearCompound.getBoolean("Enabled"), clearCompound.hasKey("ButtonX") ? clearCompound.getInteger("ButtonX") : -16, clearCompound.hasKey("ButtonY") ? clearCompound.getInteger("ButtonY") : 16);
                 registerProvider(containerClassName, provider);
+                logger.info(message.getSender() + " has registered " + containerClassName + " for CraftingTweaks");
+            } else {
+                logger.warn("CraftingTweaks received an invalid IMC message from " + message.getSender());
             }
         }
     }
