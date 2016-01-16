@@ -67,6 +67,8 @@ sourceJar {
 task jarJavadoc(type: Jar, dependsOn: 'javadoc') {
     from "build/docs/javadoc"
     classifier "javadoc"
+
+    appendix "mc" + minecraft.version
 }
 
 task jarAPI(type: Jar) {
