@@ -174,17 +174,17 @@ public class DefaultProviderV2Impl implements DefaultProviderV2 {
         IInventory craftMatrix = provider.getCraftMatrix(entityPlayer, container, id);
         int start = provider.getCraftingGridStart(id);
         int size = provider.getCraftingGridSize(id);
-        IInventory matrixClone = new InventoryBasic("", false, craftMatrix.getSizeInventory());
-        for(int i = start; i < start + size; i++) {
-            int slotIndex = container.inventorySlots.get(i).getSlotIndex();
-            matrixClone.setInventorySlotContents(slotIndex, craftMatrix.getStackInSlot(slotIndex));
+        IInventory matrixClone = new InventoryBasic("", false, size);
+        for(int i = 0; i < size; i++) {
+            int slotIndex = container.inventorySlots.get(start + i).getSlotIndex();
+            matrixClone.setInventorySlotContents(i, craftMatrix.getStackInSlot(slotIndex));
         }
-        for(int i = start; i < start + size; i++) {
-            int slotIndex = container.inventorySlots.get(i).getSlotIndex();
-            if(rotationHandler.ignoreSlotId(slotIndex)) {
+        for(int i = 0; i < size; i++) {
+            if(rotationHandler.ignoreSlotId(i)) {
                 continue;
             }
-            craftMatrix.setInventorySlotContents(rotationHandler.rotateSlotId(slotIndex), matrixClone.getStackInSlot(slotIndex));
+            int slotIndex = container.inventorySlots.get(start + rotationHandler.rotateSlotId(i)).getSlotIndex();
+            craftMatrix.setInventorySlotContents(slotIndex, matrixClone.getStackInSlot(i));
         }
         container.detectAndSendChanges();
     }
