@@ -51,7 +51,7 @@ The fields are described below:
   * **ButtonX**: X-Position of the tweak button relative to ButtonOffsetX
   * **ButtonY**: Y-Position of the tweak button relative to ButtonOffsetY
 
-*Note*: If you're specifying custom button positions, they should be 18 pixels apart from each other.
+*Note*: If you're specifying custom button positions, they should be 18 pixels apart from each other. If you just want to move all buttons at once, use ButtonOffsetX/Y. The buttons are set out vertically by default.
 
 ## API
 If your crafting grid is more complex or doesn't follow Vanilla standards, you may need to supply a custom tweak provider. In that case, follow these steps.
