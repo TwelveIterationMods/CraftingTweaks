@@ -36,6 +36,7 @@ public class Compatiblity {
     public static void thaumcraft() {
         SimpleTweakProvider provider = registerSimpleProvider("Thaumcraft", "thaumcraft.common.container.ContainerArcaneWorkbench");
         if(provider != null) {
+            provider.setGrid(2, 9);
             provider.setTweakRotate(true, true, -12, 46);
             provider.setTweakBalance(true, true, -12, 64);
             provider.setTweakClear(true, true, -12, 82);
