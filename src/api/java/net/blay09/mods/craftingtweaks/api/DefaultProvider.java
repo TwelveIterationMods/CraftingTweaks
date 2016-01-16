@@ -94,9 +94,20 @@ public interface DefaultProvider {
      * Default implementation for checking if transfer-to-grid is allowed from this slot. Checks if this slot is part of the player inventory.
      * @param entityPlayer the player who wants to transfer items into the grid
      * @param container the container the grid is part of
-     * @param id the crafting grid ID that is being transferred into (usually 0 unless there's more grids in one GUI)
      * @param sourceSlot the source slot inside the container the item is coming from
      * @return true if items are allowed to be transferred from this slot, false otherwise
      */
+    boolean canTransferFrom(EntityPlayer entityPlayer, Container container, Slot sourceSlot);
+
+    /**
+     * Default implementation for checking if transfer-to-grid is allowed from this slot. Checks if this slot is part of the player inventory.
+     * @param entityPlayer the player who wants to transfer items into the grid
+     * @param container the container the grid is part of
+     * @param id unused
+     * @param sourceSlot the source slot inside the container the item is coming from
+     * @deprecated Use canTransferFrom() without the id parameter instead
+     * @return true if items are allowed to be transferred from this slot, false otherwise
+     */
+    @Deprecated
     boolean canTransferFrom(EntityPlayer entityPlayer, Container container, int id, Slot sourceSlot);
 }

@@ -6,16 +6,19 @@ import net.blay09.mods.craftingtweaks.addon.JACBTweakProvider;
 import net.blay09.mods.craftingtweaks.addon.ThaumCraft5TweakProvider;
 import net.blay09.mods.craftingtweaks.addon.VanillaTweakProviderImpl;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
+import net.blay09.mods.craftingtweaks.api.SimpleTweakProvider;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.blay09.mods.craftingtweaks.net.NetworkHandler;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ContainerWorkbench;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.LogManager;
@@ -69,6 +72,7 @@ public class CraftingTweaks {
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         CraftingTweaksAPI.setupAPI(new InternalMethodsImpl());
+        FMLInterModComms.sendMessage("craftingtweaks", "RegisterProvider", "");
 
         configMap.put("minecraft", ModSupportState.ENABLED);
         configMap.put("Thaumcraft", ModSupportState.ENABLED);
@@ -82,6 +86,26 @@ public class CraftingTweaks {
         // Load all options (including those from non-included addons)
         for(Property property : config.getCategory("addons").values()) {
             configMap.put(property.getName(), ModSupportState.fromName(config.getString(property.getName(), "addons", ModSupportState.ENABLED.name().toLowerCase(), "enabled, buttons_only, hotkeys_only or disabled", ModSupportState.getValidValues())));
+        }
+    }
+
+    @Mod.EventHandler
+    public void imc(FMLInterModComms.IMCEvent event) {
+        for(FMLInterModComms.IMCMessage message : event.getMessages()) {
+            if(message.key.equals("RegisterProvider")) {
+                NBTTagCompound tagCompound = message.getNBTValue();
+                String containerClassName = tagCompound.getString("ContainerClass");
+                SimpleTweakProvider provider = new SimpleTweakProviderImpl(message.getSender());
+                provider.setGrid(tagCompound.hasKey("GridSlotNumber") ? tagCompound.getInteger("GridSlotNumber") : 1, tagCompound.hasKey("GridSize") ? tagCompound.getInteger("GridSize") : 9);
+                provider.setHideButtons(tagCompound.getBoolean("HideButtons"));
+                NBTTagCompound rotateCompound = tagCompound.getCompoundTag("TweakRotate");
+                provider.setTweakBalance(!rotateCompound.hasKey("Enabled") || rotateCompound.getBoolean("Enabled"), rotateCompound.hasKey("ButtonX") ? rotateCompound.getInteger("ButtonX") : -16, rotateCompound.hasKey("ButtonY") ? rotateCompound.getInteger("ButtonY") : 16);
+                NBTTagCompound balanceCompound = tagCompound.getCompoundTag("TweakBalance");
+                provider.setTweakBalance(!balanceCompound.hasKey("Enabled") || balanceCompound.getBoolean("Enabled"), balanceCompound.hasKey("ButtonX") ? balanceCompound.getInteger("ButtonX") : -16, balanceCompound.hasKey("ButtonY") ? balanceCompound.getInteger("ButtonY") : 16);
+                NBTTagCompound clearCompound = tagCompound.getCompoundTag("TweakClear");
+                provider.setTweakBalance(!clearCompound.hasKey("Enabled") || clearCompound.getBoolean("Enabled"), clearCompound.hasKey("ButtonX") ? clearCompound.getInteger("ButtonX") : -16, clearCompound.hasKey("ButtonY") ? clearCompound.getInteger("ButtonY") : 16);
+                registerProvider(containerClassName, provider);
+            }
         }
     }
 

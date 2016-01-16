@@ -17,6 +17,11 @@ public class InternalMethodsImpl implements InternalMethods {
     }
 
     @Override
+    public void registerWithDefaultProvider(String modid, Class<? extends Container> containerClass) {
+        CraftingTweaks.instance.registerProvider(containerClass, new SimpleTweakProviderImpl(modid));
+    }
+
+    @Override
     public DefaultProvider createDefaultProvider() {
         return new DefaultProviderImpl();
     }
