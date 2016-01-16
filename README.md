@@ -21,11 +21,13 @@ tagCompound.setString("ContainerClass", YourCraftingContainer.class.getName());
 // tagCompound.setString("GridSlotNumber", 1);
 // tagCompound.setString("GridSize", 9);
 // tagCompound.setBoolean("HideButtons", false);
+// tagCompound.setBoolean("ButtonOffsetX", -16);
+// tagCompound.setBoolean("ButtonOffsetY", 16);
 
 // NBTTagCompound tweakRotate = new NBTTagCompound();
 // tweakRotate.setBoolean("Enabled", true);
-// tweakRotate.setInteger("ButtonX", -16);
-// tweakRotate.setInteger("ButtonY", 16);
+// tweakRotate.setInteger("ButtonX", 0);
+// tweakRotate.setInteger("ButtonY", 18);
 // tagCompound.setTag("TweakRotate", tweakRotate);
 // [...] (same structure for "TweakBalance" and "TweakClear")
 
@@ -39,13 +41,15 @@ The fields are described below:
 * **GridSlotNumber**: The slotNumber of the first slot in the crafting matrix (this is the index within Container.inventorySlots, **NOT** the index within the IInventory)
 * **GridSize**: The size of the crafting grid (probably 9)
 * **HideButtons**: If you don't want Crafting Tweak's buttons to show up (but you want the hotkeys to work), set this to true
+* **ButtonOffsetX**: X-Offset to apply to all tweak buttons, relative to the upper left corner of the GuiContainer
+* **ButtonOffsetY**: Y-Offset to apply to all tweak buttons, relative to the upper left corner of the GuiContainer
 * **TweakRotate**: A tag compound containing settings for the rotate tweak (see <Tweak*>)
 * **TweakBalance**: A tag compound containing settings for the balance tweak (see <Tweak*>)
 * **TweakClear**: A tag compound containing settings for the clear tweak (see <Tweak*>)
 * **<Tweak\*>**: Contains the following settings for tweaks:
   * **Enabled**: Set this to false if this tweak should be disabled for this container
-  * **ButtonX**: X-Position of the tweak button relative to the upper left corner of the GuiContainer
-  * **ButtonY**: Y-Position of the tweak button relative to the upper left corner of the GuiContainer
+  * **ButtonX**: X-Position of the tweak button relative to ButtonOffsetX
+  * **ButtonY**: Y-Position of the tweak button relative to ButtonOffsetY
 
 *Note*: If you're specifying custom button positions, they should be 18 pixels apart from each other.
 

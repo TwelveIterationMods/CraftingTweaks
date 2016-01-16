@@ -95,14 +95,16 @@ public class CraftingTweaks {
                 NBTTagCompound tagCompound = message.getNBTValue();
                 String containerClassName = tagCompound.getString("ContainerClass");
                 SimpleTweakProvider provider = new SimpleTweakProviderImpl(message.getSender());
+                int buttonOffsetX = tagCompound.hasKey("ButtonOffsetX") ? tagCompound.getInteger("ButtonOffsetX") : -16;
+                int buttonOffsetY = tagCompound.hasKey("ButtonOffsetY") ? tagCompound.getInteger("ButtonOffsetY") : 16;
                 provider.setGrid(tagCompound.hasKey("GridSlotNumber") ? tagCompound.getInteger("GridSlotNumber") : 1, tagCompound.hasKey("GridSize") ? tagCompound.getInteger("GridSize") : 9);
                 provider.setHideButtons(tagCompound.getBoolean("HideButtons"));
                 NBTTagCompound rotateCompound = tagCompound.getCompoundTag("TweakRotate");
-                provider.setTweakRotate(!rotateCompound.hasKey("Enabled") || rotateCompound.getBoolean("Enabled"), rotateCompound.hasKey("ButtonX") ? rotateCompound.getInteger("ButtonX") : -16, rotateCompound.hasKey("ButtonY") ? rotateCompound.getInteger("ButtonY") : 16);
+                provider.setTweakRotate(!rotateCompound.hasKey("Enabled") || rotateCompound.getBoolean("Enabled"), buttonOffsetX + (rotateCompound.hasKey("ButtonX") ? rotateCompound.getInteger("ButtonX") : 0), buttonOffsetY + (rotateCompound.hasKey("ButtonY") ? rotateCompound.getInteger("ButtonY") : 0));
                 NBTTagCompound balanceCompound = tagCompound.getCompoundTag("TweakBalance");
-                provider.setTweakBalance(!balanceCompound.hasKey("Enabled") || balanceCompound.getBoolean("Enabled"), balanceCompound.hasKey("ButtonX") ? balanceCompound.getInteger("ButtonX") : -16, balanceCompound.hasKey("ButtonY") ? balanceCompound.getInteger("ButtonY") : 16 + 18);
+                provider.setTweakBalance(!balanceCompound.hasKey("Enabled") || balanceCompound.getBoolean("Enabled"), buttonOffsetX + (balanceCompound.hasKey("ButtonX") ? balanceCompound.getInteger("ButtonX") : 0), buttonOffsetY + (balanceCompound.hasKey("ButtonY") ? balanceCompound.getInteger("ButtonY") : 18));
                 NBTTagCompound clearCompound = tagCompound.getCompoundTag("TweakClear");
-                provider.setTweakClear(!clearCompound.hasKey("Enabled") || clearCompound.getBoolean("Enabled"), clearCompound.hasKey("ButtonX") ? clearCompound.getInteger("ButtonX") : -16, clearCompound.hasKey("ButtonY") ? clearCompound.getInteger("ButtonY") : 16 + 18 + 18);
+                provider.setTweakClear(!clearCompound.hasKey("Enabled") || clearCompound.getBoolean("Enabled"), buttonOffsetX + (clearCompound.hasKey("ButtonX") ? clearCompound.getInteger("ButtonX") : 0), buttonOffsetY + (clearCompound.hasKey("ButtonY") ? clearCompound.getInteger("ButtonY") : 18 + 18));
                 registerProvider(containerClassName, provider);
                 logger.info(message.getSender() + " has registered " + containerClassName + " for CraftingTweaks");
             } else {
