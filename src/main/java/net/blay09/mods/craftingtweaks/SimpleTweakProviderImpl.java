@@ -1,7 +1,7 @@
 package net.blay09.mods.craftingtweaks;
 
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
-import net.blay09.mods.craftingtweaks.api.DefaultProvider;
+import net.blay09.mods.craftingtweaks.api.DefaultProviderV2;
 import net.blay09.mods.craftingtweaks.api.SimpleTweakProvider;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -17,42 +17,50 @@ public class SimpleTweakProviderImpl implements SimpleTweakProvider {
 
     public static class TweakSettings {
         public final boolean enabled;
+        public final boolean showButton;
         public final int buttonX;
         public final int buttonY;
 
-        public TweakSettings(boolean enabled, int buttonX, int buttonY) {
+        public TweakSettings(boolean enabled, boolean showButton, int buttonX, int buttonY) {
             this.enabled = enabled;
+            this.showButton = showButton;
             this.buttonX = buttonX;
             this.buttonY = buttonY;
         }
     }
 
     private final String modid;
-    private final DefaultProvider defaultProvider = CraftingTweaksAPI.createDefaultProvider();
+    private final DefaultProviderV2 defaultProvider = CraftingTweaksAPI.createDefaultProviderV2();
     private int gridSlotNumber = 1;
     private int gridSize = 9;
     private boolean hideButtons;
-    private TweakSettings tweakRotate = new TweakSettings(true, -16, 16);
-    private TweakSettings tweakBalance = new TweakSettings(true, -16, 16 + 18);
-    private TweakSettings tweakClear = new TweakSettings(true, -16, 16 + 18 + 18);
+    private boolean phantomItems;
+    private TweakSettings tweakRotate = new TweakSettings(true, true, -16, 16);
+    private TweakSettings tweakBalance = new TweakSettings(true, true, -16, 16 + 18);
+    private TweakSettings tweakClear = new TweakSettings(true, true, -16, 16 + 18 + 18);
 
     public SimpleTweakProviderImpl(String modid) {
         this.modid = modid;
     }
 
     @Override
-    public void setTweakRotate(boolean enabled, int x, int y) {
-        tweakRotate = new TweakSettings(enabled, x, y);
+    public void setTweakRotate(boolean enabled, boolean showButton, int x, int y) {
+        tweakRotate = new TweakSettings(enabled, showButton, x, y);
     }
 
     @Override
-    public void setTweakBalance(boolean enabled, int x, int y) {
-        tweakBalance = new TweakSettings(enabled, x, y);
+    public void setTweakBalance(boolean enabled, boolean showButton, int x, int y) {
+        tweakBalance = new TweakSettings(enabled, showButton, x, y);
     }
 
     @Override
-    public void setTweakClear(boolean enabled, int x, int y) {
-        tweakClear = new TweakSettings(enabled, x, y);
+    public void setTweakClear(boolean enabled, boolean showButton, int x, int y) {
+        tweakClear = new TweakSettings(enabled, showButton, x, y);
+    }
+
+    @Override
+    public void setPhantomItems(boolean phantomItems) {
+        this.phantomItems = phantomItems;
     }
 
     @Override
@@ -79,21 +87,21 @@ public class SimpleTweakProviderImpl implements SimpleTweakProvider {
     @Override
     public void clearGrid(EntityPlayer entityPlayer, Container container, int id) {
         if(tweakClear.enabled) {
-            defaultProvider.clearGrid(entityPlayer, container, getCraftMatrix(entityPlayer, container, id));
+            defaultProvider.clearGrid(this, id, entityPlayer, container, phantomItems);
         }
     }
 
     @Override
     public void rotateGrid(EntityPlayer entityPlayer, Container container, int id) {
         if(tweakRotate.enabled) {
-            defaultProvider.rotateGrid(entityPlayer, container, getCraftMatrix(entityPlayer, container, id));
+            defaultProvider.rotateGrid(this, id, entityPlayer, container);
         }
     }
 
     @Override
     public void balanceGrid(EntityPlayer entityPlayer, Container container, int id) {
         if(tweakBalance.enabled) {
-            defaultProvider.balanceGrid(entityPlayer, container, getCraftMatrix(entityPlayer, container, id));
+            defaultProvider.balanceGrid(this, id, entityPlayer, container);
         }
     }
 
@@ -104,12 +112,12 @@ public class SimpleTweakProviderImpl implements SimpleTweakProvider {
 
     @Override
     public boolean transferIntoGrid(EntityPlayer entityPlayer, Container container, int id, Slot sourceSlot) {
-        return defaultProvider.transferIntoGrid(entityPlayer, container, getCraftMatrix(entityPlayer, container, id), sourceSlot);
+        return defaultProvider.transferIntoGrid(this, id, entityPlayer, container, sourceSlot);
     }
 
     @Override
     public ItemStack putIntoGrid(EntityPlayer entityPlayer, Container container, int id, ItemStack itemStack, int index) {
-        return defaultProvider.putIntoGrid(entityPlayer, container, getCraftMatrix(entityPlayer, container, id), itemStack, index);
+        return defaultProvider.putIntoGrid(this, id, entityPlayer, container, itemStack, index);
     }
 
     @Override
@@ -119,7 +127,7 @@ public class SimpleTweakProviderImpl implements SimpleTweakProvider {
 
     @Override
     public boolean requiresServerSide() {
-        return false;
+        return phantomItems;
     }
 
     @Override
@@ -135,13 +143,13 @@ public class SimpleTweakProviderImpl implements SimpleTweakProvider {
     @Override
     public void initGui(GuiContainer guiContainer, List<GuiButton> buttonList) {
         if(!hideButtons) {
-            if(tweakRotate.enabled) {
+            if(tweakRotate.enabled && tweakRotate.showButton) {
                 buttonList.add(CraftingTweaksAPI.createRotateButton(0, guiContainer.guiLeft + tweakRotate.buttonX, guiContainer.guiTop + tweakRotate.buttonY));
             }
-            if(tweakBalance.enabled) {
+            if(tweakBalance.enabled && tweakBalance.showButton) {
                 buttonList.add(CraftingTweaksAPI.createBalanceButton(0, guiContainer.guiLeft + tweakBalance.buttonX, guiContainer.guiTop +  + tweakBalance.buttonY));
             }
-            if(tweakClear.enabled) {
+            if(tweakClear.enabled && tweakClear.showButton) {
                 buttonList.add(CraftingTweaksAPI.createClearButton(0, guiContainer.guiLeft + tweakClear.buttonX, guiContainer.guiTop +  + tweakClear.buttonY));
             }
         }

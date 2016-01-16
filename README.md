@@ -8,9 +8,7 @@ Minecraft Mod. Allows you to rotate, balance or clear the crafting matrix by the
 * [@BlayTheNinth](https://twitter.com/BlayTheNinth) on Twitter
 
 ## IMC API (1.8.9+)
-Most crafting grids can probably be registered using the IMC API. In order to function with this simplified implementation, the following requirements **must** be met.
-* Your container contains only one crafting grid
-* Your container does not use phantom items
+Most crafting grids can be registered using the IMC API.
 
 In order to register your container for Crafting Tweaks, send an IMC message as follows:
 
@@ -18,14 +16,16 @@ In order to register your container for Crafting Tweaks, send an IMC message as 
 NBTTagCompound tagCompound = new NBTTagCompound();
 tagCompound.setString("ContainerClass", YourCraftingContainer.class.getName());
 
-// tagCompound.setString("GridSlotNumber", 1);
-// tagCompound.setString("GridSize", 9);
+// tagCompound.setInteger("GridSlotNumber", 1);
+// tagCompound.setInteger("GridSize", 9);
 // tagCompound.setBoolean("HideButtons", false);
-// tagCompound.setBoolean("ButtonOffsetX", -16);
-// tagCompound.setBoolean("ButtonOffsetY", 16);
+// tagCompound.setBoolean("PhantomItems", true);
+// tagCompound.setInteger("ButtonOffsetX", -16);
+// tagCompound.setInteger("ButtonOffsetY", 16);
 
 // NBTTagCompound tweakRotate = new NBTTagCompound();
 // tweakRotate.setBoolean("Enabled", true);
+// tweakRotate.setBoolean("ShowButton", true);
 // tweakRotate.setInteger("ButtonX", 0);
 // tweakRotate.setInteger("ButtonY", 18);
 // tagCompound.setTag("TweakRotate", tweakRotate);
@@ -41,6 +41,7 @@ The fields are described below:
 * **GridSlotNumber**: The slotNumber of the first slot in the crafting matrix (this is the index within Container.inventorySlots, NOT the index within the IInventory)
 * **GridSize**: The size of the crafting grid (probably 9)
 * **HideButtons**: If you don't want Crafting Tweak's buttons to show up (but you want the hotkeys to work), set this to true
+* **PhantomItems**: If your crafting grid contains phantom items, set this to true. This will make the clear operation delete the grid instead of putting the items into the player inventory.
 * **ButtonOffsetX**: X-Offset to apply to all tweak buttons, relative to the upper left corner of the GuiContainer
 * **ButtonOffsetY**: Y-Offset to apply to all tweak buttons, relative to the upper left corner of the GuiContainer
 * **TweakRotate**: A tag compound containing settings for the rotate tweak (see below)
@@ -48,6 +49,7 @@ The fields are described below:
 * **TweakClear**: A tag compound containing settings for the clear tweak (see below)
 * **Tweak...**: Contains the following settings for tweaks:
   * **Enabled**: Set this to false if this tweak should be disabled for this container
+  * **ShowButton**: Set this to false if the button for this tweak should not be added
   * **ButtonX**: X-Position of the tweak button relative to ButtonOffsetX
   * **ButtonY**: Y-Position of the tweak button relative to ButtonOffsetY
 

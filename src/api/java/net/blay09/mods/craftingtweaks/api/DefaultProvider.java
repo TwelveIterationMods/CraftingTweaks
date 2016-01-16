@@ -6,6 +6,10 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
+/**
+ * @deprecated Use DefaultProviderV2 instead.
+ */
+@Deprecated
 public interface DefaultProvider {
 
     /**

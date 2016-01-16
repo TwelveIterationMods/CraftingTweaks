@@ -17,10 +17,7 @@ public class CraftingTweaksAPI {
 
     /**
      * For simple crafting tables that follow Vanilla's standard, you can use this instead of the registerProvider() method that allows custom implementations.
-     * The following requirements must be met:
-     * [*] Your container contains only one crafting grid
-     * [*] Your container does not use phantom items
-     * If your container does not meet these requirements, use registerProvider() and provide a custom implementation (also see createDefaultProvider)
+     * Make sure to set things up properly in the returned SimpleTweakProvider (e.g. setPhantomItems(true) if your grid uses phantom items)
      * @param modid the mod id the container is part of
      * @param containerClass the container containing a default crafting grid
      * @return a SimpleTweakProvider instance that allows further control over the provider settings
@@ -41,10 +38,20 @@ public class CraftingTweaksAPI {
 
     /**
      * Returns a default provider implementation you can use within your TweakProvider
+     * @deprecated Use createDefaultProviderV2() instead, it's way better
      * @return default provider implementation with functions to be called from a TweakProvider
      */
+    @Deprecated
     public static DefaultProvider createDefaultProvider() {
         return internalMethods.createDefaultProvider();
+    }
+
+    /**
+     * Returns a default provider implementation you can use within your TweakProvider
+     * @return default provider implementation with functions to be called from a TweakProvider
+     */
+    public static DefaultProviderV2 createDefaultProviderV2() {
+        return internalMethods.createDefaultProviderV2();
     }
 
     /**
