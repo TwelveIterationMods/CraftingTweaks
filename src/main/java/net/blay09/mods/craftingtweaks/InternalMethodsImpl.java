@@ -1,9 +1,6 @@
 package net.blay09.mods.craftingtweaks;
 
-import net.blay09.mods.craftingtweaks.api.DefaultProvider;
-import net.blay09.mods.craftingtweaks.api.InternalMethods;
-import net.blay09.mods.craftingtweaks.api.SimpleTweakProvider;
-import net.blay09.mods.craftingtweaks.api.TweakProvider;
+import net.blay09.mods.craftingtweaks.api.*;
 import net.blay09.mods.craftingtweaks.client.GuiTweakButton;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.inventory.Container;
@@ -27,6 +24,11 @@ public class InternalMethodsImpl implements InternalMethods {
     @Override
     public DefaultProvider createDefaultProvider() {
         return new DefaultProviderImpl();
+    }
+
+    @Override
+    public DefaultProviderV2 createDefaultProviderV2() {
+        return new DefaultProviderV2Impl();
     }
 
     @Override
