@@ -197,8 +197,9 @@ public class ClientProxy extends CommonProxy {
     }
 
     @SubscribeEvent
-    public void onActionPerformed(GuiScreenEvent.ActionPerformedEvent event) {
+    public void onActionPerformed(GuiScreenEvent.ActionPerformedEvent.Pre event) {
         if(event.button instanceof GuiTweakButton) {
+            event.button.playPressSound(Minecraft.getMinecraft().getSoundHandler());
             EntityPlayer entityPlayer = FMLClientHandler.instance().getClientPlayerEntity();
             Container container = entityPlayer.openContainer;
             TweakProvider provider = CraftingTweaks.instance.getProvider(container);
