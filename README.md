@@ -47,6 +47,8 @@ The fields are described below:
   * **ButtonX**: X-Position of the tweak button relative to the upper left corner of the GuiContainer
   * **ButtonY**: Y-Position of the tweak button relative to the upper left corner of the GuiContainer
 
+*Note*: If you're specifying custom button positions, they should be 18 pixels apart from each other.
+
 ## API
 If your crafting grid is more complex or doesn't follow Vanilla standards, you may need to supply a custom tweak provider. In that case, follow these steps.
 The easiest way to add Crafting Tweaks to your development environment is to do some additions to your build.gradle file. First, register Crafting Tweaks's maven repository by adding the following lines:
