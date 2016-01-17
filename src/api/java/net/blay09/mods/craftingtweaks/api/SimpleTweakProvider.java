@@ -1,6 +1,9 @@
 package net.blay09.mods.craftingtweaks.api;
 
-public interface SimpleTweakProvider extends TweakProvider {
+
+import net.minecraft.inventory.Container;
+
+public interface SimpleTweakProvider<T extends Container> extends TweakProvider<T> {
 
     /**
      * Sets the settings for the rotation tweak.

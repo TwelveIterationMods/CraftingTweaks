@@ -37,11 +37,11 @@ public class ClientProvider {
         return Minecraft.getMinecraft().playerController;
     }
 
-    public boolean canClear(TweakProvider provider, EntityPlayer entityPlayer, Container container, int id) {
+    public <T extends Container> boolean canClear(TweakProvider<T> provider, EntityPlayer entityPlayer, T container, int id) {
         return !provider.requiresServerSide();
     }
 
-    public void clearGrid(TweakProvider provider, EntityPlayer entityPlayer, Container container, int id) {
+    public <T extends Container> void clearGrid(TweakProvider<T> provider, EntityPlayer entityPlayer, T container, int id) {
         if(!canClear(provider, entityPlayer, container, id)) {
             return;
         }
@@ -53,11 +53,11 @@ public class ClientProvider {
         }
     }
 
-    public boolean canRotate(TweakProvider provider, EntityPlayer entityPlayer, Container container, int id) {
+    public <T extends Container> boolean canRotate(TweakProvider<T> provider, EntityPlayer entityPlayer, T container, int id) {
         return !provider.requiresServerSide() && provider.getCraftingGridSize(id) == 9;
     }
 
-    public void rotateGrid(TweakProvider provider, EntityPlayer entityPlayer, Container container, int id) {
+    public <T extends Container> void rotateGrid(TweakProvider<T> provider, EntityPlayer entityPlayer, T container, int id) {
         if(!canRotate(provider, entityPlayer, container, id)) {
             return;
         }
@@ -73,11 +73,11 @@ public class ClientProvider {
         } while(currentSlot != startSlot);
     }
 
-    public boolean canTransfer(TweakProvider provider, EntityPlayer entityPlayer, Container container, int id) {
+    public <T extends Container> boolean canTransfer(TweakProvider<T> provider, EntityPlayer entityPlayer, T container, int id) {
         return !provider.requiresServerSide();
     }
 
-    public boolean transferIntoGrid(TweakProvider provider, EntityPlayer entityPlayer, Container container, int id, Slot sourceSlot) {
+    public <T extends Container> boolean transferIntoGrid(TweakProvider<T> provider, EntityPlayer entityPlayer, T container, int id, Slot sourceSlot) {
         if(!canTransfer(provider, entityPlayer, container, id)) {
             return false;
         }

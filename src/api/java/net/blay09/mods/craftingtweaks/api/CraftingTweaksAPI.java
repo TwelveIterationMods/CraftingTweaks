@@ -22,7 +22,7 @@ public class CraftingTweaksAPI {
      * @param containerClass the container containing a default crafting grid
      * @return a SimpleTweakProvider instance that allows further control over the provider settings
      */
-    public static SimpleTweakProvider registerSimpleProvider(String modid, Class<? extends Container> containerClass) {
+    public static <T extends Container> SimpleTweakProvider<T> registerSimpleProvider(String modid, Class<T> containerClass) {
         return internalMethods.registerSimpleProvider(modid, containerClass);
     }
 
@@ -32,7 +32,7 @@ public class CraftingTweaksAPI {
      * @param containerClass the container this provider is used for
      * @param provider the tweak provider implementation for the given container
      */
-    public static void registerProvider(Class<? extends Container> containerClass, TweakProvider provider) {
+    public static <T extends Container> void registerProvider(Class<T> containerClass, TweakProvider<T> provider) {
         internalMethods.registerProvider(containerClass, provider);
     }
 

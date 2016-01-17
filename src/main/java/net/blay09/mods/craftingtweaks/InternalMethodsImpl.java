@@ -10,13 +10,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class InternalMethodsImpl implements InternalMethods {
 
     @Override
-    public void registerProvider(Class<? extends Container> containerClass, TweakProvider provider) {
+    public <T extends Container> void registerProvider(Class<T> containerClass, TweakProvider<T> provider) {
         CraftingTweaks.instance.registerProvider(containerClass, provider);
     }
 
     @Override
-    public SimpleTweakProvider registerSimpleProvider(String modid, Class<? extends Container> containerClass) {
-        SimpleTweakProvider simpleTweakProvider = new SimpleTweakProviderImpl(modid);
+    public <T extends Container> SimpleTweakProvider<T> registerSimpleProvider(String modid, Class<T> containerClass) {
+        SimpleTweakProvider<T> simpleTweakProvider = new SimpleTweakProviderImpl<>(modid);
         CraftingTweaks.instance.registerProvider(containerClass, simpleTweakProvider);
         return simpleTweakProvider;
     }

@@ -13,7 +13,7 @@ import net.minecraft.item.ItemStack;
 
 import java.util.List;
 
-public class SimpleTweakProviderImpl implements SimpleTweakProvider {
+public class SimpleTweakProviderImpl<T extends Container> implements SimpleTweakProvider<T> {
 
     public static class TweakSettings {
         public final boolean enabled;
@@ -85,43 +85,43 @@ public class SimpleTweakProviderImpl implements SimpleTweakProvider {
     }
 
     @Override
-    public void clearGrid(EntityPlayer entityPlayer, Container container, int id) {
+    public void clearGrid(EntityPlayer entityPlayer, T container, int id) {
         if(tweakClear.enabled) {
             defaultProvider.clearGrid(this, id, entityPlayer, container, phantomItems);
         }
     }
 
     @Override
-    public void rotateGrid(EntityPlayer entityPlayer, Container container, int id) {
+    public void rotateGrid(EntityPlayer entityPlayer, T container, int id) {
         if(tweakRotate.enabled) {
             defaultProvider.rotateGrid(this, id, entityPlayer, container);
         }
     }
 
     @Override
-    public void balanceGrid(EntityPlayer entityPlayer, Container container, int id) {
+    public void balanceGrid(EntityPlayer entityPlayer, T container, int id) {
         if(tweakBalance.enabled) {
             defaultProvider.balanceGrid(this, id, entityPlayer, container);
         }
     }
 
     @Override
-    public boolean canTransferFrom(EntityPlayer entityPlayer, Container container, int id, Slot sourceSlot) {
+    public boolean canTransferFrom(EntityPlayer entityPlayer, T container, int id, Slot sourceSlot) {
         return defaultProvider.canTransferFrom(entityPlayer, container, sourceSlot);
     }
 
     @Override
-    public boolean transferIntoGrid(EntityPlayer entityPlayer, Container container, int id, Slot sourceSlot) {
+    public boolean transferIntoGrid(EntityPlayer entityPlayer, T container, int id, Slot sourceSlot) {
         return defaultProvider.transferIntoGrid(this, id, entityPlayer, container, sourceSlot);
     }
 
     @Override
-    public ItemStack putIntoGrid(EntityPlayer entityPlayer, Container container, int id, ItemStack itemStack, int index) {
+    public ItemStack putIntoGrid(EntityPlayer entityPlayer, T container, int id, ItemStack itemStack, int index) {
         return defaultProvider.putIntoGrid(this, id, entityPlayer, container, itemStack, index);
     }
 
     @Override
-    public IInventory getCraftMatrix(EntityPlayer entityPlayer, Container container, int id) {
+    public IInventory getCraftMatrix(EntityPlayer entityPlayer, T container, int id) {
         return container.inventorySlots.get(getCraftingGridStart(id)).inventory;
     }
 
