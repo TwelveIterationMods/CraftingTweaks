@@ -16,7 +16,7 @@ public class HandlerRotate implements IMessageHandler<MessageRotate, IMessage> {
             EntityPlayer entityPlayer = ctx.getServerHandler().playerEntity;
             Container container = entityPlayer.openContainer;
             if(container != null) {
-                TweakProvider tweakProvider = CraftingTweaks.instance.getProvider(container);
+                TweakProvider<Container> tweakProvider = CraftingTweaks.instance.getProvider(container);
                 if (tweakProvider != null) {
                     tweakProvider.rotateGrid(entityPlayer, container, message.id);
                 }

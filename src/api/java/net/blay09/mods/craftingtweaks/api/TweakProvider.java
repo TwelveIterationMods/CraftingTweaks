@@ -16,7 +16,7 @@ import java.util.List;
  * An interface for tweak provider implementations. Needs to be registered using CraftingTweaksAPI.registerProvider().
  * Can make use of CraftingTweaksAPI.createDefaultProvider() for standard crafting grids.
  */
-public interface TweakProvider {
+public interface TweakProvider<T extends Container> {
 
     /**
      * @return the mod id the provider is for, used to check availability and configuration
@@ -61,7 +61,7 @@ public interface TweakProvider {
      * @param container the container the grid is part of
      * @param id the crafting grid ID that is being cleared (usually 0 unless there's more grids in one GUI)
      */
-    void clearGrid(EntityPlayer entityPlayer, Container container, int id);
+    void clearGrid(EntityPlayer entityPlayer, T container, int id);
 
     /**
      * Rotates the grid clockwise.
@@ -69,7 +69,7 @@ public interface TweakProvider {
      * @param container the container the grid is part of
      * @param id the crafting grid ID tthat is being rotated (usually 0 unless there's more grids in one GUI)
      */
-    void rotateGrid(EntityPlayer entityPlayer, Container container, int id);
+    void rotateGrid(EntityPlayer entityPlayer, T container, int id);
 
     /**
      * Balances the grid.
@@ -77,7 +77,7 @@ public interface TweakProvider {
      * @param container the container the grid is part of
      * @param id the crafting grid ID that is being balanced (usually 0 unless there's more grids in one GUI)
      */
-    void balanceGrid(EntityPlayer entityPlayer, Container container, int id);
+    void balanceGrid(EntityPlayer entityPlayer, T container, int id);
 
     /**
      * Checks if the transfer-to-grid feature can be used from the sourceSlot.
@@ -87,7 +87,7 @@ public interface TweakProvider {
      * @param sourceSlot the slot items are being transferred from
      * @return true if transfer-to-grid is allowed from the sourceSlot, false otherwise
      */
-    boolean canTransferFrom(EntityPlayer entityPlayer, Container container, int id, Slot sourceSlot);
+    boolean canTransferFrom(EntityPlayer entityPlayer, T container, int id, Slot sourceSlot);
 
     /**
      * Transfers items from sourceSlot into the grid (similar to shift-clicking items into a chest).
@@ -97,7 +97,7 @@ public interface TweakProvider {
      * @param sourceSlot the slot items are being transferred from
      * @return true if items were fully transferred, false otherwise
      */
-    boolean transferIntoGrid(EntityPlayer entityPlayer, Container container, int id, Slot sourceSlot);
+    boolean transferIntoGrid(EntityPlayer entityPlayer, T container, int id, Slot sourceSlot);
 
     /**
      * Puts an item into the grid.
@@ -108,7 +108,7 @@ public interface TweakProvider {
      * @param index the slot index within the craft matrix the item should be put into
      * @return a rest stack or null if there is no rest
      */
-    ItemStack putIntoGrid(EntityPlayer entityPlayer, Container container, int id, ItemStack itemStack, int index);
+    ItemStack putIntoGrid(EntityPlayer entityPlayer, T container, int id, ItemStack itemStack, int index);
 
     /**
      * @param entityPlayer the player that is accessing the container
@@ -116,7 +116,7 @@ public interface TweakProvider {
      * @param id the crafting grid ID that is being accessed (usually 0 unless there's more grids in one GUI)
      * @return the craft matrix inventory
      */
-    IInventory getCraftMatrix(EntityPlayer entityPlayer, Container container, int id);
+    IInventory getCraftMatrix(EntityPlayer entityPlayer, T container, int id);
 
     /**
      * Called to add buttons to the GUI. May not be called if buttons are disabled in the configuration.

@@ -89,7 +89,7 @@ public class CraftingTweaks {
             if(message.isNBTMessage() && message.key.equals("RegisterProvider")) {
                 NBTTagCompound tagCompound = message.getNBTValue();
                 String containerClassName = tagCompound.getString("ContainerClass");
-                SimpleTweakProvider provider = new SimpleTweakProviderImpl(message.getSender());
+                SimpleTweakProvider<Container> provider = new SimpleTweakProviderImpl<>(message.getSender());
 
                 int buttonOffsetX = tagCompound.hasKey("ButtonOffsetX") ? tagCompound.getInteger("ButtonOffsetX") : -16;
                 int buttonOffsetY = tagCompound.hasKey("ButtonOffsetY") ? tagCompound.getInteger("ButtonOffsetY") : 16;
@@ -137,7 +137,7 @@ public class CraftingTweaks {
         config.save();
     }
 
-    public void registerProvider(Class<? extends Container> clazz, TweakProvider provider) {
+    public <T extends Container> void registerProvider(Class<T> clazz, TweakProvider<T> provider) {
         if(!provider.getModId().equals("minecraft") && !Loader.isModLoaded(provider.getModId())) {
             return;
         }
@@ -147,7 +147,7 @@ public class CraftingTweaks {
     }
 
     @SuppressWarnings("unchecked")
-    public void registerProvider(String className, TweakProvider provider) {
+    public <T extends Container> void registerProvider(String className, TweakProvider<T> provider) {
         config.getString(provider.getModId(), "addons", ModSupportState.ENABLED.name().toLowerCase(), "enabled, buttons_only, hotkeys_only or disabled", ModSupportState.getValidValues());
         if(Loader.isModLoaded(provider.getModId())) {
             if(provider.load()) {
@@ -162,18 +162,19 @@ public class CraftingTweaks {
         }
     }
 
-    public TweakProvider getProvider(Container container) {
+    @SuppressWarnings("unchecked")
+    public <T extends Container> TweakProvider<T> getProvider(T container) {
         if(container == null) {
             return null;
         }
-        for(Class clazz : providerMap.keySet()) {
+        for(Class<? extends Container> clazz : providerMap.keySet()) {
             if(container.getClass() == clazz) {
-                return providerMap.get(clazz);
+                return (TweakProvider<T>)providerMap.get(clazz);
             }
         }
         for(Class<? extends Container> clazz : providerMap.keySet()) {
             if(clazz.isAssignableFrom(container.getClass())) {
-                return providerMap.get(clazz);
+                return (TweakProvider<T>)providerMap.get(clazz);
             }
         }
         return null;

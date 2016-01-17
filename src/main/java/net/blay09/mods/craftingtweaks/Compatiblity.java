@@ -8,14 +8,14 @@ import net.minecraft.inventory.ContainerWorkbench;
 public class Compatiblity {
 
     public static void vanilla() {
-        SimpleTweakProvider provider = CraftingTweaksAPI.registerSimpleProvider("minecraft", ContainerWorkbench.class);
+        SimpleTweakProvider<ContainerWorkbench> provider = CraftingTweaksAPI.registerSimpleProvider("minecraft", ContainerWorkbench.class);
         provider.setTweakRotate(true, true, 10, 17);
         provider.setTweakBalance(true, true, 10, 17 + 18);
         provider.setTweakClear(true, true, 10, 17 + 36);
     }
 
     public static void jacb() {
-        SimpleTweakProvider provider = registerSimpleProvider("jacb", "tv.vanhal.jacb.gui.BenchContainer");
+        SimpleTweakProvider<?> provider = registerSimpleProvider("jacb", "tv.vanhal.jacb.gui.BenchContainer");
         if(provider != null) {
             provider.setTweakRotate(true, true, 10, 17);
             provider.setTweakBalance(true, true, 10, 17 + 18);
@@ -24,7 +24,7 @@ public class Compatiblity {
     }
 
     public static void backpack() {
-        SimpleTweakProvider provider = registerSimpleProvider("Backpack", "de.eydamos.backpack.inventory.container.ContainerWorkbenchBackpack");
+        SimpleTweakProvider<?> provider = registerSimpleProvider("Backpack", "de.eydamos.backpack.inventory.container.ContainerWorkbenchBackpack");
         if(provider != null) {
             provider.setPhantomItems(true);
             provider.setTweakRotate(true, true, 8, 35);
@@ -34,7 +34,7 @@ public class Compatiblity {
     }
 
     public static void thaumcraft() {
-        SimpleTweakProvider provider = registerSimpleProvider("Thaumcraft", "thaumcraft.common.container.ContainerArcaneWorkbench");
+        SimpleTweakProvider<?> provider = registerSimpleProvider("Thaumcraft", "thaumcraft.common.container.ContainerArcaneWorkbench");
         if(provider != null) {
             provider.setGrid(2, 9);
             provider.setTweakRotate(true, true, -12, 46);

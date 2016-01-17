@@ -21,7 +21,7 @@ public interface DefaultProviderV2 {
      * @param entityPlayer the player who's rotating the grid
      * @param container the container the grid is part of
      */
-    void rotateGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container);
+    <T extends Container> void rotateGrid(TweakProvider<T> provider, int id, EntityPlayer entityPlayer, T container);
 
     /**
      * Default implementation for grid rotation with custom rotation handling.
@@ -31,7 +31,7 @@ public interface DefaultProviderV2 {
      * @param container the container the grid is part of
      * @param rotationHandler the rotation handler that determines where items are going to end up
      */
-    void rotateGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container, RotationHandler rotationHandler);
+    <T extends Container> void rotateGrid(TweakProvider<T> provider, int id, EntityPlayer entityPlayer, T container, RotationHandler rotationHandler);
 
     /**
      * Default implementation for grid clearing.
@@ -41,7 +41,7 @@ public interface DefaultProviderV2 {
      * @param container the container the grid is part of
      * @param phantomItems true if the grid contains phantom items (i.e. they should be deleted, not put into the player's inventory)
      */
-    void clearGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container, boolean phantomItems);
+    <T extends Container> void clearGrid(TweakProvider<T> provider, int id, EntityPlayer entityPlayer, T container, boolean phantomItems);
 
     /**
      * Default implementation for grid balancing.
@@ -50,7 +50,7 @@ public interface DefaultProviderV2 {
      * @param entityPlayer the player who's balancing the grid
      * @param container the container the grid is part of
      */
-    void balanceGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container);
+    <T extends Container> void balanceGrid(TweakProvider<T> provider, int id, EntityPlayer entityPlayer, T container);
 
     /**
      * Default implementation for putting an item into a specific slot within a the grid.
@@ -62,7 +62,7 @@ public interface DefaultProviderV2 {
      * @param index the slot index within the craft matrix the item is being put into
      * @return a rest stack that didn't fit in or null if there is no rest
      */
-    ItemStack putIntoGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container, ItemStack itemStack, int index);
+    <T extends Container> ItemStack putIntoGrid(TweakProvider<T> provider, int id, EntityPlayer entityPlayer, T container, ItemStack itemStack, int index);
 
     /**
      * Default implementation for transferring an item into the crafting grid
@@ -73,7 +73,7 @@ public interface DefaultProviderV2 {
      * @param sourceSlot the source slot inside the container the item is coming from
      * @return true if items were transferred, false otherwise
      */
-    boolean transferIntoGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container, Slot sourceSlot);
+    <T extends Container> boolean transferIntoGrid(TweakProvider<T> provider, int id, EntityPlayer entityPlayer, T container, Slot sourceSlot);
 
     /**
      * Default implementation for checking if transfer-to-grid is allowed from this slot. Checks if this slot is part of the player inventory.

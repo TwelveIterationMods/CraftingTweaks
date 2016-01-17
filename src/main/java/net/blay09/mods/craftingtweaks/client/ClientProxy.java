@@ -73,7 +73,7 @@ public class ClientProxy extends CommonProxy {
             if(entityPlayer != null) {
                 Container container = entityPlayer.openContainer;
                 if (container != null) {
-                    TweakProvider provider = CraftingTweaks.instance.getProvider(container);
+                    TweakProvider<Container> provider = CraftingTweaks.instance.getProvider(container);
                     if (provider != null) {
                         CraftingTweaks.ModSupportState config = CraftingTweaks.instance.getModSupportState(provider.getModId());
                         if (config == CraftingTweaks.ModSupportState.ENABLED || config == CraftingTweaks.ModSupportState.HOTKEYS_ONLY) {
@@ -123,7 +123,7 @@ public class ClientProxy extends CommonProxy {
             if (entityPlayer != null) {
                 Container container = entityPlayer.openContainer;
                 if (container != null) {
-                    TweakProvider provider = CraftingTweaks.instance.getProvider(container);
+                    TweakProvider<Container> provider = CraftingTweaks.instance.getProvider(container);
                     if (provider != null) {
                         if (keyTransferStack.getKeyCode() > 0 && Keyboard.isKeyDown(keyTransferStack.getKeyCode())) {
                             if (mouseSlot != null) {
@@ -160,7 +160,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     private void initGui(GuiContainer guiContainer) {
-        TweakProvider provider = CraftingTweaks.instance.getProvider(guiContainer.inventorySlots);
+        TweakProvider<Container> provider = CraftingTweaks.instance.getProvider(guiContainer.inventorySlots);
         if(provider != null) {
             CraftingTweaks.ModSupportState config = CraftingTweaks.instance.getModSupportState(provider.getModId());
             if(config == CraftingTweaks.ModSupportState.ENABLED || config == CraftingTweaks.ModSupportState.BUTTONS_ONLY) {
@@ -202,7 +202,7 @@ public class ClientProxy extends CommonProxy {
             event.button.playPressSound(Minecraft.getMinecraft().getSoundHandler());
             EntityPlayer entityPlayer = FMLClientHandler.instance().getClientPlayerEntity();
             Container container = entityPlayer.openContainer;
-            TweakProvider provider = CraftingTweaks.instance.getProvider(container);
+            TweakProvider<Container> provider = CraftingTweaks.instance.getProvider(container);
             switch(((GuiTweakButton) event.button).getTweakOption()) {
                 case Rotate:
                     if(isServerSide) {
