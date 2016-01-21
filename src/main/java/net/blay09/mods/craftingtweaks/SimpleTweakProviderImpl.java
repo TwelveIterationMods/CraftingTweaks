@@ -189,11 +189,11 @@ public class SimpleTweakProviderImpl implements SimpleTweakProvider {
             case UP:
             case SOUTH:
             case DOWN:
-                return guiContainer.guiLeft + firstSlot.xDisplayPosition + 18 * index;
+                return firstSlot.xDisplayPosition + 18 * index;
             case EAST:
-                return guiContainer.guiLeft + firstSlot.xDisplayPosition + 18 * 3 + 1;
+                return firstSlot.xDisplayPosition + 18 * 3 + 1;
             case WEST:
-                return guiContainer.guiLeft + firstSlot.xDisplayPosition - 19;
+                return firstSlot.xDisplayPosition - 19;
         }
         return 0;
     }
@@ -203,13 +203,13 @@ public class SimpleTweakProviderImpl implements SimpleTweakProvider {
         switch(alignToGrid) {
             case NORTH:
             case UP:
-                return guiContainer.guiTop + firstSlot.yDisplayPosition - 18 - 1;
+                return firstSlot.yDisplayPosition - 18 - 1;
             case SOUTH:
             case DOWN:
-                return guiContainer.guiTop + firstSlot.yDisplayPosition + 18 * 3 + 1;
+                return firstSlot.yDisplayPosition + 18 * 3 + 1;
             case EAST:
             case WEST:
-                return guiContainer.guiTop + firstSlot.yDisplayPosition + 18 * index;
+                return firstSlot.yDisplayPosition + 18 * index;
         }
         return 0;
     }
