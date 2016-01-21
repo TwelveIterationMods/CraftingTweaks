@@ -15,10 +15,6 @@ public class GuiTweakButton extends GuiImageButton {
     private final int tweakId;
     private final GuiContainer parentGui;
 
-    public GuiTweakButton(int xPosition, int yPosition, int texCoordX, int texCoordY, TweakOption tweakOption, int tweakId) {
-        this(null, xPosition, yPosition, texCoordX, texCoordY, tweakOption, tweakId);
-    }
-
     public GuiTweakButton(GuiContainer parentGui, int xPosition, int yPosition, int texCoordX, int texCoordY, TweakOption tweakOption, int tweakId) {
         super(-1, xPosition, yPosition, texCoordX, texCoordY);
         this.parentGui = parentGui;

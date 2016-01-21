@@ -3,6 +3,7 @@ package net.blay09.mods.craftingtweaks;
 import net.blay09.mods.craftingtweaks.api.*;
 import net.blay09.mods.craftingtweaks.client.GuiTweakButton;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.Container;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -33,20 +34,20 @@ public class InternalMethodsImpl implements InternalMethods {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public GuiButton createBalanceButton(int id, int x, int y) {
-        return new GuiTweakButton(x, y, 48, 0, GuiTweakButton.TweakOption.Balance, id);
+    public GuiButton createBalanceButton(int id, GuiContainer parentGui, int x, int y) {
+        return new GuiTweakButton(parentGui, x, y, 48, 0, GuiTweakButton.TweakOption.Balance, id);
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public GuiButton createRotateButton(int id, int x, int y) {
-        return new GuiTweakButton(x, y, 16, 0, GuiTweakButton.TweakOption.Rotate, id);
+    public GuiButton createRotateButton(int id, GuiContainer parentGui, int x, int y) {
+        return new GuiTweakButton(parentGui, x, y, 16, 0, GuiTweakButton.TweakOption.Rotate, id);
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public GuiButton createClearButton(int id, int x, int y) {
-        return new GuiTweakButton(x, y, 32, 0, GuiTweakButton.TweakOption.Clear, id);
+    public GuiButton createClearButton(int id, GuiContainer parentGui, int x, int y) {
+        return new GuiTweakButton(parentGui, x, y, 32, 0, GuiTweakButton.TweakOption.Clear, id);
     }
 
 }
