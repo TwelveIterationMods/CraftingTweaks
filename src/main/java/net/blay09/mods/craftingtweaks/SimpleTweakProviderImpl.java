@@ -151,33 +151,33 @@ public class SimpleTweakProviderImpl implements SimpleTweakProvider {
         if(!hideButtons) {
             int index = 0;
             if(tweakRotate.enabled && tweakRotate.showButton) {
-                int buttonX = guiContainer.guiLeft + tweakRotate.buttonX;
-                int buttonY = guiContainer.guiTop + tweakRotate.buttonY;
+                int buttonX = tweakRotate.buttonX;
+                int buttonY = tweakRotate.buttonY;
                 if(alignToGrid != null) {
                     buttonX = getButtonX(guiContainer, index);
                     buttonY = getButtonY(guiContainer, index);
                 }
-                buttonList.add(CraftingTweaksAPI.createRotateButton(0, buttonX, buttonY));
+                buttonList.add(CraftingTweaksAPI.createRotateButtonRelative(0, guiContainer, buttonX, buttonY));
                 index++;
             }
             if(tweakBalance.enabled && tweakBalance.showButton) {
-                int buttonX = guiContainer.guiLeft + tweakBalance.buttonX;
-                int buttonY = guiContainer.guiTop + tweakBalance.buttonY;
+                int buttonX = tweakBalance.buttonX;
+                int buttonY = tweakBalance.buttonY;
                 if(alignToGrid != null) {
                     buttonX = getButtonX(guiContainer, index);
                     buttonY = getButtonY(guiContainer, index);
                 }
-                buttonList.add(CraftingTweaksAPI.createBalanceButton(0, buttonX, buttonY));
+                buttonList.add(CraftingTweaksAPI.createBalanceButtonRelative(0, guiContainer, buttonX, buttonY));
                 index++;
             }
             if(tweakClear.enabled && tweakClear.showButton) {
-                int buttonX = guiContainer.guiLeft + tweakClear.buttonX;
-                int buttonY = guiContainer.guiTop + tweakClear.buttonY;
+                int buttonX = tweakClear.buttonX;
+                int buttonY = tweakClear.buttonY;
                 if(alignToGrid != null) {
                     buttonX = getButtonX(guiContainer, index);
                     buttonY = getButtonY(guiContainer, index);
                 }
-                buttonList.add(CraftingTweaksAPI.createClearButton(0, buttonX, buttonY));
+                buttonList.add(CraftingTweaksAPI.createClearButtonRelative(0, guiContainer, buttonX, buttonY));
             }
         }
     }

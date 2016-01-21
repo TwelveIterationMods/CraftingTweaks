@@ -1,6 +1,7 @@
 package net.blay09.mods.craftingtweaks.api;
 
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.Container;
 
 public class CraftingTweaksAPI {
@@ -62,8 +63,21 @@ public class CraftingTweaksAPI {
      * @return a new GuiButton instance that you should add to the buttonList
      */
     public static GuiButton createBalanceButton(int id, int x, int y) {
-        return internalMethods.createBalanceButton(id, x, y);
+        return internalMethods.createBalanceButton(id, null, x, y);
     }
+
+    /**
+     * Creates a Crafting Tweaks button to balance the grid. To be called from within TweakProvider.initGui()
+     * This function stores relative button positions, meaning this version of the button will work correctly for GUIs that do hacky weird things where they temporarily change guiLeft/guiTop before drawing.
+     * @param id the crafting grid ID this button is for (usually 0 unless there's more grids in one GUI)
+     * @param parentGui the parent GUI for this button, used to obtain the absolute position
+     * @param relX the relative position the button should be placed at
+     * @param relY the relative position the button should be placed at
+     */
+    public static GuiButton createBalanceButtonRelative(int id, GuiContainer parentGui, int relX, int relY) {
+        return internalMethods.createBalanceButton(id, parentGui, relX, relY);
+    }
+
 
     /**
      * Creates a Crafting Tweaks button to rotate the grid. To be called from within TweakProvider.initGui()
@@ -73,7 +87,19 @@ public class CraftingTweaksAPI {
      * @return a new GuiButton instance that you should add to the buttonList
      */
     public static GuiButton createRotateButton(int id, int x, int y) {
-        return internalMethods.createRotateButton(id, x, y);
+        return internalMethods.createRotateButton(id, null, x, y);
+    }
+
+    /**
+     * Creates a Crafting Tweaks button to rotate the grid. To be called from within TweakProvider.initGui()
+     * This function stores relative button positions, meaning this version of the button will work correctly for GUIs that do hacky weird things where they temporarily change guiLeft/guiTop before drawing.
+     * @param id the crafting grid ID this button is for (usually 0 unless there's more grids in one GUI)
+     * @param parentGui the parent GUI for this button, used to obtain the absolute position
+     * @param relX the relative position the button should be placed at
+     * @param relY the relative position the button should be placed at
+     */
+    public static GuiButton createRotateButtonRelative(int id, GuiContainer parentGui, int relX, int relY) {
+        return internalMethods.createRotateButton(id, parentGui, relX, relY);
     }
 
     /**
@@ -84,7 +110,18 @@ public class CraftingTweaksAPI {
      * @return a new GuiButton instance that you should add to the buttonList
      */
     public static GuiButton createClearButton(int id, int x, int y) {
-        return internalMethods.createClearButton(id, x, y);
+        return internalMethods.createClearButton(id, null, x, y);
     }
 
+    /**
+     * Creates a Crafting Tweaks button to clear the grid. To be called from within TweakProvider.initGui()
+     * This function stores relative button positions, meaning this version of the button will work correctly for GUIs that do hacky weird things where they temporarily change guiLeft/guiTop before drawing.
+     * @param id the crafting grid ID this button is for (usually 0 unless there's more grids in one GUI)
+     * @param parentGui the parent GUI for this button, used to obtain the absolute position
+     * @param relX the relative position the button should be placed at
+     * @param relY the relative position the button should be placed at
+     */
+    public static GuiButton createClearButtonRelative(int id, GuiContainer parentGui, int relX, int relY) {
+        return internalMethods.createClearButton(id, parentGui, relX, relY);
+    }
 }
