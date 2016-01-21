@@ -7,6 +7,7 @@ import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.blay09.mods.craftingtweaks.net.NetworkHandler;
 import net.minecraft.inventory.Container;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.Loader;
@@ -93,6 +94,27 @@ public class CraftingTweaks {
 
                 int buttonOffsetX = tagCompound.hasKey("ButtonOffsetX") ? tagCompound.getInteger("ButtonOffsetX") : -16;
                 int buttonOffsetY = tagCompound.hasKey("ButtonOffsetY") ? tagCompound.getInteger("ButtonOffsetY") : 16;
+                EnumFacing alignToGrid = null;
+                String alignToGridName = tagCompound.getString("AlignToGrid");
+                switch(alignToGridName.toLowerCase()) {
+                    case "north":
+                    case "up":
+                        alignToGrid = EnumFacing.UP;
+                        break;
+                    case "south":
+                    case "down":
+                        alignToGrid = EnumFacing.DOWN;
+                        break;
+                    case "east":
+                    case "right":
+                        alignToGrid = EnumFacing.EAST;
+                        break;
+                    case "west":
+                    case "left":
+                        alignToGrid = EnumFacing.WEST;
+                        break;
+                }
+                provider.setAlignToGrid(alignToGrid);
 
                 provider.setGrid(getIntOr(tagCompound, "GridSlotNumber", 1), getIntOr(tagCompound, "GridSize", 9));
                 provider.setHideButtons(tagCompound.getBoolean("HideButtons"));

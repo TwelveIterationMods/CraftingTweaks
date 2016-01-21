@@ -1,5 +1,7 @@
 package net.blay09.mods.craftingtweaks.api;
 
+import net.minecraft.util.EnumFacing;
+
 public interface SimpleTweakProvider extends TweakProvider {
 
     /**
@@ -42,4 +44,10 @@ public interface SimpleTweakProvider extends TweakProvider {
      * @param phantomItems true if the crafting grid contains phantom items
      */
     void setPhantomItems(boolean phantomItems);
+
+    /**
+     * Setting this will make the buttons always align to the grid and ignore their offset settings.
+     * @param alignToGrid the direction the buttons should be aligned towards
+     */
+    void setAlignToGrid(EnumFacing alignToGrid);
 }

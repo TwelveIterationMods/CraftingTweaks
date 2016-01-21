@@ -20,14 +20,17 @@ tagCompound.setString("ContainerClass", YourCraftingContainer.class.getName());
 // tagCompound.setInteger("GridSize", 9);
 // tagCompound.setBoolean("HideButtons", false);
 // tagCompound.setBoolean("PhantomItems", true);
-// tagCompound.setInteger("ButtonOffsetX", -16);
-// tagCompound.setInteger("ButtonOffsetY", 16);
+
+// tagCompound.setInteger("ButtonOffsetX", -16); // ignored if AlignToGrid is set
+// tagCompound.setInteger("ButtonOffsetY", 16); // ignored if AlignToGrid is set
+// ***** OR *****
+// tagCompound.setString("AlignToGrid", "left");
 
 // NBTTagCompound tweakRotate = new NBTTagCompound();
 // tweakRotate.setBoolean("Enabled", true);
 // tweakRotate.setBoolean("ShowButton", true);
-// tweakRotate.setInteger("ButtonX", 0);
-// tweakRotate.setInteger("ButtonY", 18);
+// tweakRotate.setInteger("ButtonX", 0); // ignored if AlignToGrid is set
+// tweakRotate.setInteger("ButtonY", 18); // ignored if AlignToGrid is set
 // tagCompound.setTag("TweakRotate", tweakRotate);
 // [...] (same structure for "TweakBalance" and "TweakClear")
 
@@ -42,18 +45,19 @@ The fields are described below:
 * **GridSize**: The size of the crafting grid (probably 9)
 * **HideButtons**: If you don't want Crafting Tweak's buttons to show up (but you want the hotkeys to work), set this to true
 * **PhantomItems**: If your crafting grid contains phantom items, set this to true. This will make the clear operation delete the grid instead of putting the items into the player inventory.
-* **ButtonOffsetX**: X-Offset to apply to all tweak buttons, relative to the upper left corner of the GuiContainer
-* **ButtonOffsetY**: Y-Offset to apply to all tweak buttons, relative to the upper left corner of the GuiContainer
+* **ButtonOffsetX**: X-Offset to apply to all tweak buttons, relative to the upper left corner of the GuiContainer. AlignToGrid will override this option.
+* **ButtonOffsetY**: Y-Offset to apply to all tweak buttons, relative to the upper left corner of the GuiContainer. AlignToGrid will override this option.
+* **AlignToGrid**: Can be "up", "down", "left" or "right". Will automatically position buttons next to the grid.
 * **TweakRotate**: A tag compound containing settings for the rotate tweak (see below)
 * **TweakBalance**: A tag compound containing settings for the balance tweak (see below)
 * **TweakClear**: A tag compound containing settings for the clear tweak (see below)
 * **Tweak...**: Contains the following settings for tweaks:
   * **Enabled**: Set this to false if this tweak should be disabled for this container
   * **ShowButton**: Set this to false if the button for this tweak should not be added
-  * **ButtonX**: X-Position of the tweak button relative to ButtonOffsetX
-  * **ButtonY**: Y-Position of the tweak button relative to ButtonOffsetY
+  * **ButtonX**: X-Position of the tweak button relative to ButtonOffsetX. AlignToGrid will override this option.
+  * **ButtonY**: Y-Position of the tweak button relative to ButtonOffsetY. AlignToGrid will override this option.
 
-*Note*: If you're specifying custom button positions, they should be 18 pixels apart from each other. If you just want to move all buttons at once, use ButtonOffsetX/Y. The buttons are set out vertically by default.
+*Note*: If you're specifying custom button positions, they should be 18 pixels apart from each other. If you simply want the buttons next to the crafting grid, use AlignToGrid. If you just want to move all buttons at once, use ButtonOffsetX/Y. The buttons are set out vertically by default.
 
 ## API
 If your crafting grid is more complex or doesn't follow Vanilla standards, you may need to supply a custom tweak provider. In that case, follow these steps.

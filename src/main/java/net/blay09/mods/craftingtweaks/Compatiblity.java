@@ -4,22 +4,25 @@ import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
 import net.blay09.mods.craftingtweaks.api.SimpleTweakProvider;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ContainerWorkbench;
+import net.minecraft.util.EnumFacing;
 
 public class Compatiblity {
 
     public static void vanilla() {
         SimpleTweakProvider provider = CraftingTweaksAPI.registerSimpleProvider("minecraft", ContainerWorkbench.class);
-        provider.setTweakRotate(true, true, 10, 17);
-        provider.setTweakBalance(true, true, 10, 17 + 18);
-        provider.setTweakClear(true, true, 10, 17 + 36);
+        provider.setTweakRotate(true, true, 0, 0);
+        provider.setTweakBalance(true, true, 0, 0);
+        provider.setTweakClear(true, true, 0, 0);
+        provider.setAlignToGrid(EnumFacing.WEST);
     }
 
     public static void jacb() {
         SimpleTweakProvider provider = registerSimpleProvider("jacb", "tv.vanhal.jacb.gui.BenchContainer");
         if(provider != null) {
-            provider.setTweakRotate(true, true, 10, 17);
-            provider.setTweakBalance(true, true, 10, 17 + 18);
-            provider.setTweakClear(true, true, 10, 17 + 36);
+            provider.setTweakRotate(true, true, 0, 0);
+            provider.setTweakBalance(true, true, 0, 0);
+            provider.setTweakClear(true, true, 0, 0);
+            provider.setAlignToGrid(EnumFacing.WEST);
         }
     }
 

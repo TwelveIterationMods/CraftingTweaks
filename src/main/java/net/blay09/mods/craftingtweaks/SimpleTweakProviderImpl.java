@@ -10,6 +10,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 
 import java.util.List;
 
@@ -38,9 +39,14 @@ public class SimpleTweakProviderImpl implements SimpleTweakProvider {
     private TweakSettings tweakRotate = new TweakSettings(true, true, -16, 16);
     private TweakSettings tweakBalance = new TweakSettings(true, true, -16, 16 + 18);
     private TweakSettings tweakClear = new TweakSettings(true, true, -16, 16 + 18 + 18);
+    private EnumFacing alignToGrid;
 
     public SimpleTweakProviderImpl(String modid) {
         this.modid = modid;
+    }
+
+    public void setAlignToGrid(EnumFacing direction) {
+        this.alignToGrid = direction;
     }
 
     @Override
@@ -143,16 +149,69 @@ public class SimpleTweakProviderImpl implements SimpleTweakProvider {
     @Override
     public void initGui(GuiContainer guiContainer, List<GuiButton> buttonList) {
         if(!hideButtons) {
+            int index = 0;
             if(tweakRotate.enabled && tweakRotate.showButton) {
-                buttonList.add(CraftingTweaksAPI.createRotateButton(0, guiContainer.guiLeft + tweakRotate.buttonX, guiContainer.guiTop + tweakRotate.buttonY));
+                int buttonX = guiContainer.guiLeft + tweakRotate.buttonX;
+                int buttonY = guiContainer.guiTop + tweakRotate.buttonY;
+                if(alignToGrid != null) {
+                    buttonX = getButtonX(guiContainer, index);
+                    buttonY = getButtonY(guiContainer, index);
+                }
+                buttonList.add(CraftingTweaksAPI.createRotateButton(0, buttonX, buttonY));
+                index++;
             }
             if(tweakBalance.enabled && tweakBalance.showButton) {
-                buttonList.add(CraftingTweaksAPI.createBalanceButton(0, guiContainer.guiLeft + tweakBalance.buttonX, guiContainer.guiTop +  + tweakBalance.buttonY));
+                int buttonX = guiContainer.guiLeft + tweakBalance.buttonX;
+                int buttonY = guiContainer.guiTop + tweakBalance.buttonY;
+                if(alignToGrid != null) {
+                    buttonX = getButtonX(guiContainer, index);
+                    buttonY = getButtonY(guiContainer, index);
+                }
+                buttonList.add(CraftingTweaksAPI.createBalanceButton(0, buttonX, buttonY));
+                index++;
             }
             if(tweakClear.enabled && tweakClear.showButton) {
-                buttonList.add(CraftingTweaksAPI.createClearButton(0, guiContainer.guiLeft + tweakClear.buttonX, guiContainer.guiTop +  + tweakClear.buttonY));
+                int buttonX = guiContainer.guiLeft + tweakClear.buttonX;
+                int buttonY = guiContainer.guiTop + tweakClear.buttonY;
+                if(alignToGrid != null) {
+                    buttonX = getButtonX(guiContainer, index);
+                    buttonY = getButtonY(guiContainer, index);
+                }
+                buttonList.add(CraftingTweaksAPI.createClearButton(0, buttonX, buttonY));
             }
         }
+    }
+
+    private int getButtonX(GuiContainer guiContainer, int index) {
+        Slot firstSlot = guiContainer.inventorySlots.inventorySlots.get(getCraftingGridStart(0));
+        switch(alignToGrid) {
+            case NORTH:
+            case UP:
+            case SOUTH:
+            case DOWN:
+                return guiContainer.guiLeft + firstSlot.xDisplayPosition + 18 * index;
+            case EAST:
+                return guiContainer.guiLeft + firstSlot.xDisplayPosition + 18 * 3 + 1;
+            case WEST:
+                return guiContainer.guiLeft + firstSlot.xDisplayPosition - 19;
+        }
+        return 0;
+    }
+
+    private int getButtonY(GuiContainer guiContainer, int index) {
+        Slot firstSlot = guiContainer.inventorySlots.inventorySlots.get(getCraftingGridStart(0));
+        switch(alignToGrid) {
+            case NORTH:
+            case UP:
+                return guiContainer.guiTop + firstSlot.yDisplayPosition - 18 - 1;
+            case SOUTH:
+            case DOWN:
+                return guiContainer.guiTop + firstSlot.yDisplayPosition + 18 * 3 + 1;
+            case EAST:
+            case WEST:
+                return guiContainer.guiTop + firstSlot.yDisplayPosition + 18 * index;
+        }
+        return 0;
     }
 
 }
