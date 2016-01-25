@@ -43,8 +43,9 @@ public class ClientProxy extends CommonProxy {
     private final KeyBinding keyToggleButtons = new KeyBinding("key.craftingtweaks.toggleButtons", 0, "key.categories.craftingtweaks");
     private KeyBinding keyTransferStack;
 
-    private Slot mouseSlot;
     private boolean ignoreMouseUp;
+
+    private GuiRoundMenu roundMenu;
 
     @Override
     public void init(FMLInitializationEvent event) {
@@ -93,7 +94,11 @@ public class ClientProxy extends CommonProxy {
                                     clientProvider.clearGrid(provider, entityPlayer, container, 0);
                                 }
                             } else if (keyBalance.getKeyCode() > 0 && Keyboard.getEventKey() == keyBalance.getKeyCode()) {
-                                NetworkHandler.instance.sendToServer(new MessageBalance(0));
+                                if(isServerSide) {
+                                    NetworkHandler.instance.sendToServer(new MessageBalance(0));
+                                } else {
+                                    clientProvider.balanceGrid(provider, entityPlayer, container, 0);
+                                }
                             }
                         }
                         GuiScreen guiScreen = Minecraft.getMinecraft().currentScreen;
@@ -126,24 +131,25 @@ public class ClientProxy extends CommonProxy {
             if (entityPlayer != null) {
                 Container container = entityPlayer.openContainer;
                 if (container != null) {
+                    Slot mouseSlot = event.gui instanceof GuiContainer ? ((GuiContainer) event.gui).getSlotUnderMouse() : null;
                     TweakProvider provider = CraftingTweaks.instance.getProvider(container);
                     if (provider != null) {
                         if (keyTransferStack.getKeyCode() > 0 && Keyboard.isKeyDown(keyTransferStack.getKeyCode())) {
-                            List<Slot> transferSlots = Lists.newArrayList();
-                            transferSlots.add(mouseSlot);
-                            ItemStack mouseSlotStack = mouseSlot.getStack();
-                            if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
-                                for(Slot slot : container.inventorySlots) {
-                                    if(!slot.getHasStack() || mouseSlot == slot) {
-                                        continue;
-                                    }
-                                    ItemStack slotStack = slot.getStack();
-                                    if(slotStack.isItemEqual(mouseSlotStack) && ItemStack.areItemStackTagsEqual(slotStack, mouseSlotStack)) {
-                                        transferSlots.add(slot);
+                            if (mouseSlot != null) {
+                                List<Slot> transferSlots = Lists.newArrayList();
+                                transferSlots.add(mouseSlot);
+                                if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+                                    ItemStack mouseSlotStack = mouseSlot.getStack();
+                                    for(Slot slot : container.inventorySlots) {
+                                        if(!slot.getHasStack() || mouseSlot == slot) {
+                                            continue;
+                                        }
+                                        ItemStack slotStack = slot.getStack();
+                                        if(slotStack.isItemEqual(mouseSlotStack) && ItemStack.areItemStackTagsEqual(slotStack, mouseSlotStack)) {
+                                            transferSlots.add(slot);
+                                        }
                                     }
                                 }
-                            }
-                            if (mouseSlot != null) {
                                 if(isServerSide) {
                                     for(Slot slot : transferSlots) {
                                         NetworkHandler.instance.sendToServer(new MessageTransferStack(0, slot.slotNumber));
@@ -173,7 +179,7 @@ public class ClientProxy extends CommonProxy {
             if(helloTimeout > 0) {
                 helloTimeout--;
                 if (helloTimeout <= 0) {
-                    entityPlayer.addChatMessage(new ChatComponentText("This server does not have Crafting Tweaks installed. Functionality will be limited."));
+                    entityPlayer.addChatMessage(new ChatComponentText("This server does not have Crafting Tweaks installed. Functionality may be limited."));
                     isServerSide = false;
                 }
             }
@@ -187,15 +193,6 @@ public class ClientProxy extends CommonProxy {
             CraftingTweaks.ModSupportState config = CraftingTweaks.instance.getModSupportState(provider.getModId());
             if(config == CraftingTweaks.ModSupportState.ENABLED || config == CraftingTweaks.ModSupportState.BUTTONS_ONLY) {
                 provider.initGui(guiContainer, guiContainer.buttonList);
-                if(!isServerSide) {
-                    for(GuiButton button : guiContainer.buttonList) {
-                        if(button instanceof GuiTweakButton) {
-                            if(((GuiTweakButton) button).getTweakOption() == GuiTweakButton.TweakOption.Balance) {
-                                button.enabled = false;
-                            }
-                        }
-                    }
-                }
             }
         }
     }
@@ -211,10 +208,17 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public void onDrawScreen(GuiScreenEvent.DrawScreenEvent.Post event) {
-        if(event.gui instanceof GuiContainer) {
-            mouseSlot = ((GuiContainer) event.gui).getSlotAtPosition(event.mouseX, event.mouseY);
-        } else {
-            mouseSlot = null;
+        // Testing Code
+//        if(event.gui instanceof GuiContainer && roundMenu == null) {
+//            GuiContainer guiContainer =  (GuiContainer) event.gui;
+//            if(guiContainer.getSlotUnderMouse() != null) {
+//                roundMenu = new GuiRoundMenu(guiContainer.guiLeft + guiContainer.getSlotUnderMouse().xDisplayPosition + 8, guiContainer.guiTop + guiContainer.getSlotUnderMouse().yDisplayPosition + 8);
+//            } else {
+//                roundMenu = null;
+//            }
+//        }
+        if(roundMenu != null) {
+            roundMenu.drawMenu(event.gui.mc, event.mouseX, event.mouseY);
         }
     }
 
@@ -237,6 +241,8 @@ public class ClientProxy extends CommonProxy {
                 case Balance:
                     if(isServerSide) {
                         NetworkHandler.instance.sendToServer(new MessageBalance(((GuiTweakButton) event.button).getTweakId()));
+                    } else {
+                        clientProvider.balanceGrid(provider, entityPlayer, container, ((GuiTweakButton) event.button).getTweakId());
                     }
                     event.setCanceled(true);
                     break;

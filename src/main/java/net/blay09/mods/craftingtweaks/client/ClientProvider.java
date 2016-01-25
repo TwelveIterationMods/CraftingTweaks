@@ -1,5 +1,9 @@
 package net.blay09.mods.craftingtweaks.client;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 import net.blay09.mods.craftingtweaks.api.RotationHandler;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.minecraft.client.Minecraft;
@@ -8,6 +12,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class ClientProvider {
 
@@ -35,6 +43,58 @@ public class ClientProvider {
 
     public PlayerControllerMP getController() {
         return Minecraft.getMinecraft().playerController;
+    }
+
+    public boolean canBalance(TweakProvider provider, EntityPlayer entityPlayer, Container container, int id) {
+        return !provider.requiresServerSide();
+    }
+
+    public void balanceGrid(TweakProvider provider, EntityPlayer entityPlayer, Container container, int id) {
+        if(!canBalance(provider, entityPlayer, container, id)) {
+            return;
+        }
+        Multimap<String, Slot> balanceSlots = ArrayListMultimap.create();
+        int start = provider.getCraftingGridStart(entityPlayer, container, id);
+        int size = provider.getCraftingGridSize(entityPlayer, container, id);
+        for(int i = start; i < start + size; i++) {
+            Slot slot = container.inventorySlots.get(i);
+            if(slot.getHasStack()) {
+                ItemStack itemStack = slot.getStack();
+                balanceSlots.put(itemStack.getUnlocalizedName() + "@" + itemStack.getItemDamage(), slot);
+            }
+        }
+        for(String key : balanceSlots.keySet()) {
+            Collection<Slot> slotList = balanceSlots.get(key);
+            int average = 0;
+            for(Slot slot : slotList) {
+                average += slot.getStack().stackSize;
+            }
+            average = (int) Math.ceil(average / (float) slotList.size());
+            for(Slot slot : slotList) {
+                if(slot.getHasStack() && slot.getStack().stackSize > average) {
+                    // Pick up item from biggest stack
+                    int mouseStackSize = slot.getStack().stackSize;
+                    getController().windowClick(container.windowId, slot.slotNumber, 0, 0, entityPlayer);
+
+                    for(Slot otherSlot : slotList) {
+                        if(slot == otherSlot || !otherSlot.getHasStack()) {
+                            continue;
+                        }
+                        int otherStackSize = otherSlot.getStack().stackSize;
+                        if(otherStackSize < average) {
+                            while(otherStackSize < average && mouseStackSize > average) {
+                                getController().windowClick(container.windowId, otherSlot.slotNumber, 1, 0, entityPlayer);
+                                mouseStackSize--;
+                                otherStackSize++;
+                            }
+                        }
+                    }
+
+                    // Put the remaining stack back
+                    getController().windowClick(container.windowId, slot.slotNumber, 0, 0, entityPlayer);
+                }
+            }
+        }
     }
 
     public boolean canClear(TweakProvider provider, EntityPlayer entityPlayer, Container container, int id) {
