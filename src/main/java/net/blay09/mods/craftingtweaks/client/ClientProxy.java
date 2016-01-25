@@ -152,7 +152,7 @@ public class ClientProxy extends CommonProxy {
             if(helloTimeout > 0) {
                 helloTimeout--;
                 if (helloTimeout <= 0) {
-                    entityPlayer.addChatMessage(new ChatComponentText("This server does not have Crafting Tweaks installed. It will be disabled."));
+                    entityPlayer.addChatMessage(new ChatComponentText("This server does not have Crafting Tweaks installed. Functionality will be limited."));
                     isServerSide = false;
                 }
             }

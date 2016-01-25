@@ -14,6 +14,8 @@ public class GuiTweakButton extends GuiImageButton {
     private final TweakOption tweakOption;
     private final int tweakId;
     private final GuiContainer parentGui;
+    private int lastGuiLeft;
+    private int lastGuiTop;
 
     public GuiTweakButton(GuiContainer parentGui, int xPosition, int yPosition, int texCoordX, int texCoordY, TweakOption tweakOption, int tweakId) {
         super(-1, xPosition, yPosition, texCoordX, texCoordY);
@@ -36,8 +38,8 @@ public class GuiTweakButton extends GuiImageButton {
         int oldY = yPosition;
         // If parentGui is set, we only store the relative position in the button for mods that do hacky things where guiLeft/guiTop constantly changes
         if(parentGui != null) {
-            xPosition += parentGui.guiLeft;
-            yPosition += parentGui.guiTop;
+            xPosition += lastGuiLeft;
+            yPosition += lastGuiTop;
         }
         boolean result = super.mousePressed(mc, mouseX, mouseY);
         xPosition = oldX;
@@ -51,8 +53,10 @@ public class GuiTweakButton extends GuiImageButton {
         int oldY = yPosition;
         // If parentGui is set, we only store the relative position in the button for mods that do hacky things where guiLeft/guiTop constantly changes
         if(parentGui != null) {
-            xPosition += parentGui.guiLeft;
-            yPosition += parentGui.guiTop;
+            lastGuiLeft = parentGui.guiLeft;
+            lastGuiTop = parentGui.guiTop;
+            xPosition += lastGuiLeft;
+            yPosition += lastGuiTop;
         }
         super.drawButton(mc, mouseX, mouseY);
         xPosition = oldX;
