@@ -184,7 +184,6 @@ public class ClientProxy extends CommonProxy {
                 }
             }
         }
-        isServerSide = false;
     }
 
     private void initGui(GuiContainer guiContainer) {
