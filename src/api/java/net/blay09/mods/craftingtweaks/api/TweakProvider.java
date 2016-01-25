@@ -39,19 +39,23 @@ public interface TweakProvider {
 
     /**
      * Defaults to 1.
+     * @param entityPlayer the player who's looking at the grid
+     * @param container the container the grid is part of
      * @param id the crafting grid ID this is checked for (usually 0 unless there's more grids in one GUI)
      * @return the slot number within the container's inventorySlots list that marks the beginning of the grid (for client-only instances)
      */
-    default int getCraftingGridStart(int id) {
+    default int getCraftingGridStart(EntityPlayer entityPlayer, Container container, int id) {
         return 1;
     }
 
     /**
      * Defaults to 9.
+     * @param entityPlayer the player who's looking at the grid
+     * @param container the container the grid is part of
      * @param id the crafting grid ID this is checked for (usually 0 unless there's more grids in one GUI)
      * @return the size of this crafting grid within the container's inventorySlots list (for client-only instances)
      */
-    default int getCraftingGridSize(int id) {
+    default int getCraftingGridSize(EntityPlayer entityPlayer, Container container, int id) {
         return 9;
     }
 

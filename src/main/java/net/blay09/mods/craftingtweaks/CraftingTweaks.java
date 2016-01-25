@@ -152,9 +152,6 @@ public class CraftingTweaks {
         proxy.postInit(event);
 
         Compatiblity.vanilla();
-        Compatiblity.jacb();
-        Compatiblity.backpack();
-        Compatiblity.thaumcraft();
 
         config.save();
     }

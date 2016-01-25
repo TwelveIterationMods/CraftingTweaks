@@ -45,8 +45,8 @@ public class ClientProvider {
         if(!canClear(provider, entityPlayer, container, id)) {
             return;
         }
-        int start = provider.getCraftingGridStart(id);
-        int size = provider.getCraftingGridSize(id);
+        int start = provider.getCraftingGridStart(entityPlayer, container, id);
+        int size = provider.getCraftingGridSize(entityPlayer, container, id);
         for(int i = start; i < start + size; i++) {
             getController().windowClick(container.windowId, i, 0, 1, entityPlayer);
             container.transferStackInSlot(entityPlayer, i);
@@ -54,7 +54,7 @@ public class ClientProvider {
     }
 
     public boolean canRotate(TweakProvider provider, EntityPlayer entityPlayer, Container container, int id) {
-        return !provider.requiresServerSide() && provider.getCraftingGridSize(id) == 9;
+        return !provider.requiresServerSide() && provider.getCraftingGridSize(entityPlayer, container, id) == 9;
     }
 
     public void rotateGrid(TweakProvider provider, EntityPlayer entityPlayer, Container container, int id) {
@@ -64,7 +64,7 @@ public class ClientProvider {
         if(!dropOffMouseStack(entityPlayer, container)) {
             return;
         }
-        int startSlot = provider.getCraftingGridStart(id);
+        int startSlot = provider.getCraftingGridStart(entityPlayer, container, id);
         getController().windowClick(container.windowId, startSlot, 0, 0, entityPlayer);
         int currentSlot = startSlot;
         do {
@@ -94,8 +94,8 @@ public class ClientProvider {
         }
         boolean itemMoved = false;
         int firstEmptySlot = -1;
-        int start = provider.getCraftingGridStart(id);
-        int size = provider.getCraftingGridSize(id);
+        int start = provider.getCraftingGridStart(entityPlayer, container, id);
+        int size = provider.getCraftingGridSize(entityPlayer, container, id);
         for(int i = start; i < start + size; i++) {
             Slot craftSlot = container.inventorySlots.get(i);
             ItemStack craftStack = craftSlot.getStack();

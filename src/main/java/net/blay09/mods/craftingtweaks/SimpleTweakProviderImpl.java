@@ -11,6 +11,9 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
@@ -128,7 +131,7 @@ public class SimpleTweakProviderImpl implements SimpleTweakProvider {
 
     @Override
     public IInventory getCraftMatrix(EntityPlayer entityPlayer, Container container, int id) {
-        return container.inventorySlots.get(getCraftingGridStart(id)).inventory;
+        return container.inventorySlots.get(getCraftingGridStart(entityPlayer, container, id)).inventory;
     }
 
     @Override
@@ -137,16 +140,17 @@ public class SimpleTweakProviderImpl implements SimpleTweakProvider {
     }
 
     @Override
-    public int getCraftingGridStart(int id) {
+    public int getCraftingGridStart(EntityPlayer entityPlayer, Container container, int id) {
         return gridSlotNumber;
     }
 
     @Override
-    public int getCraftingGridSize(int id) {
+    public int getCraftingGridSize(EntityPlayer entityPlayer, Container container, int id) {
         return gridSize;
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void initGui(GuiContainer guiContainer, List<GuiButton> buttonList) {
         if(!hideButtons) {
             int index = 0;
@@ -182,8 +186,9 @@ public class SimpleTweakProviderImpl implements SimpleTweakProvider {
         }
     }
 
+    @SideOnly(Side.CLIENT)
     private int getButtonX(GuiContainer guiContainer, int index) {
-        Slot firstSlot = guiContainer.inventorySlots.inventorySlots.get(getCraftingGridStart(0));
+        Slot firstSlot = guiContainer.inventorySlots.inventorySlots.get(getCraftingGridStart(FMLClientHandler.instance().getClientPlayerEntity(), guiContainer.inventorySlots, 0));
         switch(alignToGrid) {
             case NORTH:
             case UP:
@@ -198,8 +203,9 @@ public class SimpleTweakProviderImpl implements SimpleTweakProvider {
         return 0;
     }
 
+    @SideOnly(Side.CLIENT)
     private int getButtonY(GuiContainer guiContainer, int index) {
-        Slot firstSlot = guiContainer.inventorySlots.inventorySlots.get(getCraftingGridStart(0));
+        Slot firstSlot = guiContainer.inventorySlots.inventorySlots.get(getCraftingGridStart(FMLClientHandler.instance().getClientPlayerEntity(), guiContainer.inventorySlots, 0));
         switch(alignToGrid) {
             case NORTH:
             case UP:

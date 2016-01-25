@@ -3,7 +3,6 @@ package net.blay09.mods.craftingtweaks;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
-import net.blay09.mods.craftingtweaks.api.DefaultProvider;
 import net.blay09.mods.craftingtweaks.api.DefaultProviderV2;
 import net.blay09.mods.craftingtweaks.api.RotationHandler;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
@@ -43,8 +42,8 @@ public class DefaultProviderV2Impl implements DefaultProviderV2 {
     @Override
     public void clearGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container, boolean phantomItems) {
         IInventory craftMatrix = provider.getCraftMatrix(entityPlayer, container, id);
-        int start = provider.getCraftingGridStart(id);
-        int size = provider.getCraftingGridSize(id);
+        int start = provider.getCraftingGridStart(entityPlayer, container, id);
+        int size = provider.getCraftingGridSize(entityPlayer, container, id);
         for(int i = start; i < start + size; i++) {
             int slotIndex = container.inventorySlots.get(i).getSlotIndex();
             if(!phantomItems) {
@@ -63,8 +62,8 @@ public class DefaultProviderV2Impl implements DefaultProviderV2 {
         ArrayListMultimap<String, ItemStack> itemMap = ArrayListMultimap.create();
         Multiset<String> itemCount = HashMultiset.create();
         IInventory craftMatrix = provider.getCraftMatrix(entityPlayer, container, id);
-        int start = provider.getCraftingGridStart(id);
-        int size = provider.getCraftingGridSize(id);
+        int start = provider.getCraftingGridStart(entityPlayer, container, id);
+        int size = provider.getCraftingGridSize(entityPlayer, container, id);
         for(int i = start; i < start + size; i++) {
             int slotIndex = container.inventorySlots.get(i).getSlotIndex();
             ItemStack itemStack = craftMatrix.getStackInSlot(slotIndex);
@@ -126,8 +125,8 @@ public class DefaultProviderV2Impl implements DefaultProviderV2 {
     @Override
     public boolean transferIntoGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container, Slot sourceSlot) {
         IInventory craftMatrix = provider.getCraftMatrix(entityPlayer, container, id);
-        int start = provider.getCraftingGridStart(id);
-        int size = provider.getCraftingGridSize(id);
+        int start = provider.getCraftingGridStart(entityPlayer, container, id);
+        int size = provider.getCraftingGridSize(entityPlayer, container, id);
         ItemStack itemStack = sourceSlot.getStack();
         if(itemStack == null) {
             return false;
@@ -172,8 +171,8 @@ public class DefaultProviderV2Impl implements DefaultProviderV2 {
     @Override
     public void rotateGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container, RotationHandler rotationHandler) {
         IInventory craftMatrix = provider.getCraftMatrix(entityPlayer, container, id);
-        int start = provider.getCraftingGridStart(id);
-        int size = provider.getCraftingGridSize(id);
+        int start = provider.getCraftingGridStart(entityPlayer, container, id);
+        int size = provider.getCraftingGridSize(entityPlayer, container, id);
         IInventory matrixClone = new InventoryBasic("", false, size);
         for(int i = 0; i < size; i++) {
             int slotIndex = container.inventorySlots.get(start + i).getSlotIndex();
