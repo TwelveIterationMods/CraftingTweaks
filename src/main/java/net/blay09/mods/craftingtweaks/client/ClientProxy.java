@@ -1,5 +1,6 @@
 package net.blay09.mods.craftingtweaks.client;
 
+import com.google.common.collect.Lists;
 import net.blay09.mods.craftingtweaks.CommonProxy;
 import net.blay09.mods.craftingtweaks.CraftingTweaks;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
@@ -12,6 +13,7 @@ import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -26,6 +28,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import java.util.Iterator;
+import java.util.List;
 
 public class ClientProxy extends CommonProxy {
 
@@ -126,11 +129,29 @@ public class ClientProxy extends CommonProxy {
                     TweakProvider provider = CraftingTweaks.instance.getProvider(container);
                     if (provider != null) {
                         if (keyTransferStack.getKeyCode() > 0 && Keyboard.isKeyDown(keyTransferStack.getKeyCode())) {
+                            List<Slot> transferSlots = Lists.newArrayList();
+                            transferSlots.add(mouseSlot);
+                            ItemStack mouseSlotStack = mouseSlot.getStack();
+                            if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+                                for(Slot slot : container.inventorySlots) {
+                                    if(!slot.getHasStack() || mouseSlot == slot) {
+                                        continue;
+                                    }
+                                    ItemStack slotStack = slot.getStack();
+                                    if(slotStack.isItemEqual(mouseSlotStack) && ItemStack.areItemStackTagsEqual(slotStack, mouseSlotStack)) {
+                                        transferSlots.add(slot);
+                                    }
+                                }
+                            }
                             if (mouseSlot != null) {
                                 if(isServerSide) {
-                                    NetworkHandler.instance.sendToServer(new MessageTransferStack(0, mouseSlot.slotNumber));
+                                    for(Slot slot : transferSlots) {
+                                        NetworkHandler.instance.sendToServer(new MessageTransferStack(0, slot.slotNumber));
+                                    }
                                 } else {
-                                    clientProvider.transferIntoGrid(provider, entityPlayer, container, 0, mouseSlot);
+                                    for(Slot slot : transferSlots) {
+                                        clientProvider.transferIntoGrid(provider, entityPlayer, container, 0, slot);
+                                    }
                                     ignoreMouseUp = true;
                                 }
                                 event.setCanceled(true);
@@ -157,6 +178,7 @@ public class ClientProxy extends CommonProxy {
                 }
             }
         }
+        isServerSide = false;
     }
 
     private void initGui(GuiContainer guiContainer) {
