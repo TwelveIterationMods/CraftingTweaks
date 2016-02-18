@@ -58,6 +58,7 @@ public class ClientProxy extends CommonProxy {
         ClientRegistry.registerKeyBinding(keyClear);
         ClientRegistry.registerKeyBinding(keyToggleButtons);
         ClientRegistry.registerKeyBinding(keyCompress);
+        ClientRegistry.registerKeyBinding(keyDecompress);
         keyTransferStack = Minecraft.getMinecraft().gameSettings.keyBindForward;
     }
 
