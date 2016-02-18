@@ -129,6 +129,7 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public void onClientTick(TickEvent.ClientTickEvent event) {
+        isServerSide = false;
         EntityPlayer entityPlayer = FMLClientHandler.instance().getClientPlayerEntity();
         if (entityPlayer != null) {
             if (helloTimeout > 0) {
@@ -148,7 +149,7 @@ public class ClientProxy extends CommonProxy {
                 if (provider != null) {
                     CraftingTweaks.ModSupportState config = CraftingTweaks.instance.getModSupportState(provider.getModId());
                     if (config == CraftingTweaks.ModSupportState.ENABLED || config == CraftingTweaks.ModSupportState.HOTKEYS_ONLY) {
-                        if (keyRotate.getKeyCode() > 0 && Keyboard.getEventKey() == keyRotate.getKeyCode()) {
+                        if (keyRotate.getKeyCode() > 0 && Keyboard.isKeyDown(keyRotate.getKeyCode())) {
                             if (!wasRotated) {
                                 if (isServerSide) {
                                     NetworkHandler.instance.sendToServer(new MessageRotate(0));
@@ -160,7 +161,7 @@ public class ClientProxy extends CommonProxy {
                         } else {
                             wasRotated = false;
                         }
-                        if (keyClear.getKeyCode() > 0 && Keyboard.getEventKey() == keyClear.getKeyCode()) {
+                        if (keyClear.getKeyCode() > 0 && Keyboard.isKeyDown(keyClear.getKeyCode())) {
                             if (!wasCleared) {
                                 if (isServerSide) {
                                     NetworkHandler.instance.sendToServer(new MessageClear(0));
@@ -172,7 +173,7 @@ public class ClientProxy extends CommonProxy {
                         } else {
                             wasCleared = false;
                         }
-                        if (keyBalance.getKeyCode() > 0 && Keyboard.getEventKey() == keyBalance.getKeyCode()) {
+                        if (keyBalance.getKeyCode() > 0 && Keyboard.isKeyDown(keyBalance.getKeyCode())) {
                             if (!wasBalanced) {
                                 if (isServerSide) {
                                     NetworkHandler.instance.sendToServer(new MessageBalance(0));
@@ -186,7 +187,7 @@ public class ClientProxy extends CommonProxy {
                         }
                     }
                     if (guiScreen instanceof GuiContainer) {
-                        if (keyToggleButtons.getKeyCode() > 0 && Keyboard.getEventKey() == keyToggleButtons.getKeyCode()) {
+                        if (keyToggleButtons.getKeyCode() > 0 && Keyboard.isKeyDown(keyToggleButtons.getKeyCode())) {
                             if (!wasToggleButtons) {
                                 CraftingTweaks.hideButtons = !CraftingTweaks.hideButtons;
                                 if (CraftingTweaks.hideButtons) {
@@ -208,7 +209,7 @@ public class ClientProxy extends CommonProxy {
                     }
                 }
                 if (guiScreen instanceof GuiContainer) {
-                    if (keyCompress.getKeyCode() > 0 && Keyboard.getEventKey() == keyCompress.getKeyCode()) {
+                    if (keyCompress.getKeyCode() > 0 && Keyboard.isKeyDown(keyCompress.getKeyCode())) {
                         if (!wasCompressed) {
                             if (mouseSlot != null) {
                                 boolean isDecompress = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
@@ -225,7 +226,7 @@ public class ClientProxy extends CommonProxy {
                     } else {
                         wasCompressed = false;
                     }
-                    if (keyDecompress.getKeyCode() > 0 && Keyboard.getEventKey() == keyDecompress.getKeyCode()) {
+                    if (keyDecompress.getKeyCode() > 0 && Keyboard.isKeyDown(keyDecompress.getKeyCode())) {
                         if(!wasDecompressed) {
                             if (mouseSlot != null) {
                                 if (isServerSide) {
