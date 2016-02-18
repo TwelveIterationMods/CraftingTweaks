@@ -8,6 +8,7 @@ import net.blay09.mods.craftingtweaks.InventoryCraftingCompress;
 import net.blay09.mods.craftingtweaks.InventoryCraftingDecompress;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -22,6 +23,9 @@ public class HandlerCompress implements IMessageHandler<MessageCompress, IMessag
             return null;
         }
         Slot mouseSlot = (Slot) container.inventorySlots.get(message.getSlotNumber());
+        if(!(mouseSlot.inventory instanceof InventoryPlayer)) {
+            return null;
+        }
         ItemStack mouseStack = mouseSlot.getStack();
         if (mouseStack == null) {
             return null;
