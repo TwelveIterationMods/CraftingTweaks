@@ -64,6 +64,7 @@ public class CraftingTweaks {
     private final Map<Class<? extends Container>, TweakProvider> providerMap = Maps.newHashMap();
 
     public static boolean hideButtons;
+    public static boolean compressAnywhere;
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
@@ -76,6 +77,7 @@ public class CraftingTweaks {
 
         config = new Configuration(event.getSuggestedConfigurationFile());
         hideButtons = config.getBoolean("hideButtons", "general", false, "This option is toggled by the 'Toggle Buttons' key that can be defined in the Controls settings.");
+        compressAnywhere = config.getBoolean("compressAnywhere", "general", false, "Set this to true if you want the (de)compress feature to work outside of crafting GUIs (only works if installed on server)");
         config.setCategoryComment("addons", "Here you can control whether support for a mod should be enabled, buttons_only, hotkeys_only or disabled. For Vanilla Minecraft, see the option 'minecraft'. Mods are identified by their mod ids.");
         config.getString("minecraft", "addons", ModSupportState.ENABLED.name().toLowerCase(), "", ModSupportState.getValidValues());
         // Load all options (including those from non-included addons)

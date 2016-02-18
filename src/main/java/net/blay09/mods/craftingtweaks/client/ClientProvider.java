@@ -1,21 +1,18 @@
 package net.blay09.mods.craftingtweaks.client;
 
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import net.blay09.mods.craftingtweaks.InventoryCraftingCompress;
 import net.blay09.mods.craftingtweaks.api.RotationHandler;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.Slot;
+import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CraftingManager;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 public class ClientProvider {
 
@@ -195,9 +192,9 @@ public class ClientProvider {
                 ItemStack mouseItem = entityPlayer.inventory.getItemStack();
                 ItemStack slotStack = slot.getStack();
                 if(slotStack == null) {
-                    getController().windowClick(container.windowId, i, 1, 0, entityPlayer);
+                    getController().windowClick(container.windowId, i, 0, 0, entityPlayer);
                 } else if(mouseItem.getItem() == slotStack.getItem() && (!slotStack.getHasSubtypes() || slotStack.getMetadata() == mouseItem.getMetadata()) && ItemStack.areItemStackTagsEqual(slotStack, mouseItem)) {
-                    getController().windowClick(container.windowId, i, 1, 0, entityPlayer);
+                    getController().windowClick(container.windowId, i, 0, 0, entityPlayer);
                 }
                 if(entityPlayer.inventory.getItemStack() == null) {
                     return true;
@@ -206,4 +203,103 @@ public class ClientProvider {
         }
         return entityPlayer.inventory.getItemStack() == null;
     }
+
+    public void decompress(TweakProvider provider, EntityPlayer entityPlayer, Container container, Slot mouseSlot) {
+        if(!mouseSlot.getHasStack() || !canClear(provider, entityPlayer, container, 0)) {
+            return;
+        }
+        clearGrid(provider, entityPlayer, container, 0);
+        int start = provider.getCraftingGridStart(entityPlayer, container, 0);
+        int size = provider.getCraftingGridSize(entityPlayer, container, 0);
+        for(int i = start; i < start + size; i++) {
+            if(container.inventorySlots.get(i).getHasStack()) {
+                return;
+            }
+        }
+        getController().windowClick(container.windowId, mouseSlot.slotNumber, 0, 0, entityPlayer);
+        getController().windowClick(container.windowId, start, 0, 0, entityPlayer);
+        for(Slot slot : container.inventorySlots) {
+            if(slot instanceof SlotCrafting && slot.getHasStack()) {
+                getController().windowClick(container.windowId, slot.slotNumber, 0, 0, entityPlayer);
+                break;
+            }
+        }
+        dropOffMouseStack(entityPlayer, container);
+        getController().windowClick(container.windowId, start, 0, 0, entityPlayer);
+        getController().windowClick(container.windowId, mouseSlot.slotNumber, 0, 0, entityPlayer);
+    }
+
+    public void compress(TweakProvider provider, EntityPlayer entityPlayer, Container container, Slot mouseSlot) {
+        if(!mouseSlot.getHasStack() || !canClear(provider, entityPlayer, container, 0)) {
+            return;
+        }
+        clearGrid(provider, entityPlayer, container, 0);
+        int start = provider.getCraftingGridStart(entityPlayer, container, 0);
+        int size = provider.getCraftingGridSize(entityPlayer, container, 0);
+        for(int i = start; i < start + size; i++) {
+            if(container.inventorySlots.get(i).getHasStack()) {
+                return;
+            }
+        }
+        ItemStack result;
+        ItemStack mouseStack = mouseSlot.getStack();
+        if(size == 9 && mouseStack.stackSize >= 9) {
+            result = CraftingManager.getInstance().findMatchingRecipe(new InventoryCraftingCompress(container, 3, mouseStack), entityPlayer.worldObj);
+            if(result != null) {
+                getController().windowClick(container.windowId, mouseSlot.slotNumber, 0, 0, entityPlayer);
+                getController().windowClick(container.windowId, -999, getDragSplittingButton(0, 0), 5, entityPlayer);
+                for (int i = start; i < start + size; i++) {
+                    getController().windowClick(container.windowId, i, getDragSplittingButton(1, 0), 5, entityPlayer);
+                }
+                getController().windowClick(container.windowId, -999, getDragSplittingButton(2, 0), 5, entityPlayer);
+                getController().windowClick(container.windowId, mouseSlot.slotNumber, 0, 0, entityPlayer);
+            } else {
+                result = CraftingManager.getInstance().findMatchingRecipe(new InventoryCraftingCompress(container, 2, mouseStack), entityPlayer.worldObj);
+                if(result != null) {
+                    getController().windowClick(container.windowId, mouseSlot.slotNumber, 0, 0, entityPlayer);
+                    getController().windowClick(container.windowId, -999, getDragSplittingButton(0, 0), 5, entityPlayer);
+                    getController().windowClick(container.windowId, start, getDragSplittingButton(1, 0), 5, entityPlayer);
+                    getController().windowClick(container.windowId, start + 1, getDragSplittingButton(1, 0), 5, entityPlayer);
+                    getController().windowClick(container.windowId, start + 3, getDragSplittingButton(1, 0), 5, entityPlayer);
+                    getController().windowClick(container.windowId, start + 4, getDragSplittingButton(1, 0), 5, entityPlayer);
+                    getController().windowClick(container.windowId, -999, getDragSplittingButton(2, 0), 5, entityPlayer);
+                    getController().windowClick(container.windowId, mouseSlot.slotNumber, 0, 0, entityPlayer);
+                } else {
+                    return;
+                }
+            }
+        } else if(size == 4 && mouseStack.stackSize >= 4) {
+            result = CraftingManager.getInstance().findMatchingRecipe(new InventoryCraftingCompress(container, 2, mouseStack), entityPlayer.worldObj);
+            if(result != null) {
+                getController().windowClick(container.windowId, mouseSlot.slotNumber, 0, 0, entityPlayer);
+                getController().windowClick(container.windowId, -999, getDragSplittingButton(0, 0), 5, entityPlayer);
+                for (int i = start; i < start + size; i++) {
+                    getController().windowClick(container.windowId, i, getDragSplittingButton(1, 0), 5, entityPlayer);
+                }
+                getController().windowClick(container.windowId, -999, getDragSplittingButton(2, 0), 5, entityPlayer);
+                getController().windowClick(container.windowId, mouseSlot.slotNumber, 0, 0, entityPlayer);
+            } else {
+                return;
+            }
+        }
+        for (Slot slot : container.inventorySlots) {
+            if (slot instanceof SlotCrafting && slot.getHasStack()) {
+                getController().windowClick(container.windowId, slot.slotNumber, 0, 0, entityPlayer);
+                break;
+            }
+        }
+        dropOffMouseStack(entityPlayer, container);
+        for(int i = start; i < start + size; i++) {
+            if(container.inventorySlots.get(i).getHasStack()) {
+                getController().windowClick(container.windowId, i, 0, 0, entityPlayer);
+                getController().windowClick(container.windowId, mouseSlot.slotNumber, 0, 0, entityPlayer);
+            }
+        }
+        dropOffMouseStack(entityPlayer, container);
+    }
+
+    private static int getDragSplittingButton(int id, int limit) {
+        return id & 3 | (limit & 3) << 2;
+    }
+
 }

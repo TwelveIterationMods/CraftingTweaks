@@ -6,7 +6,6 @@ import net.blay09.mods.craftingtweaks.CraftingTweaks;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.blay09.mods.craftingtweaks.net.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.settings.KeyBinding;
@@ -41,6 +40,8 @@ public class ClientProxy extends CommonProxy {
     private final KeyBinding keyBalance = new KeyBinding("key.craftingtweaks.balance", Keyboard.KEY_B, "key.categories.craftingtweaks");
     private final KeyBinding keyClear = new KeyBinding("key.craftingtweaks.clear", Keyboard.KEY_C, "key.categories.craftingtweaks");
     private final KeyBinding keyToggleButtons = new KeyBinding("key.craftingtweaks.toggleButtons", 0, "key.categories.craftingtweaks");
+    private final KeyBinding keyCompress = new KeyBinding("key.craftingtweaks.compress", Keyboard.KEY_K, "key.categories.craftingtweaks");
+    private final KeyBinding keyDecompress = new KeyBinding("key.craftingtweaks.decompress", 0, "key.categories.craftingtweaks");
     private KeyBinding keyTransferStack;
 
     private boolean ignoreMouseUp;
@@ -56,6 +57,7 @@ public class ClientProxy extends CommonProxy {
         ClientRegistry.registerKeyBinding(keyBalance);
         ClientRegistry.registerKeyBinding(keyClear);
         ClientRegistry.registerKeyBinding(keyToggleButtons);
+        ClientRegistry.registerKeyBinding(keyCompress);
         keyTransferStack = Minecraft.getMinecraft().gameSettings.keyBindForward;
     }
 
@@ -72,38 +74,60 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onGuiKeyboardEvent(GuiScreenEvent.KeyboardInputEvent.Pre event) {
-        if(Keyboard.getEventKeyState()) {
+        if (Keyboard.getEventKeyState()) {
             EntityPlayer entityPlayer = FMLClientHandler.instance().getClientPlayerEntity();
-            if(entityPlayer != null) {
+            if (entityPlayer != null) {
                 Container container = entityPlayer.openContainer;
                 if (container != null) {
+                    GuiScreen guiScreen = Minecraft.getMinecraft().currentScreen;
                     TweakProvider provider = CraftingTweaks.instance.getProvider(container);
                     if (provider != null) {
                         CraftingTweaks.ModSupportState config = CraftingTweaks.instance.getModSupportState(provider.getModId());
                         if (config == CraftingTweaks.ModSupportState.ENABLED || config == CraftingTweaks.ModSupportState.HOTKEYS_ONLY) {
                             if (keyRotate.getKeyCode() > 0 && Keyboard.getEventKey() == keyRotate.getKeyCode()) {
-                                if(isServerSide) {
+                                if (isServerSide) {
                                     NetworkHandler.instance.sendToServer(new MessageRotate(0));
                                 } else {
                                     clientProvider.rotateGrid(provider, entityPlayer, container, 0);
                                 }
                             } else if (keyClear.getKeyCode() > 0 && Keyboard.getEventKey() == keyClear.getKeyCode()) {
-                                if(isServerSide) {
+                                if (isServerSide) {
                                     NetworkHandler.instance.sendToServer(new MessageClear(0));
                                 } else {
                                     clientProvider.clearGrid(provider, entityPlayer, container, 0);
                                 }
                             } else if (keyBalance.getKeyCode() > 0 && Keyboard.getEventKey() == keyBalance.getKeyCode()) {
-                                if(isServerSide) {
+                                if (isServerSide) {
                                     NetworkHandler.instance.sendToServer(new MessageBalance(0));
                                 } else {
                                     clientProvider.balanceGrid(provider, entityPlayer, container, 0);
                                 }
                             }
                         }
-                        GuiScreen guiScreen = Minecraft.getMinecraft().currentScreen;
                         if (guiScreen instanceof GuiContainer) {
-                            if (keyToggleButtons.getKeyCode() > 0 && Keyboard.getEventKey() == keyToggleButtons.getKeyCode()) {
+                            GuiContainer guiContainer = (GuiContainer) guiScreen;
+                            if (keyCompress.getKeyCode() > 0 && Keyboard.getEventKey() == keyCompress.getKeyCode()) {
+                                Slot mouseSlot = guiContainer.getSlotUnderMouse();
+                                if (mouseSlot != null) {
+                                    boolean isDecompress = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
+                                    if (isServerSide) {
+                                        NetworkHandler.instance.sendToServer(new MessageCompress(mouseSlot.slotNumber, isDecompress));
+                                    } else if (isDecompress) {
+                                        clientProvider.decompress(provider, entityPlayer, container, mouseSlot);
+                                    } else {
+                                        clientProvider.compress(provider, entityPlayer, container, mouseSlot);
+                                    }
+                                }
+                            } else if (keyDecompress.getKeyCode() > 0 && Keyboard.getEventKey() == keyDecompress.getKeyCode()) {
+                                Slot mouseSlot = guiContainer.getSlotUnderMouse();
+                                if (mouseSlot != null) {
+                                    if (isServerSide) {
+                                        NetworkHandler.instance.sendToServer(new MessageCompress(mouseSlot.slotNumber, true));
+                                    } else {
+                                        clientProvider.decompress(provider, entityPlayer, container, mouseSlot);
+                                    }
+                                }
+                            } else if (keyToggleButtons.getKeyCode() > 0 && Keyboard.getEventKey() == keyToggleButtons.getKeyCode()) {
                                 CraftingTweaks.hideButtons = !CraftingTweaks.hideButtons;
                                 if (CraftingTweaks.hideButtons) {
                                     Iterator it = guiScreen.buttonList.iterator();
@@ -113,9 +137,34 @@ public class ClientProxy extends CommonProxy {
                                         }
                                     }
                                 } else {
-                                    initGui((GuiContainer) guiScreen);
+                                    initGui(guiContainer);
                                 }
                                 CraftingTweaks.saveConfig();
+                            }
+                        }
+                    }
+                    if (guiScreen instanceof GuiContainer) {
+                        GuiContainer guiContainer = (GuiContainer) guiScreen;
+                        if (keyCompress.getKeyCode() > 0 && Keyboard.getEventKey() == keyCompress.getKeyCode()) {
+                            Slot mouseSlot = guiContainer.getSlotUnderMouse();
+                            if (mouseSlot != null) {
+                                boolean isDecompress = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
+                                if (isServerSide) {
+                                    NetworkHandler.instance.sendToServer(new MessageCompress(mouseSlot.slotNumber, isDecompress));
+                                } else if (isDecompress && provider != null) {
+                                    clientProvider.decompress(provider, entityPlayer, container, mouseSlot);
+                                } else if(provider != null) {
+                                    clientProvider.compress(provider, entityPlayer, container, mouseSlot);
+                                }
+                            }
+                        } else if (keyDecompress.getKeyCode() > 0 && Keyboard.getEventKey() == keyDecompress.getKeyCode()) {
+                            Slot mouseSlot = guiContainer.getSlotUnderMouse();
+                            if (mouseSlot != null) {
+                                if (isServerSide) {
+                                    NetworkHandler.instance.sendToServer(new MessageCompress(mouseSlot.slotNumber, true));
+                                } else if(provider != null) {
+                                    clientProvider.decompress(provider, entityPlayer, container, mouseSlot);
+                                }
                             }
                         }
                     }
@@ -126,7 +175,7 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onGuiMouseEvent(GuiScreenEvent.MouseInputEvent.Pre event) {
-        if(Mouse.getEventButtonState()) {
+        if (Mouse.getEventButtonState()) {
             EntityPlayer entityPlayer = FMLClientHandler.instance().getClientPlayerEntity();
             if (entityPlayer != null) {
                 Container container = entityPlayer.openContainer;
@@ -138,24 +187,24 @@ public class ClientProxy extends CommonProxy {
                             if (mouseSlot != null) {
                                 List<Slot> transferSlots = Lists.newArrayList();
                                 transferSlots.add(mouseSlot);
-                                if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+                                if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
                                     ItemStack mouseSlotStack = mouseSlot.getStack();
-                                    for(Slot slot : container.inventorySlots) {
-                                        if(!slot.getHasStack() || mouseSlot == slot) {
+                                    for (Slot slot : container.inventorySlots) {
+                                        if (!slot.getHasStack() || mouseSlot == slot) {
                                             continue;
                                         }
                                         ItemStack slotStack = slot.getStack();
-                                        if(slotStack.isItemEqual(mouseSlotStack) && ItemStack.areItemStackTagsEqual(slotStack, mouseSlotStack)) {
+                                        if (slotStack.isItemEqual(mouseSlotStack) && ItemStack.areItemStackTagsEqual(slotStack, mouseSlotStack)) {
                                             transferSlots.add(slot);
                                         }
                                     }
                                 }
-                                if(isServerSide) {
-                                    for(Slot slot : transferSlots) {
+                                if (isServerSide) {
+                                    for (Slot slot : transferSlots) {
                                         NetworkHandler.instance.sendToServer(new MessageTransferStack(0, slot.slotNumber));
                                     }
                                 } else {
-                                    for(Slot slot : transferSlots) {
+                                    for (Slot slot : transferSlots) {
                                         clientProvider.transferIntoGrid(provider, entityPlayer, container, 0, slot);
                                     }
                                     ignoreMouseUp = true;
@@ -166,7 +215,7 @@ public class ClientProxy extends CommonProxy {
                     }
                 }
             }
-        } else if(ignoreMouseUp) {
+        } else if (ignoreMouseUp) {
             event.setCanceled(true);
             ignoreMouseUp = false;
         }
@@ -175,8 +224,8 @@ public class ClientProxy extends CommonProxy {
     @SubscribeEvent
     public void onClientTick(TickEvent.ClientTickEvent event) {
         EntityPlayer entityPlayer = FMLClientHandler.instance().getClientPlayerEntity();
-        if(entityPlayer != null) {
-            if(helloTimeout > 0) {
+        if (entityPlayer != null) {
+            if (helloTimeout > 0) {
                 helloTimeout--;
                 if (helloTimeout <= 0) {
                     entityPlayer.addChatMessage(new ChatComponentText("This server does not have Crafting Tweaks installed. Functionality may be limited."));
@@ -188,9 +237,9 @@ public class ClientProxy extends CommonProxy {
 
     private void initGui(GuiContainer guiContainer) {
         TweakProvider provider = CraftingTweaks.instance.getProvider(guiContainer.inventorySlots);
-        if(provider != null) {
+        if (provider != null) {
             CraftingTweaks.ModSupportState config = CraftingTweaks.instance.getModSupportState(provider.getModId());
-            if(config == CraftingTweaks.ModSupportState.ENABLED || config == CraftingTweaks.ModSupportState.BUTTONS_ONLY) {
+            if (config == CraftingTweaks.ModSupportState.ENABLED || config == CraftingTweaks.ModSupportState.BUTTONS_ONLY) {
                 provider.initGui(guiContainer, guiContainer.buttonList);
             }
         }
@@ -198,7 +247,7 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public void onInitGui(GuiScreenEvent.InitGuiEvent.Post event) {
-        if(!CraftingTweaks.hideButtons) {
+        if (!CraftingTweaks.hideButtons) {
             if (event.gui instanceof GuiContainer) {
                 initGui((GuiContainer) event.gui);
             }
@@ -216,21 +265,21 @@ public class ClientProxy extends CommonProxy {
 //                roundMenu = null;
 //            }
 //        }
-        if(roundMenu != null) {
+        if (roundMenu != null) {
             roundMenu.drawMenu(event.gui.mc, event.mouseX, event.mouseY);
         }
     }
 
     @SubscribeEvent
     public void onActionPerformed(GuiScreenEvent.ActionPerformedEvent.Pre event) {
-        if(event.button instanceof GuiTweakButton) {
+        if (event.button instanceof GuiTweakButton) {
             event.button.playPressSound(Minecraft.getMinecraft().getSoundHandler());
             EntityPlayer entityPlayer = FMLClientHandler.instance().getClientPlayerEntity();
             Container container = entityPlayer.openContainer;
             TweakProvider provider = CraftingTweaks.instance.getProvider(container);
-            switch(((GuiTweakButton) event.button).getTweakOption()) {
+            switch (((GuiTweakButton) event.button).getTweakOption()) {
                 case Rotate:
-                    if(isServerSide) {
+                    if (isServerSide) {
                         NetworkHandler.instance.sendToServer(new MessageRotate(((GuiTweakButton) event.button).getTweakId()));
                     } else {
                         clientProvider.rotateGrid(provider, entityPlayer, container, ((GuiTweakButton) event.button).getTweakId());
@@ -238,7 +287,7 @@ public class ClientProxy extends CommonProxy {
                     event.setCanceled(true);
                     break;
                 case Balance:
-                    if(isServerSide) {
+                    if (isServerSide) {
                         NetworkHandler.instance.sendToServer(new MessageBalance(((GuiTweakButton) event.button).getTweakId()));
                     } else {
                         clientProvider.balanceGrid(provider, entityPlayer, container, ((GuiTweakButton) event.button).getTweakId());
@@ -246,7 +295,7 @@ public class ClientProxy extends CommonProxy {
                     event.setCanceled(true);
                     break;
                 case Clear:
-                    if(isServerSide) {
+                    if (isServerSide) {
                         NetworkHandler.instance.sendToServer(new MessageClear(((GuiTweakButton) event.button).getTweakId()));
                     } else {
                         clientProvider.clearGrid(provider, entityPlayer, container, ((GuiTweakButton) event.button).getTweakId());
