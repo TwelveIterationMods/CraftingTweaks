@@ -1,6 +1,5 @@
 package net.blay09.mods.craftingtweaks;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -9,11 +8,12 @@ import net.blay09.mods.craftingtweaks.net.MessageHello;
 import net.blay09.mods.craftingtweaks.net.NetworkHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraftforge.common.MinecraftForge;
 
 public class CommonProxy {
 
     public void init(FMLInitializationEvent event) {
-        FMLCommonHandler.instance().bus().register(this);
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     public void postInit(FMLPostInitializationEvent event) {

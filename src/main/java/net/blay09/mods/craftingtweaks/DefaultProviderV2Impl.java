@@ -3,8 +3,9 @@ package net.blay09.mods.craftingtweaks;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
-import net.blay09.mods.craftingtweaks.api.DefaultProvider;
+import net.blay09.mods.craftingtweaks.api.DefaultProviderV2;
 import net.blay09.mods.craftingtweaks.api.RotationHandler;
+import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
@@ -14,7 +15,7 @@ import net.minecraft.item.ItemStack;
 
 import java.util.List;
 
-public class DefaultProviderImpl implements DefaultProvider {
+public class DefaultProviderV2Impl implements DefaultProviderV2 {
 
     private static final RotationHandler rotationHandler = new RotationHandler() {
         @Override
@@ -39,34 +40,33 @@ public class DefaultProviderImpl implements DefaultProvider {
     };
 
     @Override
-    public void clearGrid(EntityPlayer entityPlayer, Container container, IInventory craftMatrix) {
-        clearGrid(entityPlayer, container, craftMatrix, 0, craftMatrix.getSizeInventory());
-    }
-
-    @Override
-    public void clearGrid(EntityPlayer entityPlayer, Container container, IInventory craftMatrix, int start, int size) {
+    public void clearGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container, boolean phantomItems) {
+        IInventory craftMatrix = provider.getCraftMatrix(entityPlayer, container, id);
+        int start = provider.getCraftingGridStart(entityPlayer, container, id);
+        int size = provider.getCraftingGridSize(entityPlayer, container, id);
         for(int i = start; i < start + size; i++) {
-            ItemStack itemStack = craftMatrix.getStackInSlot(i);
-            if(itemStack != null) {
-                if (entityPlayer.inventory.addItemStackToInventory(itemStack)) {
-                    craftMatrix.setInventorySlotContents(i, null);
+            int slotIndex = ((Slot) container.inventorySlots.get(i)).getSlotIndex();
+            if(!phantomItems) {
+                ItemStack itemStack = craftMatrix.getStackInSlot(slotIndex);
+                if(!entityPlayer.inventory.addItemStackToInventory(itemStack)) {
+                    continue;
                 }
             }
-            container.detectAndSendChanges();
+            craftMatrix.setInventorySlotContents(slotIndex, null);
         }
+        container.detectAndSendChanges();
     }
 
     @Override
-    public void balanceGrid(EntityPlayer entityPlayer, Container container, IInventory craftMatrix) {
-        balanceGrid(entityPlayer, container, craftMatrix, 0, craftMatrix.getSizeInventory());
-    }
-
-    @Override
-    public void balanceGrid(EntityPlayer entityPlayer, Container container, IInventory craftMatrix, int start, int size) {
+    public void balanceGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container) {
         ArrayListMultimap<String, ItemStack> itemMap = ArrayListMultimap.create();
         Multiset<String> itemCount = HashMultiset.create();
+        IInventory craftMatrix = provider.getCraftMatrix(entityPlayer, container, id);
+        int start = provider.getCraftingGridStart(entityPlayer, container, id);
+        int size = provider.getCraftingGridSize(entityPlayer, container, id);
         for(int i = start; i < start + size; i++) {
-            ItemStack itemStack = craftMatrix.getStackInSlot(i);
+            int slotIndex = ((Slot) container.inventorySlots.get(i)).getSlotIndex();
+            ItemStack itemStack = craftMatrix.getStackInSlot(slotIndex);
             if(itemStack != null && itemStack.getMaxStackSize() > 1) {
                 String key = itemStack.getUnlocalizedName() + "@" + itemStack.getMetadata();
                 itemMap.put(key, itemStack);
@@ -98,7 +98,8 @@ public class DefaultProviderImpl implements DefaultProvider {
     }
 
     @Override
-    public ItemStack putIntoGrid(EntityPlayer entityPlayer, Container container, IInventory craftMatrix, ItemStack itemStack, int index) {
+    public ItemStack putIntoGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container, ItemStack itemStack, int index) {
+        IInventory craftMatrix = provider.getCraftMatrix(entityPlayer, container, id);
         ItemStack craftStack = craftMatrix.getStackInSlot(index);
         if(craftStack != null) {
             if(craftStack.isItemEqual(itemStack) && ItemStack.areItemStackTagsEqual(craftStack, itemStack)) {
@@ -122,14 +123,18 @@ public class DefaultProviderImpl implements DefaultProvider {
     }
 
     @Override
-    public boolean transferIntoGrid(EntityPlayer entityPlayer, Container container, IInventory craftMatrix, Slot sourceSlot) {
+    public boolean transferIntoGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container, Slot sourceSlot) {
+        IInventory craftMatrix = provider.getCraftMatrix(entityPlayer, container, id);
+        int start = provider.getCraftingGridStart(entityPlayer, container, id);
+        int size = provider.getCraftingGridSize(entityPlayer, container, id);
         ItemStack itemStack = sourceSlot.getStack();
         if(itemStack == null) {
             return false;
         }
         int firstEmptySlot = -1;
-        for(int i = 0; i < craftMatrix.getSizeInventory(); i++) {
-            ItemStack craftStack = craftMatrix.getStackInSlot(i);
+        for(int i = start; i < start + size; i++) {
+            int slotIndex = ((Slot) container.inventorySlots.get(i)).getSlotIndex();
+            ItemStack craftStack = craftMatrix.getStackInSlot(slotIndex);
             if(craftStack != null) {
                 if(craftStack.isItemEqual(itemStack) && ItemStack.areItemStackTagsEqual(craftStack, itemStack)) {
                     int spaceLeft = Math.min(craftMatrix.getInventoryStackLimit(), craftStack.getMaxStackSize()) - craftStack.stackSize;
@@ -142,7 +147,7 @@ public class DefaultProviderImpl implements DefaultProvider {
                     }
                 }
             } else if(firstEmptySlot == -1) {
-                firstEmptySlot = i;
+                firstEmptySlot = slotIndex;
             }
         }
         if(itemStack.stackSize > 0 && firstEmptySlot != -1) {
@@ -159,26 +164,26 @@ public class DefaultProviderImpl implements DefaultProvider {
     }
 
     @Override
-    public boolean canTransferFrom(EntityPlayer entityPlayer, Container container, int id, Slot slot) {
-        return canTransferFrom(entityPlayer, container, slot);
+    public void rotateGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container) {
+        rotateGrid(provider, id, entityPlayer, container, rotationHandler);
     }
 
     @Override
-    public void rotateGrid(EntityPlayer entityPlayer, Container container, IInventory craftMatrix) {
-        rotateGrid(entityPlayer, container, craftMatrix, 0, craftMatrix.getSizeInventory(), rotationHandler);
-    }
-
-    @Override
-    public void rotateGrid(EntityPlayer entityPlayer, Container container, IInventory craftMatrix, int start, int size, RotationHandler rotationHandler) {
-        IInventory matrixClone = new InventoryBasic("", false, craftMatrix.getSizeInventory());
-        for(int i = start; i < start + size; i++) {
-            matrixClone.setInventorySlotContents(i, craftMatrix.getStackInSlot(i));
+    public void rotateGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container, RotationHandler rotationHandler) {
+        IInventory craftMatrix = provider.getCraftMatrix(entityPlayer, container, id);
+        int start = provider.getCraftingGridStart(entityPlayer, container, id);
+        int size = provider.getCraftingGridSize(entityPlayer, container, id);
+        IInventory matrixClone = new InventoryBasic("", false, size);
+        for(int i = 0; i < size; i++) {
+            int slotIndex = ((Slot) container.inventorySlots.get(start + i)).getSlotIndex();
+            matrixClone.setInventorySlotContents(i, craftMatrix.getStackInSlot(slotIndex));
         }
-        for(int i = start; i < start + size; i++) {
+        for(int i = 0; i < size; i++) {
             if(rotationHandler.ignoreSlotId(i)) {
                 continue;
             }
-            craftMatrix.setInventorySlotContents(rotationHandler.rotateSlotId(i), matrixClone.getStackInSlot(i));
+            int slotIndex = ((Slot) container.inventorySlots.get(start + rotationHandler.rotateSlotId(i))).getSlotIndex();
+            craftMatrix.setInventorySlotContents(slotIndex, matrixClone.getStackInSlot(i));
         }
         container.detectAndSendChanges();
     }

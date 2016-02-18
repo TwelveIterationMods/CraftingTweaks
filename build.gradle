@@ -27,6 +27,9 @@ version = "1.0." + BUILD_NUMBER
 group= "net.blay09.mods"
 archivesBaseName = "craftingtweaks"
 
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
 minecraft {
     version = "1.7.10-10.13.4.1566-1.7.10"
     runDir = "run"
@@ -34,10 +37,28 @@ minecraft {
 	mappings = "stable_12"
 }
 
+configurations {
+    provided
+}
+
+sourceSets.main.compileClasspath += [configurations.provided]
+
 idea {
     module {
         inheritOutputDirs = true
+        scopes.PROVIDED.plus += [configurations.provided]
     }
+}
+
+repositories {
+    maven {
+        name = "chickenbones"
+        url = "http://chickenbones.net/maven"
+    }
+}
+
+dependencies {
+    provided "codechicken:NotEnoughItems:1.7.10-1.0.5.118:dev"
 }
 
 processResources

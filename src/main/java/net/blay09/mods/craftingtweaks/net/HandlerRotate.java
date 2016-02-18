@@ -11,7 +11,7 @@ import net.minecraft.inventory.Container;
 public class HandlerRotate implements IMessageHandler<MessageRotate, IMessage> {
 
     @Override
-    public IMessage onMessage(MessageRotate message, MessageContext ctx) {
+    public IMessage onMessage(final MessageRotate message, final MessageContext ctx) {
         EntityPlayer entityPlayer = ctx.getServerHandler().playerEntity;
         Container container = entityPlayer.openContainer;
         if(container != null) {

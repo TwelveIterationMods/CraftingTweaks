@@ -13,7 +13,7 @@ public class CraftingTweaksLoadingPlugin implements IFMLLoadingPlugin {
     @Override
     public String[] getASMTransformerClass() {
         return new String[] {
-            "net.blay09.mods.craftingtweaks.coremod.GuiScreenClassTransformer"
+                "net.blay09.mods.craftingtweaks.coremod.GuiScreenClassTransformer"
         };
     }
 

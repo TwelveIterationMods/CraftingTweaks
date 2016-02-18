@@ -4,29 +4,20 @@ import com.google.common.collect.Maps;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.blay09.mods.craftingtweaks.addon.*;
-import net.blay09.mods.craftingtweaks.addon.appliedenergistics2.AE2CraftingTerminalTweakProvider;
-import net.blay09.mods.craftingtweaks.addon.appliedenergistics2.AE2PatternTerminalTweakProvider;
-import net.blay09.mods.craftingtweaks.addon.forestry.ForestryAddon;
-import net.blay09.mods.craftingtweaks.addon.ganyssurface.GanysDualWorktableTweakProvider;
-import net.blay09.mods.craftingtweaks.addon.ganyssurface.GanysWorktableTweakProvider;
-import net.blay09.mods.craftingtweaks.addon.railcraft.RailcraftAddon;
-import net.blay09.mods.craftingtweaks.addon.railcraft.RailcraftRollingMachineTweakProvider;
-import net.blay09.mods.craftingtweaks.addon.railcraft.RailcraftWorkCartTweakProviderOld;
-import net.blay09.mods.craftingtweaks.addon.terrafirmacraft.TerraFirmaCraftOldTweakProvider;
-import net.blay09.mods.craftingtweaks.addon.terrafirmacraft.TerraFirmaCraftTweakProvider;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
-import net.blay09.mods.craftingtweaks.net.NetworkHandler;
+import net.blay09.mods.craftingtweaks.api.SimpleTweakProvider;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
+import net.blay09.mods.craftingtweaks.net.NetworkHandler;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.ContainerWorkbench;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -78,16 +69,16 @@ public class CraftingTweaks {
     private final Map<Class<? extends Container>, TweakProvider> providerMap = Maps.newHashMap();
 
     public static boolean hideButtons;
+    public static boolean compressAnywhere;
 
-    @EventHandler
+    @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         CraftingTweaksAPI.setupAPI(new InternalMethodsImpl());
 
         configMap.put("minecraft", ModSupportState.ENABLED);
         configMap.put("TConstruct", ModSupportState.ENABLED);
-        configMap.put("appliedenergistics2", ModSupportState.ENABLED);
+        configMap.put("appliedenergistics2", ModSupportState.BUTTONS_ONLY);
         configMap.put("DraconicEvolution", ModSupportState.ENABLED);
-        configMap.put("StevesWorkshop", ModSupportState.ENABLED);
         configMap.put("Natura", ModSupportState.ENABLED);
         configMap.put("Thaumcraft", ModSupportState.ENABLED);
         configMap.put("MineFactoryReloaded", ModSupportState.ENABLED);
@@ -107,6 +98,7 @@ public class CraftingTweaks {
 
         config = new Configuration(event.getSuggestedConfigurationFile());
         hideButtons = config.getBoolean("hideButtons", "general", false, "This option is toggled by the 'Toggle Buttons' key that can be defined in the Controls settings.");
+        compressAnywhere = config.getBoolean("compressAnywhere", "general", false, "Set this to true if you want the (de)compress feature to work outside of crafting GUIs (only works if installed on server)");
         config.setCategoryComment("addons", "Here you can control whether support for a mod should be enabled, buttons_only, hotkeys_only or disabled. For Vanilla Minecraft, see the option 'minecraft'. Mods are identified by their mod ids.");
         config.getString("minecraft", "addons", ModSupportState.ENABLED.name().toLowerCase(), "", ModSupportState.getValidValues());
         // Load all options (including those from non-included addons)
@@ -115,44 +107,94 @@ public class CraftingTweaks {
         }
     }
 
-    @EventHandler
+    @Mod.EventHandler
+    public void imc(FMLInterModComms.IMCEvent event) {
+        for(FMLInterModComms.IMCMessage message : event.getMessages()) {
+            if(message.isNBTMessage() && message.key.equals("RegisterProvider")) {
+                NBTTagCompound tagCompound = message.getNBTValue();
+                String containerClassName = tagCompound.getString("ContainerClass");
+                SimpleTweakProvider provider = new SimpleTweakProviderImpl(message.getSender());
+
+                int buttonOffsetX = tagCompound.hasKey("ButtonOffsetX") ? tagCompound.getInteger("ButtonOffsetX") : -16;
+                int buttonOffsetY = tagCompound.hasKey("ButtonOffsetY") ? tagCompound.getInteger("ButtonOffsetY") : 16;
+                EnumFacing alignToGrid = null;
+                String alignToGridName = tagCompound.getString("AlignToGrid");
+                switch(alignToGridName.toLowerCase()) {
+                    case "north":
+                    case "up":
+                        alignToGrid = EnumFacing.UP;
+                        break;
+                    case "south":
+                    case "down":
+                        alignToGrid = EnumFacing.DOWN;
+                        break;
+                    case "east":
+                    case "right":
+                        alignToGrid = EnumFacing.EAST;
+                        break;
+                    case "west":
+                    case "left":
+                        alignToGrid = EnumFacing.WEST;
+                        break;
+                }
+                provider.setAlignToGrid(alignToGrid);
+
+                provider.setGrid(getIntOr(tagCompound, "GridSlotNumber", 1), getIntOr(tagCompound, "GridSize", 9));
+                provider.setHideButtons(tagCompound.getBoolean("HideButtons"));
+                provider.setPhantomItems(tagCompound.getBoolean("PhantomItems"));
+
+                NBTTagCompound rotateCompound = tagCompound.getCompoundTag("TweakRotate");
+                provider.setTweakRotate(getBoolOr(rotateCompound, "Enabled", true), getBoolOr(rotateCompound, "ShowButton", true),
+                        buttonOffsetX + getIntOr(rotateCompound, "ButtonX", 0), buttonOffsetY + getIntOr(rotateCompound, "ButtonY", 0));
+
+                NBTTagCompound balanceCompound = tagCompound.getCompoundTag("TweakBalance");
+                provider.setTweakBalance(getBoolOr(balanceCompound, "Enabled", true), getBoolOr(balanceCompound, "ShowButton", true),
+                        buttonOffsetX + getIntOr(balanceCompound, "ButtonX", 0), buttonOffsetY + getIntOr(balanceCompound, "ButtonY", 18));
+
+                NBTTagCompound clearCompound = tagCompound.getCompoundTag("TweakClear");
+                provider.setTweakClear(getBoolOr(clearCompound, "Enabled", true), getBoolOr(clearCompound, "ShowButton", true),
+                        buttonOffsetX + getIntOr(clearCompound, "ButtonX", 0), buttonOffsetY + getIntOr(clearCompound, "ButtonY", 36));
+
+                registerProvider(containerClassName, provider);
+                logger.info(message.getSender() + " has registered " + containerClassName + " for CraftingTweaks");
+            } else {
+                logger.warn("CraftingTweaks received an invalid IMC message from " + message.getSender());
+            }
+        }
+    }
+
+    @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         proxy.init(event);
 
         NetworkHandler.init();
     }
 
-    @EventHandler
+    @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
         proxy.postInit(event);
+        configMap.put("appliedenergistics2", ModSupportState.BUTTONS_ONLY);
 
-        providerMap.put(ContainerWorkbench.class, new VanillaTweakProviderImpl());
-        registerProvider("tconstruct.tools.inventory.CraftingStationContainer", new TinkersConstructTweakProvider());
-        registerProvider("appeng.container.implementations.ContainerCraftingTerm", new AE2CraftingTerminalTweakProvider());
-        registerProvider("appeng.container.implementations.ContainerPatternTerm", new AE2PatternTerminalTweakProvider());
-        registerProvider("com.brandon3055.draconicevolution.common.container.ContainerDraconiumChest", new DraconicEvolutionTweakProvider());
-        registerProvider("vswe.production.gui.container.ContainerTable", new StevesWorkshopTweakProvider());
-        registerProvider("mods.natura.gui.WorkbenchContainer", new NaturaTweakProvider());
-        registerProvider("thaumcraft.common.container.ContainerArcaneWorkbench", new ThaumCraft4TweakProvider());
-        registerProvider("powercrystals.minefactoryreloaded.gui.container.ContainerLiquiCrafter", new MineFactoryReloadedTweakProvider());
-
-        new ForestryAddon();
-        new RailcraftAddon();
-
-        registerProvider("buildcraft.factory.gui.ContainerAutoWorkbench", new BuildcraftTweakProvider());
-        registerProvider("Reika.RotaryCraft.Containers.ContainerHandCraft", new RotaryCraftDefaultTweakProvider("Reika.RotaryCraft.Containers.ContainerHandCraft"));
-        registerProvider("Reika.RotaryCraft.Containers.ContainerCraftingPattern", new RotaryCraftDefaultTweakProvider("Reika.RotaryCraft.Containers.ContainerCraftingPattern"));
-        registerProvider("twilightforest.uncrafting.ContainerTFUncrafting", new TwilightForestTweakProvider());
-        registerProvider("com.bioxx.tfc.Containers.ContainerWorkbench", new TerraFirmaCraftOldTweakProvider());
-        registerProvider("com.bioxx.tfc.Containers.ContainerPlayerTFC", new TerraFirmaCraftTweakProvider());
-        registerProvider("ganymedes01.ganyssurface.inventory.ContainerWorkTable", new GanysWorktableTweakProvider());
-        registerProvider("ganymedes01.ganyssurface.inventory.ContainerDualWorkTable", new GanysDualWorktableTweakProvider());
-        registerProvider("tv.vanhal.jacb.gui.BenchContainer", new JACBTweakProvider());
-        registerProvider("com.bluepowermod.container.ContainerProjectTable", new BluePowerTweakProvider());
-        registerProvider("jds.bibliocraft.blocks.ContainerFancyWorkbench", new BiblioCraftTweakProvider());
-        registerProvider("cofh.thermalexpansion.gui.container.device.ContainerWorkbench", new ThermalExpansionTweakProvider());
-        registerProvider("de.eydamos.backpack.inventory.container.ContainerWorkbenchBackpack", new BackpacksTweakProvider());
-        registerProvider("fox.spiteful.avaritia.gui.ContainerExtremeCrafting", new AvaritiaTweakProvider());
+        Compatiblity.vanilla();
+        Compatiblity.appliedenergistics2();
+        Compatiblity.avaritia();
+        Compatiblity.backpacks();
+        Compatiblity.bibliocraft();
+        Compatiblity.bluepower();
+        Compatiblity.buildcraft();
+        Compatiblity.jacb();
+        Compatiblity.ganyssurface();
+        Compatiblity.forestry();
+        Compatiblity.draconicevolution();
+        Compatiblity.natura();
+        Compatiblity.minefactoryreloaded();
+        Compatiblity.twilightforest();
+        Compatiblity.tinkersconstruct();
+        Compatiblity.thermalexpansion();
+        Compatiblity.railcraft();
+        Compatiblity.thaumcraft4();
+        Compatiblity.rotarycraft();
+        Compatiblity.terrafirmacraft();
 
         config.save();
     }
@@ -213,6 +255,14 @@ public class CraftingTweaks {
         config.save();
     }
 
+    private static int getIntOr(NBTTagCompound tagCompound, String key, int defaultVal) {
+        return (tagCompound.hasKey(key) ? tagCompound.getInteger(key) : defaultVal);
+    }
+
+    private static boolean getBoolOr(NBTTagCompound tagCompound, String key, boolean defaultVal) {
+        return (tagCompound.hasKey(key) ? tagCompound.getBoolean(key) : defaultVal);
+    }
+
     @SideOnly(Side.CLIENT)
     public static boolean onGuiClick(int mouseX, int mouseY, int button) {
         if(Mouse.getEventButtonState()) {
@@ -222,5 +272,4 @@ public class CraftingTweaks {
         }
         return false;
     }
-
 }

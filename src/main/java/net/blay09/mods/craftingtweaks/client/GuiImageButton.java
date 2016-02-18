@@ -1,5 +1,6 @@
 package net.blay09.mods.craftingtweaks.client;
 
+import net.blay09.mods.craftingtweaks.CraftingTweaks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.ResourceLocation;
@@ -7,7 +8,7 @@ import org.lwjgl.opengl.GL11;
 
 public class GuiImageButton extends GuiButton {
 
-    private static final ResourceLocation texture = new ResourceLocation("craftingtweaks", "gui.png");
+    private static final ResourceLocation texture = new ResourceLocation(CraftingTweaks.MOD_ID, "gui.png");
 
     private final int texCoordX;
     private final int texCoordY;
@@ -23,6 +24,6 @@ public class GuiImageButton extends GuiButton {
         boolean isHovered = this.enabled && this.visible && mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
         mc.renderEngine.bindTexture(texture);
         GL11.glColor4f(1f, 1f, 1f, 1f);
-        drawTexturedModalRect(xPosition, yPosition, texCoordX, texCoordY + (isHovered ? 16 : 0), 16, 16);
+        drawTexturedModalRect(xPosition, yPosition, texCoordX, enabled ? texCoordY + (isHovered ? 16 : 0) : texCoordY + 32, 16, 16);
     }
 }

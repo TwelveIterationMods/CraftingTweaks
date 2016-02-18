@@ -11,7 +11,7 @@ import net.minecraft.inventory.Container;
 public class HandlerClear implements IMessageHandler<MessageClear, IMessage> {
 
     @Override
-    public IMessage onMessage(MessageClear message, MessageContext ctx) {
+    public IMessage onMessage(final MessageClear message, final MessageContext ctx) {
         EntityPlayer entityPlayer = ctx.getServerHandler().playerEntity;
         Container container = entityPlayer.openContainer;
         if(container != null) {

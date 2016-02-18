@@ -8,36 +8,38 @@ import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
+import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
 
 public class HandlerTransferStack implements IMessageHandler<MessageTransferStack, IMessage> {
 
     @Override
-    public IMessage onMessage(MessageTransferStack message, MessageContext ctx) {
+    public IMessage onMessage(final MessageTransferStack message, final MessageContext ctx) {
         EntityPlayer entityPlayer = ctx.getServerHandler().playerEntity;
         Container container = entityPlayer.openContainer;
-        if(container != null && message.slotNumber >= 0 && message.slotNumber < container.inventorySlots.size()) {
+        if (container != null && message.slotNumber >= 0 && message.slotNumber < container.inventorySlots.size()) {
             TweakProvider tweakProvider = CraftingTweaks.instance.getProvider(container);
             if (tweakProvider != null) {
                 Slot slot = (Slot) container.inventorySlots.get(message.slotNumber);
-                if(slot.inventory != entityPlayer.inventory) {
+                if (!tweakProvider.canTransferFrom(entityPlayer, container, message.id, slot) || slot instanceof SlotCrafting) { // SlotCrafting is always blacklisted
                     return null;
                 }
-                ItemStack itemStack = slot.getStack();
-                if(itemStack != null && slot.canTakeStack(entityPlayer)) {
-                    ItemStack restStack = tweakProvider.transferIntoGrid(entityPlayer, container, message.id, itemStack);
-                    if(restStack == null) {
-                        restStack = itemStack.copy();
-                        restStack.stackSize = 0;
+                ItemStack slotStack = slot.getStack();
+                if (slotStack != null && slot.canTakeStack(entityPlayer)) {
+                    ItemStack oldStack = slotStack.copy();
+                    if (!tweakProvider.transferIntoGrid(entityPlayer, container, message.id, slot)) {
+                        return null;
                     }
-                    if(restStack.stackSize != itemStack.stackSize) {
-                        slot.onSlotChange(restStack, itemStack);
-                        ItemStack movedStack = itemStack.copy();
-                        movedStack.stackSize -= restStack.stackSize;
-                        slot.onPickupFromSlot(entityPlayer, movedStack);
+                    slot.onSlotChange(slotStack, oldStack);
+                    if (slotStack.stackSize <= 0) {
+                        slot.putStack(null);
+                    } else {
+                        slot.onSlotChanged();
                     }
-                    slot.putStack(restStack);
-                    container.detectAndSendChanges();
+                    if (slotStack.stackSize == oldStack.stackSize) {
+                        return null;
+                    }
+                    slot.onPickupFromSlot(entityPlayer, slotStack);
                 }
             }
         }

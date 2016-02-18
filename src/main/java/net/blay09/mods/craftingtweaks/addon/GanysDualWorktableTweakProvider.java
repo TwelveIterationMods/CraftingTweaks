@@ -1,14 +1,15 @@
-package net.blay09.mods.craftingtweaks.addon.ganyssurface;
+package net.blay09.mods.craftingtweaks.addon;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
-import net.blay09.mods.craftingtweaks.api.DefaultProvider;
+import net.blay09.mods.craftingtweaks.api.DefaultProviderV2;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
 import java.lang.reflect.Field;
@@ -16,7 +17,7 @@ import java.util.List;
 
 public class GanysDualWorktableTweakProvider implements TweakProvider {
 
-    private final DefaultProvider defaultProvider = CraftingTweaksAPI.createDefaultProvider();
+    private final DefaultProviderV2 defaultProvider = CraftingTweaksAPI.createDefaultProviderV2();
     private Field[] craftMatrixField = new Field[2];
 
     @Override
@@ -28,77 +29,64 @@ public class GanysDualWorktableTweakProvider implements TweakProvider {
             craftMatrixField[1] = clazz.getDeclaredField("matrixRight");
             craftMatrixField[1].setAccessible(true);
             return true;
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
+        } catch (ClassNotFoundException | NoSuchFieldException e) {
             e.printStackTrace();
         }
         return false;
     }
 
     @Override
-    public ItemStack transferIntoGrid(EntityPlayer entityPlayer, Container container, int id, ItemStack itemStack) {
-        try {
-            IInventory craftMatrix = (IInventory) craftMatrixField[id].get(container);
-            return defaultProvider.transferIntoGrid(entityPlayer, container, craftMatrix, itemStack);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            return itemStack;
-        }
+    public boolean requiresServerSide() {
+        return false;
     }
 
     @Override
-    public ItemStack putIntoGrid(EntityPlayer entityPlayer, Container container, int id, ItemStack itemStack, int index) {
-        try {
-            IInventory craftMatrix = (IInventory) craftMatrixField[id].get(container);
-            return defaultProvider.putIntoGrid(entityPlayer, container, craftMatrix, itemStack, index);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            return itemStack;
-        }
+    public int getCraftingGridStart(EntityPlayer entityPlayer, Container container, int id) {
+        return id == 0 ? 0 : 9;
     }
 
     @Override
-    public IInventory getCraftMatrix(EntityPlayer entityPlayer, Container container, int id) {
-        try {
-            return (IInventory) craftMatrixField[id].get(container);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            return null;
-        }
+    public int getCraftingGridSize(EntityPlayer entityPlayer, Container container, int id) {
+        return 9;
     }
 
     @Override
     public void clearGrid(EntityPlayer entityPlayer, Container container, int id) {
-        try {
-            IInventory craftMatrix = (IInventory) craftMatrixField[id].get(container);
-            defaultProvider.clearGrid(entityPlayer, container, craftMatrix);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        defaultProvider.clearGrid(this, id, entityPlayer, container, false);
     }
 
     @Override
     public void rotateGrid(EntityPlayer entityPlayer, Container container, int id) {
-        try {
-            IInventory craftMatrix = (IInventory) craftMatrixField[id].get(container);
-            defaultProvider.rotateGrid(entityPlayer, container, craftMatrix);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        defaultProvider.rotateGrid(this, id, entityPlayer, container);
     }
 
     @Override
     public void balanceGrid(EntityPlayer entityPlayer, Container container, int id) {
-        try {
-            IInventory craftMatrix = (IInventory) craftMatrixField[id].get(container);
-            defaultProvider.balanceGrid(entityPlayer, container, craftMatrix);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        defaultProvider.balanceGrid(this, id, entityPlayer, container);
     }
 
     @Override
+    public boolean canTransferFrom(EntityPlayer entityPlayer, Container container, int id, Slot sourceSlot) {
+        return defaultProvider.canTransferFrom(entityPlayer, container, sourceSlot);
+    }
+
+    @Override
+    public boolean transferIntoGrid(EntityPlayer entityPlayer, Container container, int id, Slot sourceSlot) {
+        return defaultProvider.transferIntoGrid(this, id, entityPlayer, container, sourceSlot);
+    }
+
+    @Override
+    public ItemStack putIntoGrid(EntityPlayer entityPlayer, Container container, int id, ItemStack itemStack, int index) {
+        return defaultProvider.putIntoGrid(this, id, entityPlayer, container, itemStack, index);
+    }
+
+    @Override
+    public IInventory getCraftMatrix(EntityPlayer entityPlayer, Container container, int id) {
+        return null;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
     @SideOnly(Side.CLIENT)
     public void initGui(GuiContainer guiContainer, List buttonList) {
         final int paddingTop = 16;
@@ -108,12 +96,6 @@ public class GanysDualWorktableTweakProvider implements TweakProvider {
         buttonList.add(CraftingTweaksAPI.createRotateButton(1, guiContainer.guiLeft + guiContainer.xSize, guiContainer.guiTop + paddingTop));
         buttonList.add(CraftingTweaksAPI.createBalanceButton(1, guiContainer.guiLeft + guiContainer.xSize, guiContainer.guiTop + paddingTop + 18));
         buttonList.add(CraftingTweaksAPI.createClearButton(1, guiContainer.guiLeft + guiContainer.xSize, guiContainer.guiTop + paddingTop + 36));
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public boolean areHotkeysEnabled(EntityPlayer entityPlayer, Container container) {
-        return true;
     }
 
     @Override
