@@ -10,8 +10,9 @@ public interface RotationHandler {
 
     /**
      * @param slotId the slot id being rotated
+     * @param counterClockwise true if the rotation should happen counter-clockwise
      * @return the resulting slot id after clockwise-rotation
      */
-    int rotateSlotId(int slotId);
+    int rotateSlotId(int slotId, boolean counterClockwise);
 
 }
