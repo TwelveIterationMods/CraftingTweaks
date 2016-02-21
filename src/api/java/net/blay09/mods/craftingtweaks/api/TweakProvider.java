@@ -103,11 +103,19 @@ public interface TweakProvider {
 
     /**
      * Balances the grid.
-     * @param entityPlayer the player who's rotating the grid
+     * @param entityPlayer the player who's balancing the grid
      * @param container the container the grid is part of
      * @param id the crafting grid ID that is being balanced (usually 0 unless there's more grids in one GUI)
      */
     void balanceGrid(EntityPlayer entityPlayer, Container container, int id);
+
+    /**
+     * Spreads the items in the grid out.
+     * @param entityPlayer the player who's spreading the grid
+     * @param container the container the grid is part of
+     * @param id the crafting grid ID that is being spread (usually 0 unless there's more grids in one GUI)
+     */
+    void spreadGrid(EntityPlayer entityPlayer, Container container, int id);
 
     /**
      * Checks if the transfer-to-grid feature can be used from the sourceSlot.
@@ -156,5 +164,4 @@ public interface TweakProvider {
      */
     @SideOnly(Side.CLIENT)
     void initGui(GuiContainer guiContainer, List<GuiButton> buttonList);
-
 }

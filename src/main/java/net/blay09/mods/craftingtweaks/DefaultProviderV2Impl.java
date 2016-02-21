@@ -137,6 +137,47 @@ public class DefaultProviderV2Impl implements DefaultProviderV2 {
     }
 
     @Override
+    public void spreadGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container) {
+        IInventory craftMatrix = provider.getCraftMatrix(entityPlayer, container, id);
+        if (craftMatrix == null) {
+            return;
+        }
+        while(true) {
+            ItemStack biggestSlotStack = null;
+            int biggestSlotSize = 1;
+            int start = provider.getCraftingGridStart(entityPlayer, container, id);
+            int size = provider.getCraftingGridSize(entityPlayer, container, id);
+            for (int i = start; i < start + size; i++) {
+                int slotIndex = container.inventorySlots.get(i).getSlotIndex();
+                ItemStack itemStack = craftMatrix.getStackInSlot(slotIndex);
+                if (itemStack != null && itemStack.stackSize > biggestSlotSize) {
+                    biggestSlotStack = itemStack;
+                    biggestSlotSize = itemStack.stackSize;
+                }
+            }
+            if (biggestSlotStack == null) {
+                return;
+            }
+            boolean emptyBiggestSlot = false;
+            for (int i = start; i < start + size; i++) {
+                int slotIndex = container.inventorySlots.get(i).getSlotIndex();
+                ItemStack itemStack = craftMatrix.getStackInSlot(slotIndex);
+                if (itemStack == null) {
+                    if(biggestSlotStack.stackSize > 1) {
+                        craftMatrix.setInventorySlotContents(slotIndex, biggestSlotStack.splitStack(1));
+                    } else {
+                        emptyBiggestSlot = true;
+                    }
+                }
+            }
+            if(!emptyBiggestSlot) {
+                break;
+            }
+        }
+        balanceGrid(provider, id, entityPlayer, container);
+    }
+
+    @Override
     public ItemStack putIntoGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container, ItemStack itemStack, int index) {
         IInventory craftMatrix = provider.getCraftMatrix(entityPlayer, container, id);
         if (craftMatrix == null) {

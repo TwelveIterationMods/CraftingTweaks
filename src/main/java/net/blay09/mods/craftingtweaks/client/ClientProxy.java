@@ -102,7 +102,11 @@ public class ClientProxy extends CommonProxy {
                                 if (isServerSide) {
                                     NetworkHandler.instance.sendToServer(new MessageBalance(0, isShiftDown));
                                 } else {
-                                    clientProvider.balanceGrid(provider, entityPlayer, container, 0);
+                                    if(isShiftDown) {
+                                        clientProvider.spreadGrid(provider, entityPlayer, container, 0);
+                                    } else {
+                                        clientProvider.balanceGrid(provider, entityPlayer, container, 0);
+                                    }
                                 }
                             }
                         }
@@ -224,6 +228,7 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public void onClientTick(TickEvent.ClientTickEvent event) {
+        isServerSide = false;
         EntityPlayer entityPlayer = FMLClientHandler.instance().getClientPlayerEntity();
         if (entityPlayer != null) {
             if (helloTimeout > 0) {
@@ -292,7 +297,11 @@ public class ClientProxy extends CommonProxy {
                     if (isServerSide) {
                         NetworkHandler.instance.sendToServer(new MessageBalance(((GuiTweakButton) event.button).getTweakId(), isShiftDown));
                     } else {
-                        clientProvider.balanceGrid(provider, entityPlayer, container, ((GuiTweakButton) event.button).getTweakId());
+                        if(isShiftDown) {
+                            clientProvider.spreadGrid(provider, entityPlayer, container, ((GuiTweakButton) event.button).getTweakId());
+                        } else {
+                            clientProvider.balanceGrid(provider, entityPlayer, container, ((GuiTweakButton) event.button).getTweakId());
+                        }
                     }
                     event.setCanceled(true);
                     break;

@@ -96,7 +96,7 @@ public class ClientProvider {
             for (Slot slot : slotList) {
                 average += slot.getStack().stackSize;
             }
-            average = (int) Math.ceil(average / (float) slotList.size());
+            average = (int) Math.ceil(average / (float) (slotList.size() + 1));
             for (Slot slot : slotList) {
                 if (slot.getHasStack() && slot.getStack().stackSize > average) {
                     // Pick up item from biggest stack
@@ -122,6 +122,44 @@ public class ClientProvider {
                 }
             }
         }
+    }
+
+    public void spreadGrid(TweakProvider provider, EntityPlayer entityPlayer, Container container, int id) {
+        while(true) {
+            Slot biggestSlot = null;
+            int biggestSlotSize = 1;
+            int start = provider.getCraftingGridStart(entityPlayer, container, id);
+            int size = provider.getCraftingGridSize(entityPlayer, container, id);
+            for (int i = start; i < start + size; i++) {
+                Slot slot = container.inventorySlots.get(i);
+                ItemStack itemStack = slot.getStack();
+                if (itemStack != null && itemStack.stackSize > biggestSlotSize) {
+                    biggestSlot = slot;
+                    biggestSlotSize = itemStack.stackSize;
+                }
+            }
+            if (biggestSlot == null) {
+                return;
+            }
+            boolean emptyBiggestSlot = false;
+            getController().windowClick(container.windowId, biggestSlot.slotNumber, 0, 0, entityPlayer);
+            for (int i = start; i < start + size; i++) {
+                ItemStack itemStack = container.inventorySlots.get(i).getStack();
+                if (itemStack == null) {
+                    if(biggestSlotSize > 1) {
+                        getController().windowClick(container.windowId, i, 1, 0, entityPlayer);
+                        biggestSlotSize--;
+                    } else {
+                        emptyBiggestSlot = true;
+                    }
+                }
+            }
+            getController().windowClick(container.windowId, biggestSlot.slotNumber, 0, 0, entityPlayer);
+            if(!emptyBiggestSlot) {
+                break;
+            }
+        }
+        balanceGrid(provider, entityPlayer, container, id);
     }
 
     public boolean canClear(TweakProvider provider, EntityPlayer entityPlayer, Container container, int id) {
@@ -370,5 +408,4 @@ public class ClientProvider {
     private static int getDragSplittingButton(int id, int limit) {
         return id & 3 | (limit & 3) << 2;
     }
-
 }

@@ -1,5 +1,6 @@
 package net.blay09.mods.craftingtweaks.api;
 
+import net.blay09.mods.craftingtweaks.SimpleTweakProviderImpl;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
@@ -96,6 +97,15 @@ public interface DefaultProviderV2 {
     void balanceGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container);
 
     /**
+     * Default implementation for grid spreading.
+     * @param provider the TweakProvider invoking this function
+     * @param id the crafting grid id invoking this function (usually 0 unless the container has multiple grids)
+     * @param entityPlayer the player who's spreading the grid
+     * @param container the container the grid is part of
+     */
+    void spreadGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container);
+
+    /**
      * Default implementation for putting an item into a specific slot within a the grid.
      * @param provider the TweakProvider invoking this function
      * @param id the crafting grid id invoking this function (usually 0 unless the container has multiple grids)
@@ -126,5 +136,4 @@ public interface DefaultProviderV2 {
      * @return true if items are allowed to be transferred from this slot, false otherwise
      */
     boolean canTransferFrom(EntityPlayer entityPlayer, Container container, Slot sourceSlot);
-
 }

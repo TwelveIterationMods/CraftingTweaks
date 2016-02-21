@@ -30,4 +30,8 @@ public class MessageBalance implements IMessage {
     public int getId() {
         return id;
     }
+
+    public boolean isSpread() {
+        return spread;
+    }
 }

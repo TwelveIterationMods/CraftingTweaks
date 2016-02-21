@@ -115,6 +115,13 @@ public class SimpleTweakProviderImpl implements SimpleTweakProvider {
     }
 
     @Override
+    public void spreadGrid(EntityPlayer entityPlayer, Container container, int id) {
+        if(tweakBalance.enabled) {
+            defaultProvider.spreadGrid(this, id, entityPlayer, container);
+        }
+    }
+
+    @Override
     public boolean canTransferFrom(EntityPlayer entityPlayer, Container container, int id, Slot sourceSlot) {
         return defaultProvider.canTransferFrom(entityPlayer, container, sourceSlot);
     }
