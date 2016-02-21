@@ -22,6 +22,7 @@ public class Compatiblity {
     public static void twilightforest() {
         SimpleTweakProvider provider = registerSimpleProvider("TwilightForest", "twilightforest.uncrafting.ContainerTFUncrafting");
         if (provider != null) {
+            provider.setGrid(2, 9);
             provider.setTweakRotate(true, true, 0, 0);
             provider.setTweakBalance(true, true, 0, 0);
             provider.setTweakClear(true, true, 0, 0);
@@ -42,7 +43,8 @@ public class Compatiblity {
     public static void thermalexpansion() {
         SimpleTweakProvider provider = registerSimpleProvider("ThermalExpansion", "cofh.thermalexpansion.gui.container.device.ContainerWorkbench");
         if (provider != null) {
-            provider.setTweakRotate(true, true, 0, 0);
+            provider.setGrid(57, 9);
+            provider.setTweakRotate(true, false, 0, 0);
             provider.setTweakBalance(false, false, 0, 0);
             provider.setTweakClear(true, false, 0, 0);
             provider.setPhantomItems(true);
@@ -53,6 +55,7 @@ public class Compatiblity {
     public static void thaumcraft4() {
         SimpleTweakProvider provider = registerSimpleProvider("Thaumcraft", "thaumcraft.common.container.ContainerArcaneWorkbench");
         if (provider != null) {
+            provider.setGrid(2, 9);
             provider.setTweakRotate(true, true, 0, 0);
             provider.setTweakBalance(true, true, 0, 0);
             provider.setTweakClear(true, true, 0, 0);
@@ -90,9 +93,10 @@ public class Compatiblity {
     public static void minefactoryreloaded() {
         SimpleTweakProvider provider = registerSimpleProvider("MineFactoryReloaded", "powercrystals.minefactoryreloaded.gui.container.ContainerLiquiCrafter");
         if (provider != null) {
-            provider.setTweakRotate(true, true, 0, 0);
+            provider.setGrid(0, 9);
+            provider.setTweakRotate(true, false, 0, 0);
             provider.setTweakBalance(false, false, 0, 0);
-            provider.setTweakClear(true, true, 0, 0);
+            provider.setTweakClear(true, false, 0, 0);
             provider.setPhantomItems(true);
             provider.setAlignToGrid(EnumFacing.WEST);
         }
@@ -111,9 +115,10 @@ public class Compatiblity {
     public static void draconicevolution() {
         SimpleTweakProvider provider = registerSimpleProvider("DraconicEvolution", "com.brandon3055.draconicevolution.common.container.ContainerDraconiumChest");
         if (provider != null) {
-            provider.setTweakRotate(true, true, 0, 0);
-            provider.setTweakBalance(true, true, 0, 0);
-            provider.setTweakClear(true, true, 0, 0);
+            provider.setGrid(234, 9);
+            provider.setTweakRotate(true, false, 0, 0);
+            provider.setTweakBalance(true, false, 0, 0);
+            provider.setTweakClear(true, false, 0, 0);
             provider.setAlignToGrid(EnumFacing.WEST);
         }
     }
@@ -141,6 +146,7 @@ public class Compatiblity {
     public static void bibliocraft() {
         SimpleTweakProvider provider = registerSimpleProvider("BiblioCraft", "jds.bibliocraft.blocks.ContainerFancyWorkbench");
         if (provider != null) {
+            provider.setGrid(10, 9);
             provider.setTweakRotate(true, true, 0, 0);
             provider.setTweakBalance(true, true, 0, 0);
             provider.setTweakClear(true, true, 0, 0);
@@ -190,6 +196,7 @@ public class Compatiblity {
     public static void appliedenergistics2() {
         SimpleTweakProvider provider = registerSimpleProvider("appliedenergistics2", "appeng.container.implementations.ContainerCraftingTerm");
         if (provider != null) {
+            provider.setGrid(41, 9);
             provider.setTweakRotate(true, true, 0, 0);
             provider.setTweakBalance(true, true, 0, 0);
             provider.setTweakClear(true, true, 0, 0);
@@ -197,6 +204,7 @@ public class Compatiblity {
         }
         provider = registerSimpleProvider("appliedenergistics2", "appeng.container.implementations.ContainerPatternTerm");
         if (provider != null) {
+            provider.setGrid(41, 9);
             provider.setTweakRotate(true, true, 0, 0);
             provider.setTweakBalance(false, false, 0, 0);
             provider.setTweakClear(true, true, 0, 0);
