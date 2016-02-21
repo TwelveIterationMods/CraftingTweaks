@@ -23,16 +23,29 @@ public class DefaultProviderImpl implements DefaultProvider {
         }
 
         @Override
-        public int rotateSlotId(int slotId) {
-            switch(slotId) {
-                case 0: return 1;
-                case 1: return 2;
-                case 2: return 5;
-                case 5: return 8;
-                case 8: return 7;
-                case 7: return 6;
-                case 6: return 3;
-                case 3: return 0;
+        public int rotateSlotId(int slotId, boolean counterClockwise) {
+            if(!counterClockwise) {
+                switch(slotId) {
+                    case 0: return 1;
+                    case 1: return 2;
+                    case 2: return 5;
+                    case 5: return 8;
+                    case 8: return 7;
+                    case 7: return 6;
+                    case 6: return 3;
+                    case 3: return 0;
+                }
+            } else {
+                switch(slotId) {
+                    case 0: return 3;
+                    case 1: return 0;
+                    case 2: return 1;
+                    case 3: return 6;
+                    case 5: return 2;
+                    case 6: return 7;
+                    case 7: return 8;
+                    case 8: return 5;
+                }
             }
             return 0;
         }
@@ -178,7 +191,7 @@ public class DefaultProviderImpl implements DefaultProvider {
             if(rotationHandler.ignoreSlotId(i)) {
                 continue;
             }
-            craftMatrix.setInventorySlotContents(rotationHandler.rotateSlotId(i), matrixClone.getStackInSlot(i));
+            craftMatrix.setInventorySlotContents(rotationHandler.rotateSlotId(i, false), matrixClone.getStackInSlot(i));
         }
         container.detectAndSendChanges();
     }

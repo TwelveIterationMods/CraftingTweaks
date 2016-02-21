@@ -130,6 +130,7 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public void onClientTick(TickEvent.ClientTickEvent event) {
+        isServerSide = false;
         EntityPlayer entityPlayer = FMLClientHandler.instance().getClientPlayerEntity();
         if (entityPlayer != null) {
             if (helloTimeout > 0) {
