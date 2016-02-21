@@ -56,9 +56,9 @@ public class Compatiblity {
         SimpleTweakProvider provider = registerSimpleProvider("Thaumcraft", "thaumcraft.common.container.ContainerArcaneWorkbench");
         if (provider != null) {
             provider.setGrid(2, 9);
-            provider.setTweakRotate(true, true, -12, 32);
-            provider.setTweakBalance(true, true, -12, 50);
-            provider.setTweakClear(true, true, -12, 68);
+            provider.setTweakRotate(true, true, -12, 40);
+            provider.setTweakBalance(true, true, -12, 58);
+            provider.setTweakClear(true, true, -12, 76);
         }
     }
 
@@ -146,9 +146,9 @@ public class Compatiblity {
         SimpleTweakProvider provider = registerSimpleProvider("BiblioCraft", "jds.bibliocraft.blocks.ContainerFancyWorkbench");
         if (provider != null) {
             provider.setGrid(10, 9);
-            provider.setTweakRotate(true, true, 32, 16);
-            provider.setTweakBalance(true, true, 32, 34);
-            provider.setTweakClear(true, true, 32, 52);
+            provider.setTweakRotate(true, true, 42, 16);
+            provider.setTweakBalance(true, true, 42, 34);
+            provider.setTweakClear(true, true, 42, 52);
         }
     }
 
