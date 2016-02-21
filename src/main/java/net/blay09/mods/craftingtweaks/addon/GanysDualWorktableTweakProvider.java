@@ -71,7 +71,7 @@ public class GanysDualWorktableTweakProvider implements TweakProvider {
 
     @Override
     public IInventory getCraftMatrix(EntityPlayer entityPlayer, Container container, int id) {
-        return null;
+        return ((Slot) container.inventorySlots.get(getCraftingGridStart(entityPlayer, container, id))).inventory;
     }
 
     @Override

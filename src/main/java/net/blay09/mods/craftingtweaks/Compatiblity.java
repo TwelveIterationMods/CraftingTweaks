@@ -56,9 +56,9 @@ public class Compatiblity {
         SimpleTweakProvider provider = registerSimpleProvider("Thaumcraft", "thaumcraft.common.container.ContainerArcaneWorkbench");
         if (provider != null) {
             provider.setGrid(2, 9);
-            provider.setTweakRotate(true, true, -16, 16);
-            provider.setTweakBalance(true, true, -16, 34);
-            provider.setTweakClear(true, true, -16, 52);
+            provider.setTweakRotate(true, true, -12, 32);
+            provider.setTweakBalance(true, true, -12, 50);
+            provider.setTweakClear(true, true, -12, 68);
         }
     }
 
@@ -136,8 +136,8 @@ public class Compatiblity {
         SimpleTweakProvider provider = registerSimpleProvider("bluepower", "com.bluepowermod.container.ContainerProjectTable");
         if (provider != null) {
             provider.setGrid(0, 9);
-            provider.setTweakRotate(true, true, 16, 34);
-            provider.setTweakBalance(true, true, 16, 52);
+            provider.setTweakRotate(true, true, 14, 35);
+            provider.setTweakBalance(true, true, 14, 52);
             provider.setTweakClear(true, false, 0, 0);
         }
     }
@@ -146,9 +146,9 @@ public class Compatiblity {
         SimpleTweakProvider provider = registerSimpleProvider("BiblioCraft", "jds.bibliocraft.blocks.ContainerFancyWorkbench");
         if (provider != null) {
             provider.setGrid(10, 9);
-            provider.setTweakRotate(true, true, -16, 16);
-            provider.setTweakBalance(true, true, -16, 34);
-            provider.setTweakClear(true, true, -16, 52);
+            provider.setTweakRotate(true, true, 32, 16);
+            provider.setTweakBalance(true, true, 32, 34);
+            provider.setTweakClear(true, true, 32, 52);
         }
     }
 
