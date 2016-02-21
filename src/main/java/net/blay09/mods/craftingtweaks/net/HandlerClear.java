@@ -18,7 +18,7 @@ public class HandlerClear implements IMessageHandler<MessageClear, IMessage> {
             if(container != null) {
                 TweakProvider tweakProvider = CraftingTweaks.instance.getProvider(container);
                 if (tweakProvider != null) {
-                    tweakProvider.clearGrid(entityPlayer, container, message.id);
+                    tweakProvider.clearGrid(entityPlayer, container, message.getId(), message.isForced());
                 }
             }
         });

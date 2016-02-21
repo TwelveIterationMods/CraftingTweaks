@@ -2,7 +2,6 @@ package net.blay09.mods.craftingtweaks.api;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
@@ -16,12 +15,40 @@ public interface DefaultProviderV2 {
 
     /**
      * Default implementation for grid rotation. For custom rotation handling, check the overloaded version.
+     * @deprecated Use rotateGrid with counterClockwise parameter instead.
      * @param provider the TweakProvider invoking this function
      * @param id the crafting grid id invoking this function (usually 0 unless the container has multiple grids)
      * @param entityPlayer the player who's rotating the grid
      * @param container the container the grid is part of
      */
-    void rotateGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container);
+    @Deprecated
+    default void rotateGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container) {
+        rotateGrid(provider, id, entityPlayer, container, false);
+    }
+
+    /**
+     * Default implementation for grid rotation with custom rotation handling.
+     * @deprecated Use rotateGrid with counterClockwise parameter instead.
+     * @param provider the TweakProvider invoking this function
+     * @param id the crafting grid id invoking this function (usually 0 unless the container has multiple grids)
+     * @param entityPlayer the player who's rotating the grid
+     * @param container the container the grid is part of
+     * @param rotationHandler the rotation handler that determines where items are going to end up
+     */
+    @Deprecated
+    default void rotateGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container, RotationHandler rotationHandler) {
+        rotateGrid(provider, id, entityPlayer, container, rotationHandler, false);
+    }
+
+    /**
+     * Default implementation for grid rotation. For custom rotation handling, check the overloaded version.
+     * @param provider the TweakProvider invoking this function
+     * @param id the crafting grid id invoking this function (usually 0 unless the container has multiple grids)
+     * @param entityPlayer the player who's rotating the grid
+     * @param container the container the grid is part of
+     * @param counterClockwise true if the rotation should happen counter clockwise
+     */
+    void rotateGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container, boolean counterClockwise);
 
     /**
      * Default implementation for grid rotation with custom rotation handling.
@@ -30,8 +57,23 @@ public interface DefaultProviderV2 {
      * @param entityPlayer the player who's rotating the grid
      * @param container the container the grid is part of
      * @param rotationHandler the rotation handler that determines where items are going to end up
+     * @param counterClockwise true if the rotation should happen counter clockwise
      */
-    void rotateGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container, RotationHandler rotationHandler);
+    void rotateGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container, RotationHandler rotationHandler, boolean counterClockwise);
+
+    /**
+     * Default implementation for grid clearing.
+     * @deprecated Use clearGrid with forced parameter instead.
+     * @param provider the TweakProvider invoking this function
+     * @param id the crafting grid id invoking this function (usually 0 unless the container has multiple grids)
+     * @param entityPlayer the player who's clearing the grid
+     * @param container the container the grid is part of
+     * @param phantomItems true if the grid contains phantom items (i.e. they should be deleted, not put into the player's inventory)
+     */
+    @Deprecated
+    default void clearGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container, boolean phantomItems) {
+        clearGrid(provider, id, entityPlayer, container, phantomItems, false);
+    }
 
     /**
      * Default implementation for grid clearing.
@@ -40,8 +82,9 @@ public interface DefaultProviderV2 {
      * @param entityPlayer the player who's clearing the grid
      * @param container the container the grid is part of
      * @param phantomItems true if the grid contains phantom items (i.e. they should be deleted, not put into the player's inventory)
+     * @param forced if this is true, items will be dropped to the ground if necessary
      */
-    void clearGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container, boolean phantomItems);
+    void clearGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container, boolean phantomItems, boolean forced);
 
     /**
      * Default implementation for grid balancing.

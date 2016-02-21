@@ -83,23 +83,24 @@ public class ClientProxy extends CommonProxy {
                     GuiScreen guiScreen = Minecraft.getMinecraft().currentScreen;
                     TweakProvider provider = CraftingTweaks.instance.getProvider(container);
                     if (provider != null) {
+                        boolean isShiftDown = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
                         CraftingTweaks.ModSupportState config = CraftingTweaks.instance.getModSupportState(provider.getModId());
                         if (config == CraftingTweaks.ModSupportState.ENABLED || config == CraftingTweaks.ModSupportState.HOTKEYS_ONLY) {
                             if (keyRotate.getKeyCode() > 0 && Keyboard.getEventKey() == keyRotate.getKeyCode()) {
                                 if (isServerSide) {
-                                    NetworkHandler.instance.sendToServer(new MessageRotate(0));
+                                    NetworkHandler.instance.sendToServer(new MessageRotate(0, isShiftDown));
                                 } else {
-                                    clientProvider.rotateGrid(provider, entityPlayer, container, 0);
+                                    clientProvider.rotateGrid(provider, entityPlayer, container, 0, isShiftDown);
                                 }
                             } else if (keyClear.getKeyCode() > 0 && Keyboard.getEventKey() == keyClear.getKeyCode()) {
                                 if (isServerSide) {
-                                    NetworkHandler.instance.sendToServer(new MessageClear(0));
+                                    NetworkHandler.instance.sendToServer(new MessageClear(0, isShiftDown));
                                 } else {
-                                    clientProvider.clearGrid(provider, entityPlayer, container, 0);
+                                    clientProvider.clearGrid(provider, entityPlayer, container, 0, isShiftDown);
                                 }
                             } else if (keyBalance.getKeyCode() > 0 && Keyboard.getEventKey() == keyBalance.getKeyCode()) {
                                 if (isServerSide) {
-                                    NetworkHandler.instance.sendToServer(new MessageBalance(0));
+                                    NetworkHandler.instance.sendToServer(new MessageBalance(0, isShiftDown));
                                 } else {
                                     clientProvider.balanceGrid(provider, entityPlayer, container, 0);
                                 }
@@ -110,10 +111,9 @@ public class ClientProxy extends CommonProxy {
                             if (keyCompress.getKeyCode() > 0 && Keyboard.getEventKey() == keyCompress.getKeyCode()) {
                                 Slot mouseSlot = guiContainer.getSlotUnderMouse();
                                 if (mouseSlot != null) {
-                                    boolean isDecompress = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
                                     if (isServerSide) {
-                                        NetworkHandler.instance.sendToServer(new MessageCompress(mouseSlot.slotNumber, isDecompress));
-                                    } else if (isDecompress) {
+                                        NetworkHandler.instance.sendToServer(new MessageCompress(mouseSlot.slotNumber, isShiftDown));
+                                    } else if (isShiftDown) {
                                         clientProvider.decompress(provider, entityPlayer, container, mouseSlot);
                                     } else {
                                         clientProvider.compress(provider, entityPlayer, container, mouseSlot);
@@ -278,18 +278,19 @@ public class ClientProxy extends CommonProxy {
             EntityPlayer entityPlayer = FMLClientHandler.instance().getClientPlayerEntity();
             Container container = entityPlayer.openContainer;
             TweakProvider provider = CraftingTweaks.instance.getProvider(container);
+            boolean isShiftDown = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
             switch (((GuiTweakButton) event.button).getTweakOption()) {
                 case Rotate:
                     if (isServerSide) {
-                        NetworkHandler.instance.sendToServer(new MessageRotate(((GuiTweakButton) event.button).getTweakId()));
+                        NetworkHandler.instance.sendToServer(new MessageRotate(((GuiTweakButton) event.button).getTweakId(), isShiftDown));
                     } else {
-                        clientProvider.rotateGrid(provider, entityPlayer, container, ((GuiTweakButton) event.button).getTweakId());
+                        clientProvider.rotateGrid(provider, entityPlayer, container, ((GuiTweakButton) event.button).getTweakId(), isShiftDown);
                     }
                     event.setCanceled(true);
                     break;
                 case Balance:
                     if (isServerSide) {
-                        NetworkHandler.instance.sendToServer(new MessageBalance(((GuiTweakButton) event.button).getTweakId()));
+                        NetworkHandler.instance.sendToServer(new MessageBalance(((GuiTweakButton) event.button).getTweakId(), isShiftDown));
                     } else {
                         clientProvider.balanceGrid(provider, entityPlayer, container, ((GuiTweakButton) event.button).getTweakId());
                     }
@@ -297,9 +298,9 @@ public class ClientProxy extends CommonProxy {
                     break;
                 case Clear:
                     if (isServerSide) {
-                        NetworkHandler.instance.sendToServer(new MessageClear(((GuiTweakButton) event.button).getTweakId()));
+                        NetworkHandler.instance.sendToServer(new MessageClear(((GuiTweakButton) event.button).getTweakId(), isShiftDown));
                     } else {
-                        clientProvider.clearGrid(provider, entityPlayer, container, ((GuiTweakButton) event.button).getTweakId());
+                        clientProvider.clearGrid(provider, entityPlayer, container, ((GuiTweakButton) event.button).getTweakId(), isShiftDown);
                     }
                     event.setCanceled(true);
                     break;

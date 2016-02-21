@@ -10,8 +10,8 @@ public class GuiImageButton extends GuiButton {
 
     private static final ResourceLocation texture = new ResourceLocation(CraftingTweaks.MOD_ID, "gui.png");
 
-    private final int texCoordX;
-    private final int texCoordY;
+    protected int texCoordX;
+    protected int texCoordY;
 
     public GuiImageButton(int id, int x, int y, int texCoordX, int texCoordY) {
         super(id, x, y, 16, 16, "");

@@ -94,16 +94,16 @@ public class SimpleTweakProviderImpl implements SimpleTweakProvider {
     }
 
     @Override
-    public void clearGrid(EntityPlayer entityPlayer, Container container, int id) {
+    public void clearGrid(EntityPlayer entityPlayer, Container container, int id, boolean forced) {
         if(tweakClear.enabled) {
-            defaultProvider.clearGrid(this, id, entityPlayer, container, phantomItems);
+            defaultProvider.clearGrid(this, id, entityPlayer, container, phantomItems, forced);
         }
     }
 
     @Override
-    public void rotateGrid(EntityPlayer entityPlayer, Container container, int id) {
+    public void rotateGrid(EntityPlayer entityPlayer, Container container, int id, boolean counterClockwise) {
         if(tweakRotate.enabled) {
-            defaultProvider.rotateGrid(this, id, entityPlayer, container);
+            defaultProvider.rotateGrid(this, id, entityPlayer, container, counterClockwise);
         }
     }
 

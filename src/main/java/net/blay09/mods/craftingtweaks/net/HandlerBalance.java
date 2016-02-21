@@ -18,7 +18,7 @@ public class HandlerBalance implements IMessageHandler<MessageBalance, IMessage>
             if(container != null) {
                 TweakProvider tweakProvider = CraftingTweaks.instance.getProvider(container);
                 if (tweakProvider != null) {
-                    tweakProvider.balanceGrid(entityPlayer, container, message.id);
+                    tweakProvider.balanceGrid(entityPlayer, container, message.getId());
                 }
             }
         });

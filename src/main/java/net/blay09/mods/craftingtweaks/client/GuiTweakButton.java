@@ -2,6 +2,7 @@ package net.blay09.mods.craftingtweaks.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import org.lwjgl.input.Keyboard;
 
 public class GuiTweakButton extends GuiImageButton {
 
@@ -58,7 +59,12 @@ public class GuiTweakButton extends GuiImageButton {
             xPosition += lastGuiLeft;
             yPosition += lastGuiTop;
         }
+        int oldTexCoordX = texCoordX;
+        if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+            texCoordX += 48;
+        }
         super.drawButton(mc, mouseX, mouseY);
+        texCoordX = oldTexCoordX;
         xPosition = oldX;
         yPosition = oldY;
     }

@@ -128,7 +128,7 @@ public class ClientProvider {
         return !provider.requiresServerSide();
     }
 
-    public void clearGrid(TweakProvider provider, EntityPlayer entityPlayer, Container container, int id) {
+    public void clearGrid(TweakProvider provider, EntityPlayer entityPlayer, Container container, int id, boolean forced) {
         if (!canClear(provider, entityPlayer, container, id)) {
             return;
         }
@@ -137,6 +137,9 @@ public class ClientProvider {
         for (int i = start; i < start + size; i++) {
             getController().windowClick(container.windowId, i, 0, 1, entityPlayer);
             container.transferStackInSlot(entityPlayer, i);
+            if(forced && container.inventorySlots.get(i).getHasStack()) {
+                getController().windowClick(container.windowId, i, 0, 4, entityPlayer);
+            }
         }
     }
 
@@ -144,26 +147,26 @@ public class ClientProvider {
         return !provider.requiresServerSide() && provider.getCraftingGridSize(entityPlayer, container, id) == 9;
     }
 
-    public void rotateGrid(TweakProvider provider, EntityPlayer entityPlayer, Container container, int id) {
+    public void rotateGrid(TweakProvider provider, EntityPlayer entityPlayer, Container container, int id, boolean counterClockwise) {
         if (!canRotate(provider, entityPlayer, container, id)) {
             return;
         }
         if (!dropOffMouseStack(entityPlayer, container)) {
             return;
         }
-        if (rotateGridWithBuffer(provider, entityPlayer, container, id)) {
+        if (rotateGridWithBuffer(provider, entityPlayer, container, id, counterClockwise)) {
             return;
         }
         int startSlot = provider.getCraftingGridStart(entityPlayer, container, id);
         getController().windowClick(container.windowId, startSlot, 0, 0, entityPlayer);
         int currentSlot = startSlot;
         do {
-            currentSlot = startSlot + rotationHandler.rotateSlotId(currentSlot - startSlot, false);
+            currentSlot = startSlot + rotationHandler.rotateSlotId(currentSlot - startSlot, counterClockwise);
             getController().windowClick(container.windowId, currentSlot, 0, 0, entityPlayer);
         } while (currentSlot != startSlot);
     }
 
-    public boolean rotateGridWithBuffer(TweakProvider provider, EntityPlayer entityPlayer, Container container, int id) {
+    public boolean rotateGridWithBuffer(TweakProvider provider, EntityPlayer entityPlayer, Container container, int id, boolean counterClockwise) {
         int emptyBuffer = 0;
         int[] bufferSlot = new int[2];
         for (Object obj : container.inventorySlots) {
@@ -188,7 +191,7 @@ public class ClientProvider {
             emptyBuffer = (emptyBuffer + 1) % 2;
             getController().windowClick(container.windowId, bufferSlot[emptyBuffer], 0, 0, entityPlayer);
             getController().windowClick(container.windowId, currentSlot, 0, 0, entityPlayer);
-            currentSlot = startSlot + rotationHandler.rotateSlotId(currentSlot - startSlot, false);
+            currentSlot = startSlot + rotationHandler.rotateSlotId(currentSlot - startSlot, counterClockwise);
         } while (currentSlot != startSlot);
         emptyBuffer = (emptyBuffer + 1) % 2;
         getController().windowClick(container.windowId, bufferSlot[emptyBuffer], 0, 0, entityPlayer);
@@ -274,7 +277,7 @@ public class ClientProvider {
         if (!mouseSlot.getHasStack() || !canClear(provider, entityPlayer, container, 0)) {
             return;
         }
-        clearGrid(provider, entityPlayer, container, 0);
+        clearGrid(provider, entityPlayer, container, 0, false);
         int start = provider.getCraftingGridStart(entityPlayer, container, 0);
         int size = provider.getCraftingGridSize(entityPlayer, container, 0);
         for (int i = start; i < start + size; i++) {
@@ -299,7 +302,7 @@ public class ClientProvider {
         if (!mouseSlot.getHasStack() || !canClear(provider, entityPlayer, container, 0)) {
             return;
         }
-        clearGrid(provider, entityPlayer, container, 0);
+        clearGrid(provider, entityPlayer, container, 0, false);
         int start = provider.getCraftingGridStart(entityPlayer, container, 0);
         int size = provider.getCraftingGridSize(entityPlayer, container, 0);
         for (int i = start; i < start + size; i++) {
