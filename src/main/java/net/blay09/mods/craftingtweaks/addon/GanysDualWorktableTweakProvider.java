@@ -18,21 +18,10 @@ import java.util.List;
 public class GanysDualWorktableTweakProvider implements TweakProvider {
 
     private final DefaultProviderV2 defaultProvider = CraftingTweaksAPI.createDefaultProviderV2();
-    private Field[] craftMatrixField = new Field[2];
 
     @Override
     public boolean load() {
-        try {
-            Class clazz = Class.forName("ganymedes01.ganyssurface.inventory.ContainerDualWorkTable");
-            craftMatrixField[0] = clazz.getDeclaredField("matrixLeft");
-            craftMatrixField[0].setAccessible(true);
-            craftMatrixField[1] = clazz.getDeclaredField("matrixRight");
-            craftMatrixField[1].setAccessible(true);
-            return true;
-        } catch (ClassNotFoundException | NoSuchFieldException e) {
-            e.printStackTrace();
-        }
-        return false;
+        return true;
     }
 
     @Override
@@ -42,7 +31,7 @@ public class GanysDualWorktableTweakProvider implements TweakProvider {
 
     @Override
     public int getCraftingGridStart(EntityPlayer entityPlayer, Container container, int id) {
-        return id == 0 ? 0 : 9;
+        return id == 0 ? 2 : 11;
     }
 
     @Override
