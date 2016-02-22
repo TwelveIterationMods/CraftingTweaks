@@ -19,7 +19,7 @@ public class HandlerTransferStack implements IMessageHandler<MessageTransferStac
             EntityPlayer entityPlayer = ctx.getServerHandler().playerEntity;
             Container container = entityPlayer.openContainer;
             if(container != null && message.slotNumber >= 0 && message.slotNumber < container.inventorySlots.size()) {
-                TweakProvider tweakProvider = CraftingTweaks.instance.getProvider(container);
+                TweakProvider<Container> tweakProvider = CraftingTweaks.instance.getProvider(container);
                 if (tweakProvider != null) {
                     Slot slot = container.inventorySlots.get(message.slotNumber);
                     if(!tweakProvider.canTransferFrom(entityPlayer, container, message.id, slot) || slot instanceof SlotCrafting) { // SlotCrafting is always blacklisted

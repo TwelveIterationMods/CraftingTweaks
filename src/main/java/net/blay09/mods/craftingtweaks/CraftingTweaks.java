@@ -68,13 +68,11 @@ public class CraftingTweaks {
     public static boolean hideButtonTooltips;
 
     @Mod.EventHandler
+    @SuppressWarnings("unused")
     public void preInit(FMLPreInitializationEvent event) {
         CraftingTweaksAPI.setupAPI(new InternalMethodsImpl());
 
         configMap.put("minecraft", ModSupportState.ENABLED);
-        configMap.put("Thaumcraft", ModSupportState.ENABLED);
-        configMap.put("Backpack", ModSupportState.ENABLED);
-        configMap.put("jacb", ModSupportState.ENABLED);
 
         config = new Configuration(event.getSuggestedConfigurationFile());
         hideButtons = config.getBoolean("hideButtons", "general", false, "This option is toggled by the 'Toggle Buttons' key that can be defined in the Controls settings.");
@@ -89,6 +87,7 @@ public class CraftingTweaks {
     }
 
     @Mod.EventHandler
+    @SuppressWarnings("unused")
     public void imc(FMLInterModComms.IMCEvent event) {
         for(FMLInterModComms.IMCMessage message : event.getMessages()) {
             if(message.isNBTMessage() && message.key.equals("RegisterProvider")) {
@@ -145,6 +144,7 @@ public class CraftingTweaks {
     }
 
     @Mod.EventHandler
+    @SuppressWarnings("unused")
     public void init(FMLInitializationEvent event) {
         proxy.init(event);
 
@@ -152,15 +152,16 @@ public class CraftingTweaks {
     }
 
     @Mod.EventHandler
+    @SuppressWarnings("unused")
     public void postInit(FMLPostInitializationEvent event) {
         proxy.postInit(event);
 
-        Compatiblity.vanilla();
+        Compatibility.vanilla();
 
         config.save();
     }
 
-    public void registerProvider(Class<? extends Container> clazz, TweakProvider provider) {
+    public <T extends Container> void registerProvider(Class<T> clazz, TweakProvider<T> provider) {
         if(!provider.getModId().equals("minecraft") && !Loader.isModLoaded(provider.getModId())) {
             return;
         }
@@ -170,7 +171,7 @@ public class CraftingTweaks {
     }
 
     @SuppressWarnings("unchecked")
-    public void registerProvider(String className, TweakProvider provider) {
+    private void registerProvider(String className, TweakProvider provider) {
         config.getString(provider.getModId(), "addons", ModSupportState.ENABLED.name().toLowerCase(), "enabled, buttons_only, hotkeys_only or disabled", ModSupportState.getValidValues());
         if(Loader.isModLoaded(provider.getModId())) {
             if(provider.load()) {
@@ -185,18 +186,19 @@ public class CraftingTweaks {
         }
     }
 
-    public TweakProvider getProvider(Container container) {
+    @SuppressWarnings("unchecked")
+    public <T extends Container> TweakProvider<T> getProvider(T container) {
         if(container == null) {
             return null;
         }
-        for(Class clazz : providerMap.keySet()) {
+        for(Class<? extends Container> clazz : providerMap.keySet()) {
             if(container.getClass() == clazz) {
-                return providerMap.get(clazz);
+                return (TweakProvider<T>) providerMap.get(clazz);
             }
         }
         for(Class<? extends Container> clazz : providerMap.keySet()) {
             if(clazz.isAssignableFrom(container.getClass())) {
-                return providerMap.get(clazz);
+                return (TweakProvider<T>) providerMap.get(clazz);
             }
         }
         return null;

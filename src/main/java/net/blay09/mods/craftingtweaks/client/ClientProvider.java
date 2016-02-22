@@ -68,15 +68,15 @@ public class ClientProvider {
         }
     };
 
-    public PlayerControllerMP getController() {
+    private PlayerControllerMP getController() {
         return Minecraft.getMinecraft().playerController;
     }
 
-    public boolean canBalance(TweakProvider provider, EntityPlayer entityPlayer, Container container, int id) {
+    private boolean canBalance(TweakProvider<Container> provider, EntityPlayer entityPlayer, Container container, int id) {
         return !provider.requiresServerSide();
     }
 
-    public void balanceGrid(TweakProvider provider, EntityPlayer entityPlayer, Container container, int id) {
+    public void balanceGrid(TweakProvider<Container> provider, EntityPlayer entityPlayer, Container container, int id) {
         if (!canBalance(provider, entityPlayer, container, id)) {
             return;
         }
@@ -124,7 +124,7 @@ public class ClientProvider {
         }
     }
 
-    public void spreadGrid(TweakProvider provider, EntityPlayer entityPlayer, Container container, int id) {
+    public void spreadGrid(TweakProvider<Container> provider, EntityPlayer entityPlayer, Container container, int id) {
         while(true) {
             Slot biggestSlot = null;
             int biggestSlotSize = 1;
@@ -162,11 +162,11 @@ public class ClientProvider {
         balanceGrid(provider, entityPlayer, container, id);
     }
 
-    public boolean canClear(TweakProvider provider, EntityPlayer entityPlayer, Container container, int id) {
+    private boolean canClear(TweakProvider<Container> provider, EntityPlayer entityPlayer, Container container, int id) {
         return !provider.requiresServerSide();
     }
 
-    public void clearGrid(TweakProvider provider, EntityPlayer entityPlayer, Container container, int id, boolean forced) {
+    public void clearGrid(TweakProvider<Container> provider, EntityPlayer entityPlayer, Container container, int id, boolean forced) {
         if (!canClear(provider, entityPlayer, container, id)) {
             return;
         }
@@ -181,11 +181,11 @@ public class ClientProvider {
         }
     }
 
-    public boolean canRotate(TweakProvider provider, EntityPlayer entityPlayer, Container container, int id) {
+    private boolean canRotate(TweakProvider<Container> provider, EntityPlayer entityPlayer, Container container, int id) {
         return !provider.requiresServerSide() && provider.getCraftingGridSize(entityPlayer, container, id) == 9;
     }
 
-    public void rotateGrid(TweakProvider provider, EntityPlayer entityPlayer, Container container, int id, boolean counterClockwise) {
+    public void rotateGrid(TweakProvider<Container> provider, EntityPlayer entityPlayer, Container container, int id, boolean counterClockwise) {
         if (!canRotate(provider, entityPlayer, container, id)) {
             return;
         }
@@ -204,7 +204,7 @@ public class ClientProvider {
         } while (currentSlot != startSlot);
     }
 
-    public boolean rotateGridWithBuffer(TweakProvider provider, EntityPlayer entityPlayer, Container container, int id, boolean counterClockwise) {
+    private boolean rotateGridWithBuffer(TweakProvider<Container> provider, EntityPlayer entityPlayer, Container container, int id, boolean counterClockwise) {
         int emptyBuffer = 0;
         int[] bufferSlot = new int[2];
         for (Object obj : container.inventorySlots) {
@@ -237,11 +237,11 @@ public class ClientProvider {
         return true;
     }
 
-    public boolean canTransfer(TweakProvider provider, EntityPlayer entityPlayer, Container container, int id) {
+    private boolean canTransfer(TweakProvider<Container> provider, EntityPlayer entityPlayer, Container container, int id) {
         return !provider.requiresServerSide();
     }
 
-    public boolean transferIntoGrid(TweakProvider provider, EntityPlayer entityPlayer, Container container, int id, Slot sourceSlot) {
+    public boolean transferIntoGrid(TweakProvider<Container> provider, EntityPlayer entityPlayer, Container container, int id, Slot sourceSlot) {
         if (!canTransfer(provider, entityPlayer, container, id)) {
             return false;
         }
@@ -289,11 +289,11 @@ public class ClientProvider {
         return itemMoved;
     }
 
-    public boolean dropOffMouseStack(EntityPlayer entityPlayer, Container container) {
+    private boolean dropOffMouseStack(EntityPlayer entityPlayer, Container container) {
         return dropOffMouseStack(entityPlayer, container, -1);
     }
 
-    public boolean dropOffMouseStack(EntityPlayer entityPlayer, Container container, int ignoreSlot) {
+    private boolean dropOffMouseStack(EntityPlayer entityPlayer, Container container, int ignoreSlot) {
         if (entityPlayer.inventory.getItemStack() == null) {
             return true;
         }
@@ -318,7 +318,7 @@ public class ClientProvider {
         return entityPlayer.inventory.getItemStack() == null;
     }
 
-    public void decompress(TweakProvider provider, EntityPlayer entityPlayer, Container container, Slot mouseSlot, boolean decompressAll) {
+    public void decompress(TweakProvider<Container> provider, EntityPlayer entityPlayer, Container container, Slot mouseSlot, boolean decompressAll) {
         if (!mouseSlot.getHasStack() || !canClear(provider, entityPlayer, container, 0)) {
             return;
         }
@@ -343,7 +343,7 @@ public class ClientProvider {
         getController().windowClick(container.windowId, mouseSlot.slotNumber, 0, 0, entityPlayer);
     }
 
-    public void compress(TweakProvider provider, EntityPlayer entityPlayer, Container container, Slot mouseSlot, boolean compressAll) {
+    public void compress(TweakProvider<Container> provider, EntityPlayer entityPlayer, Container container, Slot mouseSlot, boolean compressAll) {
         if (!mouseSlot.getHasStack() || !canClear(provider, entityPlayer, container, 0)) {
             return;
         }

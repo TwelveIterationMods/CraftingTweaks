@@ -69,12 +69,14 @@ public class ClientProxy extends CommonProxy {
     }
 
     @SubscribeEvent
+    @SuppressWarnings("unused")
     public void connectedToServer(FMLNetworkEvent.ClientConnectedToServerEvent event) {
         helloTimeout = HELLO_TIMEOUT;
         isServerSide = false;
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
+    @SuppressWarnings("unused")
     public void onGuiKeyboardEvent(GuiScreenEvent.KeyboardInputEvent.Pre event) {
         if (Keyboard.getEventKeyState()) {
             EntityPlayer entityPlayer = FMLClientHandler.instance().getClientPlayerEntity();
@@ -82,7 +84,7 @@ public class ClientProxy extends CommonProxy {
                 Container container = entityPlayer.openContainer;
                 if (container != null) {
                     GuiScreen guiScreen = Minecraft.getMinecraft().currentScreen;
-                    TweakProvider provider = CraftingTweaks.instance.getProvider(container);
+                    TweakProvider<Container> provider = CraftingTweaks.instance.getProvider(container);
                     if (provider != null) {
                         boolean isShiftDown = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
                         CraftingTweaks.ModSupportState config = CraftingTweaks.instance.getModSupportState(provider.getModId());
@@ -172,6 +174,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
+    @SuppressWarnings("unused")
     public void onGuiMouseEvent(GuiScreenEvent.MouseInputEvent.Pre event) {
         if (Mouse.getEventButtonState()) {
             EntityPlayer entityPlayer = FMLClientHandler.instance().getClientPlayerEntity();
@@ -179,7 +182,7 @@ public class ClientProxy extends CommonProxy {
                 Container container = entityPlayer.openContainer;
                 if (container != null) {
                     Slot mouseSlot = event.gui instanceof GuiContainer ? ((GuiContainer) event.gui).getSlotUnderMouse() : null;
-                    TweakProvider provider = CraftingTweaks.instance.getProvider(container);
+                    TweakProvider<Container> provider = CraftingTweaks.instance.getProvider(container);
                     if (provider != null) {
                         if (keyTransferStack.getKeyCode() > 0 && Keyboard.isKeyDown(keyTransferStack.getKeyCode())) {
                             if (mouseSlot != null) {
@@ -220,6 +223,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     @SubscribeEvent
+    @SuppressWarnings("unused")
     public void onClientTick(TickEvent.ClientTickEvent event) {
         EntityPlayer entityPlayer = FMLClientHandler.instance().getClientPlayerEntity();
         if (entityPlayer != null) {
@@ -244,6 +248,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     @SubscribeEvent
+    @SuppressWarnings("unused")
     public void onInitGui(GuiScreenEvent.InitGuiEvent.Post event) {
         if (!CraftingTweaks.hideButtons) {
             if (event.gui instanceof GuiContainer) {
@@ -255,6 +260,7 @@ public class ClientProxy extends CommonProxy {
     private static final List<String> tooltipList = Lists.newArrayList();
 
     @SubscribeEvent
+    @SuppressWarnings("unused")
     public void onDrawScreen(GuiScreenEvent.DrawScreenEvent.Post event) {
         // Testing Code
 //        if(event.gui instanceof GuiContainer && roundMenu == null) {
@@ -283,12 +289,13 @@ public class ClientProxy extends CommonProxy {
     }
 
     @SubscribeEvent
+    @SuppressWarnings("unused")
     public void onActionPerformed(GuiScreenEvent.ActionPerformedEvent.Pre event) {
         if (event.button instanceof GuiTweakButton) {
             event.button.playPressSound(Minecraft.getMinecraft().getSoundHandler());
             EntityPlayer entityPlayer = FMLClientHandler.instance().getClientPlayerEntity();
             Container container = entityPlayer.openContainer;
-            TweakProvider provider = CraftingTweaks.instance.getProvider(container);
+            TweakProvider<Container> provider = CraftingTweaks.instance.getProvider(container);
             boolean isShiftDown = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
             switch (((GuiTweakButton) event.button).getTweakOption()) {
                 case Rotate:

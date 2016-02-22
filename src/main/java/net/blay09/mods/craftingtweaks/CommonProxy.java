@@ -28,6 +28,7 @@ public class CommonProxy {
     }
 
     @SubscribeEvent
+    @SuppressWarnings("unused")
     public void playerJoined(PlayerEvent.PlayerLoggedInEvent event) {
         NetworkHandler.instance.sendTo(new MessageHello(NetworkHandler.PROTOCOL_VERSION), (EntityPlayerMP) event.player);
     }

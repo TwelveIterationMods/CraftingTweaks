@@ -1,8 +1,9 @@
 package net.blay09.mods.craftingtweaks.api;
 
+import net.minecraft.inventory.Container;
 import net.minecraft.util.EnumFacing;
 
-public interface SimpleTweakProvider extends TweakProvider {
+public interface SimpleTweakProvider<T extends Container> extends TweakProvider<T> {
 
     /**
      * Sets the settings for the rotation tweak.

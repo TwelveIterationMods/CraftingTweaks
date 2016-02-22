@@ -31,7 +31,7 @@ public class HandlerCompress implements IMessageHandler<MessageCompress, IMessag
             if (mouseStack == null) {
                 return;
             }
-            TweakProvider provider = CraftingTweaks.instance.getProvider(container);
+            TweakProvider<Container> provider = CraftingTweaks.instance.getProvider(container);
             if (!CraftingTweaks.compressAnywhere && provider == null) {
                 return;
             }

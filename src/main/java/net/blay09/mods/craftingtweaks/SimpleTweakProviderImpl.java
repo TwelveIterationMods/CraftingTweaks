@@ -17,7 +17,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
-public class SimpleTweakProviderImpl implements SimpleTweakProvider {
+public class SimpleTweakProviderImpl<T extends Container> implements SimpleTweakProvider<T> {
 
     public static class TweakSettings {
         public final boolean enabled;
@@ -94,50 +94,50 @@ public class SimpleTweakProviderImpl implements SimpleTweakProvider {
     }
 
     @Override
-    public void clearGrid(EntityPlayer entityPlayer, Container container, int id, boolean forced) {
+    public void clearGrid(EntityPlayer entityPlayer, T container, int id, boolean forced) {
         if(tweakClear.enabled) {
             defaultProvider.clearGrid(this, id, entityPlayer, container, phantomItems, forced);
         }
     }
 
     @Override
-    public void rotateGrid(EntityPlayer entityPlayer, Container container, int id, boolean counterClockwise) {
+    public void rotateGrid(EntityPlayer entityPlayer, T container, int id, boolean counterClockwise) {
         if(tweakRotate.enabled) {
             defaultProvider.rotateGrid(this, id, entityPlayer, container, counterClockwise);
         }
     }
 
     @Override
-    public void balanceGrid(EntityPlayer entityPlayer, Container container, int id) {
+    public void balanceGrid(EntityPlayer entityPlayer, T container, int id) {
         if(tweakBalance.enabled) {
             defaultProvider.balanceGrid(this, id, entityPlayer, container);
         }
     }
 
     @Override
-    public void spreadGrid(EntityPlayer entityPlayer, Container container, int id) {
+    public void spreadGrid(EntityPlayer entityPlayer, T container, int id) {
         if(tweakBalance.enabled) {
             defaultProvider.spreadGrid(this, id, entityPlayer, container);
         }
     }
 
     @Override
-    public boolean canTransferFrom(EntityPlayer entityPlayer, Container container, int id, Slot sourceSlot) {
+    public boolean canTransferFrom(EntityPlayer entityPlayer, T container, int id, Slot sourceSlot) {
         return defaultProvider.canTransferFrom(entityPlayer, container, sourceSlot);
     }
 
     @Override
-    public boolean transferIntoGrid(EntityPlayer entityPlayer, Container container, int id, Slot sourceSlot) {
+    public boolean transferIntoGrid(EntityPlayer entityPlayer, T container, int id, Slot sourceSlot) {
         return defaultProvider.transferIntoGrid(this, id, entityPlayer, container, sourceSlot);
     }
 
     @Override
-    public ItemStack putIntoGrid(EntityPlayer entityPlayer, Container container, int id, ItemStack itemStack, int index) {
+    public ItemStack putIntoGrid(EntityPlayer entityPlayer, T container, int id, ItemStack itemStack, int index) {
         return defaultProvider.putIntoGrid(this, id, entityPlayer, container, itemStack, index);
     }
 
     @Override
-    public IInventory getCraftMatrix(EntityPlayer entityPlayer, Container container, int id) {
+    public IInventory getCraftMatrix(EntityPlayer entityPlayer, T container, int id) {
         return container.inventorySlots.get(getCraftingGridStart(entityPlayer, container, id)).inventory;
     }
 
@@ -147,12 +147,12 @@ public class SimpleTweakProviderImpl implements SimpleTweakProvider {
     }
 
     @Override
-    public int getCraftingGridStart(EntityPlayer entityPlayer, Container container, int id) {
+    public int getCraftingGridStart(EntityPlayer entityPlayer, T container, int id) {
         return gridSlotNumber;
     }
 
     @Override
-    public int getCraftingGridSize(EntityPlayer entityPlayer, Container container, int id) {
+    public int getCraftingGridSize(EntityPlayer entityPlayer, T container, int id) {
         return gridSize;
     }
 
@@ -194,8 +194,9 @@ public class SimpleTweakProviderImpl implements SimpleTweakProvider {
     }
 
     @SideOnly(Side.CLIENT)
+    @SuppressWarnings("unchecked")
     private int getButtonX(GuiContainer guiContainer, int index) {
-        Slot firstSlot = guiContainer.inventorySlots.inventorySlots.get(getCraftingGridStart(FMLClientHandler.instance().getClientPlayerEntity(), guiContainer.inventorySlots, 0));
+        Slot firstSlot = guiContainer.inventorySlots.inventorySlots.get(getCraftingGridStart(FMLClientHandler.instance().getClientPlayerEntity(), (T) guiContainer.inventorySlots, 0));
         switch(alignToGrid) {
             case NORTH:
             case UP:
@@ -211,8 +212,9 @@ public class SimpleTweakProviderImpl implements SimpleTweakProvider {
     }
 
     @SideOnly(Side.CLIENT)
+    @SuppressWarnings("unchecked")
     private int getButtonY(GuiContainer guiContainer, int index) {
-        Slot firstSlot = guiContainer.inventorySlots.inventorySlots.get(getCraftingGridStart(FMLClientHandler.instance().getClientPlayerEntity(), guiContainer.inventorySlots, 0));
+        Slot firstSlot = guiContainer.inventorySlots.inventorySlots.get(getCraftingGridStart(FMLClientHandler.instance().getClientPlayerEntity(), (T) guiContainer.inventorySlots, 0));
         switch(alignToGrid) {
             case NORTH:
             case UP:

@@ -88,7 +88,7 @@ public interface DefaultProvider {
      * Default implementation for transferring an item into the crafting grid
      * @param entityPlayer the player who's putting the item in
      * @param container the container the grid is part of
-     * @param craftMatrix the craft matrix inventeory that's being put into
+     * @param craftMatrix the craft matrix inventory that's being put into
      * @param sourceSlot the source slot inside the container the item is coming from
      * @return true if items were transferred, false otherwise
      */

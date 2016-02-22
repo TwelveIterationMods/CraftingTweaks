@@ -16,7 +16,7 @@ public class HandlerBalance implements IMessageHandler<MessageBalance, IMessage>
             EntityPlayer entityPlayer = ctx.getServerHandler().playerEntity;
             Container container = entityPlayer.openContainer;
             if(container != null) {
-                TweakProvider tweakProvider = CraftingTweaks.instance.getProvider(container);
+                TweakProvider<Container> tweakProvider = CraftingTweaks.instance.getProvider(container);
                 if (tweakProvider != null) {
                     if(message.isSpread()) {
                         tweakProvider.spreadGrid(entityPlayer, container, message.getId());

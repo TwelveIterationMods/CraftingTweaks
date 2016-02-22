@@ -5,8 +5,8 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.Container;
 
 public interface InternalMethods {
-    void registerProvider(Class<? extends Container> containerClass, TweakProvider provider);
-    SimpleTweakProvider registerSimpleProvider(String modid, Class<? extends Container> containerClass);
+    <T extends Container> void registerProvider(Class<T> containerClass, TweakProvider<T> provider);
+    <T extends Container> SimpleTweakProvider<T> registerSimpleProvider(String modid, Class<T> containerClass);
     DefaultProvider createDefaultProvider();
     DefaultProviderV2 createDefaultProviderV2();
     GuiButton createBalanceButton(int id, GuiContainer parentGui, int x, int y);
