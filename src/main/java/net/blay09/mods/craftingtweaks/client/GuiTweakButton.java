@@ -81,7 +81,7 @@ public class GuiTweakButton extends GuiImageButton implements ITooltipProvider {
             case Clear:
                 if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
                     tooltip.add(I18n.format("tooltip.craftingtweaks.forceClear"));
-                    tooltip.add(I18n.format("tooltip.craftingtweaks.forceClearInfo"));
+                    tooltip.add("\u00a77" + I18n.format("tooltip.craftingtweaks.forceClearInfo"));
                 } else {
                     tooltip.add(I18n.format("tooltip.craftingtweaks.clear"));
                 }
