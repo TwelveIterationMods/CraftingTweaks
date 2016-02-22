@@ -115,21 +115,22 @@ public class ClientProxy extends CommonProxy {
                             if (keyCompress.getKeyCode() > 0 && Keyboard.getEventKey() == keyCompress.getKeyCode()) {
                                 Slot mouseSlot = guiContainer.getSlotUnderMouse();
                                 if (mouseSlot != null) {
+                                    boolean isDecompress = Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL);
                                     if (isServerSide) {
-                                        NetworkHandler.instance.sendToServer(new MessageCompress(mouseSlot.slotNumber, isShiftDown));
-                                    } else if (isShiftDown) {
-                                        clientProvider.decompress(provider, entityPlayer, container, mouseSlot);
+                                        NetworkHandler.instance.sendToServer(new MessageCompress(mouseSlot.slotNumber, isDecompress, isShiftDown));
+                                    } else if (isDecompress) {
+                                        clientProvider.decompress(provider, entityPlayer, container, mouseSlot, isShiftDown);
                                     } else {
-                                        clientProvider.compress(provider, entityPlayer, container, mouseSlot);
+                                        clientProvider.compress(provider, entityPlayer, container, mouseSlot, isShiftDown);
                                     }
                                 }
                             } else if (keyDecompress.getKeyCode() > 0 && Keyboard.getEventKey() == keyDecompress.getKeyCode()) {
                                 Slot mouseSlot = guiContainer.getSlotUnderMouse();
                                 if (mouseSlot != null) {
                                     if (isServerSide) {
-                                        NetworkHandler.instance.sendToServer(new MessageCompress(mouseSlot.slotNumber, true));
+                                        NetworkHandler.instance.sendToServer(new MessageCompress(mouseSlot.slotNumber, true, isShiftDown));
                                     } else {
-                                        clientProvider.decompress(provider, entityPlayer, container, mouseSlot);
+                                        clientProvider.decompress(provider, entityPlayer, container, mouseSlot, isShiftDown);
                                     }
                                 }
                             } else if (keyToggleButtons.getKeyCode() > 0 && Keyboard.getEventKey() == keyToggleButtons.getKeyCode()) {
@@ -148,28 +149,19 @@ public class ClientProxy extends CommonProxy {
                             }
                         }
                     }
-                    if (guiScreen instanceof GuiContainer) {
+                    if (isServerSide && provider == null && guiScreen instanceof GuiContainer) {
                         GuiContainer guiContainer = (GuiContainer) guiScreen;
+                        boolean isShiftDown = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
                         if (keyCompress.getKeyCode() > 0 && Keyboard.getEventKey() == keyCompress.getKeyCode()) {
+                            boolean isDecompress = Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_LCONTROL);
                             Slot mouseSlot = guiContainer.getSlotUnderMouse();
                             if (mouseSlot != null) {
-                                boolean isDecompress = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
-                                if (isServerSide) {
-                                    NetworkHandler.instance.sendToServer(new MessageCompress(mouseSlot.slotNumber, isDecompress));
-                                } else if (isDecompress && provider != null) {
-                                    clientProvider.decompress(provider, entityPlayer, container, mouseSlot);
-                                } else if(provider != null) {
-                                    clientProvider.compress(provider, entityPlayer, container, mouseSlot);
-                                }
+                                NetworkHandler.instance.sendToServer(new MessageCompress(mouseSlot.slotNumber, isDecompress, isShiftDown));
                             }
                         } else if (keyDecompress.getKeyCode() > 0 && Keyboard.getEventKey() == keyDecompress.getKeyCode()) {
                             Slot mouseSlot = guiContainer.getSlotUnderMouse();
                             if (mouseSlot != null) {
-                                if (isServerSide) {
-                                    NetworkHandler.instance.sendToServer(new MessageCompress(mouseSlot.slotNumber, true));
-                                } else if(provider != null) {
-                                    clientProvider.decompress(provider, entityPlayer, container, mouseSlot);
-                                }
+                                NetworkHandler.instance.sendToServer(new MessageCompress(mouseSlot.slotNumber, true, isShiftDown));
                             }
                         }
                     }
@@ -228,7 +220,6 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public void onClientTick(TickEvent.ClientTickEvent event) {
-        isServerSide = false;
         EntityPlayer entityPlayer = FMLClientHandler.instance().getClientPlayerEntity();
         if (entityPlayer != null) {
             if (helloTimeout > 0) {
