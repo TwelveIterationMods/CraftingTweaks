@@ -6,6 +6,7 @@ import net.blay09.mods.craftingtweaks.CraftingTweaks;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.blay09.mods.craftingtweaks.net.*;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.settings.KeyBinding;
@@ -251,6 +252,8 @@ public class ClientProxy extends CommonProxy {
         }
     }
 
+    private static final List<String> tooltipList = Lists.newArrayList();
+
     @SubscribeEvent
     public void onDrawScreen(GuiScreenEvent.DrawScreenEvent.Post event) {
         // Testing Code
@@ -262,8 +265,20 @@ public class ClientProxy extends CommonProxy {
 //                roundMenu = null;
 //            }
 //        }
-        if (roundMenu != null) {
-            roundMenu.drawMenu(event.gui.mc, event.mouseX, event.mouseY);
+//        if (roundMenu != null) {
+//            roundMenu.drawMenu(event.gui.mc, event.mouseX, event.mouseY);
+//        }
+        if(!CraftingTweaks.hideButtonTooltips) {
+            tooltipList.clear();
+            for (GuiButton button : event.gui.buttonList) {
+                if (button instanceof ITooltipProvider && button.isMouseOver()) {
+                    ((ITooltipProvider) button).addInformation(tooltipList);
+                    break;
+                }
+            }
+            if (!tooltipList.isEmpty()) {
+                event.gui.drawHoveringText(tooltipList, event.mouseX, event.mouseY);
+            }
         }
     }
 

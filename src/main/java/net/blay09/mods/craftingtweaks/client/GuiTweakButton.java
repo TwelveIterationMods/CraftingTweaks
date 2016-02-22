@@ -2,9 +2,12 @@ package net.blay09.mods.craftingtweaks.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.resources.I18n;
 import org.lwjgl.input.Keyboard;
 
-public class GuiTweakButton extends GuiImageButton {
+import java.util.List;
+
+public class GuiTweakButton extends GuiImageButton implements ITooltipProvider {
 
     public enum TweakOption {
         Rotate,
@@ -67,5 +70,29 @@ public class GuiTweakButton extends GuiImageButton {
         texCoordX = oldTexCoordX;
         xPosition = oldX;
         yPosition = oldY;
+    }
+
+    @Override
+    public void addInformation(List<String> tooltip) {
+        switch(tweakOption) {
+            case Rotate:
+                tooltip.add(I18n.format("tooltip.craftingtweaks.rotate"));
+                break;
+            case Clear:
+                if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+                    tooltip.add(I18n.format("tooltip.craftingtweaks.forceClear"));
+                    tooltip.add(I18n.format("tooltip.craftingtweaks.forceClearInfo"));
+                } else {
+                    tooltip.add(I18n.format("tooltip.craftingtweaks.clear"));
+                }
+                break;
+            case Balance:
+                if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+                    tooltip.add(I18n.format("tooltip.craftingtweaks.spread"));
+                } else {
+                    tooltip.add(I18n.format("tooltip.craftingtweaks.balance"));
+                }
+                break;
+        }
     }
 }
