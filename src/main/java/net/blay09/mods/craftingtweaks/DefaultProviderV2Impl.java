@@ -24,8 +24,8 @@ public class DefaultProviderV2Impl implements DefaultProviderV2 {
         }
 
         @Override
-        public int rotateSlotId(int slotId, boolean counterClockWise) {
-            if (!counterClockWise) {
+        public int rotateSlotId(int slotId, boolean counterClockwise) {
+            if (!counterClockwise) {
                 switch (slotId) {
                     case 0:
                         return 1;
@@ -46,22 +46,22 @@ public class DefaultProviderV2Impl implements DefaultProviderV2 {
                 }
             } else {
                 switch (slotId) {
+                    case 0:
+                        return 3;
                     case 1:
                         return 0;
                     case 2:
                         return 1;
-                    case 5:
-                        return 2;
-                    case 8:
-                        return 5;
-                    case 7:
-                        return 8;
-                    case 6:
-                        return 7;
                     case 3:
                         return 6;
-                    case 0:
-                        return 3;
+                    case 5:
+                        return 2;
+                    case 6:
+                        return 7;
+                    case 7:
+                        return 8;
+                    case 8:
+                        return 5;
                 }
             }
             return 0;
@@ -69,7 +69,7 @@ public class DefaultProviderV2Impl implements DefaultProviderV2 {
     };
 
     @Override
-    public void clearGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container, boolean phantomItems) {
+    public void clearGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container, boolean phantomItems, boolean forced) {
         IInventory craftMatrix = provider.getCraftMatrix(entityPlayer, container, id);
         if (craftMatrix == null) {
             return;
@@ -81,6 +81,10 @@ public class DefaultProviderV2Impl implements DefaultProviderV2 {
             if (!phantomItems) {
                 ItemStack itemStack = craftMatrix.getStackInSlot(slotIndex);
                 if (!entityPlayer.inventory.addItemStackToInventory(itemStack)) {
+                    if(forced) {
+                        entityPlayer.dropPlayerItemWithRandomChoice(itemStack, false);
+                        craftMatrix.setInventorySlotContents(slotIndex, null);
+                    }
                     continue;
                 }
             }
@@ -130,6 +134,47 @@ public class DefaultProviderV2Impl implements DefaultProviderV2 {
             }
         }
         container.detectAndSendChanges();
+    }
+
+    @Override
+    public void spreadGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container) {
+        IInventory craftMatrix = provider.getCraftMatrix(entityPlayer, container, id);
+        if (craftMatrix == null) {
+            return;
+        }
+        while(true) {
+            ItemStack biggestSlotStack = null;
+            int biggestSlotSize = 1;
+            int start = provider.getCraftingGridStart(entityPlayer, container, id);
+            int size = provider.getCraftingGridSize(entityPlayer, container, id);
+            for (int i = start; i < start + size; i++) {
+                int slotIndex = ((Slot) container.inventorySlots.get(i)).getSlotIndex();
+                ItemStack itemStack = craftMatrix.getStackInSlot(slotIndex);
+                if (itemStack != null && itemStack.stackSize > biggestSlotSize) {
+                    biggestSlotStack = itemStack;
+                    biggestSlotSize = itemStack.stackSize;
+                }
+            }
+            if (biggestSlotStack == null) {
+                return;
+            }
+            boolean emptyBiggestSlot = false;
+            for (int i = start; i < start + size; i++) {
+                int slotIndex = ((Slot) container.inventorySlots.get(i)).getSlotIndex();
+                ItemStack itemStack = craftMatrix.getStackInSlot(slotIndex);
+                if (itemStack == null) {
+                    if(biggestSlotStack.stackSize > 1) {
+                        craftMatrix.setInventorySlotContents(slotIndex, biggestSlotStack.splitStack(1));
+                    } else {
+                        emptyBiggestSlot = true;
+                    }
+                }
+            }
+            if(!emptyBiggestSlot) {
+                break;
+            }
+        }
+        balanceGrid(provider, id, entityPlayer, container);
     }
 
     @Override
@@ -205,12 +250,12 @@ public class DefaultProviderV2Impl implements DefaultProviderV2 {
     }
 
     @Override
-    public void rotateGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container) {
-        rotateGrid(provider, id, entityPlayer, container, rotationHandler);
+    public void rotateGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container, boolean counterClockwise) {
+        rotateGrid(provider, id, entityPlayer, container, rotationHandler, counterClockwise);
     }
 
     @Override
-    public void rotateGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container, RotationHandler rotationHandler) {
+    public void rotateGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container, RotationHandler rotationHandler, boolean counterClockwise) {
         IInventory craftMatrix = provider.getCraftMatrix(entityPlayer, container, id);
         if (craftMatrix == null) {
             return;
@@ -226,7 +271,7 @@ public class DefaultProviderV2Impl implements DefaultProviderV2 {
             if (rotationHandler.ignoreSlotId(i)) {
                 continue;
             }
-            int slotIndex = ((Slot) container.inventorySlots.get(start + rotationHandler.rotateSlotId(i, false))).getSlotIndex();
+            int slotIndex = ((Slot) container.inventorySlots.get(start + rotationHandler.rotateSlotId(i, counterClockwise))).getSlotIndex();
             craftMatrix.setInventorySlotContents(slotIndex, matrixClone.getStackInSlot(i));
         }
         container.detectAndSendChanges();

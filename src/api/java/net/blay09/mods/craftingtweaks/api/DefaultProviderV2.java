@@ -19,8 +19,9 @@ public interface DefaultProviderV2 {
      * @param id the crafting grid id invoking this function (usually 0 unless the container has multiple grids)
      * @param entityPlayer the player who's rotating the grid
      * @param container the container the grid is part of
+     * @param counterClockwise true if the rotation should happen counter clockwise
      */
-    void rotateGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container);
+    void rotateGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container, boolean counterClockwise);
 
     /**
      * Default implementation for grid rotation with custom rotation handling.
@@ -29,8 +30,9 @@ public interface DefaultProviderV2 {
      * @param entityPlayer the player who's rotating the grid
      * @param container the container the grid is part of
      * @param rotationHandler the rotation handler that determines where items are going to end up
+     * @param counterClockwise true if the rotation should happen counter clockwise
      */
-    void rotateGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container, RotationHandler rotationHandler);
+    void rotateGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container, RotationHandler rotationHandler, boolean counterClockwise);
 
     /**
      * Default implementation for grid clearing.
@@ -39,8 +41,9 @@ public interface DefaultProviderV2 {
      * @param entityPlayer the player who's clearing the grid
      * @param container the container the grid is part of
      * @param phantomItems true if the grid contains phantom items (i.e. they should be deleted, not put into the player's inventory)
+     * @param forced if this is true, items will be dropped to the ground if necessary
      */
-    void clearGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container, boolean phantomItems);
+    void clearGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container, boolean phantomItems, boolean forced);
 
     /**
      * Default implementation for grid balancing.
@@ -50,6 +53,15 @@ public interface DefaultProviderV2 {
      * @param container the container the grid is part of
      */
     void balanceGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container);
+
+    /**
+     * Default implementation for grid spreading.
+     * @param provider the TweakProvider invoking this function
+     * @param id the crafting grid id invoking this function (usually 0 unless the container has multiple grids)
+     * @param entityPlayer the player who's spreading the grid
+     * @param container the container the grid is part of
+     */
+    void spreadGrid(TweakProvider provider, int id, EntityPlayer entityPlayer, Container container);
 
     /**
      * Default implementation for putting an item into a specific slot within a the grid.
@@ -82,5 +94,4 @@ public interface DefaultProviderV2 {
      * @return true if items are allowed to be transferred from this slot, false otherwise
      */
     boolean canTransferFrom(EntityPlayer entityPlayer, Container container, Slot sourceSlot);
-
 }

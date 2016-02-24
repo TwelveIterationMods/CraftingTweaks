@@ -94,23 +94,30 @@ public class SimpleTweakProviderImpl implements SimpleTweakProvider {
     }
 
     @Override
-    public void clearGrid(EntityPlayer entityPlayer, Container container, int id) {
-        if(tweakClear.enabled) {
-            defaultProvider.clearGrid(this, id, entityPlayer, container, phantomItems);
+    public void clearGrid(EntityPlayer entityPlayer, Container container, int id, boolean forced) {
+        if (tweakClear.enabled) {
+            defaultProvider.clearGrid(this, id, entityPlayer, container, phantomItems, forced);
         }
     }
 
     @Override
-    public void rotateGrid(EntityPlayer entityPlayer, Container container, int id) {
-        if(tweakRotate.enabled) {
-            defaultProvider.rotateGrid(this, id, entityPlayer, container);
+    public void rotateGrid(EntityPlayer entityPlayer, Container container, int id, boolean counterClockwise) {
+        if (tweakRotate.enabled) {
+            defaultProvider.rotateGrid(this, id, entityPlayer, container, counterClockwise);
         }
     }
 
     @Override
     public void balanceGrid(EntityPlayer entityPlayer, Container container, int id) {
-        if(tweakBalance.enabled) {
+        if (tweakBalance.enabled) {
             defaultProvider.balanceGrid(this, id, entityPlayer, container);
+        }
+    }
+
+    @Override
+    public void spreadGrid(EntityPlayer entityPlayer, Container container, int id) {
+        if (tweakBalance.enabled) {
+            defaultProvider.spreadGrid(this, id, entityPlayer, container);
         }
     }
 
@@ -152,32 +159,32 @@ public class SimpleTweakProviderImpl implements SimpleTweakProvider {
     @Override
     @SideOnly(Side.CLIENT)
     public void initGui(GuiContainer guiContainer, List<GuiButton> buttonList) {
-        if(!hideButtons) {
+        if (!hideButtons) {
             int index = 0;
-            if(tweakRotate.enabled && tweakRotate.showButton) {
+            if (tweakRotate.enabled && tweakRotate.showButton) {
                 int buttonX = tweakRotate.buttonX;
                 int buttonY = tweakRotate.buttonY;
-                if(alignToGrid != null) {
+                if (alignToGrid != null) {
                     buttonX = getButtonX(guiContainer, index);
                     buttonY = getButtonY(guiContainer, index);
                 }
                 buttonList.add(CraftingTweaksAPI.createRotateButtonRelative(0, guiContainer, buttonX, buttonY));
                 index++;
             }
-            if(tweakBalance.enabled && tweakBalance.showButton) {
+            if (tweakBalance.enabled && tweakBalance.showButton) {
                 int buttonX = tweakBalance.buttonX;
                 int buttonY = tweakBalance.buttonY;
-                if(alignToGrid != null) {
+                if (alignToGrid != null) {
                     buttonX = getButtonX(guiContainer, index);
                     buttonY = getButtonY(guiContainer, index);
                 }
                 buttonList.add(CraftingTweaksAPI.createBalanceButtonRelative(0, guiContainer, buttonX, buttonY));
                 index++;
             }
-            if(tweakClear.enabled && tweakClear.showButton) {
+            if (tweakClear.enabled && tweakClear.showButton) {
                 int buttonX = tweakClear.buttonX;
                 int buttonY = tweakClear.buttonY;
-                if(alignToGrid != null) {
+                if (alignToGrid != null) {
                     buttonX = getButtonX(guiContainer, index);
                     buttonY = getButtonY(guiContainer, index);
                 }
@@ -189,7 +196,7 @@ public class SimpleTweakProviderImpl implements SimpleTweakProvider {
     @SideOnly(Side.CLIENT)
     private int getButtonX(GuiContainer guiContainer, int index) {
         Slot firstSlot = (Slot) guiContainer.inventorySlots.inventorySlots.get(getCraftingGridStart(FMLClientHandler.instance().getClientPlayerEntity(), guiContainer.inventorySlots, 0));
-        switch(alignToGrid) {
+        switch (alignToGrid) {
             case NORTH:
             case UP:
             case SOUTH:
@@ -206,7 +213,7 @@ public class SimpleTweakProviderImpl implements SimpleTweakProvider {
     @SideOnly(Side.CLIENT)
     private int getButtonY(GuiContainer guiContainer, int index) {
         Slot firstSlot = (Slot) guiContainer.inventorySlots.inventorySlots.get(getCraftingGridStart(FMLClientHandler.instance().getClientPlayerEntity(), guiContainer.inventorySlots, 0));
-        switch(alignToGrid) {
+        switch (alignToGrid) {
             case NORTH:
             case UP:
                 return firstSlot.yDisplayPosition - 18 - 1;

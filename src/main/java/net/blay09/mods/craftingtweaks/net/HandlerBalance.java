@@ -14,10 +14,14 @@ public class HandlerBalance implements IMessageHandler<MessageBalance, IMessage>
     public IMessage onMessage(final MessageBalance message, final MessageContext ctx) {
         EntityPlayer entityPlayer = ctx.getServerHandler().playerEntity;
         Container container = entityPlayer.openContainer;
-        if(container != null) {
+        if (container != null) {
             TweakProvider tweakProvider = CraftingTweaks.instance.getProvider(container);
             if (tweakProvider != null) {
-                tweakProvider.balanceGrid(entityPlayer, container, message.id);
+                if (message.isSpread()) {
+                    tweakProvider.spreadGrid(entityPlayer, container, message.getId());
+                } else {
+                    tweakProvider.balanceGrid(entityPlayer, container, message.getId());
+                }
             }
         }
         return null;

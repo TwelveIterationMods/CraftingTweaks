@@ -7,25 +7,29 @@ public class MessageCompress implements IMessage {
 
     private int slotNumber;
     private boolean isDecompress;
+    private boolean compressAll;
 
     public MessageCompress() {
     }
 
-    public MessageCompress(int slotNumber, boolean isDecompress) {
+    public MessageCompress(int slotNumber, boolean isDecompress, boolean compressAll) {
         this.slotNumber = slotNumber;
         this.isDecompress = isDecompress;
+        this.compressAll = compressAll;
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
         slotNumber = buf.readInt();
         isDecompress = buf.readBoolean();
+        compressAll = buf.readBoolean();
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(slotNumber);
         buf.writeBoolean(isDecompress);
+        buf.writeBoolean(compressAll);
     }
 
     public int getSlotNumber() {
@@ -36,4 +40,7 @@ public class MessageCompress implements IMessage {
         return isDecompress;
     }
 
+    public boolean isCompressAll() {
+        return compressAll;
+    }
 }
