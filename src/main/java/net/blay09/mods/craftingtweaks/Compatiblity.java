@@ -225,7 +225,7 @@ public class Compatiblity {
     public static void forestry() {
         SimpleTweakProvider provider = registerSimpleProvider("Forestry", "forestry.core.gui.ContainerTile");
         if (provider != null) {
-            provider.setGrid(0, 9);
+            provider.setGrid(36, 9);
             provider.setTweakRotate(true, true, 0, 0);
             provider.setTweakBalance(false, false, 0, 0);
             provider.setTweakClear(true, true, 0, 0);
