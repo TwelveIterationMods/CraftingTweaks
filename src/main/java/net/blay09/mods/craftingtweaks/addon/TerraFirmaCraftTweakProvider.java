@@ -74,18 +74,23 @@ public class TerraFirmaCraftTweakProvider implements TweakProvider {
     }
 
     @Override
-    public void clearGrid(EntityPlayer entityPlayer, Container container, int id) {
-        defaultProvider.clearGrid(this, id, entityPlayer, container, false);
+    public void clearGrid(EntityPlayer entityPlayer, Container container, int id, boolean forced) {
+        defaultProvider.clearGrid(this, id, entityPlayer, container, false, forced);
     }
 
     @Override
-    public void rotateGrid(EntityPlayer entityPlayer, Container container, int id) {
-        defaultProvider.rotateGrid(this, id, entityPlayer, container, smallRotationHandler);
+    public void rotateGrid(EntityPlayer entityPlayer, Container container, int id, boolean counterClockwise) {
+        defaultProvider.rotateGrid(this, id, entityPlayer, container, smallRotationHandler, counterClockwise);
     }
 
     @Override
     public void balanceGrid(EntityPlayer entityPlayer, Container container, int id) {
         defaultProvider.balanceGrid(this, id, entityPlayer, container);
+    }
+
+    @Override
+    public void spreadGrid(EntityPlayer entityPlayer, Container container, int id) {
+        defaultProvider.spreadGrid(this, id, entityPlayer, container);
     }
 
     @Override

@@ -5,6 +5,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
 import net.blay09.mods.craftingtweaks.api.DefaultProviderV2;
+import net.blay09.mods.craftingtweaks.api.RotationHandler;
 import net.blay09.mods.craftingtweaks.api.SimpleTweakProvider;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -18,6 +19,37 @@ import net.minecraft.util.EnumFacing;
 import java.util.List;
 
 public class SimpleTweakProviderImpl implements SimpleTweakProvider {
+
+    private final RotationHandler smallRotationHandler = new RotationHandler() {
+        @Override
+        public boolean ignoreSlotId(int slotId) {
+            return false;
+        }
+
+        @Override
+        public int rotateSlotId(int slotId, boolean counterClockwise) {
+            if(!counterClockwise) {
+                switch (slotId) {
+                    case 0:
+                        return 1;
+                    case 1:
+                        return 3;
+                    case 2:
+                        return 0;
+                    case 3:
+                        return 2;
+                }
+            } else {
+                switch(slotId) {
+                    case 1: return 0;
+                    case 3: return 1;
+                    case 0: return 2;
+                    case 2: return 3;
+                }
+            }
+            return 0;
+        }
+    };
 
     public static class TweakSettings {
         public final boolean enabled;
@@ -103,7 +135,7 @@ public class SimpleTweakProviderImpl implements SimpleTweakProvider {
     @Override
     public void rotateGrid(EntityPlayer entityPlayer, Container container, int id, boolean counterClockwise) {
         if (tweakRotate.enabled) {
-            defaultProvider.rotateGrid(this, id, entityPlayer, container, counterClockwise);
+            defaultProvider.rotateGrid(this, id, entityPlayer, container, getCraftingGridSize(entityPlayer, container, id) == 4 ? smallRotationHandler : defaultProvider.getRotationHandler(), counterClockwise);
         }
     }
 

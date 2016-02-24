@@ -6,6 +6,7 @@ import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
 import net.blay09.mods.craftingtweaks.api.SimpleTweakProvider;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.ContainerPlayer;
 import net.minecraft.inventory.ContainerWorkbench;
 import net.minecraft.util.EnumFacing;
 
@@ -17,6 +18,12 @@ public class Compatiblity {
         provider.setTweakBalance(true, true, 0, 0);
         provider.setTweakClear(true, true, 0, 0);
         provider.setAlignToGrid(EnumFacing.WEST);
+
+        provider = CraftingTweaksAPI.registerSimpleProvider("minecraft", ContainerPlayer.class);
+        provider.setGrid(1, 4);
+        provider.setTweakRotate(true, false, 0, 0);
+        provider.setTweakBalance(true, false, 0, 0);
+        provider.setTweakClear(true, false, 0, 0);
     }
 
     public static void twilightforest() {
