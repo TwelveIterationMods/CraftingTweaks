@@ -4,8 +4,8 @@ import net.blay09.mods.craftingtweaks.net.MessageHello;
 import net.blay09.mods.craftingtweaks.net.NetworkHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -24,7 +24,7 @@ public class CommonProxy {
     }
 
     public void addScheduledTask(Runnable runnable) {
-        MinecraftServer.getServer().addScheduledTask(runnable);
+        FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(runnable);
     }
 
     @SubscribeEvent

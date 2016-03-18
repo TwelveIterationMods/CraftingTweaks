@@ -18,34 +18,37 @@ def MAVEN_REPO = System.getenv("MAVEN_REPO") ?: ""
 def MAVEN_USERNAME = System.getenv("MAVEN_USERNAME") ?: ""
 def MAVEN_PASSWORD = System.getenv("MAVEN_PASSWORD") ?: ""
 
-version = "3.0." + BUILD_NUMBER
+version = "1.0." + BUILD_NUMBER
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 group = "net.blay09.mods"
-archivesBaseName = "craftingtweaks"
+archivesBaseName = "modid"
 
 minecraft {
-    version = "1.8.9-11.15.0.1684"
+    version = "1.9-12.16.0.1767-1.9"
     runDir = "run"
     
-    mappings = "stable_20"
+    mappings = "snapshot_20160312"
 }
 
-processResources
-{
-    // this will ensure that this task is redone when the versions change.
+repositories {
+
+}
+
+dependencies {
+    
+}
+
+processResources{
     inputs.property "version", project.version
     inputs.property "mcversion", project.minecraft.version
 
-    // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
                 
-        // replace version and mcversion
         expand 'version':project.version, 'mcversion':project.minecraft.version
     }
         
-    // copy everything else, thats not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }
@@ -55,9 +58,9 @@ jar {
     from sourceSets.api.output
     appendix "mc" + minecraft.version
 
-    manifest {
-        attributes('FMLAT': 'craftingtweaks_at.cfg')
-    }
+    //manifest {
+    //    attributes('FMLAT': 'modid_at.cfg')
+    //}
 }
 
 sourceJar {
@@ -86,9 +89,9 @@ task jarDev(type: Jar) {
     classifier "dev"
     appendix "mc" + minecraft.version
 
-    manifest {
-        attributes('FMLAT': 'craftingtweaks_at.cfg')
-    }
+    //manifest {
+    //    attributes('FMLAT': 'modid_at.cfg')
+    //}
 }
 
 artifacts {

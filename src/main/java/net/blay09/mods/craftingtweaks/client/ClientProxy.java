@@ -14,7 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.FMLClientHandler;
@@ -230,7 +230,7 @@ public class ClientProxy extends CommonProxy {
             if (helloTimeout > 0) {
                 helloTimeout--;
                 if (helloTimeout <= 0) {
-                    entityPlayer.addChatMessage(new ChatComponentText("This server does not have Crafting Tweaks installed. Functionality may be limited."));
+                    entityPlayer.addChatMessage(new TextComponentString("This server does not have Crafting Tweaks installed. Functionality may be limited."));
                     isServerSide = false;
                 }
             }
