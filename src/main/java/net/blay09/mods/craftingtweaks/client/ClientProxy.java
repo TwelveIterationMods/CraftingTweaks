@@ -185,7 +185,7 @@ public class ClientProxy extends CommonProxy {
                     TweakProvider<Container> provider = CraftingTweaks.instance.getProvider(container);
                     if (provider != null) {
                         if (keyTransferStack.getKeyCode() > 0 && Keyboard.isKeyDown(keyTransferStack.getKeyCode())) {
-                            if (mouseSlot != null) {
+                            if (mouseSlot != null && mouseSlot.getHasStack()) {
                                 List<Slot> transferSlots = Lists.newArrayList();
                                 transferSlots.add(mouseSlot);
                                 if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
