@@ -18,7 +18,7 @@ def MAVEN_REPO = System.getenv("MAVEN_REPO") ?: ""
 def MAVEN_USERNAME = System.getenv("MAVEN_USERNAME") ?: ""
 def MAVEN_PASSWORD = System.getenv("MAVEN_PASSWORD") ?: ""
 
-version = "1.0." + BUILD_NUMBER
+version = "4.0." + BUILD_NUMBER
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 group = "net.blay09.mods"
