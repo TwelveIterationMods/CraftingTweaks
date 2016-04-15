@@ -26,7 +26,7 @@ public class MessageCompress implements IMessage {
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(slotNumber);
-        type = CompressType.values()[buf.readByte()];
+        buf.writeByte(type.ordinal());
     }
 
     public int getSlotNumber() {

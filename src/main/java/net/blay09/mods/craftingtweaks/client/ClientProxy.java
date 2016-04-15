@@ -165,20 +165,29 @@ public class ClientProxy extends CommonProxy {
     }
 
     private CompressType getCompressType(int eventKey) {
-        if(keyCompressOne.isActiveAndMatches(eventKey)) {
+        if(isActiveAndMatches(keyCompressOne, eventKey)) {
             return CompressType.COMPRESS_ONE;
-        } else if(keyCompressStack.isActiveAndMatches(eventKey)) {
+        } else if(isActiveAndMatches(keyCompressStack, eventKey)) {
             return CompressType.COMPRESS_STACK;
-        } else if(keyCompressAll.isActiveAndMatches(eventKey)) {
+        } else if(isActiveAndMatches(keyCompressAll, eventKey)) {
             return CompressType.COMPRESS_ALL;
-        } else if(keyDecompressOne.isActiveAndMatches(eventKey)) {
+        } else if(isActiveAndMatches(keyDecompressOne, eventKey)) {
             return CompressType.DECOMPRESS_ONE;
-        } else if(keyDecompressStack.isActiveAndMatches(eventKey)) {
+        } else if(isActiveAndMatches(keyDecompressStack, eventKey)) {
             return CompressType.DECOMPRESS_STACK;
-        } else if(keyDecompressAll.isActiveAndMatches(eventKey)) {
+        } else if(isActiveAndMatches(keyDecompressAll, eventKey)) {
             return CompressType.DECOMPRESS_ALL;
         }
         return null;
+    }
+
+    private boolean isActiveAndMatches(KeyBinding keyBinding, int eventKey) {
+        if(keyBinding.getKeyModifier() == KeyModifier.NONE) {
+            if(KeyModifier.SHIFT.isActive() || KeyModifier.CONTROL.isActive() || KeyModifier.ALT.isActive()) {
+                return false;
+            }
+        }
+        return keyBinding.isActiveAndMatches(eventKey);
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
