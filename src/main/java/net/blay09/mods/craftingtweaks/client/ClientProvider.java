@@ -96,7 +96,7 @@ public class ClientProvider {
             for (Slot slot : slotList) {
                 average += slot.getStack().stackSize;
             }
-            average = (int) Math.ceil((float) average / (float) (slotList.size()));
+            average = (int) Math.floor((float) average / (float) (slotList.size()));
             for (Slot slot : slotList) {
                 if (slot.getHasStack() && slot.getStack().stackSize > average) {
                     // Pick up item from biggest stack

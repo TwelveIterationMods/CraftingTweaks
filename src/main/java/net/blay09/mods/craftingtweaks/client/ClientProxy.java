@@ -98,7 +98,7 @@ public class ClientProxy extends CommonProxy {
                 TweakProvider provider = CraftingTweaks.instance.getProvider(container);
                 if (provider != null) {
                     if (keyTransferStack.getKeyCode() > 0 && Keyboard.isKeyDown(keyTransferStack.getKeyCode())) {
-                        if (mouseSlot != null) {
+                        if (mouseSlot != null && mouseSlot.getHasStack()) {
                             List<Slot> transferSlots = Lists.newArrayList();
                             transferSlots.add(mouseSlot);
                             if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
@@ -222,11 +222,11 @@ public class ClientProxy extends CommonProxy {
                             if (mouseSlot != null) {
                                 boolean isDecompress = Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL);
                                 if (isServerSide) {
-                                    NetworkHandler.instance.sendToServer(new MessageCompress(mouseSlot.slotNumber, isDecompress, isShiftDown));
+                                    NetworkHandler.instance.sendToServer(new MessageCompress(mouseSlot.slotNumber, isDecompress, !isShiftDown));
                                 } else if (isDecompress && provider != null) {
                                     clientProvider.decompress(provider, entityPlayer, container, mouseSlot, isShiftDown);
                                 } else if (provider != null) {
-                                    clientProvider.compress(provider, entityPlayer, container, mouseSlot, isShiftDown);
+                                    clientProvider.compress(provider, entityPlayer, container, mouseSlot, !isShiftDown);
                                 }
                             }
                             wasCompressed = true;
@@ -275,6 +275,10 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public void onDrawScreen(GuiScreenEvent.DrawScreenEvent.Post event) {
+        if(event.gui == null) {
+            // WAILA somehow breaks DrawScreenEvent when exiting its menu
+            return;
+        }
         if (event.gui instanceof GuiContainer) {
             mouseSlot = ((GuiContainer) event.gui).getSlotAtPosition(event.mouseX, event.mouseY);
         } else {
@@ -338,7 +342,6 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void receivedHello(EntityPlayer entityPlayer) {
-        super.receivedHello(entityPlayer);
         helloTimeout = 0;
         isServerSide = true;
     }
