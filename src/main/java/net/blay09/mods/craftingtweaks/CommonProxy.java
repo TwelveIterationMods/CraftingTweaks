@@ -14,23 +14,17 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 public class CommonProxy {
 
     public void init(FMLInitializationEvent event) {
-        MinecraftForge.EVENT_BUS.register(this);
     }
 
     public void postInit(FMLPostInitializationEvent event) {
     }
 
     public void receivedHello(EntityPlayer entityPlayer) {
+        NetworkHandler.instance.sendTo(new MessageHello(NetworkHandler.PROTOCOL_VERSION), (EntityPlayerMP) entityPlayer);
     }
 
     public void addScheduledTask(Runnable runnable) {
         FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(runnable);
-    }
-
-    @SubscribeEvent
-    @SuppressWarnings("unused")
-    public void playerJoined(PlayerEvent.PlayerLoggedInEvent event) {
-        NetworkHandler.instance.sendTo(new MessageHello(NetworkHandler.PROTOCOL_VERSION), (EntityPlayerMP) event.player);
     }
 
 }

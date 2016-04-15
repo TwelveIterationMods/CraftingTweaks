@@ -339,8 +339,8 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void receivedHello(EntityPlayer entityPlayer) {
-        super.receivedHello(entityPlayer);
         helloTimeout = 0;
         isServerSide = true;
+        isServerSide = false; // TODO DBEUGBUFB EBUGUSDGUSBG UESG FIX THIS T TTATTAATATTATATATATA ITS JUST TEST COED YOU NEED TO REMVOE IT BAEOFRE REALEASE BLAY!!
     }
 }

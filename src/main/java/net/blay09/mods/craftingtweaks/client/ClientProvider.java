@@ -97,7 +97,7 @@ public class ClientProvider {
             for (Slot slot : slotList) {
                 average += slot.getStack().stackSize;
             }
-            average = (int) Math.ceil((float) average / (float) slotList.size());
+            average = (int) Math.floor((float) average / (float) slotList.size());
             for (Slot slot : slotList) {
                 if (slot.getHasStack() && slot.getStack().stackSize > average) {
                     // Pick up item from biggest stack
@@ -111,7 +111,7 @@ public class ClientProvider {
                         int otherStackSize = otherSlot.getStack().stackSize;
                         if (otherStackSize < average) {
                             while (otherStackSize < average && mouseStackSize > average) {
-                                getController().func_187098_a(container.windowId, slot.slotNumber, 1, ClickType.PICKUP, entityPlayer); // func_187098_a
+                                getController().func_187098_a(container.windowId, otherSlot.slotNumber, 1, ClickType.PICKUP, entityPlayer); // func_187098_a
                                 mouseStackSize--;
                                 otherStackSize++;
                             }
