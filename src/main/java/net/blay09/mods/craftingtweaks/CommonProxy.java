@@ -13,18 +13,13 @@ import net.minecraftforge.common.MinecraftForge;
 public class CommonProxy {
 
     public void init(FMLInitializationEvent event) {
-        MinecraftForge.EVENT_BUS.register(this);
     }
 
     public void postInit(FMLPostInitializationEvent event) {
     }
 
     public void receivedHello(EntityPlayer entityPlayer) {
-    }
-
-    @SubscribeEvent
-    public void playerJoined(PlayerEvent.PlayerLoggedInEvent event) {
-        NetworkHandler.instance.sendTo(new MessageHello(NetworkHandler.PROTOCOL_VERSION), (EntityPlayerMP) event.player);
+        NetworkHandler.instance.sendTo(new MessageHello(NetworkHandler.PROTOCOL_VERSION), (EntityPlayerMP) entityPlayer);
     }
 
 }
