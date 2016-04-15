@@ -141,20 +141,21 @@ public class ClientProvider {
             if (biggestSlot == null) {
                 break;
             }
-            boolean isGridFull = true;
+            boolean emptyBiggestSlot = false;
             getController().windowClick(container.windowId, biggestSlot.slotNumber, 0, 0, entityPlayer);
             for (int i = start; i < start + size; i++) {
                 ItemStack itemStack = ((Slot) container.inventorySlots.get(i)).getStack();
                 if (itemStack == null) {
-                    isGridFull = false;
                     if(biggestSlotSize > 1) {
                         getController().windowClick(container.windowId, i, 1, 0, entityPlayer);
                         biggestSlotSize--;
+                    } else {
+                        emptyBiggestSlot = true;
                     }
                 }
             }
             getController().windowClick(container.windowId, biggestSlot.slotNumber, 0, 0, entityPlayer);
-            if(isGridFull) {
+            if(!emptyBiggestSlot) {
                 break;
             }
         }
