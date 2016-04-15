@@ -41,16 +41,16 @@ public class ClientProxy extends CommonProxy {
     private boolean isServerSide;
 
     private final ClientProvider clientProvider = new ClientProvider();
-    private final KeyBinding keyRotate = new KeyBinding("key.craftingtweaks.rotate", KeyConflictContext.GUI, Keyboard.KEY_R, "key.categories.craftingtweaks");
-    private final KeyBinding keyBalance = new KeyBinding("key.craftingtweaks.balance", KeyConflictContext.GUI, Keyboard.KEY_B, "key.categories.craftingtweaks");
-    private final KeyBinding keyClear = new KeyBinding("key.craftingtweaks.clear", KeyConflictContext.GUI, Keyboard.KEY_C, "key.categories.craftingtweaks");
-    private final KeyBinding keyToggleButtons = new KeyBinding("key.craftingtweaks.toggleButtons", KeyConflictContext.GUI, 0, "key.categories.craftingtweaks");
+    private final KeyBinding keyRotate = new KeyBinding("key.craftingtweaks.rotate", KeyConflictContext.GUI, KeyModifier.NONE, Keyboard.KEY_R, "key.categories.craftingtweaks");
+    private final KeyBinding keyBalance = new KeyBinding("key.craftingtweaks.balance", KeyConflictContext.GUI, KeyModifier.NONE, Keyboard.KEY_B, "key.categories.craftingtweaks");
+    private final KeyBinding keyClear = new KeyBinding("key.craftingtweaks.clear", KeyConflictContext.GUI, KeyModifier.NONE, Keyboard.KEY_C, "key.categories.craftingtweaks");
+    private final KeyBinding keyToggleButtons = new KeyBinding("key.craftingtweaks.toggleButtons", KeyConflictContext.GUI, KeyModifier.NONE, 0, "key.categories.craftingtweaks");
     private final KeyBinding keyCompressOne = new KeyBinding("key.craftingtweaks.compressOne", KeyConflictContext.GUI, KeyModifier.CONTROL, Keyboard.KEY_K, "key.categories.craftingtweaks");
-    private final KeyBinding keyCompressStack = new KeyBinding("key.craftingtweaks.compressStack", KeyConflictContext.GUI, Keyboard.KEY_K, "key.categories.craftingtweaks");
+    private final KeyBinding keyCompressStack = new KeyBinding("key.craftingtweaks.compressStack", KeyConflictContext.GUI, KeyModifier.NONE, Keyboard.KEY_K, "key.categories.craftingtweaks");
     private final KeyBinding keyCompressAll = new KeyBinding("key.craftingtweaks.compressAll", KeyConflictContext.GUI, KeyModifier.SHIFT, Keyboard.KEY_K, "key.categories.craftingtweaks");
-    private final KeyBinding keyDecompressOne = new KeyBinding("key.craftingtweaks.decompressOne", KeyConflictContext.GUI, 0, "key.categories.craftingtweaks");
-    private final KeyBinding keyDecompressStack = new KeyBinding("key.craftingtweaks.decompressStack", KeyConflictContext.GUI, 0, "key.categories.craftingtweaks");
-    private final KeyBinding keyDecompressAll = new KeyBinding("key.craftingtweaks.decompressAll", KeyConflictContext.GUI, 0, "key.categories.craftingtweaks");
+    private final KeyBinding keyDecompressOne = new KeyBinding("key.craftingtweaks.decompressOne", KeyConflictContext.GUI, KeyModifier.NONE, 0, "key.categories.craftingtweaks");
+    private final KeyBinding keyDecompressStack = new KeyBinding("key.craftingtweaks.decompressStack", KeyConflictContext.GUI, KeyModifier.NONE, 0, "key.categories.craftingtweaks");
+    private final KeyBinding keyDecompressAll = new KeyBinding("key.craftingtweaks.decompressAll", KeyConflictContext.GUI, KeyModifier.NONE, 0, "key.categories.craftingtweaks");
     private KeyBinding keyTransferStack;
 
     private boolean ignoreMouseUp;
