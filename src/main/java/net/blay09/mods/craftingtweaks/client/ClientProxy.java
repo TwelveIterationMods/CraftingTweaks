@@ -2,6 +2,7 @@ package net.blay09.mods.craftingtweaks.client;
 
 import com.google.common.collect.Lists;
 import net.blay09.mods.craftingtweaks.CommonProxy;
+import net.blay09.mods.craftingtweaks.CompressType;
 import net.blay09.mods.craftingtweaks.CraftingTweaks;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.blay09.mods.craftingtweaks.net.*;
@@ -16,6 +17,8 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.client.settings.KeyConflictContext;
+import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -30,6 +33,7 @@ import org.lwjgl.input.Mouse;
 import java.util.Iterator;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class ClientProxy extends CommonProxy {
 
     private static final int HELLO_TIMEOUT = 20 * 10;
@@ -37,17 +41,19 @@ public class ClientProxy extends CommonProxy {
     private boolean isServerSide;
 
     private final ClientProvider clientProvider = new ClientProvider();
-    private final KeyBinding keyRotate = new KeyBinding("key.craftingtweaks.rotate", Keyboard.KEY_R, "key.categories.craftingtweaks");
-    private final KeyBinding keyBalance = new KeyBinding("key.craftingtweaks.balance", Keyboard.KEY_B, "key.categories.craftingtweaks");
-    private final KeyBinding keyClear = new KeyBinding("key.craftingtweaks.clear", Keyboard.KEY_C, "key.categories.craftingtweaks");
-    private final KeyBinding keyToggleButtons = new KeyBinding("key.craftingtweaks.toggleButtons", 0, "key.categories.craftingtweaks");
-    private final KeyBinding keyCompress = new KeyBinding("key.craftingtweaks.compress", Keyboard.KEY_K, "key.categories.craftingtweaks");
-    private final KeyBinding keyDecompress = new KeyBinding("key.craftingtweaks.decompress", 0, "key.categories.craftingtweaks");
+    private final KeyBinding keyRotate = new KeyBinding("key.craftingtweaks.rotate", KeyConflictContext.GUI, Keyboard.KEY_R, "key.categories.craftingtweaks");
+    private final KeyBinding keyBalance = new KeyBinding("key.craftingtweaks.balance", KeyConflictContext.GUI, Keyboard.KEY_B, "key.categories.craftingtweaks");
+    private final KeyBinding keyClear = new KeyBinding("key.craftingtweaks.clear", KeyConflictContext.GUI, Keyboard.KEY_C, "key.categories.craftingtweaks");
+    private final KeyBinding keyToggleButtons = new KeyBinding("key.craftingtweaks.toggleButtons", KeyConflictContext.GUI, 0, "key.categories.craftingtweaks");
+    private final KeyBinding keyCompressOne = new KeyBinding("key.craftingtweaks.compressOne", KeyConflictContext.GUI, KeyModifier.CONTROL, Keyboard.KEY_K, "key.categories.craftingtweaks");
+    private final KeyBinding keyCompressStack = new KeyBinding("key.craftingtweaks.compressStack", KeyConflictContext.GUI, Keyboard.KEY_K, "key.categories.craftingtweaks");
+    private final KeyBinding keyCompressAll = new KeyBinding("key.craftingtweaks.compressAll", KeyConflictContext.GUI, KeyModifier.SHIFT, Keyboard.KEY_K, "key.categories.craftingtweaks");
+    private final KeyBinding keyDecompressOne = new KeyBinding("key.craftingtweaks.decompressOne", KeyConflictContext.GUI, 0, "key.categories.craftingtweaks");
+    private final KeyBinding keyDecompressStack = new KeyBinding("key.craftingtweaks.decompressStack", KeyConflictContext.GUI, 0, "key.categories.craftingtweaks");
+    private final KeyBinding keyDecompressAll = new KeyBinding("key.craftingtweaks.decompressAll", KeyConflictContext.GUI, 0, "key.categories.craftingtweaks");
     private KeyBinding keyTransferStack;
 
     private boolean ignoreMouseUp;
-
-    private GuiRoundMenu roundMenu;
 
     @Override
     public void init(FMLInitializationEvent event) {
@@ -58,8 +64,12 @@ public class ClientProxy extends CommonProxy {
         ClientRegistry.registerKeyBinding(keyBalance);
         ClientRegistry.registerKeyBinding(keyClear);
         ClientRegistry.registerKeyBinding(keyToggleButtons);
-        ClientRegistry.registerKeyBinding(keyCompress);
-        ClientRegistry.registerKeyBinding(keyDecompress);
+        ClientRegistry.registerKeyBinding(keyCompressOne);
+        ClientRegistry.registerKeyBinding(keyCompressStack);
+        ClientRegistry.registerKeyBinding(keyCompressAll);
+        ClientRegistry.registerKeyBinding(keyDecompressOne);
+        ClientRegistry.registerKeyBinding(keyDecompressStack);
+        ClientRegistry.registerKeyBinding(keyDecompressAll);
         keyTransferStack = Minecraft.getMinecraft().gameSettings.keyBindForward;
     }
 
@@ -85,6 +95,7 @@ public class ClientProxy extends CommonProxy {
                 if (container != null) {
                     GuiScreen guiScreen = Minecraft.getMinecraft().currentScreen;
                     TweakProvider<Container> provider = CraftingTweaks.instance.getProvider(container);
+                    CompressType compressType = getCompressType(Keyboard.getEventKey());
                     if (provider != null) {
                         boolean isShiftDown = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
                         CraftingTweaks.ModSupportState config = CraftingTweaks.instance.getModSupportState(provider.getModId());
@@ -115,25 +126,13 @@ public class ClientProxy extends CommonProxy {
                         }
                         if (guiScreen instanceof GuiContainer) {
                             GuiContainer guiContainer = (GuiContainer) guiScreen;
-                            if (keyCompress.getKeyCode() > 0 && Keyboard.getEventKey() == keyCompress.getKeyCode()) {
-                                Slot mouseSlot = guiContainer.getSlotUnderMouse();
-                                if (mouseSlot != null) {
-                                    boolean isDecompress = Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL);
-                                    if (isServerSide) {
-                                        NetworkHandler.instance.sendToServer(new MessageCompress(mouseSlot.slotNumber, isDecompress, isShiftDown));
-                                    } else if (isDecompress) {
-                                        clientProvider.decompress(provider, entityPlayer, container, mouseSlot, isShiftDown);
-                                    } else {
-                                        clientProvider.compress(provider, entityPlayer, container, mouseSlot, isShiftDown);
-                                    }
-                                }
-                            } else if (keyDecompress.getKeyCode() > 0 && Keyboard.getEventKey() == keyDecompress.getKeyCode()) {
+                            if (compressType != null) {
                                 Slot mouseSlot = guiContainer.getSlotUnderMouse();
                                 if (mouseSlot != null) {
                                     if (isServerSide) {
-                                        NetworkHandler.instance.sendToServer(new MessageCompress(mouseSlot.slotNumber, true, isShiftDown));
+                                        NetworkHandler.instance.sendToServer(new MessageCompress(mouseSlot.slotNumber, compressType));
                                     } else {
-                                        clientProvider.decompress(provider, entityPlayer, container, mouseSlot, isShiftDown);
+                                        clientProvider.compress(provider, entityPlayer, container, mouseSlot, compressType);
                                     }
                                 }
                             } else if (keyToggleButtons.getKeyCode() > 0 && Keyboard.getEventKey() == keyToggleButtons.getKeyCode()) {
@@ -151,26 +150,35 @@ public class ClientProxy extends CommonProxy {
                                 CraftingTweaks.saveConfig();
                             }
                         }
-                    }
-                    if (isServerSide && provider == null && guiScreen instanceof GuiContainer) {
+                    } else if (isServerSide && guiScreen instanceof GuiContainer) {
                         GuiContainer guiContainer = (GuiContainer) guiScreen;
-                        boolean isShiftDown = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
-                        if (keyCompress.getKeyCode() > 0 && Keyboard.getEventKey() == keyCompress.getKeyCode()) {
-                            boolean isDecompress = Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_LCONTROL);
+                        if (compressType != null) {
                             Slot mouseSlot = guiContainer.getSlotUnderMouse();
                             if (mouseSlot != null) {
-                                NetworkHandler.instance.sendToServer(new MessageCompress(mouseSlot.slotNumber, isDecompress, isShiftDown));
-                            }
-                        } else if (keyDecompress.getKeyCode() > 0 && Keyboard.getEventKey() == keyDecompress.getKeyCode()) {
-                            Slot mouseSlot = guiContainer.getSlotUnderMouse();
-                            if (mouseSlot != null) {
-                                NetworkHandler.instance.sendToServer(new MessageCompress(mouseSlot.slotNumber, true, isShiftDown));
+                                NetworkHandler.instance.sendToServer(new MessageCompress(mouseSlot.slotNumber, compressType));
                             }
                         }
                     }
                 }
             }
         }
+    }
+
+    private CompressType getCompressType(int eventKey) {
+        if(keyCompressOne.isActiveAndMatches(eventKey)) {
+            return CompressType.COMPRESS_ONE;
+        } else if(keyCompressStack.isActiveAndMatches(eventKey)) {
+            return CompressType.COMPRESS_STACK;
+        } else if(keyCompressAll.isActiveAndMatches(eventKey)) {
+            return CompressType.COMPRESS_ALL;
+        } else if(keyDecompressOne.isActiveAndMatches(eventKey)) {
+            return CompressType.DECOMPRESS_ONE;
+        } else if(keyDecompressStack.isActiveAndMatches(eventKey)) {
+            return CompressType.DECOMPRESS_STACK;
+        } else if(keyDecompressAll.isActiveAndMatches(eventKey)) {
+            return CompressType.DECOMPRESS_ALL;
+        }
+        return null;
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
@@ -261,18 +269,9 @@ public class ClientProxy extends CommonProxy {
     @SubscribeEvent
     @SuppressWarnings("unused")
     public void onDrawScreen(GuiScreenEvent.DrawScreenEvent.Post event) {
-        // Testing Code
-//        if(event.gui instanceof GuiContainer && roundMenu == null) {
-//            GuiContainer guiContainer =  (GuiContainer) event.gui;
-//            if(guiContainer.getSlotUnderMouse() != null) {
-//                roundMenu = new GuiRoundMenu(guiContainer.guiLeft + guiContainer.getSlotUnderMouse().xDisplayPosition + 8, guiContainer.guiTop + guiContainer.getSlotUnderMouse().yDisplayPosition + 8);
-//            } else {
-//                roundMenu = null;
-//            }
-//        }
-//        if (roundMenu != null) {
-//            roundMenu.drawMenu(event.gui.mc, event.mouseX, event.mouseY);
-//        }
+        if(event.getGui() == null) { // WAILA somehow breaks the DrawScreenEvent, so we have to null-check here. o_o
+            return;
+        }
         if(!CraftingTweaks.hideButtonTooltips) {
             tooltipList.clear();
             for (GuiButton button : event.getGui().buttonList) {

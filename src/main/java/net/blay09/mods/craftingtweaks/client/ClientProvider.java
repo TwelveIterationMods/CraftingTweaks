@@ -2,6 +2,7 @@ package net.blay09.mods.craftingtweaks.client;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import net.blay09.mods.craftingtweaks.CompressType;
 import net.blay09.mods.craftingtweaks.InventoryCraftingCompress;
 import net.blay09.mods.craftingtweaks.api.RotationHandler;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
@@ -318,105 +319,134 @@ public class ClientProvider {
         return entityPlayer.inventory.getItemStack() == null;
     }
 
-    public void decompress(TweakProvider<Container> provider, EntityPlayer entityPlayer, Container container, Slot mouseSlot, boolean decompressAll) {
+    private void decompress(TweakProvider<Container> provider, EntityPlayer entityPlayer, Container container, Slot mouseSlot, CompressType compressType) {
         if (!mouseSlot.getHasStack() || !canClear(provider, entityPlayer, container, 0)) {
             return;
         }
+        boolean decompressAll = compressType != CompressType.DECOMPRESS_ONE;
+        // Clear the crafting grid
         clearGrid(provider, entityPlayer, container, 0, false);
         int start = provider.getCraftingGridStart(entityPlayer, container, 0);
         int size = provider.getCraftingGridSize(entityPlayer, container, 0);
+        // Ensure the crafting grid is empty
         for (int i = start; i < start + size; i++) {
             if (container.inventorySlots.get(i).getHasStack()) {
                 return;
             }
         }
-        getController().func_187098_a(container.windowId, mouseSlot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
-        getController().func_187098_a(container.windowId, start, 0, ClickType.PICKUP, entityPlayer);
-        for (Slot slot : container.inventorySlots) {
-            if (slot instanceof SlotCrafting && slot.getHasStack()) {
-                getController().func_187098_a(container.windowId, slot.slotNumber, 0, decompressAll ? ClickType.QUICK_MOVE : ClickType.PICKUP, entityPlayer);
-                break;
+        // Perform decompression on all valid slots
+        for(Slot slot : container.inventorySlots) {
+            if(compressType != CompressType.DECOMPRESS_ALL && slot != mouseSlot) {
+                continue;
+            }
+            if(slot.inventory instanceof InventoryPlayer && slot.getHasStack() && ItemStack.areItemsEqual(slot.getStack(), mouseSlot.getStack()) && ItemStack.areItemStackTagsEqual(slot.getStack(), mouseSlot.getStack())) {
+                // Move stack to crafting grid
+                getController().func_187098_a(container.windowId, mouseSlot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
+                getController().func_187098_a(container.windowId, start, 0, ClickType.PICKUP, entityPlayer);
+                for (Slot resultSlot : container.inventorySlots) {
+                    // Search for result slot and grab result
+                    if (resultSlot instanceof SlotCrafting && resultSlot.getHasStack()) {
+                        getController().func_187098_a(container.windowId, resultSlot.slotNumber, 0, decompressAll ? ClickType.QUICK_MOVE : ClickType.PICKUP, entityPlayer);
+                        break;
+                    }
+                }
+                dropOffMouseStack(entityPlayer, container, mouseSlot.slotNumber);
+                // Take remaining stack back out of the crafting grid
+                getController().func_187098_a(container.windowId, start, 0, ClickType.PICKUP, entityPlayer);
+                getController().func_187098_a(container.windowId, mouseSlot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
             }
         }
-        dropOffMouseStack(entityPlayer, container, mouseSlot.slotNumber);
-        getController().func_187098_a(container.windowId, start, 0, ClickType.PICKUP, entityPlayer);
-        getController().func_187098_a(container.windowId, mouseSlot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
     }
 
-    public void compress(TweakProvider<Container> provider, EntityPlayer entityPlayer, Container container, Slot mouseSlot, boolean compressAll) {
+    public void compress(TweakProvider<Container> provider, EntityPlayer entityPlayer, Container container, Slot mouseSlot, CompressType compressType) {
+        if(compressType == CompressType.DECOMPRESS_ALL || compressType == CompressType.DECOMPRESS_ONE || compressType == CompressType.DECOMPRESS_STACK) {
+            decompress(provider, entityPlayer, container, mouseSlot, compressType);
+            return;
+        }
         if (!mouseSlot.getHasStack() || !canClear(provider, entityPlayer, container, 0)) {
             return;
         }
+        boolean compressAll = compressType != CompressType.COMPRESS_ONE;
+        // Clear the crafting grid
         clearGrid(provider, entityPlayer, container, 0, false);
         int start = provider.getCraftingGridStart(entityPlayer, container, 0);
         int size = provider.getCraftingGridSize(entityPlayer, container, 0);
+        // Ensure the crafting grid is empty
         for (int i = start; i < start + size; i++) {
             if (container.inventorySlots.get(i).getHasStack()) {
                 return;
             }
         }
-        ItemStack result;
-        ItemStack mouseStack = mouseSlot.getStack();
-        if (size == 9 && mouseStack.stackSize >= 9) {
-            result = CraftingManager.getInstance().findMatchingRecipe(new InventoryCraftingCompress(container, 3, mouseStack), entityPlayer.worldObj);
-            if (result != null) {
-                getController().func_187098_a(container.windowId, mouseSlot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
-                getController().func_187098_a(container.windowId, -999, getDragSplittingButton(0, 0), ClickType.QUICK_CRAFT, entityPlayer);
-                for (int i = start; i < start + size; i++) {
-                    getController().func_187098_a(container.windowId, i, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, entityPlayer);
-                }
-                getController().func_187098_a(container.windowId, -999, getDragSplittingButton(2, 0), ClickType.QUICK_CRAFT, entityPlayer);
-                getController().func_187098_a(container.windowId, mouseSlot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
-            } else {
-                result = CraftingManager.getInstance().findMatchingRecipe(new InventoryCraftingCompress(container, 2, mouseStack), entityPlayer.worldObj);
-                if (result != null) {
-                    getController().func_187098_a(container.windowId, mouseSlot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
-                    getController().func_187098_a(container.windowId, -999, getDragSplittingButton(0, 0), ClickType.QUICK_CRAFT, entityPlayer);
-                    getController().func_187098_a(container.windowId, start, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, entityPlayer);
-                    getController().func_187098_a(container.windowId, start + 1, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, entityPlayer);
-                    getController().func_187098_a(container.windowId, start + 3, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, entityPlayer);
-                    getController().func_187098_a(container.windowId, start + 4, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, entityPlayer);
-                    getController().func_187098_a(container.windowId, -999, getDragSplittingButton(2, 0), ClickType.QUICK_CRAFT, entityPlayer);
-                    getController().func_187098_a(container.windowId, mouseSlot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
-                } else {
-                    return;
-                }
+        // Perform decompression on all valid slots
+        for(Slot slot : container.inventorySlots) {
+            if (compressType != CompressType.COMPRESS_ALL && slot != mouseSlot) {
+                continue;
             }
-        } else if (size >= 4 && mouseStack.stackSize >= 4) {
-            result = CraftingManager.getInstance().findMatchingRecipe(new InventoryCraftingCompress(container, 2, mouseStack), entityPlayer.worldObj);
-            if (result != null) {
-                getController().func_187098_a(container.windowId, mouseSlot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
-                getController().func_187098_a(container.windowId, -999, getDragSplittingButton(0, 0), ClickType.QUICK_CRAFT, entityPlayer);
-                if(size == 4) {
-                    for (int i = start; i < start + size; i++) {
-                        getController().func_187098_a(container.windowId, i, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, entityPlayer);
+            if (slot.inventory instanceof InventoryPlayer && slot.getHasStack() && ItemStack.areItemsEqual(slot.getStack(), mouseSlot.getStack()) && ItemStack.areItemStackTagsEqual(slot.getStack(), mouseSlot.getStack())) {
+                ItemStack result;
+                ItemStack mouseStack = slot.getStack();
+                if (size == 9 && mouseStack.stackSize >= 9) {
+                    result = CraftingManager.getInstance().findMatchingRecipe(new InventoryCraftingCompress(container, 3, mouseStack), entityPlayer.worldObj);
+                    if (result != null) {
+                        getController().func_187098_a(container.windowId, slot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
+                        getController().func_187098_a(container.windowId, -999, getDragSplittingButton(0, 0), ClickType.QUICK_CRAFT, entityPlayer);
+                        for (int i = start; i < start + size; i++) {
+                            getController().func_187098_a(container.windowId, i, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, entityPlayer);
+                        }
+                        getController().func_187098_a(container.windowId, -999, getDragSplittingButton(2, 0), ClickType.QUICK_CRAFT, entityPlayer);
+                        getController().func_187098_a(container.windowId, slot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
+                    } else {
+                        result = CraftingManager.getInstance().findMatchingRecipe(new InventoryCraftingCompress(container, 2, mouseStack), entityPlayer.worldObj);
+                        if (result != null) {
+                            getController().func_187098_a(container.windowId, slot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
+                            getController().func_187098_a(container.windowId, -999, getDragSplittingButton(0, 0), ClickType.QUICK_CRAFT, entityPlayer);
+                            getController().func_187098_a(container.windowId, start, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, entityPlayer);
+                            getController().func_187098_a(container.windowId, start + 1, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, entityPlayer);
+                            getController().func_187098_a(container.windowId, start + 3, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, entityPlayer);
+                            getController().func_187098_a(container.windowId, start + 4, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, entityPlayer);
+                            getController().func_187098_a(container.windowId, -999, getDragSplittingButton(2, 0), ClickType.QUICK_CRAFT, entityPlayer);
+                            getController().func_187098_a(container.windowId, slot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
+                        } else {
+                            return;
+                        }
                     }
-                } else {
-                    getController().func_187098_a(container.windowId, start, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, entityPlayer);
-                    getController().func_187098_a(container.windowId, start + 1, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, entityPlayer);
-                    getController().func_187098_a(container.windowId, start + 3, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, entityPlayer);
-                    getController().func_187098_a(container.windowId, start + 4, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, entityPlayer);
+                } else if (size >= 4 && mouseStack.stackSize >= 4) {
+                    result = CraftingManager.getInstance().findMatchingRecipe(new InventoryCraftingCompress(container, 2, mouseStack), entityPlayer.worldObj);
+                    if (result != null) {
+                        getController().func_187098_a(container.windowId, slot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
+                        getController().func_187098_a(container.windowId, -999, getDragSplittingButton(0, 0), ClickType.QUICK_CRAFT, entityPlayer);
+                        if(size == 4) {
+                            for (int i = start; i < start + size; i++) {
+                                getController().func_187098_a(container.windowId, i, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, entityPlayer);
+                            }
+                        } else {
+                            getController().func_187098_a(container.windowId, start, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, entityPlayer);
+                            getController().func_187098_a(container.windowId, start + 1, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, entityPlayer);
+                            getController().func_187098_a(container.windowId, start + 3, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, entityPlayer);
+                            getController().func_187098_a(container.windowId, start + 4, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, entityPlayer);
+                        }
+                        getController().func_187098_a(container.windowId, -999, getDragSplittingButton(2, 0), ClickType.QUICK_CRAFT, entityPlayer);
+                        getController().func_187098_a(container.windowId, slot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
+                    } else {
+                        return;
+                    }
                 }
-                getController().func_187098_a(container.windowId, -999, getDragSplittingButton(2, 0), ClickType.QUICK_CRAFT, entityPlayer);
-                getController().func_187098_a(container.windowId, mouseSlot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
-            } else {
-                return;
+                for (Slot resultSlot : container.inventorySlots) {
+                    if (resultSlot instanceof SlotCrafting && resultSlot.getHasStack()) {
+                        getController().func_187098_a(container.windowId, resultSlot.slotNumber, 0, compressAll ? ClickType.QUICK_MOVE : ClickType.PICKUP, entityPlayer);
+                        break;
+                    }
+                }
+                dropOffMouseStack(entityPlayer, container, slot.slotNumber);
+                for (int i = start; i < start + size; i++) {
+                    if (container.inventorySlots.get(i).getHasStack()) {
+                        getController().func_187098_a(container.windowId, i, 0, ClickType.PICKUP, entityPlayer);
+                        getController().func_187098_a(container.windowId, slot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
+                    }
+                }
+                dropOffMouseStack(entityPlayer, container);
             }
         }
-        for (Slot slot : container.inventorySlots) {
-            if (slot instanceof SlotCrafting && slot.getHasStack()) {
-                getController().func_187098_a(container.windowId, slot.slotNumber, 0, compressAll ? ClickType.QUICK_MOVE : ClickType.PICKUP, entityPlayer);
-                break;
-            }
-        }
-        dropOffMouseStack(entityPlayer, container, mouseSlot.slotNumber);
-        for (int i = start; i < start + size; i++) {
-            if (container.inventorySlots.get(i).getHasStack()) {
-                getController().func_187098_a(container.windowId, i, 0, ClickType.PICKUP, entityPlayer);
-                getController().func_187098_a(container.windowId, mouseSlot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
-            }
-        }
-        dropOffMouseStack(entityPlayer, container);
     }
 
     private static int getDragSplittingButton(int id, int limit) {

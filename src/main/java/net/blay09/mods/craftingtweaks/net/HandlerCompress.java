@@ -1,5 +1,6 @@
 package net.blay09.mods.craftingtweaks.net;
 
+import net.blay09.mods.craftingtweaks.CompressType;
 import net.blay09.mods.craftingtweaks.CraftingTweaks;
 import net.blay09.mods.craftingtweaks.InventoryCraftingCompress;
 import net.blay09.mods.craftingtweaks.InventoryCraftingDecompress;
@@ -23,6 +24,7 @@ public class HandlerCompress implements IMessageHandler<MessageCompress, IMessag
             if (container == null) {
                 return;
             }
+            CompressType compressType = message.getType();
             Slot mouseSlot = container.inventorySlots.get(message.getSlotNumber());
             if (!(mouseSlot.inventory instanceof InventoryPlayer)) {
                 return;
@@ -35,54 +37,72 @@ public class HandlerCompress implements IMessageHandler<MessageCompress, IMessag
             if (!CraftingTweaks.compressAnywhere && provider == null) {
                 return;
             }
-            if (message.isDecompress()) {
-                ItemStack result = CraftingManager.getInstance().findMatchingRecipe(new InventoryCraftingDecompress(container, mouseStack), entityPlayer.worldObj);
-                if (result != null && mouseStack.stackSize >= 1) {
-                    do {
-                        if (entityPlayer.inventory.addItemStackToInventory(result.copy())) {
-                            mouseSlot.decrStackSize(1);
-                        } else {
-                            break;
-                        }
-                    } while(message.isCompressAll() && mouseSlot.getHasStack() && mouseSlot.getStack().stackSize >= 1);
-                }
-            } else {
-                int size = provider != null ? provider.getCraftingGridSize(entityPlayer, container, 0) : 9;
-                if (size == 9 && mouseStack.stackSize >= 9) {
-                    ItemStack result = CraftingManager.getInstance().findMatchingRecipe(new InventoryCraftingCompress(container, 3, mouseStack), entityPlayer.worldObj);
-                    if (result != null) {
-                        do {
-                            if (entityPlayer.inventory.addItemStackToInventory(result.copy())) {
-                                mouseSlot.decrStackSize(9);
-                            } else {
-                                break;
-                            }
-                        }
-                        while (message.isCompressAll() && mouseSlot.getHasStack() && mouseSlot.getStack().stackSize >= 9);
-                    } else {
-                        result = CraftingManager.getInstance().findMatchingRecipe(new InventoryCraftingCompress(container, 2, mouseStack), entityPlayer.worldObj);
-                        if (result != null) {
+            if (compressType == CompressType.DECOMPRESS_ALL || compressType == CompressType.DECOMPRESS_STACK || compressType == CompressType.DECOMPRESS_ONE) {
+                boolean decompressAll = compressType != CompressType.DECOMPRESS_ONE;
+                // Perform decompression on all valid slots
+                for(Slot slot : container.inventorySlots) {
+                    if (compressType != CompressType.DECOMPRESS_ALL && slot != mouseSlot) {
+                        continue;
+                    }
+                    if (slot.inventory instanceof InventoryPlayer && slot.getHasStack() && ItemStack.areItemsEqual(slot.getStack(), mouseSlot.getStack()) && ItemStack.areItemStackTagsEqual(slot.getStack(), mouseSlot.getStack())) {
+                        ItemStack result = CraftingManager.getInstance().findMatchingRecipe(new InventoryCraftingDecompress(container, slot.getStack()), entityPlayer.worldObj);
+                        if (result != null && slot.getStack().stackSize >= 1) {
                             do {
                                 if (entityPlayer.inventory.addItemStackToInventory(result.copy())) {
-                                    mouseSlot.decrStackSize(4);
+                                    slot.decrStackSize(1);
                                 } else {
                                     break;
                                 }
-                            }
-                            while (message.isCompressAll() && mouseSlot.getHasStack() && mouseSlot.getStack().stackSize >= 4);
+                            } while (decompressAll && slot.getHasStack() && slot.getStack().stackSize >= 1);
                         }
                     }
-                } else if (size >= 4 && mouseStack.stackSize >= 4) {
-                    ItemStack result = CraftingManager.getInstance().findMatchingRecipe(new InventoryCraftingCompress(container, 2, mouseStack), entityPlayer.worldObj);
-                    if (result != null) {
-                        do {
-                            if (entityPlayer.inventory.addItemStackToInventory(result.copy())) {
-                                mouseSlot.decrStackSize(4);
+                }
+            } else {
+                boolean compressAll = compressType != CompressType.COMPRESS_ONE;
+                int size = provider != null ? provider.getCraftingGridSize(entityPlayer, container, 0) : 9;
+                // Perform decompression on all valid slots
+                for(Slot slot : container.inventorySlots) {
+                    if (compressType != CompressType.COMPRESS_ALL && slot != mouseSlot) {
+                        continue;
+                    }
+                    if (slot.inventory instanceof InventoryPlayer && slot.getHasStack() && ItemStack.areItemsEqual(slot.getStack(), mouseSlot.getStack()) && ItemStack.areItemStackTagsEqual(slot.getStack(), mouseSlot.getStack())) {
+                        if (size == 9 && slot.getStack().stackSize >= 9) {
+                            ItemStack result = CraftingManager.getInstance().findMatchingRecipe(new InventoryCraftingCompress(container, 3, slot.getStack()), entityPlayer.worldObj);
+                            if (result != null) {
+                                do {
+                                    if (entityPlayer.inventory.addItemStackToInventory(result.copy())) {
+                                        slot.decrStackSize(9);
+                                    } else {
+                                        break;
+                                    }
+                                }
+                                while (compressAll && slot.getHasStack() && slot.getStack().stackSize >= 9);
                             } else {
-                                break;
+                                result = CraftingManager.getInstance().findMatchingRecipe(new InventoryCraftingCompress(container, 2, slot.getStack()), entityPlayer.worldObj);
+                                if (result != null) {
+                                    do {
+                                        if (entityPlayer.inventory.addItemStackToInventory(result.copy())) {
+                                            slot.decrStackSize(4);
+                                        } else {
+                                            break;
+                                        }
+                                    }
+                                    while (compressAll && slot.getHasStack() && slot.getStack().stackSize >= 4);
+                                }
+                            }
+                        } else if (size >= 4 && slot.getStack().stackSize >= 4) {
+                            ItemStack result = CraftingManager.getInstance().findMatchingRecipe(new InventoryCraftingCompress(container, 2, slot.getStack()), entityPlayer.worldObj);
+                            if (result != null) {
+                                do {
+                                    if (entityPlayer.inventory.addItemStackToInventory(result.copy())) {
+                                        slot.decrStackSize(4);
+                                    } else {
+                                        break;
+                                    }
+                                }
+                                while (compressAll && slot.getHasStack() && slot.getStack().stackSize >= 4);
                             }
                         }
-                        while (message.isCompressAll() && mouseSlot.getHasStack() && mouseSlot.getStack().stackSize >= 4);
                     }
                 }
             }

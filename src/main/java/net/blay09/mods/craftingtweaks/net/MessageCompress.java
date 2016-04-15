@@ -1,46 +1,39 @@
 package net.blay09.mods.craftingtweaks.net;
 
 import io.netty.buffer.ByteBuf;
+import net.blay09.mods.craftingtweaks.CompressType;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 public class MessageCompress implements IMessage {
 
     private int slotNumber;
-    private boolean isDecompress;
-    private boolean compressAll;
+    private CompressType type;
 
     public MessageCompress() {
     }
 
-    public MessageCompress(int slotNumber, boolean isDecompress, boolean compressAll) {
+    public MessageCompress(int slotNumber, CompressType type) {
         this.slotNumber = slotNumber;
-        this.isDecompress = isDecompress;
-        this.compressAll = compressAll;
+        this.type = type;
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
         slotNumber = buf.readInt();
-        isDecompress = buf.readBoolean();
-        compressAll = buf.readBoolean();
+        type = CompressType.values()[buf.readByte()];
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(slotNumber);
-        buf.writeBoolean(isDecompress);
-        buf.writeBoolean(compressAll);
+        type = CompressType.values()[buf.readByte()];
     }
 
     public int getSlotNumber() {
         return slotNumber;
     }
 
-    public boolean isDecompress() {
-        return isDecompress;
-    }
-
-    public boolean isCompressAll() {
-        return compressAll;
+    public CompressType getType() {
+        return type;
     }
 }

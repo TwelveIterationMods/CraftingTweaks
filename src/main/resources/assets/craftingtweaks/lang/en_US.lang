@@ -3,8 +3,12 @@ key.craftingtweaks.rotate=Rotate Grid
 key.craftingtweaks.clear=Clear Grid
 key.craftingtweaks.balance=Balance Grid
 key.craftingtweaks.toggleButtons=Toggle Buttons
-key.craftingtweaks.compress=Compress Item
-key.craftingtweaks.decompress=Decompress Item
+key.craftingtweaks.compressOne=Compress Item
+key.craftingtweaks.compressStack=Compress Item
+key.craftingtweaks.compressAll=Compress Item
+key.craftingtweaks.decompressOne=Decompress Item
+key.craftingtweaks.decompressStack=Decompress Item
+key.craftingtweaks.decompressAll=Decompress Item
 
 tooltip.craftingtweaks.rotate=Rotate Grid
 tooltip.craftingtweaks.balance=Balance Grid
