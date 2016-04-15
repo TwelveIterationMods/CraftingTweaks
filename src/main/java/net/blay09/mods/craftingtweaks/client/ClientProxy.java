@@ -47,8 +47,6 @@ public class ClientProxy extends CommonProxy {
 
     private boolean ignoreMouseUp;
 
-    private GuiRoundMenu roundMenu;
-
     @Override
     public void init(FMLInitializationEvent event) {
         super.init(event);
@@ -120,11 +118,11 @@ public class ClientProxy extends CommonProxy {
                                 if (mouseSlot != null) {
                                     boolean isDecompress = Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL);
                                     if (isServerSide) {
-                                        NetworkHandler.instance.sendToServer(new MessageCompress(mouseSlot.slotNumber, isDecompress, isShiftDown));
+                                        NetworkHandler.instance.sendToServer(new MessageCompress(mouseSlot.slotNumber, isDecompress, !isShiftDown));
                                     } else if (isDecompress) {
                                         clientProvider.decompress(provider, entityPlayer, container, mouseSlot, isShiftDown);
                                     } else {
-                                        clientProvider.compress(provider, entityPlayer, container, mouseSlot, isShiftDown);
+                                        clientProvider.compress(provider, entityPlayer, container, mouseSlot, !isShiftDown);
                                     }
                                 }
                             } else if (keyDecompress.getKeyCode() > 0 && Keyboard.getEventKey() == keyDecompress.getKeyCode()) {
@@ -159,7 +157,7 @@ public class ClientProxy extends CommonProxy {
                             boolean isDecompress = Keyboard.isKeyDown(Keyboard.KEY_RCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_LCONTROL);
                             Slot mouseSlot = guiContainer.getSlotUnderMouse();
                             if (mouseSlot != null) {
-                                NetworkHandler.instance.sendToServer(new MessageCompress(mouseSlot.slotNumber, isDecompress, isShiftDown));
+                                NetworkHandler.instance.sendToServer(new MessageCompress(mouseSlot.slotNumber, isDecompress, !isShiftDown));
                             }
                         } else if (keyDecompress.getKeyCode() > 0 && Keyboard.getEventKey() == keyDecompress.getKeyCode()) {
                             Slot mouseSlot = guiContainer.getSlotUnderMouse();
@@ -262,18 +260,9 @@ public class ClientProxy extends CommonProxy {
     @SubscribeEvent
     @SuppressWarnings("unused")
     public void onDrawScreen(GuiScreenEvent.DrawScreenEvent.Post event) {
-        // Testing Code
-//        if(event.gui instanceof GuiContainer && roundMenu == null) {
-//            GuiContainer guiContainer =  (GuiContainer) event.gui;
-//            if(guiContainer.getSlotUnderMouse() != null) {
-//                roundMenu = new GuiRoundMenu(guiContainer.guiLeft + guiContainer.getSlotUnderMouse().xDisplayPosition + 8, guiContainer.guiTop + guiContainer.getSlotUnderMouse().yDisplayPosition + 8);
-//            } else {
-//                roundMenu = null;
-//            }
-//        }
-//        if (roundMenu != null) {
-//            roundMenu.drawMenu(event.gui.mc, event.mouseX, event.mouseY);
-//        }
+        if(event.gui == null) {
+            return; // necessary because WAILA does weird things
+        }
         if(!CraftingTweaks.hideButtonTooltips) {
             tooltipList.clear();
             for (GuiButton button : event.gui.buttonList) {
@@ -332,7 +321,6 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void receivedHello(EntityPlayer entityPlayer) {
-        super.receivedHello(entityPlayer);
         helloTimeout = 0;
         isServerSide = true;
     }
