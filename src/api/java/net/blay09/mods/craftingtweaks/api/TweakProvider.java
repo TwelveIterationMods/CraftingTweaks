@@ -61,36 +61,12 @@ public interface TweakProvider<T extends Container> {
 
     /**
      * Clears the grid, transferring items from it into the player inventory.
-     * @deprecated use clearGrid with forced parameter instead
-     * @param entityPlayer the player who's clearing the grid
-     * @param container the container the grid is part of
-     * @param id the crafting grid ID that is being cleared (usually 0 unless there's more grids in one GUI)
-     */
-    @Deprecated
-    default void clearGrid(EntityPlayer entityPlayer, T container, int id) {
-        clearGrid(entityPlayer, container, id, false);
-    }
-
-    /**
-     * Clears the grid, transferring items from it into the player inventory.
      * @param entityPlayer the player who's clearing the grid
      * @param container the container the grid is part of
      * @param forced if true, drop items to the ground if necessary
      * @param id the crafting grid ID that is being cleared (usually 0 unless there's more grids in one GUI)
      */
     void clearGrid(EntityPlayer entityPlayer, T container, int id, boolean forced);
-
-    /**
-     * Rotates the grid clockwise.
-     * @deprecated Use rotateGrid with counterClockwise parameter instead.
-     * @param entityPlayer the player who's rotating the grid
-     * @param container the container the grid is part of
-     * @param id the crafting grid ID that is being rotated (usually 0 unless there's more grids in one GUI)
-     */
-    @Deprecated
-    default void rotateGrid(EntityPlayer entityPlayer, T container, int id) {
-        rotateGrid(entityPlayer, container, id, false);
-    }
 
     /**
      * Rotates the grid clockwise.

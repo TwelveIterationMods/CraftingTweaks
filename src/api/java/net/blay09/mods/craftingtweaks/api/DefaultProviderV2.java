@@ -15,33 +15,6 @@ public interface DefaultProviderV2 {
 
     /**
      * Default implementation for grid rotation. For custom rotation handling, check the overloaded version.
-     * @deprecated Use rotateGrid with counterClockwise parameter instead.
-     * @param provider the TweakProvider invoking this function
-     * @param id the crafting grid id invoking this function (usually 0 unless the container has multiple grids)
-     * @param entityPlayer the player who's rotating the grid
-     * @param container the container the grid is part of
-     */
-    @Deprecated
-    default <T extends Container> void rotateGrid(TweakProvider<T> provider, int id, EntityPlayer entityPlayer, T container) {
-        rotateGrid(provider, id, entityPlayer, container, false);
-    }
-
-    /**
-     * Default implementation for grid rotation with custom rotation handling.
-     * @deprecated Use rotateGrid with counterClockwise parameter instead.
-     * @param provider the TweakProvider invoking this function
-     * @param id the crafting grid id invoking this function (usually 0 unless the container has multiple grids)
-     * @param entityPlayer the player who's rotating the grid
-     * @param container the container the grid is part of
-     * @param rotationHandler the rotation handler that determines where items are going to end up
-     */
-    @Deprecated
-    default <T extends Container> void rotateGrid(TweakProvider<T> provider, int id, EntityPlayer entityPlayer, T container, RotationHandler rotationHandler) {
-        rotateGrid(provider, id, entityPlayer, container, rotationHandler, false);
-    }
-
-    /**
-     * Default implementation for grid rotation. For custom rotation handling, check the overloaded version.
      * @param provider the TweakProvider invoking this function
      * @param id the crafting grid id invoking this function (usually 0 unless the container has multiple grids)
      * @param entityPlayer the player who's rotating the grid

@@ -39,16 +39,6 @@ public class CraftingTweaksAPI {
 
     /**
      * Returns a default provider implementation you can use within your TweakProvider
-     * @deprecated Use createDefaultProviderV2() instead, it's way better
-     * @return default provider implementation with functions to be called from a TweakProvider
-     */
-    @Deprecated
-    public static DefaultProvider createDefaultProvider() {
-        return internalMethods.createDefaultProvider();
-    }
-
-    /**
-     * Returns a default provider implementation you can use within your TweakProvider
      * @return default provider implementation with functions to be called from a TweakProvider
      */
     public static DefaultProviderV2 createDefaultProviderV2() {

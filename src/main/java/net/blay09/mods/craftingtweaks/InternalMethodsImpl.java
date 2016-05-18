@@ -23,11 +23,6 @@ public class InternalMethodsImpl implements InternalMethods {
     }
 
     @Override
-    public DefaultProvider createDefaultProvider() {
-        return new DefaultProviderImpl();
-    }
-
-    @Override
     public DefaultProviderV2 createDefaultProviderV2() {
         return new DefaultProviderV2Impl();
     }

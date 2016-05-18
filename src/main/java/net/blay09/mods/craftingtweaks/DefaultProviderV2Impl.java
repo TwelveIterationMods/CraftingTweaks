@@ -82,7 +82,7 @@ public class DefaultProviderV2Impl implements DefaultProviderV2 {
                 ItemStack itemStack = craftMatrix.getStackInSlot(slotIndex);
                 if (!entityPlayer.inventory.addItemStackToInventory(itemStack)) {
                     if(forced) {
-                        entityPlayer.dropPlayerItemWithRandomChoice(itemStack, false);
+                        entityPlayer.dropItem(itemStack, false);
                         craftMatrix.setInventorySlotContents(slotIndex, null);
                     }
                     continue;
