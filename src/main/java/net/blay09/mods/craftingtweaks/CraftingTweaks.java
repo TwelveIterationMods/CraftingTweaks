@@ -8,21 +8,21 @@ import net.blay09.mods.craftingtweaks.net.NetworkHandler;
 import net.minecraft.inventory.Container;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLInterModComms;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.*;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Map;
 
-@Mod(modid = CraftingTweaks.MOD_ID, name = "Crafting Tweaks", acceptableRemoteVersions = "*")
+@Mod(modid = CraftingTweaks.MOD_ID, name = "Crafting Tweaks", acceptableRemoteVersions = "*", guiFactory = "net.blay09.mods.craftingtweaks.client.GuiFactory", updateJSON = "http://balyware.com/new/forge_update.php?modid=craftingtweaks")
 public class CraftingTweaks {
 
     public enum ModSupportState {
@@ -58,7 +58,7 @@ public class CraftingTweaks {
     @SidedProxy(clientSide = "net.blay09.mods.craftingtweaks.client.ClientProxy", serverSide = "net.blay09.mods.craftingtweaks.CommonProxy")
     public static CommonProxy proxy;
 
-    private static Configuration config;
+    public static Configuration config;
 
     private final Map<String, ModSupportState> configMap = Maps.newHashMap();
     private final Map<Class<? extends Container>, TweakProvider> providerMap = Maps.newHashMap();
@@ -72,18 +72,12 @@ public class CraftingTweaks {
     public void preInit(FMLPreInitializationEvent event) {
         CraftingTweaksAPI.setupAPI(new InternalMethodsImpl());
 
+        MinecraftForge.EVENT_BUS.register(this);
+
         configMap.put("minecraft", ModSupportState.ENABLED);
 
         config = new Configuration(event.getSuggestedConfigurationFile());
-        hideButtons = config.getBoolean("hideButtons", "general", false, "This option is toggled by the 'Toggle Buttons' key that can be defined in the Controls settings.");
-        hideButtonTooltips = config.getBoolean("hideButtonTooltips", "general", false, "Set this to true if you don't want the tweak buttons' tooltips to show.");
-        compressAnywhere = config.getBoolean("compressAnywhere", "general", false, "Set this to true if you want the (de)compress feature to work outside of crafting GUIs (only works if installed on server)");
-        config.setCategoryComment("addons", "Here you can control whether support for a mod should be enabled, buttons_only, hotkeys_only or disabled. For Vanilla Minecraft, see the option 'minecraft'. Mods are identified by their mod ids.");
-        config.getString("minecraft", "addons", ModSupportState.ENABLED.name().toLowerCase(), "", ModSupportState.getValidValues());
-        // Load all options (including those from non-included addons)
-        for(Property property : config.getCategory("addons").values()) {
-            configMap.put(property.getName(), ModSupportState.fromName(config.getString(property.getName(), "addons", ModSupportState.ENABLED.name().toLowerCase(), "enabled, buttons_only, hotkeys_only or disabled", ModSupportState.getValidValues())));
-        }
+        reloadConfig();
     }
 
     @Mod.EventHandler
@@ -158,6 +152,35 @@ public class CraftingTweaks {
 
         Compatibility.vanilla();
 
+        if(config.hasChanged()) {
+            config.save();
+        }
+    }
+
+    @SubscribeEvent
+    public void onConfigChanged(ConfigChangedEvent event) {
+        if(event.getModID().equals(MOD_ID)) {
+            reloadConfig();
+            if(config.hasChanged()) {
+                config.save();
+            }
+        }
+    }
+
+    public void reloadConfig() {
+        hideButtons = config.getBoolean("hideButtons", "general", false, "This option is toggled by the 'Toggle Buttons' key that can be defined in the Controls settings.");
+        hideButtonTooltips = config.getBoolean("hideButtonTooltips", "general", false, "Set this to true if you don't want the tweak buttons' tooltips to show.");
+        compressAnywhere = config.getBoolean("compressAnywhere", "general", false, "Set this to true if you want the (de)compress feature to work outside of crafting GUIs (only works if installed on server)");
+        config.setCategoryComment("addons", "Here you can control whether support for a mod should be enabled, buttons_only, hotkeys_only or disabled. For Vanilla Minecraft, see the option 'minecraft'. Mods are identified by their mod ids.");
+        config.getString("minecraft", "addons", ModSupportState.ENABLED.name().toLowerCase(), "", ModSupportState.getValidValues());
+        // Load all options (including those from non-included addons)
+        for(Property property : config.getCategory("addons").values()) {
+            configMap.put(property.getName(), ModSupportState.fromName(config.getString(property.getName(), "addons", ModSupportState.ENABLED.name().toLowerCase(), "enabled, buttons_only, hotkeys_only or disabled", ModSupportState.getValidValues())));
+        }
+    }
+
+    public static void saveConfig() {
+        config.get("general", "hideButtons", false, "This option is toggled by the 'Toggle Buttons' key that can be defined in the Controls settings.").set(hideButtons);
         config.save();
     }
 
@@ -213,11 +236,6 @@ public class CraftingTweaks {
         return suportState;
     }
 
-    public static void saveConfig() {
-        config.get("general", "hideButtons", false, "This option is toggled by the 'Toggle Buttons' key that can be defined in the Controls settings.").set(hideButtons);
-        config.save();
-    }
-
     private static int getIntOr(NBTTagCompound tagCompound, String key, int defaultVal) {
         return (tagCompound.hasKey(key) ? tagCompound.getInteger(key) : defaultVal);
     }
@@ -225,4 +243,6 @@ public class CraftingTweaks {
     private static boolean getBoolOr(NBTTagCompound tagCompound, String key, boolean defaultVal) {
         return (tagCompound.hasKey(key) ? tagCompound.getBoolean(key) : defaultVal);
     }
+
+
 }

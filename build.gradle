@@ -18,14 +18,14 @@ def MAVEN_REPO = System.getenv("MAVEN_REPO") ?: ""
 def MAVEN_USERNAME = System.getenv("MAVEN_USERNAME") ?: ""
 def MAVEN_PASSWORD = System.getenv("MAVEN_PASSWORD") ?: ""
 
-version = "4.0." + BUILD_NUMBER
+version = "5.0." + BUILD_NUMBER
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 group = "net.blay09.mods"
 archivesBaseName = "craftingtweaks"
 
 minecraft {
-    version = "1.9.4-12.16.1.1908-1.9.4"
+    version = "1.9.4-12.17.0.1909-1.9.4"
     runDir = "run"
     
     mappings = "snapshot_20160518"
