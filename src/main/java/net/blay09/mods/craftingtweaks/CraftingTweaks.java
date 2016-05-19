@@ -1,6 +1,7 @@
 package net.blay09.mods.craftingtweaks;
 
 import com.google.common.collect.Maps;
+import net.blay09.mods.craftingtweaks.addons.CraftingTweaksAddons;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
 import net.blay09.mods.craftingtweaks.api.SimpleTweakProvider;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
@@ -151,6 +152,7 @@ public class CraftingTweaks {
         proxy.postInit(event);
 
         Compatibility.vanilla();
+        CraftingTweaksAddons.postInit(event);
 
         if(config.hasChanged()) {
             config.save();
