@@ -78,7 +78,9 @@ public class DefaultProviderV2Impl implements DefaultProviderV2 {
         int size = provider.getCraftingGridSize(entityPlayer, container, id);
         for (int i = start; i < start + size; i++) {
             int slotIndex = container.inventorySlots.get(i).getSlotIndex();
-            if (!phantomItems) {
+            if (phantomItems) {
+                craftMatrix.setInventorySlotContents(slotIndex, null);
+            } else {
                 ItemStack itemStack = craftMatrix.getStackInSlot(slotIndex);
                 if(itemStack != null) {
                     ItemStack returnStack = itemStack.copy();
