@@ -80,15 +80,16 @@ public class DefaultProviderV2Impl implements DefaultProviderV2 {
             int slotIndex = container.inventorySlots.get(i).getSlotIndex();
             if (!phantomItems) {
                 ItemStack itemStack = craftMatrix.getStackInSlot(slotIndex);
-                if (!entityPlayer.inventory.addItemStackToInventory(itemStack)) {
-                    if(forced) {
-                        entityPlayer.dropItem(itemStack, false);
+                if(itemStack != null) {
+                    ItemStack returnStack = itemStack.copy();
+                    entityPlayer.inventory.addItemStackToInventory(returnStack);
+                    craftMatrix.setInventorySlotContents(slotIndex, returnStack.stackSize == 0 ? null : returnStack);
+                    if(returnStack.stackSize > 0 && forced) {
+                        entityPlayer.dropItem(returnStack, false);
                         craftMatrix.setInventorySlotContents(slotIndex, null);
                     }
-                    continue;
                 }
             }
-            craftMatrix.setInventorySlotContents(slotIndex, null);
         }
         container.detectAndSendChanges();
     }
