@@ -1,5 +1,6 @@
 package net.blay09.mods.craftingtweaks;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.blay09.mods.craftingtweaks.addons.CraftingTweaksAddons;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
@@ -9,6 +10,7 @@ import net.blay09.mods.craftingtweaks.net.NetworkHandler;
 import net.minecraft.inventory.Container;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -21,6 +23,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.List;
 import java.util.Map;
 
 @Mod(modid = CraftingTweaks.MOD_ID, name = "Crafting Tweaks", acceptableRemoteVersions = "*", guiFactory = "net.blay09.mods.craftingtweaks.client.GuiFactory", updateJSON = "http://balyware.com/new/forge_update.php?modid=craftingtweaks")
@@ -67,6 +70,7 @@ public class CraftingTweaks {
     public static boolean hideButtons;
     public static boolean compressAnywhere;
     public static boolean hideButtonTooltips;
+    public static List<String> compressBlacklist;
 
     @Mod.EventHandler
     @SuppressWarnings("unused")
@@ -173,6 +177,7 @@ public class CraftingTweaks {
         hideButtons = config.getBoolean("hideButtons", "general", false, "This option is toggled by the 'Toggle Buttons' key that can be defined in the Controls settings.");
         hideButtonTooltips = config.getBoolean("hideButtonTooltips", "general", false, "Set this to true if you don't want the tweak buttons' tooltips to show.");
         compressAnywhere = config.getBoolean("compressAnywhere", "general", false, "Set this to true if you want the (de)compress feature to work outside of crafting GUIs (only works if installed on server)");
+        compressBlacklist = Lists.newArrayList(config.getStringList("compressBlacklist", "general", new String[] {"ExtraUtilities:decorativeBlock1", "minecraft:sandstone", "minecraft:iron_trapdoor"}, "A list of modid:name entries that will not be crafted by the compress key."));
         config.setCategoryComment("addons", "Here you can control whether support for a mod should be enabled, buttons_only, hotkeys_only or disabled. For Vanilla Minecraft, see the option 'minecraft'. Mods are identified by their mod ids.");
         config.getString("minecraft", "addons", ModSupportState.ENABLED.name().toLowerCase(), "", ModSupportState.getValidValues());
         // Load all options (including those from non-included addons)

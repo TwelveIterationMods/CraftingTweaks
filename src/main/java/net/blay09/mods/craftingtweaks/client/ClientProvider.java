@@ -3,6 +3,7 @@ package net.blay09.mods.craftingtweaks.client;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import net.blay09.mods.craftingtweaks.CompressType;
+import net.blay09.mods.craftingtweaks.CraftingTweaks;
 import net.blay09.mods.craftingtweaks.InventoryCraftingCompress;
 import net.blay09.mods.craftingtweaks.api.RotationHandler;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
@@ -399,7 +400,7 @@ public class ClientProvider {
                 ItemStack mouseStack = slot.getStack();
                 if (size == 9 && mouseStack != null && mouseStack.stackSize >= 9) {
                     result = CraftingManager.getInstance().findMatchingRecipe(new InventoryCraftingCompress(container, 3, mouseStack), entityPlayer.worldObj);
-                    if (result != null) {
+                    if (result != null && !isCompressBlacklisted(result)) {
                         getController().windowClick(container.windowId, slot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
                         getController().windowClick(container.windowId, -999, getDragSplittingButton(0, 0), ClickType.QUICK_CRAFT, entityPlayer);
                         for (int i = start; i < start + size; i++) {
@@ -409,7 +410,7 @@ public class ClientProvider {
                         getController().windowClick(container.windowId, slot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
                     } else {
                         result = CraftingManager.getInstance().findMatchingRecipe(new InventoryCraftingCompress(container, 2, mouseStack), entityPlayer.worldObj);
-                        if (result != null) {
+                        if (result != null && !isCompressBlacklisted(result)) {
                             getController().windowClick(container.windowId, slot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
                             getController().windowClick(container.windowId, -999, getDragSplittingButton(0, 0), ClickType.QUICK_CRAFT, entityPlayer);
                             getController().windowClick(container.windowId, start, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, entityPlayer);
@@ -424,7 +425,7 @@ public class ClientProvider {
                     }
                 } else if (size >= 4 && mouseStack != null && mouseStack.stackSize >= 4) {
                     result = CraftingManager.getInstance().findMatchingRecipe(new InventoryCraftingCompress(container, 2, mouseStack), entityPlayer.worldObj);
-                    if (result != null) {
+                    if (result != null && !isCompressBlacklisted(result)) {
                         getController().windowClick(container.windowId, slot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
                         getController().windowClick(container.windowId, -999, getDragSplittingButton(0, 0), ClickType.QUICK_CRAFT, entityPlayer);
                         if(size == 4) {
@@ -463,5 +464,9 @@ public class ClientProvider {
 
     private static int getDragSplittingButton(int id, int limit) {
         return id & 3 | (limit & 3) << 2;
+    }
+
+    private boolean isCompressBlacklisted(ItemStack result) {
+        return CraftingTweaks.compressBlacklist.contains(result.getItem().getRegistryName().toString());
     }
 }
