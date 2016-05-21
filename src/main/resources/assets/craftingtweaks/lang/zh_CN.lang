@@ -3,12 +3,12 @@ key.craftingtweaks.rotate=旋转
 key.craftingtweaks.clear=清空
 key.craftingtweaks.balance=均分
 key.craftingtweaks.toggleButtons=绑定按键
-#key.craftingtweaks.compress=Compress Item
-#key.craftingtweaks.decompress=Decompress Item
+key.craftingtweaks.compress=压缩物品
+key.craftingtweaks.decompress=拆分物品
 
 tooltip.craftingtweaks.rotate=旋转
 tooltip.craftingtweaks.balance=均分
-#tooltip.craftingtweaks.spread=Spread Grid
+tooltip.craftingtweaks.spread=平铺
 tooltip.craftingtweaks.clear=清空
-#tooltip.craftingtweaks.forceClear=Force Clear Grid
-#tooltip.craftingtweaks.forceClearinfo=Drops items if necessary
+tooltip.craftingtweaks.forceClear=强制清空
+tooltip.craftingtweaks.forceClearInfo=清空所有能清空的物品
