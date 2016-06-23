@@ -26,7 +26,7 @@ targetCompatibility = JavaVersion.VERSION_1_8
 
 version = major_version + "." + minor_version + "." + BUILD_NUMBER
 group = "net.blay09.mods"
-archivesBaseName = mod_name
+archivesBaseName = mod_name + "_" + minecraft_version
 
 minecraft {
     version = minecraft_version + "-" + forge_version
