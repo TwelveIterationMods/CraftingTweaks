@@ -1,3 +1,11 @@
+apply plugin: 'net.minecraftforge.gradle.forge'
+
+apply from: 'gradle/scripts/common.gradle'
+apply from: 'gradle/scripts/with-api.gradle'
+apply from: 'gradle/scripts/with-at.gradle'
+
+apply from: 'dependencies.gradle'
+
 buildscript {
     repositories {
         jcenter()
@@ -10,33 +18,21 @@ buildscript {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
     }
 }
-apply plugin: 'net.minecraftforge.gradle.forge'
-apply plugin: 'maven'
 
 def BUILD_NUMBER = System.getenv("BUILD_NUMBER") ?: "0"
-def MAVEN_REPO = System.getenv("MAVEN_REPO") ?: ""
-def MAVEN_USERNAME = System.getenv("MAVEN_USERNAME") ?: ""
-def MAVEN_PASSWORD = System.getenv("MAVEN_PASSWORD") ?: ""
 
-version = "5.0." + BUILD_NUMBER
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+version = major_version + "." + minor_version + "." + BUILD_NUMBER
 group = "net.blay09.mods"
-archivesBaseName = "craftingtweaks"
+archivesBaseName = mod_name
 
 minecraft {
-    version = "1.9.4-12.17.0.1909-1.9.4"
+    version = minecraft_version + "-" + forge_version
     runDir = "run"
-    
-    mappings = "snapshot_20160518"
-}
-
-repositories {
-
-}
-
-dependencies {
-    
+    useDepAts = true
+    mappings = mappings_version
 }
 
 processResources{
@@ -54,75 +50,3 @@ processResources{
     }
 }
 
-jar {
-    from sourceSets.api.output
-    appendix "mc" + minecraft.version
-
-    manifest {
-        attributes('FMLAT': 'craftingtweaks_at.cfg')
-    }
-}
-
-sourceJar {
-    appendix "mc" + minecraft.version
-}
-
-task jarJavadoc(type: Jar, dependsOn: 'javadoc') {
-    from "build/docs/javadoc"
-    classifier "javadoc"
-
-    appendix "mc" + minecraft.version
-}
-
-task jarAPI(type: Jar) {
-    from sourceSets.api.output
-
-    classifier "api"
-    appendix "mc" + minecraft.version
-}
-
-task jarDev(type: Jar) {
-    from sourceSets.main.output
-    from sourceSets.api.output
-
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    classifier "dev"
-    appendix "mc" + minecraft.version
-
-    manifest {
-        attributes('FMLAT': 'craftingtweaks_at.cfg')
-    }
-}
-
-artifacts {
-    archives jarAPI
-    archives jarDev
-    archives jarJavadoc
-}
-
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            repository(url: MAVEN_REPO) {
-                authentication(userName: MAVEN_USERNAME, password: MAVEN_PASSWORD)
-            }
-
-            pom {
-                groupId = project.group
-                version = project.version
-                artifactId = project.archivesBaseName
-            }
-
-            pom.withXml {
-                asNode().dependencies.dependency.findAll {
-                    it.scope.text() == "compile"
-                }.each {
-                    if(it.optional)
-                        it.optional.value = 'true'
-                    else
-                        it.appendNode('optional', 'true');
-                }
-            }
-        }
-    }
-}
