@@ -1,7 +1,11 @@
 package net.blay09.mods.craftingtweaks.net;
 
+import io.netty.buffer.ByteBuf;
 import net.blay09.mods.craftingtweaks.CraftingTweaks;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -13,8 +17,28 @@ public class NetworkHandler {
         instance.registerMessage(HandlerRotate.class, MessageRotate.class, 0, Side.SERVER);
         instance.registerMessage(HandlerClear.class, MessageClear.class, 1, Side.SERVER);
         instance.registerMessage(HandlerBalance.class, MessageBalance.class, 2, Side.SERVER);
+        instance.registerMessage(HandlerHelloUnusedBackwardsCompatOnly.class, MessageHelloUnusedBackwardsCompatOnly.class, 3, Side.SERVER);
+        instance.registerMessage(HandlerHelloUnusedBackwardsCompatOnly.class, MessageHelloUnusedBackwardsCompatOnly.class, 4, Side.CLIENT);
         instance.registerMessage(HandlerTransferStack.class, MessageTransferStack.class, 5, Side.SERVER);
         instance.registerMessage(HandlerCompress.class, MessageCompress.class, 6, Side.SERVER);
     }
 
+    public static class MessageHelloUnusedBackwardsCompatOnly implements IMessage {
+        @Override
+        public void fromBytes(ByteBuf buf) {
+            buf.readInt();
+        }
+
+        @Override
+        public void toBytes(ByteBuf buf) {
+            buf.writeInt(0);
+        }
+    }
+
+    public static class HandlerHelloUnusedBackwardsCompatOnly implements IMessageHandler<MessageHelloUnusedBackwardsCompatOnly, IMessage> {
+        @Override
+        public IMessage onMessage(MessageHelloUnusedBackwardsCompatOnly message, MessageContext ctx) {
+            return null;
+        }
+    }
 }
