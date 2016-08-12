@@ -20,6 +20,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.network.NetworkCheckHandler;
+import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -71,6 +73,8 @@ public class CraftingTweaks {
     public static boolean compressAnywhere;
     public static boolean hideButtonTooltips;
     public static List<String> compressBlacklist;
+
+    public static boolean isServerSideInstalled;
 
     @Mod.EventHandler
     @SuppressWarnings("unused")
@@ -173,6 +177,14 @@ public class CraftingTweaks {
         }
     }
 
+    @NetworkCheckHandler
+    public boolean checkNetwork(Map<String, String> map, Side side) {
+        if(side == Side.SERVER) {
+            isServerSideInstalled = map.containsKey(MOD_ID);
+        }
+        return true;
+    }
+
     public void reloadConfig() {
         hideButtons = config.getBoolean("hideButtons", "general", false, "This option is toggled by the 'Toggle Buttons' key that can be defined in the Controls settings.");
         hideButtonTooltips = config.getBoolean("hideButtonTooltips", "general", false, "Set this to true if you don't want the tweak buttons' tooltips to show.");
@@ -235,12 +247,12 @@ public class CraftingTweaks {
     }
 
     public ModSupportState getModSupportState(String modId) {
-        ModSupportState suportState = configMap.get(modId);
-        if(suportState == null) {
-            suportState = ModSupportState.ENABLED;
-            configMap.put(modId, suportState);
+        ModSupportState supportState = configMap.get(modId);
+        if(supportState == null) {
+            supportState = ModSupportState.ENABLED;
+            configMap.put(modId, supportState);
         }
-        return suportState;
+        return supportState;
     }
 
     private static int getIntOr(NBTTagCompound tagCompound, String key, int defaultVal) {

@@ -5,6 +5,7 @@ import net.blay09.mods.craftingtweaks.api.SimpleTweakProvider;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,7 +19,9 @@ public class CraftingTweaksAddons {
         thaumcraft();
         progressiveautomation();
 
-        registerProvider("uk.binarycraft.storagesilo.blocks.craftingsilo.ContainerCraftingSilo", new ProviderCraftingSilo());
+        if(Loader.isModLoaded("storagesilo")) {
+            registerProvider("uk.binarycraft.storagesilo.blocks.craftingsilo.ContainerCraftingSilo", new ProviderCraftingSilo());
+        }
     }
 
     private static void ezstorage() {
@@ -56,7 +59,9 @@ public class CraftingTweaksAddons {
     @SuppressWarnings("unchecked")
     private static SimpleTweakProvider registerSimpleProvider(String modid, String className) {
         try {
-            return CraftingTweaksAPI.registerSimpleProvider(modid, (Class<? extends Container>) Class.forName(className));
+            if(Loader.isModLoaded(modid)) {
+                return CraftingTweaksAPI.registerSimpleProvider(modid, (Class<? extends Container>) Class.forName(className));
+            }
         } catch (ClassNotFoundException e) {
             logger.error("Could not register Crafting Tweaks addon for {} - internal names have changed.", modid);
         }

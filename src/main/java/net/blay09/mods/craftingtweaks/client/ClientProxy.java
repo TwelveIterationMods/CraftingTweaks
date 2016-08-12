@@ -27,17 +27,17 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
+import net.minecraftforge.fml.relauncher.Side;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("unused")
 public class ClientProxy extends CommonProxy {
 
-    private static final int HELLO_TIMEOUT = 20 * 10;
-    private int helloTimeout;
     private boolean isServerSide;
 
     private final ClientProvider clientProvider = new ClientProvider();
@@ -76,13 +76,6 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void addScheduledTask(Runnable runnable) {
         Minecraft.getMinecraft().addScheduledTask(runnable);
-    }
-
-    @SubscribeEvent
-    @SuppressWarnings("unused")
-    public void connectedToServer(FMLNetworkEvent.ClientConnectedToServerEvent event) {
-        helloTimeout = HELLO_TIMEOUT;
-        isServerSide = false;
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
@@ -239,20 +232,6 @@ public class ClientProxy extends CommonProxy {
         }
     }
 
-    @SubscribeEvent
-    @SuppressWarnings("unused")
-    public void onClientTick(TickEvent.ClientTickEvent event) {
-        EntityPlayer entityPlayer = FMLClientHandler.instance().getClientPlayerEntity();
-        if (entityPlayer != null) {
-            if (helloTimeout > 0) {
-                helloTimeout--;
-                if (helloTimeout <= 0 && !isServerSide) {
-                    entityPlayer.addChatMessage(new TextComponentString("This server does not have Crafting Tweaks installed. Functionality may be limited."));
-                }
-            }
-        }
-    }
-
     private void initGui(GuiContainer guiContainer) {
         TweakProvider provider = CraftingTweaks.instance.getProvider(guiContainer.inventorySlots);
         if (provider != null) {
@@ -338,8 +317,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
-    public void receivedHello(EntityPlayer entityPlayer) {
-        helloTimeout = 0;
-        isServerSide = true;
+    public void checkNetwork(Map<String, String> map, Side side) {
+        isServerSide = map.containsKey(CraftingTweaks.MOD_ID);
     }
 }
