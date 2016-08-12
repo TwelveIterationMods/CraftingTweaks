@@ -27,7 +27,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.List;
 import java.util.Map;
 
-@Mod(modid = CraftingTweaks.MOD_ID, name = "Crafting Tweaks", acceptableRemoteVersions = "*", guiFactory = "net.blay09.mods.craftingtweaks.client.GuiFactory", updateJSON = "http://balyware.com/new/forge_update.php?modid=craftingtweaks")
+@Mod(modid = CraftingTweaks.MOD_ID, name = "Crafting Tweaks", acceptedMinecraftVersions = "[1.10]", guiFactory = "net.blay09.mods.craftingtweaks.client.GuiFactory", updateJSON = "http://balyware.com/new/forge_update.php?modid=craftingtweaks")
 public class CraftingTweaks {
 
     public enum ModSupportState {
