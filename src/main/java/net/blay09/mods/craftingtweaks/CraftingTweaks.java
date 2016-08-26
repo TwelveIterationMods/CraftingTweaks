@@ -1,5 +1,7 @@
 package net.blay09.mods.craftingtweaks;
 
+import com.google.common.base.Function;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.blay09.mods.craftingtweaks.addons.CraftingTweaksAddons;
@@ -21,6 +23,7 @@ import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkCheckHandler;
 import net.minecraftforge.fml.relauncher.Side;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -137,10 +140,26 @@ public class CraftingTweaks {
                 provider.setTweakClear(getBoolOr(clearCompound, "Enabled", true), getBoolOr(clearCompound, "ShowButton", true),
                         buttonOffsetX + getIntOr(clearCompound, "ButtonX", 0), buttonOffsetY + getIntOr(clearCompound, "ButtonY", 36));
 
+                String callback = tagCompound.getString("ContainerCallback");
+                if(!callback.isEmpty()) {
+                    try {
+                        Class<?> functionClass = Class.forName(callback);
+                        if (!Function.class.isAssignableFrom(functionClass)) {
+                            logger.error(message.getSender() + " sent a container callback that's not even a function");
+                            return;
+                        }
+                        Function function = (Function) functionClass.newInstance();
+                        //noinspection unchecked
+                        provider.setCallbackFunction(function);
+                    } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+                        logger.error(message.getSender() + " sent an invalid container callback.");
+                    }
+                }
+
                 registerProvider(containerClassName, provider);
                 logger.info(message.getSender() + " has registered " + containerClassName + " for CraftingTweaks");
             } else {
-                logger.warn("CraftingTweaks received an invalid IMC message from " + message.getSender());
+                logger.error("CraftingTweaks received an invalid IMC message from " + message.getSender());
             }
         }
     }

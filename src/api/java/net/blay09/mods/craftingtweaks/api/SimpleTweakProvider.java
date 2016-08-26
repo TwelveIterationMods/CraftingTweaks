@@ -1,5 +1,6 @@
 package net.blay09.mods.craftingtweaks.api;
 
+import com.google.common.base.Function;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.EnumFacing;
 
@@ -51,4 +52,10 @@ public interface SimpleTweakProvider<T extends Container> extends TweakProvider<
      * @param alignToGrid the direction the buttons should be aligned towards
      */
     void setAlignToGrid(EnumFacing alignToGrid);
+
+    /**
+     * Allows specifying a function that determines whether a container contains a valid crafting grid.
+     * @param function should return true for valid crafting containers
+     */
+    void setCallbackFunction(Function<Container, Boolean> function);
 }

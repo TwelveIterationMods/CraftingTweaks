@@ -186,7 +186,7 @@ public class ClientProxy extends CommonProxy {
                 if (container != null) {
                     Slot mouseSlot = event.getGui() instanceof GuiContainer ? ((GuiContainer) event.getGui()).getSlotUnderMouse() : null;
                     TweakProvider<Container> provider = CraftingTweaks.instance.getProvider(container);
-                    if (provider != null) {
+                    if (provider != null && provider.isValidContainer(container)) {
                         if (keyTransferStack.getKeyCode() > 0 && Keyboard.isKeyDown(keyTransferStack.getKeyCode())) {
                             if (mouseSlot != null && mouseSlot.getHasStack()) {
                                 List<Slot> transferSlots = Lists.newArrayList();
@@ -230,7 +230,9 @@ public class ClientProxy extends CommonProxy {
         if (provider != null) {
             CraftingTweaks.ModSupportState config = CraftingTweaks.instance.getModSupportState(provider.getModId());
             if (config == CraftingTweaks.ModSupportState.ENABLED || config == CraftingTweaks.ModSupportState.BUTTONS_ONLY) {
-                provider.initGui(guiContainer, guiContainer.buttonList);
+                if (provider.isValidContainer(guiContainer.inventorySlots)) {
+                    provider.initGui(guiContainer, guiContainer.buttonList);
+                }
             }
         }
     }

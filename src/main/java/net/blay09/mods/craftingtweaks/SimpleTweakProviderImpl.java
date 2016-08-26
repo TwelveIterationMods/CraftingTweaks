@@ -1,5 +1,6 @@
 package net.blay09.mods.craftingtweaks;
 
+import com.google.common.base.Function;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
 import net.blay09.mods.craftingtweaks.api.DefaultProviderV2;
 import net.blay09.mods.craftingtweaks.api.RotationHandler;
@@ -54,6 +55,7 @@ public class SimpleTweakProviderImpl<T extends Container> implements SimpleTweak
             return 0;
         }
     };
+    private Function isContainerValid;
 
     public static class TweakSettings {
         public final boolean enabled;
@@ -265,4 +267,22 @@ public class SimpleTweakProviderImpl<T extends Container> implements SimpleTweak
         return 0;
     }
 
+    @Override
+    public void setCallbackFunction(Function function) {
+        this.isContainerValid = function;
+    }
+
+    @Override
+    public boolean isValidContainer(Container container) {
+        if(isContainerValid != null) {
+            //noinspection unchecked /// we want raw types because we check for correct return value at runtime
+            Object obj = isContainerValid.apply(container);
+            if (obj instanceof Boolean) {
+                return (Boolean) obj;
+            }
+            CraftingTweaks.logger.error("Callback function for " + modid + "'s " + container.getClass().getSimpleName() + " does not return a boolean value");
+            return false;
+        }
+        return true;
+    }
 }

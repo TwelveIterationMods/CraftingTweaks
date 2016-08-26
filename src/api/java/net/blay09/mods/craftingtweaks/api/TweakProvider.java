@@ -1,5 +1,6 @@
 package net.blay09.mods.craftingtweaks.api;
 
+import com.google.common.base.Function;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -140,4 +141,12 @@ public interface TweakProvider<T extends Container> {
      */
     @SideOnly(Side.CLIENT)
     void initGui(GuiContainer guiContainer, List<GuiButton> buttonList);
+
+	/**
+     * @param container the container to test
+     * @return true if the container contains a valid crafting grid
+     */
+    default boolean isValidContainer(Container container) {
+        return true;
+    }
 }
