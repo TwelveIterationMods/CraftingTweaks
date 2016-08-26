@@ -95,7 +95,7 @@ public class CraftingTweaks {
     @SuppressWarnings("unused")
     public void imc(FMLInterModComms.IMCEvent event) {
         for(FMLInterModComms.IMCMessage message : event.getMessages()) {
-            if(message.isNBTMessage() && message.key.equals("RegisterProvider")) {
+            if(message.isNBTMessage() && (message.key.equals("RegisterProvider") || message.key.equals("RegisterProviderV2"))) {
                 NBTTagCompound tagCompound = message.getNBTValue();
                 String containerClassName = tagCompound.getString("ContainerClass");
                 SimpleTweakProvider provider = new SimpleTweakProviderImpl(message.getSender());
