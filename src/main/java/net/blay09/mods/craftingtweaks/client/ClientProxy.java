@@ -10,10 +10,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
+import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
@@ -215,6 +218,20 @@ public class ClientProxy extends CommonProxy {
                                 }
                                 event.setCanceled(true);
                             }
+                        } else if(CraftingTweaks.rightClickCraftsStack && Mouse.getEventButton() == 1 && mouseSlot instanceof SlotCrafting) {
+                            PlayerControllerMP playerController = Minecraft.getMinecraft().playerController;
+                            if(playerController == null) {
+                                return;
+                            }
+                            ItemStack mouseStack = entityPlayer.inventory.getItemStack();
+                            int maxTries = 64;
+                            while(maxTries > 0 && mouseSlot.getHasStack() && (mouseStack == null || mouseStack.stackSize < mouseStack.getMaxStackSize())) {
+                                playerController.windowClick(container.windowId, mouseSlot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
+                                mouseStack = entityPlayer.inventory.getItemStack();
+                                maxTries--;
+                            }
+                            event.setCanceled(true);
+                            ignoreMouseUp = true;
                         }
                     }
                 }

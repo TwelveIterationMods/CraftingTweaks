@@ -23,7 +23,6 @@ import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkCheckHandler;
 import net.minecraftforge.fml.relauncher.Side;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -72,6 +71,7 @@ public class CraftingTweaks {
     private final Map<Class<? extends Container>, TweakProvider> providerMap = Maps.newHashMap();
 
     public static boolean hideButtons;
+    public static boolean rightClickCraftsStack;
     public static boolean compressAnywhere;
     public static boolean hideButtonTooltips;
     public static List<String> compressBlacklist;
@@ -205,6 +205,7 @@ public class CraftingTweaks {
 
     public void reloadConfig() {
         hideButtons = config.getBoolean("hideButtons", "general", false, "This option is toggled by the 'Toggle Buttons' key that can be defined in the Controls settings.");
+        rightClickCraftsStack = config.getBoolean("rightClickCraftsStack", "general", true, "If set to true, right-clicking the result slot in a crafting table will craft a full stack.");
         hideButtonTooltips = config.getBoolean("hideButtonTooltips", "general", false, "Set this to true if you don't want the tweak buttons' tooltips to show.");
         compressAnywhere = config.getBoolean("compressAnywhere", "general", false, "Set this to true if you want the (de)compress feature to work outside of crafting GUIs (only works if installed on server)");
         compressBlacklist = Lists.newArrayList(config.getStringList("compressBlacklist", "general", new String[] {"ExtraUtilities:decorativeBlock1", "minecraft:sandstone", "minecraft:iron_trapdoor"}, "A list of modid:name entries that will not be crafted by the compress key."));
