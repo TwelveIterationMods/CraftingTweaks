@@ -32,6 +32,8 @@ import java.util.Map;
 @Mod(modid = CraftingTweaks.MOD_ID, name = "Crafting Tweaks", acceptedMinecraftVersions = "[1.10]", guiFactory = "net.blay09.mods.craftingtweaks.client.GuiFactory", updateJSON = "http://balyware.com/new/forge_update.php?modid=craftingtweaks")
 public class CraftingTweaks {
 
+    public static boolean TEST_CLIENT_SIDE = false;
+
     public enum ModSupportState {
         ENABLED,
         BUTTONS_ONLY,
@@ -198,7 +200,7 @@ public class CraftingTweaks {
     @NetworkCheckHandler
     public boolean checkNetwork(Map<String, String> map, Side side) {
         if(side == Side.SERVER) {
-            isServerSideInstalled = map.containsKey(MOD_ID);
+            isServerSideInstalled = !TEST_CLIENT_SIDE && map.containsKey(MOD_ID);
         }
         return true;
     }

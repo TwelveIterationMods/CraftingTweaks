@@ -139,7 +139,9 @@ public class ClientProvider {
     }
 
     public void spreadGrid(TweakProvider<Container> provider, EntityPlayer entityPlayer, Container container, int id) {
-        while(true) {
+        int tries = 0;
+        while(tries < 9) {
+            tries++;
             Slot biggestSlot = null;
             int biggestSlotSize = 1;
             int start = provider.getCraftingGridStart(entityPlayer, container, id);
@@ -155,23 +157,23 @@ public class ClientProvider {
             if (biggestSlot == null) {
                 return;
             }
-            boolean emptyBiggestSlot = false;
             getController().windowClick(container.windowId, biggestSlot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
             for (int i = start; i < start + size; i++) {
+                if(i == biggestSlot.slotNumber) {
+                    continue;
+                }
                 ItemStack itemStack = container.inventorySlots.get(i).getStack();
                 if (itemStack == null) {
                     if(biggestSlotSize > 1) {
                         getController().windowClick(container.windowId, i, 1, ClickType.PICKUP, entityPlayer);
                         biggestSlotSize--;
-                    } else {
-                        emptyBiggestSlot = true;
+                        if(biggestSlotSize == 1) {
+                            break;
+                        }
                     }
                 }
             }
             getController().windowClick(container.windowId, biggestSlot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
-            if(!emptyBiggestSlot) {
-                break;
-            }
         }
         balanceGrid(provider, entityPlayer, container, id);
     }
