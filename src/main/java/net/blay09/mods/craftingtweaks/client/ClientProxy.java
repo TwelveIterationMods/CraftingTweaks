@@ -85,7 +85,7 @@ public class ClientProxy extends CommonProxy {
                     GuiScreen guiScreen = Minecraft.getMinecraft().currentScreen;
                     TweakProvider<Container> provider = CraftingTweaks.instance.getProvider(container);
                     CompressType compressType = getCompressType(Keyboard.getEventKey());
-                    if (provider != null) {
+                    if (provider != null && provider.isValidContainer(container)) {
                         boolean isShiftDown = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
                         CraftingTweaks.ModSupportState config = CraftingTweaks.instance.getModSupportState(provider.getModId());
                         if (config == CraftingTweaks.ModSupportState.ENABLED || config == CraftingTweaks.ModSupportState.HOTKEYS_ONLY) {
