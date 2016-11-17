@@ -16,7 +16,8 @@ In order to register your container for Crafting Tweaks, send an IMC message as 
 NBTTagCompound tagCompound = new NBTTagCompound();
 tagCompound.setString("ContainerClass", YourCraftingContainer.class.getName());
 
-// tagCompound.setInteger("ContainerCallback", YourContainerCallback.class.getName()); // requires RegisterProviderV2 or higher
+// tagCompound.setInteger("ContainerValidPredicate", YourContainerPredicate.class.getName()); // requires RegisterProviderV3 or higher
+// tagCompound.setInteger("GetGridStartFunction", YourGridStartFunction.class.getName()); // requires RegisterProviderV3 or higher
 
 // tagCompound.setInteger("GridSlotNumber", 1);
 // tagCompound.setInteger("GridSize", 9);
@@ -37,14 +38,15 @@ tagCompound.setString("ContainerClass", YourCraftingContainer.class.getName());
 // [...] (same structure for "TweakBalance" and "TweakClear")
 
 FMLInterModComms.sendMessage("craftingtweaks", "RegisterProvider", tagCompound);
-// or FMLInterModComms.sendMessage("craftingtweaks", "RegisterProviderV2", tagCompound); if using V2 features
+// or FMLInterModComms.sendMessage("craftingtweaks", "RegisterProviderV3", tagCompound); if using V3 features
 ```
 
 The commented out lines are optional (the example above shows the default value).
 
 The fields are described below:
 * **ContainerClass**: The full class name (including package name) of your container class with the crafting grid.
-* **ContainerCallback**: (V2 or higher) The full class name (including package name) of an optional container callback; a class that implements Function<Container, Boolean> to determine whether a container is a valid crafting container
+* **ContainerValidPredicate**: (V3 or higher) The full class name (including package name) of an optional container callback; a class that implements Function<Container, Boolean> to determine whether a container is a valid crafting container
+* **GetGridStartFunction**: (V3 or higher) The full class name (including package name) of an optional slot callback; a class t hat implements Function<Container, Integer> to determine the first slot of a crafting grid (overrides GridSlotNumber)
 * **GridSlotNumber**: The slotNumber of the first slot in the crafting matrix (this is the index within Container.inventorySlots, NOT the index within the IInventory)
 * **GridSize**: The size of the crafting grid (probably 9)
 * **HideButtons**: If you don't want Crafting Tweak's buttons to show up (but you want the hotkeys to work), set this to true

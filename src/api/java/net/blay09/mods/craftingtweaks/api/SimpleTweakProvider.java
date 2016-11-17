@@ -1,8 +1,11 @@
 package net.blay09.mods.craftingtweaks.api;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.EnumFacing;
+
+import javax.annotation.Nullable;
 
 public interface SimpleTweakProvider<T extends Container> extends TweakProvider<T> {
 
@@ -51,11 +54,17 @@ public interface SimpleTweakProvider<T extends Container> extends TweakProvider<
      * Setting this will make the buttons always align to the grid and ignore their offset settings.
      * @param alignToGrid the direction the buttons should be aligned towards
      */
-    void setAlignToGrid(EnumFacing alignToGrid);
+    void setAlignToGrid(@Nullable EnumFacing alignToGrid);
 
     /**
-     * Allows specifying a function that determines whether a container contains a valid crafting grid.
-     * @param function should return true for valid crafting containers
+     * Allows specifying a predicate that determines whether a container contains a valid crafting grid.
+     * @param predicate should return true for valid crafting containers
      */
-    void setCallbackFunction(Function<Container, Boolean> function);
+    void setContainerValidPredicate(Predicate<Container> predicate);
+
+    /**
+     * Allows specifying a function that determines the starting slot of a crafting grid. Overrides the slotNumber given in {@link SimpleTweakProvider#setGrid(int, int)}.
+     * @param function the slot number of the first crafting grid slot
+     */
+    void setGetGridStartFunction(Function<Container, Integer> function);
 }

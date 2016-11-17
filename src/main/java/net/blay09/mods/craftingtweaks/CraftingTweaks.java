@@ -1,6 +1,7 @@
 package net.blay09.mods.craftingtweaks;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.blay09.mods.craftingtweaks.addons.CraftingTweaksAddons;
@@ -29,7 +30,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
-@Mod(modid = CraftingTweaks.MOD_ID, name = "Crafting Tweaks", acceptedMinecraftVersions = "[1.10]", guiFactory = "net.blay09.mods.craftingtweaks.client.GuiFactory", updateJSON = "http://balyware.com/new/forge_update.php?modid=craftingtweaks")
+@Mod(modid = CraftingTweaks.MOD_ID, name = "Crafting Tweaks", acceptedMinecraftVersions = "[1.11]", guiFactory = "net.blay09.mods.craftingtweaks.client.GuiFactory")
 public class CraftingTweaks {
 
     public static boolean TEST_CLIENT_SIDE = false;
@@ -97,7 +98,9 @@ public class CraftingTweaks {
     @SuppressWarnings("unused")
     public void imc(FMLInterModComms.IMCEvent event) {
         for(FMLInterModComms.IMCMessage message : event.getMessages()) {
-            if(message.isNBTMessage() && (message.key.equals("RegisterProvider") || message.key.equals("RegisterProviderV2"))) {
+            if(message.isNBTMessage() && (message.key.equals("RegisterProvider")
+                    || message.key.equals("RegisterProviderV2")
+                    || message.key.equals("RegisterProviderV3"))) {
                 NBTTagCompound tagCompound = message.getNBTValue();
                 String containerClassName = tagCompound.getString("ContainerClass");
                 SimpleTweakProvider provider = new SimpleTweakProviderImpl(message.getSender());
@@ -142,21 +145,57 @@ public class CraftingTweaks {
                 provider.setTweakClear(getBoolOr(clearCompound, "Enabled", true), getBoolOr(clearCompound, "ShowButton", true),
                         buttonOffsetX + getIntOr(clearCompound, "ButtonX", 0), buttonOffsetY + getIntOr(clearCompound, "ButtonY", 36));
 
-                String callback = tagCompound.getString("ContainerCallback");
-                if(!callback.isEmpty()) {
+                String validContainerPredicateLegacy = tagCompound.getString("ContainerCallback");
+                if(!validContainerPredicateLegacy.isEmpty()) {
                     try {
-                        Class<?> functionClass = Class.forName(callback);
+                        Class<?> functionClass = Class.forName(validContainerPredicateLegacy);
                         if (!Function.class.isAssignableFrom(functionClass)) {
                             logger.error(message.getSender() + " sent a container callback that's not even a function");
                             return;
                         }
-                        Function function = (Function) functionClass.newInstance();
-                        //noinspection unchecked
-                        provider.setCallbackFunction(function);
+                        Function<Container, Boolean> function = (Function<Container, Boolean>) functionClass.newInstance();
+                        provider.setContainerValidPredicate(new Predicate<Container>() { // TODO this doesn't compile as a lambda for some weird Javaish reason, so leave it as is
+                            @Override
+                            public boolean apply(@Nullable Container input) {
+                                Boolean result = function.apply(input);
+                                return result != null ? result : false;
+                            }
+                        });
                     } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
                         logger.error(message.getSender() + " sent an invalid container callback.");
                     }
                 }
+
+                String validContainerPredicate = tagCompound.getString("ValidContainerPredicate");
+                if(!validContainerPredicate.isEmpty()) {
+                    try {
+                        Class<?> predicateClass = Class.forName(validContainerPredicate);
+                        if (!Predicate.class.isAssignableFrom(predicateClass)) {
+                            logger.error(message.getSender() + " sent an invalid ValidContainerPredicate - it must implement Predicate<Container>");
+                            return;
+                        }
+                        Predicate<Container> predicate = (Predicate<Container>) predicateClass.newInstance();
+                        provider.setContainerValidPredicate(predicate);
+                    } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+                        logger.error(message.getSender() + " sent an invalid ValidContainerPredicate: " + e.getMessage());
+                    }
+                }
+
+                String getGridStartFunction = tagCompound.getString("GetGridStartFunction");
+                if(!getGridStartFunction.isEmpty()) {
+                    try {
+                        Class<?> functionClass = Class.forName(getGridStartFunction);
+                        if (!Function.class.isAssignableFrom(functionClass)) {
+                            logger.error(message.getSender() + " sent an invalid GetGridStartFunction - it must implement Function<Container, Integer>");
+                            return;
+                        }
+                        Function<Container, Integer> function = (Function<Container, Integer>) functionClass.newInstance();
+                        provider.setGetGridStartFunction(function);
+                    } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+                        logger.error(message.getSender() + " sent an invalid GetGridStartFunction: " + e.getMessage());
+                    }
+                }
+
 
                 registerProvider(containerClassName, provider);
                 logger.info(message.getSender() + " has registered " + containerClassName + " for CraftingTweaks");

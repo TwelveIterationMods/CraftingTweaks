@@ -1,6 +1,7 @@
 package net.blay09.mods.craftingtweaks;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
 import net.blay09.mods.craftingtweaks.api.DefaultProviderV2;
 import net.blay09.mods.craftingtweaks.api.RotationHandler;
@@ -17,6 +18,7 @@ import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class SimpleTweakProviderImpl<T extends Container> implements SimpleTweakProvider<T> {
@@ -55,7 +57,9 @@ public class SimpleTweakProviderImpl<T extends Container> implements SimpleTweak
             return 0;
         }
     };
-    private Function isContainerValid;
+
+    private Predicate<Container> isContainerValidPredicate;
+    private Function<Container, Integer> getGridStartFunction;
 
     public static class TweakSettings {
         public final boolean enabled;
@@ -86,7 +90,7 @@ public class SimpleTweakProviderImpl<T extends Container> implements SimpleTweak
         this.modid = modid;
     }
 
-    public void setAlignToGrid(EnumFacing direction) {
+    public void setAlignToGrid(@Nullable EnumFacing direction) {
         this.alignToGrid = direction;
     }
 
@@ -186,6 +190,10 @@ public class SimpleTweakProviderImpl<T extends Container> implements SimpleTweak
 
     @Override
     public int getCraftingGridStart(EntityPlayer entityPlayer, T container, int id) {
+        if(getGridStartFunction != null) {
+            Integer result = getGridStartFunction.apply(container);
+            return result != null ? result : 0;
+        }
         return gridSlotNumber;
     }
 
@@ -268,21 +276,17 @@ public class SimpleTweakProviderImpl<T extends Container> implements SimpleTweak
     }
 
     @Override
-    public void setCallbackFunction(Function function) {
-        this.isContainerValid = function;
+    public void setContainerValidPredicate(Predicate<Container> predicate) {
+        this.isContainerValidPredicate = predicate;
+    }
+
+    @Override
+    public void setGetGridStartFunction(Function<Container, Integer> function) {
+        this.getGridStartFunction = function;
     }
 
     @Override
     public boolean isValidContainer(Container container) {
-        if(isContainerValid != null) {
-            //noinspection unchecked /// we want raw types because we check for correct return value at runtime
-            Object obj = isContainerValid.apply(container);
-            if (obj instanceof Boolean) {
-                return (Boolean) obj;
-            }
-            CraftingTweaks.logger.error("Callback function for " + modid + "'s " + container.getClass().getSimpleName() + " does not return a boolean value");
-            return false;
-        }
-        return true;
+        return isContainerValidPredicate == null || isContainerValidPredicate.apply(container);
     }
 }
