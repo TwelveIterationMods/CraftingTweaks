@@ -1,7 +1,6 @@
 package net.blay09.mods.craftingtweaks;
 
 import com.google.common.base.Function;
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.blay09.mods.craftingtweaks.addons.CraftingTweaksAddons;
@@ -26,6 +25,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
@@ -250,7 +250,8 @@ public class CraftingTweaks {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends Container> TweakProvider<T> getProvider(T container) {
+    @Nullable
+    public <T extends Container> TweakProvider<T> getProvider(@Nullable T container) {
         if(container == null) {
             return null;
         }

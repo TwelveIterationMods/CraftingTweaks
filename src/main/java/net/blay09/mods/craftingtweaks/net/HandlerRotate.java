@@ -8,9 +8,12 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
+import javax.annotation.Nullable;
+
 public class HandlerRotate implements IMessageHandler<MessageRotate, IMessage> {
 
     @Override
+    @Nullable
     public IMessage onMessage(final MessageRotate message, final MessageContext ctx) {
         CraftingTweaks.proxy.addScheduledTask(() -> {
             EntityPlayer entityPlayer = ctx.getServerHandler().playerEntity;

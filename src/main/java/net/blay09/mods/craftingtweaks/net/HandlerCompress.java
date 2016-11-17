@@ -15,8 +15,11 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
+import javax.annotation.Nullable;
+
 public class HandlerCompress implements IMessageHandler<MessageCompress, IMessage> {
     @Override
+    @Nullable
     public IMessage onMessage(MessageCompress message, MessageContext ctx) {
         CraftingTweaks.proxy.addScheduledTask(() -> {
             EntityPlayer entityPlayer = ctx.getServerHandler().playerEntity;
@@ -30,7 +33,7 @@ public class HandlerCompress implements IMessageHandler<MessageCompress, IMessag
                 return;
             }
             ItemStack mouseStack = mouseSlot.getStack();
-            if (mouseStack == null) {
+            if (mouseStack.func_190926_b()) {
                 return;
             }
             TweakProvider<Container> provider = CraftingTweaks.instance.getProvider(container);
@@ -45,15 +48,15 @@ public class HandlerCompress implements IMessageHandler<MessageCompress, IMessag
                         continue;
                     }
                     if (slot.inventory instanceof InventoryPlayer && slot.getHasStack() && ItemStack.areItemsEqual(slot.getStack(), mouseSlot.getStack()) && ItemStack.areItemStackTagsEqual(slot.getStack(), mouseSlot.getStack())) {
-                        ItemStack result = CraftingManager.getInstance().findMatchingRecipe(new InventoryCraftingDecompress(container, slot.getStack()), entityPlayer.worldObj);
-                        if (result != null && !isBlacklisted(result) && slot.getStack() != null && slot.getStack().stackSize >= 1) {
+                        ItemStack result = CraftingManager.getInstance().findMatchingRecipe(new InventoryCraftingDecompress(container, slot.getStack()), entityPlayer.world);
+                        if (!result.func_190926_b() && !isBlacklisted(result) && !slot.getStack().func_190926_b() && slot.getStack().func_190916_E() >= 1) {
                             do {
                                 if (entityPlayer.inventory.addItemStackToInventory(result.copy())) {
                                     slot.decrStackSize(1);
                                 } else {
                                     break;
                                 }
-                            } while (decompressAll && slot.getHasStack() && slot.getStack().stackSize >= 1);
+                            } while (decompressAll && slot.getHasStack() && slot.getStack().func_190916_E() >= 1);
                         }
                     }
                 }
@@ -66,9 +69,9 @@ public class HandlerCompress implements IMessageHandler<MessageCompress, IMessag
                         continue;
                     }
                     if (slot.inventory instanceof InventoryPlayer && slot.getHasStack() && ItemStack.areItemsEqual(slot.getStack(), mouseSlot.getStack()) && ItemStack.areItemStackTagsEqual(slot.getStack(), mouseSlot.getStack())) {
-                        if (size == 9 && slot.getStack() != null && slot.getStack().stackSize >= 9) {
-                            ItemStack result = CraftingManager.getInstance().findMatchingRecipe(new InventoryCraftingCompress(container, 3, slot.getStack()), entityPlayer.worldObj);
-                            if (result != null && !isBlacklisted(result)) {
+                        if (size == 9 && !slot.getStack().func_190926_b() && slot.getStack().func_190916_E() >= 9) {
+                            ItemStack result = CraftingManager.getInstance().findMatchingRecipe(new InventoryCraftingCompress(container, 3, slot.getStack()), entityPlayer.world);
+                            if (!result.func_190926_b() && !isBlacklisted(result)) {
                                 do {
                                     if (entityPlayer.inventory.addItemStackToInventory(result.copy())) {
                                         slot.decrStackSize(9);
@@ -76,10 +79,10 @@ public class HandlerCompress implements IMessageHandler<MessageCompress, IMessag
                                         break;
                                     }
                                 }
-                                while (compressAll && slot.getHasStack() && slot.getStack().stackSize >= 9);
+                                while (compressAll && slot.getHasStack() && slot.getStack().func_190916_E() >= 9);
                             } else {
-                                result = CraftingManager.getInstance().findMatchingRecipe(new InventoryCraftingCompress(container, 2, slot.getStack()), entityPlayer.worldObj);
-                                if (result != null && !isBlacklisted(result)) {
+                                result = CraftingManager.getInstance().findMatchingRecipe(new InventoryCraftingCompress(container, 2, slot.getStack()), entityPlayer.world);
+                                if (!result.func_190926_b() && !isBlacklisted(result)) {
                                     do {
                                         if (entityPlayer.inventory.addItemStackToInventory(result.copy())) {
                                             slot.decrStackSize(4);
@@ -87,12 +90,12 @@ public class HandlerCompress implements IMessageHandler<MessageCompress, IMessag
                                             break;
                                         }
                                     }
-                                    while (compressAll && slot.getHasStack() && slot.getStack().stackSize >= 4);
+                                    while (compressAll && slot.getHasStack() && slot.getStack().func_190916_E() >= 4);
                                 }
                             }
-                        } else if (size >= 4 && slot.getStack() != null && slot.getStack().stackSize >= 4) {
-                            ItemStack result = CraftingManager.getInstance().findMatchingRecipe(new InventoryCraftingCompress(container, 2, slot.getStack()), entityPlayer.worldObj);
-                            if (result != null && !isBlacklisted(result)) {
+                        } else if (size >= 4 && !slot.getStack().func_190926_b() && slot.getStack().func_190916_E() >= 4) {
+                            ItemStack result = CraftingManager.getInstance().findMatchingRecipe(new InventoryCraftingCompress(container, 2, slot.getStack()), entityPlayer.world);
+                            if (!result.func_190926_b() && !isBlacklisted(result)) {
                                 do {
                                     if (entityPlayer.inventory.addItemStackToInventory(result.copy())) {
                                         slot.decrStackSize(4);
@@ -100,7 +103,7 @@ public class HandlerCompress implements IMessageHandler<MessageCompress, IMessag
                                         break;
                                     }
                                 }
-                                while (compressAll && slot.getHasStack() && slot.getStack().stackSize >= 4);
+                                while (compressAll && slot.getHasStack() && slot.getStack().func_190916_E() >= 4);
                             }
                         }
                     }

@@ -117,7 +117,7 @@ public class ClientProxy extends CommonProxy {
                             GuiContainer guiContainer = (GuiContainer) guiScreen;
                             if (compressType != null) {
                                 Slot mouseSlot = guiContainer.getSlotUnderMouse();
-                                if (mouseSlot != null) {
+                                if (mouseSlot != null) { // Forge needs @Nullable
                                     if (CraftingTweaks.isServerSideInstalled) {
                                         NetworkHandler.instance.sendToServer(new MessageCompress(mouseSlot.slotNumber, compressType));
                                     } else {
@@ -143,7 +143,7 @@ public class ClientProxy extends CommonProxy {
                         GuiContainer guiContainer = (GuiContainer) guiScreen;
                         if (compressType != null) {
                             Slot mouseSlot = guiContainer.getSlotUnderMouse();
-                            if (mouseSlot != null) {
+                            if (mouseSlot != null) { // Forge needs @Nullable
                                 NetworkHandler.instance.sendToServer(new MessageCompress(mouseSlot.slotNumber, compressType));
                             }
                         }
@@ -172,7 +172,7 @@ public class ClientProxy extends CommonProxy {
 
     private boolean isActiveAndMatches(KeyBinding keyBinding, int eventKey) {
         if(keyBinding.getKeyModifier() == KeyModifier.NONE) {
-            if(KeyModifier.SHIFT.isActive() || KeyModifier.CONTROL.isActive() || KeyModifier.ALT.isActive()) {
+            if(KeyModifier.SHIFT.isActive(keyBinding.getKeyConflictContext()) || KeyModifier.CONTROL.isActive(keyBinding.getKeyConflictContext()) || KeyModifier.ALT.isActive(keyBinding.getKeyConflictContext())) {
                 return false;
             }
         }
@@ -225,7 +225,7 @@ public class ClientProxy extends CommonProxy {
                             }
                             ItemStack mouseStack = entityPlayer.inventory.getItemStack();
                             int maxTries = 64;
-                            while(maxTries > 0 && mouseSlot.getHasStack() && (mouseStack == null || mouseStack.stackSize < mouseStack.getMaxStackSize())) {
+                            while(maxTries > 0 && mouseSlot.getHasStack() && (mouseStack.func_190926_b() || mouseStack.func_190916_E() < mouseStack.getMaxStackSize())) {
                                 playerController.windowClick(container.windowId, mouseSlot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
                                 mouseStack = entityPlayer.inventory.getItemStack();
                                 maxTries--;

@@ -8,9 +8,12 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
+import javax.annotation.Nullable;
+
 public class HandlerClear implements IMessageHandler<MessageClear, IMessage> {
 
     @Override
+    @Nullable
     public IMessage onMessage(final MessageClear message, final MessageContext ctx) {
         CraftingTweaks.proxy.addScheduledTask(() -> {
             EntityPlayer entityPlayer = ctx.getServerHandler().playerEntity;

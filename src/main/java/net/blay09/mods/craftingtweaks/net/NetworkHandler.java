@@ -9,6 +9,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
+import javax.annotation.Nullable;
+
 public class NetworkHandler {
 
     public static final SimpleNetworkWrapper instance = NetworkRegistry.INSTANCE.newSimpleChannel(CraftingTweaks.MOD_ID);
@@ -37,6 +39,7 @@ public class NetworkHandler {
 
     public static class HandlerHelloUnusedBackwardsCompatOnly implements IMessageHandler<MessageHelloUnusedBackwardsCompatOnly, IMessage> {
         @Override
+        @Nullable
         public IMessage onMessage(MessageHelloUnusedBackwardsCompatOnly message, MessageContext ctx) {
             return null;
         }

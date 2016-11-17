@@ -79,16 +79,16 @@ public class DefaultProviderV2Impl implements DefaultProviderV2 {
         for (int i = start; i < start + size; i++) {
             int slotIndex = container.inventorySlots.get(i).getSlotIndex();
             if (phantomItems) {
-                craftMatrix.setInventorySlotContents(slotIndex, null);
+                craftMatrix.setInventorySlotContents(slotIndex, ItemStack.field_190927_a);
             } else {
                 ItemStack itemStack = craftMatrix.getStackInSlot(slotIndex);
-                if(itemStack != null) {
+                if(!itemStack.func_190926_b()) {
                     ItemStack returnStack = itemStack.copy();
                     entityPlayer.inventory.addItemStackToInventory(returnStack);
-                    craftMatrix.setInventorySlotContents(slotIndex, returnStack.stackSize == 0 ? null : returnStack);
-                    if(returnStack.stackSize > 0 && forced) {
+                    craftMatrix.setInventorySlotContents(slotIndex, returnStack.func_190916_E() == 0 ? ItemStack.field_190927_a : returnStack);
+                    if(returnStack.func_190916_E() > 0 && forced) {
                         entityPlayer.dropItem(returnStack, false);
-                        craftMatrix.setInventorySlotContents(slotIndex, null);
+                        craftMatrix.setInventorySlotContents(slotIndex, ItemStack.field_190927_a);
                     }
                 }
             }
@@ -109,10 +109,10 @@ public class DefaultProviderV2Impl implements DefaultProviderV2 {
         for (int i = start; i < start + size; i++) {
             int slotIndex = container.inventorySlots.get(i).getSlotIndex();
             ItemStack itemStack = craftMatrix.getStackInSlot(slotIndex);
-            if (itemStack != null && itemStack.getMaxStackSize() > 1) {
+            if (!itemStack.func_190926_b() && itemStack.getMaxStackSize() > 1) {
                 String key = itemStack.getUnlocalizedName() + "@" + itemStack.getItemDamage();
                 itemMap.put(key, itemStack);
-                itemCount.add(key, itemStack.stackSize);
+                itemCount.add(key, itemStack.func_190916_E());
             }
         }
         for (String key : itemMap.keySet()) {
@@ -121,13 +121,13 @@ public class DefaultProviderV2Impl implements DefaultProviderV2 {
             int countPerStack = totalCount / balanceList.size();
             int restCount = totalCount % balanceList.size();
             for (ItemStack itemStack : balanceList) {
-                itemStack.stackSize = countPerStack;
+                itemStack.func_190920_e(countPerStack);
             }
             int idx = 0;
             while (restCount > 0) {
                 ItemStack itemStack = balanceList.get(idx);
-                if (itemStack.stackSize < itemStack.getMaxStackSize()) {
-                    itemStack.stackSize++;
+                if (itemStack.func_190916_E() < itemStack.getMaxStackSize()) {
+                    itemStack.func_190917_f(1); // increaseStackSize
                     restCount--;
                 }
                 idx++;
@@ -153,9 +153,9 @@ public class DefaultProviderV2Impl implements DefaultProviderV2 {
             for (int i = start; i < start + size; i++) {
                 int slotIndex = container.inventorySlots.get(i).getSlotIndex();
                 ItemStack itemStack = craftMatrix.getStackInSlot(slotIndex);
-                if (itemStack != null && itemStack.stackSize > biggestSlotSize) {
+                if (!itemStack.func_190926_b() && itemStack.func_190916_E() > biggestSlotSize) {
                     biggestSlotStack = itemStack;
-                    biggestSlotSize = itemStack.stackSize;
+                    biggestSlotSize = itemStack.func_190916_E();
                 }
             }
             if (biggestSlotStack == null) {
@@ -165,8 +165,8 @@ public class DefaultProviderV2Impl implements DefaultProviderV2 {
             for (int i = start; i < start + size; i++) {
                 int slotIndex = container.inventorySlots.get(i).getSlotIndex();
                 ItemStack itemStack = craftMatrix.getStackInSlot(slotIndex);
-                if (itemStack == null) {
-                    if(biggestSlotStack.stackSize > 1) {
+                if (itemStack.func_190926_b()) {
+                    if(biggestSlotStack.func_190916_E() > 1) {
                         craftMatrix.setInventorySlotContents(slotIndex, biggestSlotStack.splitStack(1));
                     } else {
                         emptyBiggestSlot = true;
@@ -187,22 +187,22 @@ public class DefaultProviderV2Impl implements DefaultProviderV2 {
             return itemStack;
         }
         ItemStack craftStack = craftMatrix.getStackInSlot(index);
-        if (craftStack != null) {
+        if (!craftStack.func_190926_b()) {
             if (craftStack.isItemEqual(itemStack) && ItemStack.areItemStackTagsEqual(craftStack, itemStack)) {
-                int spaceLeft = Math.min(craftMatrix.getInventoryStackLimit(), craftStack.getMaxStackSize()) - craftStack.stackSize;
+                int spaceLeft = Math.min(craftMatrix.getInventoryStackLimit(), craftStack.getMaxStackSize()) - craftStack.func_190916_E();
                 if (spaceLeft > 0) {
-                    ItemStack splitStack = itemStack.splitStack(Math.min(spaceLeft, itemStack.stackSize));
-                    craftStack.stackSize += splitStack.stackSize;
-                    if (itemStack.stackSize <= 0) {
+                    ItemStack splitStack = itemStack.splitStack(Math.min(spaceLeft, itemStack.func_190916_E()));
+                    craftStack.func_190917_f(splitStack.func_190916_E());
+                    if (itemStack.func_190916_E() <= 0) {
                         return null;
                     }
                 }
             }
         } else {
-            ItemStack transferStack = itemStack.splitStack(Math.min(itemStack.stackSize, craftMatrix.getInventoryStackLimit()));
+            ItemStack transferStack = itemStack.splitStack(Math.min(itemStack.func_190916_E(), craftMatrix.getInventoryStackLimit()));
             craftMatrix.setInventorySlotContents(index, transferStack);
         }
-        if (itemStack.stackSize <= 0) {
+        if (itemStack.func_190916_E() <= 0) {
             return null;
         }
         return itemStack;
@@ -217,20 +217,20 @@ public class DefaultProviderV2Impl implements DefaultProviderV2 {
         int start = provider.getCraftingGridStart(entityPlayer, container, id);
         int size = provider.getCraftingGridSize(entityPlayer, container, id);
         ItemStack itemStack = sourceSlot.getStack();
-        if (itemStack == null) {
+        if (itemStack.func_190926_b()) {
             return false;
         }
         int firstEmptySlot = -1;
         for (int i = start; i < start + size; i++) {
             int slotIndex = container.inventorySlots.get(i).getSlotIndex();
             ItemStack craftStack = craftMatrix.getStackInSlot(slotIndex);
-            if (craftStack != null) {
+            if (!craftStack.func_190926_b()) {
                 if (craftStack.isItemEqual(itemStack) && ItemStack.areItemStackTagsEqual(craftStack, itemStack)) {
-                    int spaceLeft = Math.min(craftMatrix.getInventoryStackLimit(), craftStack.getMaxStackSize()) - craftStack.stackSize;
+                    int spaceLeft = Math.min(craftMatrix.getInventoryStackLimit(), craftStack.getMaxStackSize()) - craftStack.func_190916_E();
                     if (spaceLeft > 0) {
-                        ItemStack splitStack = itemStack.splitStack(Math.min(spaceLeft, itemStack.stackSize));
-                        craftStack.stackSize += splitStack.stackSize;
-                        if (itemStack.stackSize <= 0) {
+                        ItemStack splitStack = itemStack.splitStack(Math.min(spaceLeft, itemStack.func_190916_E()));
+                        craftStack.func_190917_f(splitStack.func_190916_E());
+                        if (itemStack.func_190916_E() <= 0) {
                             return true;
                         }
                     }
@@ -239,8 +239,8 @@ public class DefaultProviderV2Impl implements DefaultProviderV2 {
                 firstEmptySlot = slotIndex;
             }
         }
-        if (itemStack.stackSize > 0 && firstEmptySlot != -1) {
-            ItemStack transferStack = itemStack.splitStack(Math.min(itemStack.stackSize, craftMatrix.getInventoryStackLimit()));
+        if (itemStack.func_190916_E() > 0 && firstEmptySlot != -1) {
+            ItemStack transferStack = itemStack.splitStack(Math.min(itemStack.func_190916_E(), craftMatrix.getInventoryStackLimit()));
             craftMatrix.setInventorySlotContents(firstEmptySlot, transferStack);
             return true;
         }

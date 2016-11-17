@@ -5,6 +5,7 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
 import org.lwjgl.input.Keyboard;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class GuiTweakButton extends GuiImageButton implements ITooltipProvider {
@@ -21,7 +22,7 @@ public class GuiTweakButton extends GuiImageButton implements ITooltipProvider {
     private int lastGuiLeft;
     private int lastGuiTop;
 
-    public GuiTweakButton(GuiContainer parentGui, int xPosition, int yPosition, int texCoordX, int texCoordY, TweakOption tweakOption, int tweakId) {
+    public GuiTweakButton(@Nullable GuiContainer parentGui, int xPosition, int yPosition, int texCoordX, int texCoordY, TweakOption tweakOption, int tweakId) {
         super(-1, xPosition, yPosition, texCoordX, texCoordY);
         this.parentGui = parentGui;
         this.tweakOption = tweakOption;

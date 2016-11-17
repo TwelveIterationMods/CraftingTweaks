@@ -11,9 +11,12 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
+import javax.annotation.Nullable;
+
 public class HandlerTransferStack implements IMessageHandler<MessageTransferStack, IMessage> {
 
     @Override
+    @Nullable
     public IMessage onMessage(final MessageTransferStack message, final MessageContext ctx) {
         CraftingTweaks.proxy.addScheduledTask(() -> {
             EntityPlayer entityPlayer = ctx.getServerHandler().playerEntity;
@@ -26,21 +29,21 @@ public class HandlerTransferStack implements IMessageHandler<MessageTransferStac
                         return;
                     }
                     ItemStack slotStack = slot.getStack();
-                    if(slotStack != null && slot.canTakeStack(entityPlayer)) {
+                    if(!slotStack.func_190926_b() && slot.canTakeStack(entityPlayer)) {
                         ItemStack oldStack = slotStack.copy();
                         if(!tweakProvider.transferIntoGrid(entityPlayer, container, message.id, slot)) {
                             return;
                         }
                         slot.onSlotChange(slotStack, oldStack);
-                        if(slotStack.stackSize <= 0) {
-                            slot.putStack(null);
+                        if(slotStack.func_190916_E() <= 0) {
+                            slot.putStack(ItemStack.field_190927_a);
                         } else {
                             slot.onSlotChanged();
                         }
-                        if(slotStack.stackSize == oldStack.stackSize) {
+                        if(slotStack.func_190916_E() == oldStack.func_190916_E()) {
                             return;
                         }
-                        slot.onPickupFromSlot(entityPlayer, slotStack);
+                        slot.func_190901_a(entityPlayer, slotStack); // onPickupFromSlot
                     }
                 }
             }
