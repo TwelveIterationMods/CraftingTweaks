@@ -100,7 +100,8 @@ public class CraftingTweaks {
         for(FMLInterModComms.IMCMessage message : event.getMessages()) {
             if(message.isNBTMessage() && (message.key.equals("RegisterProvider")
                     || message.key.equals("RegisterProviderV2")
-                    || message.key.equals("RegisterProviderV3"))) {
+                    || message.key.equals("RegisterProviderV3")
+                    || message.key.equals("RegisterProviderV4"))) {
                 NBTTagCompound tagCompound = message.getNBTValue();
                 String containerClassName = tagCompound.getString("ContainerClass");
                 SimpleTweakProvider provider = new SimpleTweakProviderImpl(message.getSender());
@@ -181,18 +182,43 @@ public class CraftingTweaks {
                     }
                 }
 
+                String gridSlotClass = tagCompound.getString("GridSlotClass");
+                if(!gridSlotClass.isEmpty()) {
+                    try {
+                        Class<?> clazz = Class.forName(gridSlotClass);
+                        provider.setGetGridStartFunction(new Function<Container, Integer>() {
+                            @Nullable
+                            @Override
+                            public Integer apply(@Nullable Container input) {
+                                assert input != null;
+                                for(int i = 0; i < input.inventorySlots.size(); i++) {
+                                    if(input.inventorySlots.get(i).getClass() == clazz) {
+                                        return i;
+                                    }
+                                }
+                                return 0;
+                            }
+                        });
+                    } catch (ClassNotFoundException e) {
+                        logger.error("%s sent an invalid GridSlotClass - %s", message.getSender(), e.getMessage());
+                    }
+                }
+
                 String getGridStartFunction = tagCompound.getString("GetGridStartFunction");
                 if(!getGridStartFunction.isEmpty()) {
+                    if(!gridSlotClass.isEmpty()) {
+                        logger.warn("%s sent a GridSlotClass even though a GetGridStartFunction was supplied - GridSlotClass will be ignored.", message.getSender());
+                    }
                     try {
                         Class<?> functionClass = Class.forName(getGridStartFunction);
                         if (!Function.class.isAssignableFrom(functionClass)) {
-                            logger.error(message.getSender() + " sent an invalid GetGridStartFunction - it must implement Function<Container, Integer>");
+                            logger.error("%s sent an invalid GetGridStartFunction - it must implement Function<Container, Integer>", message.getSender());
                             return;
                         }
                         Function<Container, Integer> function = (Function<Container, Integer>) functionClass.newInstance();
                         provider.setGetGridStartFunction(function);
                     } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-                        logger.error(message.getSender() + " sent an invalid GetGridStartFunction: " + e.getMessage());
+                        logger.error("%s sent an invalid GetGridStartFunction: %s", message.getSender(), e.getMessage());
                     }
                 }
 

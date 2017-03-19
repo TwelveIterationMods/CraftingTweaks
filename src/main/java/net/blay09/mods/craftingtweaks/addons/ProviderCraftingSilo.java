@@ -22,7 +22,7 @@ public class ProviderCraftingSilo implements TweakProvider<Container> {
 
     @Override
     public String getModId() {
-        return "storageSilo";
+        return "storagesilo";
     }
 
     @Override

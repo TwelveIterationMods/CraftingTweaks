@@ -10,28 +10,18 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nullable;
+
 public class CraftingTweaksAddons {
 
     public static final Logger logger = LogManager.getLogger();
 
     public static void postInit(FMLPostInitializationEvent event) {
-        ezstorage();
         thaumcraft();
         progressiveautomation();
 
         if(Loader.isModLoaded("storagesilo")) {
             registerProvider("uk.binarycraft.storagesilo.blocks.craftingsilo.ContainerCraftingSilo", new ProviderCraftingSilo());
-        }
-    }
-
-    private static void ezstorage() {
-        SimpleTweakProvider provider = registerSimpleProvider("ezstorage", "com.zerofall.ezstorage.container.ContainerStorageCoreCrafting");
-        if(provider != null) {
-            provider.setGrid(73, 9);
-            provider.setTweakRotate(true, true, 0, 0);
-            provider.setTweakBalance(true, true, 0, 0);
-            provider.setTweakClear(true, true, 0, 0);
-            provider.setAlignToGrid(EnumFacing.WEST);
         }
     }
 
@@ -57,6 +47,7 @@ public class CraftingTweaksAddons {
     }
 
     @SuppressWarnings("unchecked")
+    @Nullable
     private static SimpleTweakProvider registerSimpleProvider(String modid, String className) {
         try {
             if(Loader.isModLoaded(modid)) {
