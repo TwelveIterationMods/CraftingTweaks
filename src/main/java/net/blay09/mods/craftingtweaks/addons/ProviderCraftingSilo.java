@@ -79,8 +79,8 @@ public class ProviderCraftingSilo implements TweakProvider<Container> {
     @SideOnly(Side.CLIENT)
     public void initGui(GuiContainer guiContainer, List<GuiButton> list) {
         Slot firstSlot = guiContainer.inventorySlots.inventorySlots.get(getCraftingGridStart(FMLClientHandler.instance().getClientPlayerEntity(), guiContainer.inventorySlots, 0));
-        int startX = firstSlot.xDisplayPosition - 19;
-        int startY = firstSlot.yDisplayPosition;
+        int startX = firstSlot.xPos - 19;
+        int startY = firstSlot.yPos;
         list.add(CraftingTweaksAPI.createRotateButtonRelative(0, guiContainer, startX, startY));
         list.add(CraftingTweaksAPI.createBalanceButtonRelative(0, guiContainer, startX, startY + 18));
         list.add(CraftingTweaksAPI.createClearButtonRelative(0, guiContainer, startX, startY + 36));

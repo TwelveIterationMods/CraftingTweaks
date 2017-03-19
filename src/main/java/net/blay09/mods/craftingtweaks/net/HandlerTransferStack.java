@@ -19,7 +19,7 @@ public class HandlerTransferStack implements IMessageHandler<MessageTransferStac
     @Nullable
     public IMessage onMessage(final MessageTransferStack message, final MessageContext ctx) {
         CraftingTweaks.proxy.addScheduledTask(() -> {
-            EntityPlayer entityPlayer = ctx.getServerHandler().playerEntity;
+            EntityPlayer entityPlayer = ctx.getServerHandler().player;
             Container container = entityPlayer.openContainer;
             if(container != null && message.slotNumber >= 0 && message.slotNumber < container.inventorySlots.size()) {
                 TweakProvider<Container> tweakProvider = CraftingTweaks.instance.getProvider(container);
@@ -29,21 +29,21 @@ public class HandlerTransferStack implements IMessageHandler<MessageTransferStac
                         return;
                     }
                     ItemStack slotStack = slot.getStack();
-                    if(!slotStack.func_190926_b() && slot.canTakeStack(entityPlayer)) {
+                    if(!slotStack.isEmpty() && slot.canTakeStack(entityPlayer)) {
                         ItemStack oldStack = slotStack.copy();
                         if(!tweakProvider.transferIntoGrid(entityPlayer, container, message.id, slot)) {
                             return;
                         }
                         slot.onSlotChange(slotStack, oldStack);
-                        if(slotStack.func_190916_E() <= 0) {
-                            slot.putStack(ItemStack.field_190927_a);
+                        if(slotStack.getCount() <= 0) {
+                            slot.putStack(ItemStack.EMPTY);
                         } else {
                             slot.onSlotChanged();
                         }
-                        if(slotStack.func_190916_E() == oldStack.func_190916_E()) {
+                        if(slotStack.getCount() == oldStack.getCount()) {
                             return;
                         }
-                        slot.func_190901_a(entityPlayer, slotStack); // onPickupFromSlot
+                        slot.onTake(entityPlayer, slotStack);
                     }
                 }
             }

@@ -248,11 +248,11 @@ public class SimpleTweakProviderImpl<T extends Container> implements SimpleTweak
             case UP:
             case SOUTH:
             case DOWN:
-                return firstSlot.xDisplayPosition + 18 * index;
+                return firstSlot.xPos + 18 * index;
             case EAST:
-                return firstSlot.xDisplayPosition + 18 * 3 + 1;
+                return firstSlot.xPos + 18 * 3 + 1;
             case WEST:
-                return firstSlot.xDisplayPosition - 19;
+                return firstSlot.xPos - 19;
         }
         return 0;
     }
@@ -264,13 +264,13 @@ public class SimpleTweakProviderImpl<T extends Container> implements SimpleTweak
         switch (alignToGrid) {
             case NORTH:
             case UP:
-                return firstSlot.yDisplayPosition - 18 - 1;
+                return firstSlot.yPos - 18 - 1;
             case SOUTH:
             case DOWN:
-                return firstSlot.yDisplayPosition + 18 * 3 + 1;
+                return firstSlot.yPos + 18 * 3 + 1;
             case EAST:
             case WEST:
-                return firstSlot.yDisplayPosition + 18 * index;
+                return firstSlot.yPos + 18 * index;
         }
         return 0;
     }

@@ -27,6 +27,7 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -47,6 +48,7 @@ public class ClientProxy extends CommonProxy {
     private final KeyBinding keyDecompressOne = new KeyBinding("key.craftingtweaks.decompressOne", KeyConflictContext.GUI, KeyModifier.NONE, 0, "key.categories.craftingtweaks");
     private final KeyBinding keyDecompressStack = new KeyBinding("key.craftingtweaks.decompressStack", KeyConflictContext.GUI, KeyModifier.NONE, 0, "key.categories.craftingtweaks");
     private final KeyBinding keyDecompressAll = new KeyBinding("key.craftingtweaks.decompressAll", KeyConflictContext.GUI, KeyModifier.NONE, 0, "key.categories.craftingtweaks");
+    private final KeyBinding keyRefillLast = new KeyBinding("key.craftingtweaks.refill_last", KeyConflictContext.GUI, KeyModifier.NONE, Keyboard.KEY_TAB, "key.categories.craftingtweaks");
     private KeyBinding keyTransferStack;
 
     private boolean ignoreMouseUp;
@@ -66,6 +68,7 @@ public class ClientProxy extends CommonProxy {
         ClientRegistry.registerKeyBinding(keyDecompressOne);
         ClientRegistry.registerKeyBinding(keyDecompressStack);
         ClientRegistry.registerKeyBinding(keyDecompressAll);
+        ClientRegistry.registerKeyBinding(keyRefillLast);
         keyTransferStack = Minecraft.getMinecraft().gameSettings.keyBindForward;
     }
 
@@ -89,19 +92,19 @@ public class ClientProxy extends CommonProxy {
                         boolean isShiftDown = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
                         CraftingTweaks.ModSupportState config = CraftingTweaks.instance.getModSupportState(provider.getModId());
                         if (config == CraftingTweaks.ModSupportState.ENABLED || config == CraftingTweaks.ModSupportState.HOTKEYS_ONLY) {
-                            if (keyRotate.getKeyCode() > 0 && Keyboard.getEventKey() == keyRotate.getKeyCode()) {
+                            if (keyRotate.getKeyCode() > 0 && keyRotate.getKeyCode() == Keyboard.getEventKey()) { // Note: these can't be isActiveAndMatches because they behave differently on shift
                                 if (CraftingTweaks.isServerSideInstalled) {
                                     NetworkHandler.instance.sendToServer(new MessageRotate(0, isShiftDown));
                                 } else {
                                     clientProvider.rotateGrid(provider, entityPlayer, container, 0, isShiftDown);
                                 }
-                            } else if (keyClear.getKeyCode() > 0 && Keyboard.getEventKey() == keyClear.getKeyCode()) {
+                            } else if (keyClear.getKeyCode() > 0 && keyClear.getKeyCode() == Keyboard.getEventKey()) {
                                 if (CraftingTweaks.isServerSideInstalled) {
                                     NetworkHandler.instance.sendToServer(new MessageClear(0, isShiftDown));
                                 } else {
                                     clientProvider.clearGrid(provider, entityPlayer, container, 0, isShiftDown);
                                 }
-                            } else if (keyBalance.getKeyCode() > 0 && Keyboard.getEventKey() == keyBalance.getKeyCode()) {
+                            } else if (keyBalance.getKeyCode() > 0 && keyBalance.getKeyCode() == Keyboard.getEventKey()) {
                                 if (CraftingTweaks.isServerSideInstalled) {
                                     NetworkHandler.instance.sendToServer(new MessageBalance(0, isShiftDown));
                                 } else {
@@ -110,6 +113,13 @@ public class ClientProxy extends CommonProxy {
                                     } else {
                                         clientProvider.balanceGrid(provider, entityPlayer, container, 0);
                                     }
+                                }
+                            } else if(keyRefillLast.getKeyCode() > 0 && keyRefillLast.getKeyCode() == Keyboard.getEventKey()) {
+                                if (CraftingTweaks.isServerSideInstalled) {
+                                    // TODO send it
+                                    clientProvider.refillLastCrafted(provider, entityPlayer, container, 0, isShiftDown);
+                                } else {
+                                    clientProvider.refillLastCrafted(provider, entityPlayer, container, 0, isShiftDown);
                                 }
                             }
                         }
@@ -225,7 +235,7 @@ public class ClientProxy extends CommonProxy {
                             }
                             ItemStack mouseStack = entityPlayer.inventory.getItemStack();
                             int maxTries = 64;
-                            while(maxTries > 0 && mouseSlot.getHasStack() && (mouseStack.func_190926_b() || mouseStack.func_190916_E() < mouseStack.getMaxStackSize())) {
+                            while(maxTries > 0 && mouseSlot.getHasStack() && (mouseStack.isEmpty() || mouseStack.getCount() < mouseStack.getMaxStackSize())) {
                                 playerController.windowClick(container.windowId, mouseSlot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
                                 mouseStack = entityPlayer.inventory.getItemStack();
                                 maxTries--;
@@ -328,4 +338,8 @@ public class ClientProxy extends CommonProxy {
         }
     }
 
+    @SubscribeEvent
+    public void onItemCrafted(PlayerEvent.ItemCraftedEvent event) {
+        clientProvider.onItemCrafted(event.craftMatrix);
+    }
 }

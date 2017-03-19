@@ -16,7 +16,7 @@ public class HandlerBalance implements IMessageHandler<MessageBalance, IMessage>
     @Nullable
     public IMessage onMessage(final MessageBalance message, final MessageContext ctx) {
         CraftingTweaks.proxy.addScheduledTask(() -> {
-            EntityPlayer entityPlayer = ctx.getServerHandler().playerEntity;
+            EntityPlayer entityPlayer = ctx.getServerHandler().player;
             Container container = entityPlayer.openContainer;
             if(container != null) {
                 TweakProvider<Container> tweakProvider = CraftingTweaks.instance.getProvider(container);
