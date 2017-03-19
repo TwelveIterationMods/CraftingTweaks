@@ -17,18 +17,10 @@ public class CraftingTweaksAddons {
     public static final Logger logger = LogManager.getLogger();
 
     public static void postInit(FMLPostInitializationEvent event) {
-        jacb();
         progressiveautomation();
 
         if(Loader.isModLoaded("storagesilo")) {
             registerProvider("uk.binarycraft.storagesilo.blocks.craftingsilo.ContainerCraftingSilo", new ProviderCraftingSilo());
-        }
-    }
-
-    private static void jacb() {
-        SimpleTweakProvider provider = registerSimpleProvider("jacb", "tv.vanhal.jacb.gui.BenchContainer");
-        if(provider != null) {
-            provider.setAlignToGrid(EnumFacing.WEST);
         }
     }
 
