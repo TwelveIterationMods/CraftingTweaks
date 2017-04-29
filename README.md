@@ -16,7 +16,7 @@ In order to register your container for Crafting Tweaks, send an IMC message as 
 NBTTagCompound tagCompound = new NBTTagCompound();
 tagCompound.setString("ContainerClass", YourCraftingContainer.class.getName());
 
-// tagCompound.setInteger("ContainerValidPredicate", YourContainerPredicate.class.getName()); // requires RegisterProviderV3 or higher
+// tagCompound.setInteger("ValidContainerPredicate", YourContainerPredicate.class.getName()); // requires RegisterProviderV3 or higher
 // tagCompound.setInteger("GetGridStartFunction", YourGridStartFunction.class.getName()); // requires RegisterProviderV3 or higher
 
 // tagCompound.setInteger("GridSlotNumber", 1);
