@@ -31,6 +31,7 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
+import javax.annotation.Nullable;
 import java.util.Iterator;
 import java.util.List;
 
@@ -77,9 +78,8 @@ public class ClientProxy extends CommonProxy {
         Minecraft.getMinecraft().addScheduledTask(runnable);
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    @SuppressWarnings("unused")
-    public void onGuiKeyboardEvent(GuiScreenEvent.KeyboardInputEvent.Pre event) {
+    @SubscribeEvent
+    public void onGuiKeyboardEvent(GuiScreenEvent.KeyboardInputEvent.Post event) {
         if (Keyboard.getEventKeyState()) {
             EntityPlayer entityPlayer = FMLClientHandler.instance().getClientPlayerEntity();
             if (entityPlayer != null) {
@@ -87,24 +87,27 @@ public class ClientProxy extends CommonProxy {
                 if (container != null) {
                     GuiScreen guiScreen = Minecraft.getMinecraft().currentScreen;
                     TweakProvider<Container> provider = CraftingTweaks.instance.getProvider(container);
-                    CompressType compressType = getCompressType(Keyboard.getEventKey());
+                    int keyCode = Keyboard.getEventKey();
+                    CompressType compressType = getCompressType(keyCode);
                     if (provider != null && provider.isValidContainer(container)) {
                         boolean isShiftDown = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
                         CraftingTweaks.ModSupportState config = CraftingTweaks.instance.getModSupportState(provider.getModId());
                         if (config == CraftingTweaks.ModSupportState.ENABLED || config == CraftingTweaks.ModSupportState.HOTKEYS_ONLY) {
-                            if (keyRotate.getKeyCode() > 0 && keyRotate.getKeyCode() == Keyboard.getEventKey()) { // Note: these can't be isActiveAndMatches because they behave differently on shift
+                            if (keyRotate.getKeyCode() > 0 && keyRotate.getKeyCode() == keyCode) { // Note: these can't be isActiveAndMatches because they behave differently on shift
                                 if (CraftingTweaks.isServerSideInstalled) {
                                     NetworkHandler.instance.sendToServer(new MessageRotate(0, isShiftDown));
                                 } else {
                                     clientProvider.rotateGrid(provider, entityPlayer, container, 0, isShiftDown);
                                 }
-                            } else if (keyClear.getKeyCode() > 0 && keyClear.getKeyCode() == Keyboard.getEventKey()) {
+                                event.setCanceled(true);
+                            } else if (keyClear.getKeyCode() > 0 && keyClear.getKeyCode() ==keyCode) {
                                 if (CraftingTweaks.isServerSideInstalled) {
                                     NetworkHandler.instance.sendToServer(new MessageClear(0, isShiftDown));
                                 } else {
                                     clientProvider.clearGrid(provider, entityPlayer, container, 0, isShiftDown);
                                 }
-                            } else if (keyBalance.getKeyCode() > 0 && keyBalance.getKeyCode() == Keyboard.getEventKey()) {
+                                event.setCanceled(true);
+                            } else if (keyBalance.getKeyCode() > 0 && keyBalance.getKeyCode() == keyCode) {
                                 if (CraftingTweaks.isServerSideInstalled) {
                                     NetworkHandler.instance.sendToServer(new MessageBalance(0, isShiftDown));
                                 } else {
@@ -114,13 +117,15 @@ public class ClientProxy extends CommonProxy {
                                         clientProvider.balanceGrid(provider, entityPlayer, container, 0);
                                     }
                                 }
-                            } else if(keyRefillLast.getKeyCode() > 0 && keyRefillLast.getKeyCode() == Keyboard.getEventKey()) {
+                                event.setCanceled(true);
+                            } else if(keyRefillLast.getKeyCode() > 0 && keyRefillLast.getKeyCode() == keyCode) {
                                 if (CraftingTweaks.isServerSideInstalled) {
                                     // TODO send it
                                     clientProvider.refillLastCrafted(provider, entityPlayer, container, 0, isShiftDown);
                                 } else {
                                     clientProvider.refillLastCrafted(provider, entityPlayer, container, 0, isShiftDown);
                                 }
+                                event.setCanceled(true);
                             }
                         }
                         if (guiScreen instanceof GuiContainer) {
@@ -133,36 +138,35 @@ public class ClientProxy extends CommonProxy {
                                     } else {
                                         clientProvider.compress(provider, entityPlayer, container, mouseSlot, compressType);
                                     }
+                                    event.setCanceled(true);
                                 }
-                            } else if (keyToggleButtons.getKeyCode() > 0 && Keyboard.getEventKey() == keyToggleButtons.getKeyCode()) {
+                            } else if (keyToggleButtons.getKeyCode() > 0 && keyCode == keyToggleButtons.getKeyCode()) {
                                 CraftingTweaks.hideButtons = !CraftingTweaks.hideButtons;
                                 if (CraftingTweaks.hideButtons) {
-                                    Iterator it = guiScreen.buttonList.iterator();
-                                    while (it.hasNext()) {
-                                        if (it.next() instanceof GuiTweakButton) {
-                                            it.remove();
-                                        }
-                                    }
+                                    guiScreen.buttonList.removeIf(o -> o instanceof GuiTweakButton);
                                 } else {
                                     initGui(guiContainer);
                                 }
                                 CraftingTweaks.saveConfig();
+                                event.setCanceled(true);
                             }
                         }
                     } else if (CraftingTweaks.isServerSideInstalled && guiScreen instanceof GuiContainer) {
                         GuiContainer guiContainer = (GuiContainer) guiScreen;
                         if (compressType != null) {
                             Slot mouseSlot = guiContainer.getSlotUnderMouse();
-                            if (mouseSlot != null) { // Forge needs @Nullable
+                            if (mouseSlot != null) {
                                 NetworkHandler.instance.sendToServer(new MessageCompress(mouseSlot.slotNumber, compressType));
                             }
                         }
+                        event.setCanceled(true);
                     }
                 }
             }
         }
     }
 
+    @Nullable
     private CompressType getCompressType(int eventKey) {
         if(isActiveAndMatches(keyCompressOne, eventKey)) {
             return CompressType.COMPRESS_ONE;
@@ -189,8 +193,7 @@ public class ClientProxy extends CommonProxy {
         return keyBinding.isActiveAndMatches(eventKey);
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    @SuppressWarnings("unused")
+    @SubscribeEvent
     public void onGuiMouseEvent(GuiScreenEvent.MouseInputEvent.Pre event) {
         if (Mouse.getEventButtonState()) {
             EntityPlayer entityPlayer = FMLClientHandler.instance().getClientPlayerEntity();
