@@ -158,8 +158,8 @@ public class ClientProxy extends CommonProxy {
                             if (mouseSlot != null) {
                                 NetworkHandler.instance.sendToServer(new MessageCompress(mouseSlot.slotNumber, compressType));
                             }
+                            event.setCanceled(true);
                         }
-                        event.setCanceled(true);
                     }
                 }
             }
