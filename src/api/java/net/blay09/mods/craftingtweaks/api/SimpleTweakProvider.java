@@ -1,11 +1,11 @@
 package net.blay09.mods.craftingtweaks.api;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.EnumFacing;
 
 import javax.annotation.Nullable;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 public interface SimpleTweakProvider<T extends Container> extends TweakProvider<T> {
 

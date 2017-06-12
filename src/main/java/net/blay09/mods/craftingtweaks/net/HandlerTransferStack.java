@@ -7,6 +7,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -18,7 +19,7 @@ public class HandlerTransferStack implements IMessageHandler<MessageTransferStac
     @Override
     @Nullable
     public IMessage onMessage(final MessageTransferStack message, final MessageContext ctx) {
-        CraftingTweaks.proxy.addScheduledTask(() -> {
+        ((WorldServer) ctx.getServerHandler().player.world).addScheduledTask(() -> {
             EntityPlayer entityPlayer = ctx.getServerHandler().player;
             Container container = entityPlayer.openContainer;
             if(container != null && message.slotNumber >= 0 && message.slotNumber < container.inventorySlots.size()) {

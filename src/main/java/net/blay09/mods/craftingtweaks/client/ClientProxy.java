@@ -10,6 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.gui.inventory.GuiCrafting;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
@@ -25,15 +26,14 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import javax.annotation.Nullable;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 @SuppressWarnings("unused")
 public class ClientProxy extends CommonProxy {
@@ -71,11 +71,6 @@ public class ClientProxy extends CommonProxy {
         ClientRegistry.registerKeyBinding(keyDecompressAll);
         ClientRegistry.registerKeyBinding(keyRefillLast);
         keyTransferStack = Minecraft.getMinecraft().gameSettings.keyBindForward;
-    }
-
-    @Override
-    public void addScheduledTask(Runnable runnable) {
-        Minecraft.getMinecraft().addScheduledTask(runnable);
     }
 
     @SubscribeEvent
@@ -267,13 +262,32 @@ public class ClientProxy extends CommonProxy {
         }
     }
 
+    private void fixVanillaCraftGuideButton(GuiScreen gui, GuiButton button) {
+        GuiCrafting guiCrafting = (GuiCrafting) gui;
+        button.x = guiCrafting.getGuiLeft() + guiCrafting.getXSize() - 25;
+        button.y = guiCrafting.getGuiTop() + 5;
+    }
+
     @SubscribeEvent
     @SuppressWarnings("unused")
     public void onInitGui(GuiScreenEvent.InitGuiEvent.Post event) {
         if (!CraftingTweaks.hideButtons) {
+            if(event.getGui() instanceof GuiCrafting) {
+                Optional<GuiButton> button = event.getButtonList().stream().filter(p -> p.id == 10).findFirst();
+                button.ifPresent(guiButton -> {
+                    fixVanillaCraftGuideButton(event.getGui(), guiButton);
+                });
+            }
             if (event.getGui() instanceof GuiContainer) {
                 initGui((GuiContainer) event.getGui());
             }
+        }
+    }
+
+    @SubscribeEvent
+    public void onActionPerformed(GuiScreenEvent.ActionPerformedEvent.Post event) {
+        if(event.getGui() instanceof GuiCrafting && event.getButton().id == 10) {
+            fixVanillaCraftGuideButton(event.getGui(), event.getButton());
         }
     }
 
@@ -307,6 +321,9 @@ public class ClientProxy extends CommonProxy {
             EntityPlayer entityPlayer = FMLClientHandler.instance().getClientPlayerEntity();
             Container container = entityPlayer.openContainer;
             TweakProvider<Container> provider = CraftingTweaks.instance.getProvider(container);
+            if(provider == null) {
+                return;
+            }
             boolean isShiftDown = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
             switch (((GuiTweakButton) event.getButton()).getTweakOption()) {
                 case Rotate:

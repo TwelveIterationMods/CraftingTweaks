@@ -4,6 +4,7 @@ import net.blay09.mods.craftingtweaks.CraftingTweaks;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -15,7 +16,7 @@ public class HandlerRotate implements IMessageHandler<MessageRotate, IMessage> {
     @Override
     @Nullable
     public IMessage onMessage(final MessageRotate message, final MessageContext ctx) {
-        CraftingTweaks.proxy.addScheduledTask(() -> {
+        ((WorldServer) ctx.getServerHandler().player.world).addScheduledTask(() -> {
             EntityPlayer entityPlayer = ctx.getServerHandler().player;
             Container container = entityPlayer.openContainer;
             if(container != null) {

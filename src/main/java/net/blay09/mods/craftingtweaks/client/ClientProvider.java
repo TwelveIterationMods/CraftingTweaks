@@ -14,6 +14,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.Collection;
@@ -405,7 +406,7 @@ public class ClientProvider {
                 ItemStack result;
                 ItemStack mouseStack = slot.getStack();
                 if (size == 9 && !mouseStack.isEmpty() && mouseStack.getCount() >= 9) {
-                    result = CraftingManager.getInstance().findMatchingRecipe(new InventoryCraftingCompress(container, 3, mouseStack), entityPlayer.world);
+                    result = CraftingManager.findMatchingRecipe(new InventoryCraftingCompress(container, 3, mouseStack), entityPlayer.world);
                     if (!result.isEmpty() && !isCompressBlacklisted(result)) {
                         getController().windowClick(container.windowId, slot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
                         getController().windowClick(container.windowId, -999, getDragSplittingButton(0, 0), ClickType.QUICK_CRAFT, entityPlayer);
@@ -415,7 +416,7 @@ public class ClientProvider {
                         getController().windowClick(container.windowId, -999, getDragSplittingButton(2, 0), ClickType.QUICK_CRAFT, entityPlayer);
                         getController().windowClick(container.windowId, slot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
                     } else {
-                        result = CraftingManager.getInstance().findMatchingRecipe(new InventoryCraftingCompress(container, 2, mouseStack), entityPlayer.world);
+                        result = CraftingManager.findMatchingRecipe(new InventoryCraftingCompress(container, 2, mouseStack), entityPlayer.world);
                         if (!result.isEmpty() && !isCompressBlacklisted(result)) {
                             getController().windowClick(container.windowId, slot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
                             getController().windowClick(container.windowId, -999, getDragSplittingButton(0, 0), ClickType.QUICK_CRAFT, entityPlayer);
@@ -430,7 +431,7 @@ public class ClientProvider {
                         }
                     }
                 } else if (size >= 4 && !mouseStack.isEmpty() && mouseStack.getCount() >= 4) {
-                    result = CraftingManager.getInstance().findMatchingRecipe(new InventoryCraftingCompress(container, 2, mouseStack), entityPlayer.world);
+                    result = CraftingManager.findMatchingRecipe(new InventoryCraftingCompress(container, 2, mouseStack), entityPlayer.world);
                     if (!result.isEmpty() && !isCompressBlacklisted(result)) {
                         getController().windowClick(container.windowId, slot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
                         getController().windowClick(container.windowId, -999, getDragSplittingButton(0, 0), ClickType.QUICK_CRAFT, entityPlayer);
@@ -473,7 +474,8 @@ public class ClientProvider {
     }
 
     private boolean isCompressBlacklisted(ItemStack result) {
-        return CraftingTweaks.compressBlacklist.contains(result.getItem().getRegistryName().toString());
+        ResourceLocation registryName = result.getItem().getRegistryName();
+        return registryName != null && CraftingTweaks.compressBlacklist.contains(registryName.toString());
     }
 
     public void onItemCrafted(IInventory craftMatrix) {

@@ -30,7 +30,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
-@Mod(modid = CraftingTweaks.MOD_ID, name = "Crafting Tweaks", acceptedMinecraftVersions = "[1.11]", guiFactory = "net.blay09.mods.craftingtweaks.client.GuiFactory")
+@Mod(modid = CraftingTweaks.MOD_ID, name = "Crafting Tweaks", acceptedMinecraftVersions = "[1.12]", guiFactory = "net.blay09.mods.craftingtweaks.client.GuiFactory")
 public class CraftingTweaks {
 
     public static boolean TEST_CLIENT_SIDE = false;
@@ -42,7 +42,7 @@ public class CraftingTweaks {
         DISABLED;
 
         public static ModSupportState fromName(String name) {
-            try {
+                try {
                 return valueOf(name.toUpperCase());
             } catch (IllegalArgumentException e) {
                 return ENABLED;

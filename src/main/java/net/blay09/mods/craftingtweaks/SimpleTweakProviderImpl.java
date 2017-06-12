@@ -1,7 +1,5 @@
 package net.blay09.mods.craftingtweaks;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
 import net.blay09.mods.craftingtweaks.api.DefaultProviderV2;
 import net.blay09.mods.craftingtweaks.api.RotationHandler;
@@ -20,6 +18,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class SimpleTweakProviderImpl<T extends Container> implements SimpleTweakProvider<T> {
 
@@ -191,8 +191,7 @@ public class SimpleTweakProviderImpl<T extends Container> implements SimpleTweak
     @Override
     public int getCraftingGridStart(EntityPlayer entityPlayer, T container, int id) {
         if(getGridStartFunction != null) {
-            Integer result = getGridStartFunction.apply(container);
-            return result != null ? result : 0;
+            return getGridStartFunction.apply(container);
         }
         return gridSlotNumber;
     }
@@ -287,6 +286,6 @@ public class SimpleTweakProviderImpl<T extends Container> implements SimpleTweak
 
     @Override
     public boolean isValidContainer(Container container) {
-        return isContainerValidPredicate == null || isContainerValidPredicate.apply(container);
+        return isContainerValidPredicate == null || isContainerValidPredicate.test(container);
     }
 }
