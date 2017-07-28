@@ -406,7 +406,7 @@ public class ClientProvider {
                 ItemStack result;
                 ItemStack mouseStack = slot.getStack();
                 if (size == 9 && !mouseStack.isEmpty() && mouseStack.getCount() >= 9) {
-                    result = CraftingManager.findMatchingRecipe(new InventoryCraftingCompress(container, 3, mouseStack), entityPlayer.world);
+                    result = CraftingManager.findMatchingResult(new InventoryCraftingCompress(container, 3, mouseStack), entityPlayer.world);
                     if (!result.isEmpty() && !isCompressBlacklisted(result)) {
                         getController().windowClick(container.windowId, slot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
                         getController().windowClick(container.windowId, -999, getDragSplittingButton(0, 0), ClickType.QUICK_CRAFT, entityPlayer);
@@ -416,7 +416,7 @@ public class ClientProvider {
                         getController().windowClick(container.windowId, -999, getDragSplittingButton(2, 0), ClickType.QUICK_CRAFT, entityPlayer);
                         getController().windowClick(container.windowId, slot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
                     } else {
-                        result = CraftingManager.findMatchingRecipe(new InventoryCraftingCompress(container, 2, mouseStack), entityPlayer.world);
+                        result = CraftingManager.findMatchingResult(new InventoryCraftingCompress(container, 2, mouseStack), entityPlayer.world);
                         if (!result.isEmpty() && !isCompressBlacklisted(result)) {
                             getController().windowClick(container.windowId, slot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
                             getController().windowClick(container.windowId, -999, getDragSplittingButton(0, 0), ClickType.QUICK_CRAFT, entityPlayer);
@@ -431,7 +431,7 @@ public class ClientProvider {
                         }
                     }
                 } else if (size >= 4 && !mouseStack.isEmpty() && mouseStack.getCount() >= 4) {
-                    result = CraftingManager.findMatchingRecipe(new InventoryCraftingCompress(container, 2, mouseStack), entityPlayer.world);
+                    result = CraftingManager.findMatchingResult(new InventoryCraftingCompress(container, 2, mouseStack), entityPlayer.world);
                     if (!result.isEmpty() && !isCompressBlacklisted(result)) {
                         getController().windowClick(container.windowId, slot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
                         getController().windowClick(container.windowId, -999, getDragSplittingButton(0, 0), ClickType.QUICK_CRAFT, entityPlayer);
