@@ -125,6 +125,8 @@ public class Compatiblity {
     public static void buildcraft() {
         SimpleTweakProvider provider = registerSimpleProvider("BuildCraft|Factory", "buildcraft.factory.gui.ContainerAutoWorkbench");
         if (provider != null) {
+            provider.setGrid(2, 9);
+            provider.setPhantomItems(true);
             provider.setTweakRotate(true, true, 0, 0);
             provider.setTweakBalance(true, true, 0, 0);
             provider.setTweakClear(true, true, 0, 0);
