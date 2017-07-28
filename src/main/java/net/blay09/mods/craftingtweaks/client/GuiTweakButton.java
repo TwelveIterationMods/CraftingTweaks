@@ -53,7 +53,7 @@ public class GuiTweakButton extends GuiImageButton implements ITooltipProvider {
     }
 
     @Override
-    public void func_191745_a(Minecraft mc, int mouseX, int mouseY, float partialTicks) { // drawButton
+    public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
         int oldX = x;
         int oldY = y;
         // If parentGui is set, we only store the relative position in the button for mods that do hacky things where guiLeft/guiTop constantly changes
@@ -67,7 +67,7 @@ public class GuiTweakButton extends GuiImageButton implements ITooltipProvider {
         if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
             texCoordX += 48;
         }
-        super.func_191745_a(mc, mouseX, mouseY, partialTicks); // drawButton
+        super.drawButton(mc, mouseX, mouseY, partialTicks);
         texCoordX = oldTexCoordX;
         x = oldX;
         y = oldY;

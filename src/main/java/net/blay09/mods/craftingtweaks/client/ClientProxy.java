@@ -3,6 +3,7 @@ package net.blay09.mods.craftingtweaks.client;
 import com.google.common.collect.Lists;
 import net.blay09.mods.craftingtweaks.CommonProxy;
 import net.blay09.mods.craftingtweaks.CompressType;
+import net.blay09.mods.craftingtweaks.CraftingGuideButtonFixer;
 import net.blay09.mods.craftingtweaks.CraftingTweaks;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.blay09.mods.craftingtweaks.net.*;
@@ -262,23 +263,12 @@ public class ClientProxy extends CommonProxy {
         }
     }
 
-    private void fixVanillaCraftGuideButton(GuiScreen gui, GuiButton button) {
-        GuiCrafting guiCrafting = (GuiCrafting) gui;
-        button.x = guiCrafting.getGuiLeft() + guiCrafting.getXSize() - 25;
-        button.y = guiCrafting.getGuiTop() + 5;
-    }
-
     @SubscribeEvent
     @SuppressWarnings("unused")
     public void onInitGui(GuiScreenEvent.InitGuiEvent.Post event) {
         if (!CraftingTweaks.hideButtons) {
-            if(event.getGui() instanceof GuiCrafting) {
-                Optional<GuiButton> button = event.getButtonList().stream().filter(p -> p.id == 10).findFirst();
-                button.ifPresent(guiButton -> {
-                    fixVanillaCraftGuideButton(event.getGui(), guiButton);
-                });
-            }
             if (event.getGui() instanceof GuiContainer) {
+                CraftingGuideButtonFixer.fixMistakes((GuiContainer) event.getGui(), event.getButtonList());
                 initGui((GuiContainer) event.getGui());
             }
         }
@@ -286,8 +276,8 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public void onActionPerformed(GuiScreenEvent.ActionPerformedEvent.Post event) {
-        if(event.getGui() instanceof GuiCrafting && event.getButton().id == 10) {
-            fixVanillaCraftGuideButton(event.getGui(), event.getButton());
+        if(event.getGui() instanceof GuiContainer) {
+            CraftingGuideButtonFixer.fixMistakes((GuiContainer) event.getGui(), event.getButtonList());
         }
     }
 
