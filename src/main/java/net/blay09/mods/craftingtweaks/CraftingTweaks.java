@@ -78,6 +78,7 @@ public class CraftingTweaks {
     public static boolean compressAnywhere;
     public static boolean hideButtonTooltips;
     public static List<String> compressBlacklist;
+    public static boolean hideVanillaCraftingGuide;
 
     public static boolean isServerSideInstalled;
 
@@ -246,6 +247,7 @@ public class CraftingTweaks {
 
     public void reloadConfig() {
         hideButtons = config.getBoolean("hideButtons", "general", false, "This option is toggled by the 'Toggle Buttons' key that can be defined in the Controls settings.");
+        hideVanillaCraftingGuide = config.getBoolean("hideVanillaCraftingGuide", "general", false, "We both know JEI is much better. This option hides Vanilla's crafting book button instead of moving it.");
         rightClickCraftsStack = config.getBoolean("rightClickCraftsStack", "general", true, "If set to true, right-clicking the result slot in a crafting table will craft a full stack.");
         hideButtonTooltips = config.getBoolean("hideButtonTooltips", "general", false, "Set this to true if you don't want the tweak buttons' tooltips to show.");
         compressAnywhere = config.getBoolean("compressAnywhere", "general", false, "Set this to true if you want the (de)compress feature to work outside of crafting GUIs (only works if installed on server)");

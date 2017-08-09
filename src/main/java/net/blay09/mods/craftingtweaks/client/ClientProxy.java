@@ -11,7 +11,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.gui.inventory.GuiCrafting;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
@@ -34,7 +33,6 @@ import org.lwjgl.input.Mouse;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Optional;
 
 @SuppressWarnings("unused")
 public class ClientProxy extends CommonProxy {
