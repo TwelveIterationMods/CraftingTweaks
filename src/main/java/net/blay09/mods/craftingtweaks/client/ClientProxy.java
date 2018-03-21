@@ -38,9 +38,12 @@ import java.util.List;
 public class ClientProxy extends CommonProxy {
 
 	private final ClientProvider clientProvider = new ClientProvider();
-	private final KeyBinding keyRotate = new KeyBinding("key.craftingtweaks.rotate", KeyConflictContext.GUI, KeyModifier.NONE, Keyboard.KEY_R, "key.categories.craftingtweaks");
-	private final KeyBinding keyBalance = new KeyBinding("key.craftingtweaks.balance", KeyConflictContext.GUI, KeyModifier.NONE, Keyboard.KEY_B, "key.categories.craftingtweaks");
-	private final KeyBinding keyClear = new KeyBinding("key.craftingtweaks.clear", KeyConflictContext.GUI, KeyModifier.NONE, Keyboard.KEY_C, "key.categories.craftingtweaks");
+	private final KeyBinding keyRotate = new KeyBinding("key.craftingtweaks.rotate", KeyConflictContext.GUI, KeyModifier.NONE, 0, "key.categories.craftingtweaks");
+	private final KeyBinding keyRotateCounterClockwise = new KeyBinding("key.craftingtweaks.rotate_counter_clockwise", KeyConflictContext.GUI, KeyModifier.NONE, 0, "key.categories.craftingtweaks");
+	private final KeyBinding keyBalance = new KeyBinding("key.craftingtweaks.balance", KeyConflictContext.GUI, KeyModifier.NONE, 0, "key.categories.craftingtweaks");
+	private final KeyBinding keySpread = new KeyBinding("key.craftingtweaks.spread", KeyConflictContext.GUI, KeyModifier.NONE, 0, "key.categories.craftingtweaks");
+	private final KeyBinding keyClear = new KeyBinding("key.craftingtweaks.clear", KeyConflictContext.GUI, KeyModifier.NONE, 0, "key.categories.craftingtweaks");
+	private final KeyBinding keyForceClear = new KeyBinding("key.craftingtweaks.force_clear", KeyConflictContext.GUI, KeyModifier.NONE, 0, "key.categories.craftingtweaks");
 	private final KeyBinding keyToggleButtons = new KeyBinding("key.craftingtweaks.toggleButtons", KeyConflictContext.GUI, KeyModifier.NONE, 0, "key.categories.craftingtweaks");
 	private final KeyBinding keyCompressOne = new KeyBinding("key.craftingtweaks.compressOne", KeyConflictContext.GUI, KeyModifier.CONTROL, Keyboard.KEY_K, "key.categories.craftingtweaks");
 	private final KeyBinding keyCompressStack = new KeyBinding("key.craftingtweaks.compressStack", KeyConflictContext.GUI, KeyModifier.NONE, Keyboard.KEY_K, "key.categories.craftingtweaks");
@@ -49,6 +52,7 @@ public class ClientProxy extends CommonProxy {
 	private final KeyBinding keyDecompressStack = new KeyBinding("key.craftingtweaks.decompressStack", KeyConflictContext.GUI, KeyModifier.NONE, 0, "key.categories.craftingtweaks");
 	private final KeyBinding keyDecompressAll = new KeyBinding("key.craftingtweaks.decompressAll", KeyConflictContext.GUI, KeyModifier.NONE, 0, "key.categories.craftingtweaks");
 	private final KeyBinding keyRefillLast = new KeyBinding("key.craftingtweaks.refill_last", KeyConflictContext.GUI, KeyModifier.NONE, Keyboard.KEY_TAB, "key.categories.craftingtweaks");
+	private final KeyBinding keyRefillLastStack = new KeyBinding("key.craftingtweaks.refill_last_stack", KeyConflictContext.GUI, KeyModifier.NONE, Keyboard.KEY_TAB, "key.categories.craftingtweaks");
 	private KeyBinding keyTransferStack;
 
 	private boolean ignoreMouseUp;
@@ -60,8 +64,11 @@ public class ClientProxy extends CommonProxy {
 		MinecraftForge.EVENT_BUS.register(this);
 
 		ClientRegistry.registerKeyBinding(keyRotate);
+		ClientRegistry.registerKeyBinding(keyRotateCounterClockwise);
 		ClientRegistry.registerKeyBinding(keyBalance);
+		ClientRegistry.registerKeyBinding(keySpread);
 		ClientRegistry.registerKeyBinding(keyClear);
+		ClientRegistry.registerKeyBinding(keyForceClear);
 		ClientRegistry.registerKeyBinding(keyToggleButtons);
 		ClientRegistry.registerKeyBinding(keyCompressOne);
 		ClientRegistry.registerKeyBinding(keyCompressStack);
@@ -70,6 +77,7 @@ public class ClientProxy extends CommonProxy {
 		ClientRegistry.registerKeyBinding(keyDecompressStack);
 		ClientRegistry.registerKeyBinding(keyDecompressAll);
 		ClientRegistry.registerKeyBinding(keyRefillLast);
+		ClientRegistry.registerKeyBinding(keyRefillLastStack);
 		keyTransferStack = Minecraft.getMinecraft().gameSettings.keyBindForward;
 	}
 
@@ -88,38 +96,41 @@ public class ClientProxy extends CommonProxy {
 						boolean isShiftDown = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
 						CraftingTweaks.ModSupportState config = CraftingTweaks.instance.getModSupportState(provider.getModId());
 						if (config == CraftingTweaks.ModSupportState.ENABLED || config == CraftingTweaks.ModSupportState.HOTKEYS_ONLY) {
-							if (keyRotate.getKeyCode() > 0 && keyRotate.getKeyCode() == keyCode) { // Note: these can't be isActiveAndMatches because they behave differently on shift
+							boolean isRotate = keyRotate.isActiveAndMatches(keyCode);
+							boolean isRotateCCW = keyRotateCounterClockwise.isActiveAndMatches(keyCode);
+							boolean isBalance = keyBalance.isActiveAndMatches(keyCode);
+							boolean isSpread = keySpread.isActiveAndMatches(keyCode);
+							boolean isClear = keyClear.isActiveAndMatches(keyCode);
+							boolean isForceClear = keyForceClear.isActiveAndMatches(keyCode);
+							boolean isRefill = keyRefillLast.isActiveAndMatches(keyCode);
+							boolean isRefillStack = keyRefillLastStack.isActiveAndMatches(keyCode);
+							if(isRotate || isRotateCCW) {
 								if (CraftingTweaks.isServerSideInstalled) {
-									NetworkHandler.instance.sendToServer(new MessageRotate(0, isShiftDown));
+									NetworkHandler.instance.sendToServer(new MessageRotate(0, isRotateCCW));
 								} else {
-									clientProvider.rotateGrid(provider, entityPlayer, container, 0, isShiftDown);
+									clientProvider.rotateGrid(provider, entityPlayer, container, 0, isRotateCCW);
 								}
 								event.setCanceled(true);
-							} else if (keyClear.getKeyCode() > 0 && keyClear.getKeyCode() == keyCode) {
+							} else if (isClear || isForceClear) {
 								if (CraftingTweaks.isServerSideInstalled) {
-									NetworkHandler.instance.sendToServer(new MessageClear(0, isShiftDown));
+									NetworkHandler.instance.sendToServer(new MessageClear(0, isForceClear));
 								} else {
-									clientProvider.clearGrid(provider, entityPlayer, container, 0, isShiftDown);
+									clientProvider.clearGrid(provider, entityPlayer, container, 0, isForceClear);
 								}
 								event.setCanceled(true);
-							} else if (keyBalance.getKeyCode() > 0 && keyBalance.getKeyCode() == keyCode) {
+							} else if (isBalance || isSpread) {
 								if (CraftingTweaks.isServerSideInstalled) {
-									NetworkHandler.instance.sendToServer(new MessageBalance(0, isShiftDown));
+									NetworkHandler.instance.sendToServer(new MessageBalance(0, isSpread));
 								} else {
-									if (isShiftDown) {
+									if (isSpread) {
 										clientProvider.spreadGrid(provider, entityPlayer, container, 0);
 									} else {
 										clientProvider.balanceGrid(provider, entityPlayer, container, 0);
 									}
 								}
 								event.setCanceled(true);
-							} else if (keyRefillLast.getKeyCode() > 0 && keyRefillLast.getKeyCode() == keyCode) {
-								if (CraftingTweaks.isServerSideInstalled) {
-									// TODO send it
-									clientProvider.refillLastCrafted(provider, entityPlayer, container, 0, isShiftDown);
-								} else {
-									clientProvider.refillLastCrafted(provider, entityPlayer, container, 0, isShiftDown);
-								}
+							} else if (isRefill || isRefillStack) {
+								clientProvider.refillLastCrafted(provider, entityPlayer, container, 0, isRefillStack);
 								event.setCanceled(true);
 							}
 						}
@@ -262,11 +273,9 @@ public class ClientProxy extends CommonProxy {
 	@SubscribeEvent
 	@SuppressWarnings("unused")
 	public void onInitGui(GuiScreenEvent.InitGuiEvent.Post event) {
-		if (!CraftingTweaks.hideButtons) {
-			if (event.getGui() instanceof GuiContainer) {
-				CraftingGuideButtonFixer.fixMistakes((GuiContainer) event.getGui(), event.getButtonList());
-				initGui((GuiContainer) event.getGui());
-			}
+		if (event.getGui() instanceof GuiContainer) {
+			CraftingGuideButtonFixer.fixMistakes((GuiContainer) event.getGui(), event.getButtonList());
+			initGui((GuiContainer) event.getGui());
 		}
 	}
 
