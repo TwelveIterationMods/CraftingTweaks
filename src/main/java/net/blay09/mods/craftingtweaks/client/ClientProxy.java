@@ -26,6 +26,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import org.lwjgl.input.Keyboard;
@@ -270,11 +271,19 @@ public class ClientProxy extends CommonProxy {
 		}
 	}
 
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	@SuppressWarnings("unused")
+	public void onInitGuiFirst(GuiScreenEvent.InitGuiEvent.Post event) {
+		// We need to do this as soon as possible because EnderIO wraps the button and gives it a new id, completely hiding it from other mods...
+		if (event.getGui() instanceof GuiContainer) {
+			CraftingGuideButtonFixer.fixMistakes((GuiContainer) event.getGui(), event.getButtonList());
+		}
+	}
+
 	@SubscribeEvent
 	@SuppressWarnings("unused")
 	public void onInitGui(GuiScreenEvent.InitGuiEvent.Post event) {
 		if (event.getGui() instanceof GuiContainer) {
-			CraftingGuideButtonFixer.fixMistakes((GuiContainer) event.getGui(), event.getButtonList());
 			initGui((GuiContainer) event.getGui());
 		}
 	}
