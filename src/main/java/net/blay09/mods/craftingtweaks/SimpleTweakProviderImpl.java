@@ -4,6 +4,7 @@ import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
 import net.blay09.mods.craftingtweaks.api.DefaultProviderV2;
 import net.blay09.mods.craftingtweaks.api.RotationHandler;
 import net.blay09.mods.craftingtweaks.api.SimpleTweakProvider;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,9 +13,9 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.GuiScreenEvent;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -202,8 +203,8 @@ public class SimpleTweakProviderImpl<T extends Container> implements SimpleTweak
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public void initGui(GuiContainer guiContainer, List<GuiButton> buttonList) {
+    @OnlyIn(Dist.CLIENT)
+    public void initGui(GuiContainer guiContainer, GuiScreenEvent.InitGuiEvent event) {
         if (!hideButtons) {
             int index = 0;
             if (tweakRotate.enabled && tweakRotate.showButton) {
@@ -213,9 +214,10 @@ public class SimpleTweakProviderImpl<T extends Container> implements SimpleTweak
                     buttonX = getButtonX(guiContainer, index);
                     buttonY = getButtonY(guiContainer, index);
                 }
-                buttonList.add(CraftingTweaksAPI.createRotateButtonRelative(0, guiContainer, buttonX, buttonY));
+                event.addButton(CraftingTweaksAPI.createRotateButtonRelative(0, guiContainer, buttonX, buttonY));
                 index++;
             }
+
             if (tweakBalance.enabled && tweakBalance.showButton) {
                 int buttonX = tweakBalance.buttonX;
                 int buttonY = tweakBalance.buttonY;
@@ -223,9 +225,10 @@ public class SimpleTweakProviderImpl<T extends Container> implements SimpleTweak
                     buttonX = getButtonX(guiContainer, index);
                     buttonY = getButtonY(guiContainer, index);
                 }
-                buttonList.add(CraftingTweaksAPI.createBalanceButtonRelative(0, guiContainer, buttonX, buttonY));
+                event.addButton(CraftingTweaksAPI.createBalanceButtonRelative(0, guiContainer, buttonX, buttonY));
                 index++;
             }
+
             if (tweakClear.enabled && tweakClear.showButton) {
                 int buttonX = tweakClear.buttonX;
                 int buttonY = tweakClear.buttonY;
@@ -233,15 +236,15 @@ public class SimpleTweakProviderImpl<T extends Container> implements SimpleTweak
                     buttonX = getButtonX(guiContainer, index);
                     buttonY = getButtonY(guiContainer, index);
                 }
-                buttonList.add(CraftingTweaksAPI.createClearButtonRelative(0, guiContainer, buttonX, buttonY));
+                event.addButton(CraftingTweaksAPI.createClearButtonRelative(0, guiContainer, buttonX, buttonY));
             }
         }
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     @SuppressWarnings("unchecked")
     private int getButtonX(GuiContainer guiContainer, int index) {
-        Slot firstSlot = guiContainer.inventorySlots.inventorySlots.get(getCraftingGridStart(FMLClientHandler.instance().getClientPlayerEntity(), (T) guiContainer.inventorySlots, 0));
+        Slot firstSlot = guiContainer.inventorySlots.inventorySlots.get(getCraftingGridStart(Minecraft.getInstance().player, (T) guiContainer.inventorySlots, 0));
         switch (alignToGrid) {
             case NORTH:
             case UP:
@@ -256,10 +259,10 @@ public class SimpleTweakProviderImpl<T extends Container> implements SimpleTweak
         return 0;
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     @SuppressWarnings("unchecked")
     private int getButtonY(GuiContainer guiContainer, int index) {
-        Slot firstSlot = guiContainer.inventorySlots.inventorySlots.get(getCraftingGridStart(FMLClientHandler.instance().getClientPlayerEntity(), (T) guiContainer.inventorySlots, 0));
+        Slot firstSlot = guiContainer.inventorySlots.inventorySlots.get(getCraftingGridStart(Minecraft.getInstance().player, (T) guiContainer.inventorySlots, 0));
         switch (alignToGrid) {
             case NORTH:
             case UP:

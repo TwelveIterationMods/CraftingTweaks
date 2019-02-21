@@ -7,9 +7,11 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.GuiScreenEvent;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -130,16 +132,17 @@ public interface TweakProvider<T extends Container> {
      * @param id the crafting grid ID that is being accessed (usually 0 unless there's more grids in one GUI)
      * @return the craft matrix inventory
      */
+    @Nullable
     IInventory getCraftMatrix(EntityPlayer entityPlayer, T container, int id);
 
     /**
      * Called to add buttons to the GUI. May not be called if buttons are disabled in the configuration.
      * Use CraftingTweaksAPI.create***Button() to create tweak buttons, then add them to the buttonList.
      * @param guiContainer the gui container the buttons are being added to
-     * @param buttonList the button list of this gui container
+     * @param event the event triggering this gui initialization
      */
-    @SideOnly(Side.CLIENT)
-    void initGui(GuiContainer guiContainer, List<GuiButton> buttonList);
+    @OnlyIn(Dist.CLIENT)
+    void initGui(GuiContainer guiContainer, GuiScreenEvent.InitGuiEvent event);
 
 	/**
      * @param container the container to test

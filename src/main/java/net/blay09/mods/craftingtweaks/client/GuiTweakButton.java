@@ -1,14 +1,19 @@
 package net.blay09.mods.craftingtweaks.client;
 
+import net.blay09.mods.craftingtweaks.CraftingTweaks;
+import net.blay09.mods.craftingtweaks.CraftingTweaksProviderManager;
+import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
-import org.lwjgl.input.Keyboard;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class GuiTweakButton extends GuiImageButton implements ITooltipProvider {
+public abstract class GuiTweakButton extends GuiImageButton implements ITooltipProvider {
 
     public enum TweakOption {
         Rotate,
@@ -38,36 +43,54 @@ public class GuiTweakButton extends GuiImageButton implements ITooltipProvider {
     }
 
     @Override
-    public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
         int oldX = x;
         int oldY = y;
         // If parentGui is set, we only store the relative position in the button for mods that do hacky things where guiLeft/guiTop constantly changes
-        if(parentGui != null) {
+        if (parentGui != null) {
             x += lastGuiLeft;
             y += lastGuiTop;
         }
-        boolean result = super.mousePressed(mc, mouseX, mouseY);
+        boolean result = super.mouseClicked(mouseX, mouseY, button);
         x = oldX;
         y = oldY;
         return result;
     }
 
     @Override
-    public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
+    public void onClick(double mouseX, double mouseY) {
+        playPressSound(Minecraft.getInstance().getSoundHandler());
+        EntityPlayer player = Minecraft.getInstance().player;
+        Container container = player.openContainer;
+        TweakProvider<Container> provider = CraftingTweaksProviderManager.getProvider(container);
+        if (provider != null) {
+            ClientProvider clientProvider = CraftingTweaks.craftingTweaksClient
+                    .map(CraftingTweaksClient::getClientProvider)
+                    .orElseThrow(() -> new IllegalStateException("Missing CraftingTweaks ClientProvider."));
+
+            onTweakButtonClicked(player, container, provider, clientProvider);
+        }
+    }
+
+    protected abstract void onTweakButtonClicked(EntityPlayer player, Container container, TweakProvider<Container> provider, ClientProvider clientProvider);
+
+    @Override
+    public void render(int mouseX, int mouseY, float partialTicks) {
         int oldX = x;
         int oldY = y;
         // If parentGui is set, we only store the relative position in the button for mods that do hacky things where guiLeft/guiTop constantly changes
-        if(parentGui != null) {
+        if (parentGui != null) {
             lastGuiLeft = parentGui.guiLeft;
             lastGuiTop = parentGui.guiTop;
             x += lastGuiLeft;
             y += lastGuiTop;
         }
         int oldTexCoordX = texCoordX;
-        if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+        if (GuiScreen.isShiftKeyDown()) {
             texCoordX += 48;
         }
-        super.drawButton(mc, mouseX, mouseY, partialTicks);
+
+        super.render(mouseX, mouseY, partialTicks);
         texCoordX = oldTexCoordX;
         x = oldX;
         y = oldY;
@@ -75,12 +98,12 @@ public class GuiTweakButton extends GuiImageButton implements ITooltipProvider {
 
     @Override
     public void addInformation(List<String> tooltip) {
-        switch(tweakOption) {
+        switch (tweakOption) {
             case Rotate:
                 tooltip.add(I18n.format("tooltip.craftingtweaks.rotate"));
                 break;
             case Clear:
-                if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+                if (GuiScreen.isShiftKeyDown()) {
                     tooltip.add(I18n.format("tooltip.craftingtweaks.forceClear"));
                     tooltip.add("\u00a77" + I18n.format("tooltip.craftingtweaks.forceClearInfo"));
                 } else {
@@ -88,7 +111,7 @@ public class GuiTweakButton extends GuiImageButton implements ITooltipProvider {
                 }
                 break;
             case Balance:
-                if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+                if (GuiScreen.isShiftKeyDown()) {
                     tooltip.add(I18n.format("tooltip.craftingtweaks.spread"));
                 } else {
                     tooltip.add(I18n.format("tooltip.craftingtweaks.balance"));

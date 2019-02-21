@@ -5,8 +5,7 @@ import net.blay09.mods.craftingtweaks.api.SimpleTweakProvider;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.ModList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,17 +15,17 @@ public class CraftingTweaksAddons {
 
     public static final Logger logger = LogManager.getLogger();
 
-    public static void postInit(FMLPostInitializationEvent event) {
-        progressiveautomation();
+    public static void loadAddons() {
+        progressiveAutomation();
 
-        if(Loader.isModLoaded("storagesilo")) {
+        if (ModList.get().isLoaded("storagesilo")) {
             registerProvider("uk.binarycraft.storagesilo.blocks.craftingsilo.ContainerCraftingSilo", new ProviderCraftingSilo());
         }
     }
 
-    private static void progressiveautomation() {
-        SimpleTweakProvider provider = registerSimpleProvider("progressiveautomation", "com.vanhal.progressiveautomation.gui.container.ContainerCrafter");
-        if(provider != null) {
+    private static void progressiveAutomation() {
+        SimpleTweakProvider provider = registerSimpleProvider("progressiveAutomation", "com.vanhal.progressiveAutomation.gui.container.ContainerCrafter");
+        if (provider != null) {
             provider.setGrid(2, 9);
             provider.setTweakRotate(true, true, 0, 0);
             provider.setTweakBalance(false, false, 0, 0);
@@ -39,7 +38,7 @@ public class CraftingTweaksAddons {
     @Nullable
     private static SimpleTweakProvider registerSimpleProvider(String modid, String className) {
         try {
-            if(Loader.isModLoaded(modid)) {
+            if (ModList.get().isLoaded(modid)) {
                 return CraftingTweaksAPI.registerSimpleProvider(modid, (Class<? extends Container>) Class.forName(className));
             }
         } catch (ClassNotFoundException e) {

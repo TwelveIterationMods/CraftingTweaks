@@ -1,39 +1,159 @@
 package net.blay09.mods.craftingtweaks.net;
 
-import io.netty.buffer.ByteBuf;
-import net.blay09.mods.craftingtweaks.CompressType;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.blay09.mods.craftingtweaks.*;
+import net.blay09.mods.craftingtweaks.api.TweakProvider;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.Container;
+import net.minecraft.inventory.IRecipeHolder;
+import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.crafting.VanillaRecipeTypes;
+import net.minecraftforge.fml.network.NetworkEvent;
 
-public class MessageCompress implements IMessage {
+import java.util.Objects;
+import java.util.function.Supplier;
 
-    private int slotNumber;
-    private CompressType type;
+public class MessageCompress {
 
-    public MessageCompress() {
-    }
+    private final int slotNumber;
+    private final CompressType type;
 
     public MessageCompress(int slotNumber, CompressType type) {
         this.slotNumber = slotNumber;
         this.type = type;
     }
 
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        slotNumber = buf.readInt();
-        type = CompressType.values()[buf.readByte()];
+    public static MessageCompress decode(PacketBuffer buf) {
+        int slotNumber = buf.readInt();
+        CompressType type = CompressType.values()[buf.readByte()];
+        return new MessageCompress(slotNumber, type);
     }
 
-    @Override
-    public void toBytes(ByteBuf buf) {
-        buf.writeInt(slotNumber);
-        buf.writeByte(type.ordinal());
+    public static void encode(MessageCompress message, PacketBuffer buf) {
+        buf.writeInt(message.slotNumber);
+        buf.writeByte(message.type.ordinal());
     }
 
-    public int getSlotNumber() {
-        return slotNumber;
+    public static void handle(MessageCompress message, Supplier<NetworkEvent.Context> contextSupplier) {
+        NetworkEvent.Context context = contextSupplier.get();
+        context.enqueueWork(() -> {
+            EntityPlayerMP player = context.getSender();
+            if (player == null) {
+                return;
+            }
+
+            Container container = player.openContainer;
+            if (container == null) {
+                return;
+            }
+
+            CompressType compressType = message.type;
+            Slot mouseSlot = container.inventorySlots.get(message.slotNumber);
+            if (!(mouseSlot.inventory instanceof InventoryPlayer)) {
+                return;
+            }
+
+            ItemStack mouseStack = mouseSlot.getStack();
+            if (mouseStack.isEmpty()) {
+                return;
+            }
+
+            TweakProvider<Container> provider = CraftingTweaksProviderManager.getProvider(container);
+            if (!CraftingTweaksConfig.COMMON.compressAnywhere.get() && provider == null) {
+                return;
+            }
+
+            if (compressType == CompressType.DECOMPRESS_ALL || compressType == CompressType.DECOMPRESS_STACK || compressType == CompressType.DECOMPRESS_ONE) {
+                boolean decompressAll = compressType != CompressType.DECOMPRESS_ONE;
+                // Perform decompression on all valid slots
+                for (Slot slot : container.inventorySlots) {
+                    if (compressType != CompressType.DECOMPRESS_ALL && slot != mouseSlot) {
+                        continue;
+                    }
+
+                    if (slot.inventory instanceof InventoryPlayer && slot.getHasStack() && ItemStack.areItemsEqual(slot.getStack(), mouseSlot.getStack()) && ItemStack.areItemStackTagsEqual(slot.getStack(), mouseSlot.getStack())) {
+                        ItemStack result = findMatchingResult(new InventoryCraftingDecompress(container, slot.getStack()), player);
+                        if (!result.isEmpty() && !isBlacklisted(result) && !slot.getStack().isEmpty() && slot.getStack().getCount() >= 1) {
+                            do {
+                                if (player.inventory.addItemStackToInventory(result.copy())) {
+                                    slot.decrStackSize(1);
+                                } else {
+                                    break;
+                                }
+                            } while (decompressAll && slot.getHasStack() && slot.getStack().getCount() >= 1);
+                        }
+                    }
+                }
+            } else {
+                boolean compressAll = compressType != CompressType.COMPRESS_ONE;
+                int size = provider != null ? provider.getCraftingGridSize(player, container, 0) : 9;
+                // Perform decompression on all valid slots
+                for (Slot slot : container.inventorySlots) {
+                    if (compressType != CompressType.COMPRESS_ALL && slot != mouseSlot) {
+                        continue;
+                    }
+
+                    if (slot.inventory instanceof InventoryPlayer && slot.getHasStack() && ItemStack.areItemsEqual(slot.getStack(), mouseSlot.getStack()) && ItemStack.areItemStackTagsEqual(slot.getStack(), mouseSlot.getStack())) {
+                        if (size == 9 && !slot.getStack().isEmpty() && slot.getStack().getCount() >= 9) {
+                            ItemStack result = findMatchingResult(new InventoryCraftingCompress(container, 3, slot.getStack()), player);
+                            if (!result.isEmpty() && !isBlacklisted(result)) {
+                                do {
+                                    if (player.inventory.addItemStackToInventory(result.copy())) {
+                                        slot.decrStackSize(9);
+                                    } else {
+                                        break;
+                                    }
+                                }
+                                while (compressAll && slot.getHasStack() && slot.getStack().getCount() >= 9);
+                            } else {
+                                result = findMatchingResult(new InventoryCraftingCompress(container, 2, slot.getStack()), player);
+                                if (!result.isEmpty() && !isBlacklisted(result)) {
+                                    do {
+                                        if (player.inventory.addItemStackToInventory(result.copy())) {
+                                            slot.decrStackSize(4);
+                                        } else {
+                                            break;
+                                        }
+                                    }
+                                    while (compressAll && slot.getHasStack() && slot.getStack().getCount() >= 4);
+                                }
+                            }
+                        } else if (size >= 4 && !slot.getStack().isEmpty() && slot.getStack().getCount() >= 4) {
+                            ItemStack result = findMatchingResult(new InventoryCraftingCompress(container, 2, slot.getStack()), player);
+                            if (!result.isEmpty() && !isBlacklisted(result)) {
+                                do {
+                                    if (player.inventory.addItemStackToInventory(result.copy())) {
+                                        slot.decrStackSize(4);
+                                    } else {
+                                        break;
+                                    }
+                                }
+                                while (compressAll && slot.getHasStack() && slot.getStack().getCount() >= 4);
+                            }
+                        }
+                    }
+                }
+            }
+            container.detectAndSendChanges();
+        });
     }
 
-    public CompressType getType() {
-        return type;
+    private static <T extends InventoryCrafting & IRecipeHolder> ItemStack findMatchingResult(T craftingInventory, EntityPlayerMP player) {
+        IRecipe recipe = Objects.requireNonNull(player.getServer()).getRecipeManager().getRecipe(craftingInventory, player.world, VanillaRecipeTypes.CRAFTING);
+        if (recipe != null && craftingInventory.canUseRecipe(player.world, player, recipe)) {
+            return recipe.getCraftingResult(craftingInventory);
+        }
+
+        return ItemStack.EMPTY;
+    }
+
+    private static boolean isBlacklisted(ItemStack result) {
+        ResourceLocation registryName = result.getItem().getRegistryName();
+        return registryName != null && CraftingTweaksConfig.COMMON.compressBlacklist.get().contains(registryName.toString());
     }
 }

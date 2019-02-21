@@ -1,21 +1,26 @@
 package net.blay09.mods.craftingtweaks.net;
 
 import net.blay09.mods.craftingtweaks.CraftingTweaks;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.network.NetworkRegistry;
+import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 public class NetworkHandler {
 
-    public static final SimpleNetworkWrapper instance = NetworkRegistry.INSTANCE.newSimpleChannel(CraftingTweaks.MOD_ID);
+    public static SimpleChannel channel;
 
     public static void init() {
-        instance.registerMessage(HandlerRotate.class, MessageRotate.class, 0, Side.SERVER);
-        instance.registerMessage(HandlerClear.class, MessageClear.class, 1, Side.SERVER);
-        instance.registerMessage(HandlerBalance.class, MessageBalance.class, 2, Side.SERVER);
-        instance.registerMessage(HandlerTransferStack.class, MessageTransferStack.class, 3, Side.SERVER);
-        instance.registerMessage(HandlerCompress.class, MessageCompress.class, 4, Side.SERVER);
-        instance.registerMessage(HandlerCraftStack.class, MessageCraftStack.class, 5, Side.SERVER);
+        channel = NetworkRegistry.newSimpleChannel(new ResourceLocation(CraftingTweaks.MOD_ID, "network"), () -> "1.0", it -> {
+            CraftingTweaks.isServerSideInstalled = !CraftingTweaks.TEST_CLIENT_SIDE && it.equals("1.0");
+            return true;
+        }, it -> true);
+
+        channel.registerMessage(0, MessageRotate.class, MessageRotate::encode, MessageRotate::decode, MessageRotate::handle);
+        channel.registerMessage(1, MessageClear.class, MessageClear::encode, MessageClear::decode, MessageClear::handle);
+        channel.registerMessage(2, MessageBalance.class, MessageBalance::encode, MessageBalance::decode, MessageBalance::handle);
+        channel.registerMessage(3, MessageTransferStack.class, MessageTransferStack::encode, MessageTransferStack::decode, MessageTransferStack::handle);
+        channel.registerMessage(4, MessageCompress.class, MessageCompress::encode, MessageCompress::decode, MessageCompress::handle);
+        channel.registerMessage(5, MessageCraftStack.class, MessageCraftStack::encode, MessageCraftStack::decode, MessageCraftStack::handle);
     }
 
 }

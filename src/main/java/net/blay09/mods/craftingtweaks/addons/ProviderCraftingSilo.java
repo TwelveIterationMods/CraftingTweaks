@@ -3,18 +3,16 @@ package net.blay09.mods.craftingtweaks.addons;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
 import net.blay09.mods.craftingtweaks.api.DefaultProviderV2;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
-import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import java.util.List;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.GuiScreenEvent;
 
 public class ProviderCraftingSilo implements TweakProvider<Container> {
 
@@ -76,14 +74,14 @@ public class ProviderCraftingSilo implements TweakProvider<Container> {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public void initGui(GuiContainer guiContainer, List<GuiButton> list) {
-        Slot firstSlot = guiContainer.inventorySlots.inventorySlots.get(getCraftingGridStart(FMLClientHandler.instance().getClientPlayerEntity(), guiContainer.inventorySlots, 0));
+    @OnlyIn(Dist.CLIENT)
+    public void initGui(GuiContainer guiContainer, GuiScreenEvent.InitGuiEvent event) {
+        Slot firstSlot = guiContainer.inventorySlots.inventorySlots.get(getCraftingGridStart(Minecraft.getInstance().player, guiContainer.inventorySlots, 0));
         int startX = firstSlot.xPos - 19;
         int startY = firstSlot.yPos;
-        list.add(CraftingTweaksAPI.createRotateButtonRelative(0, guiContainer, startX, startY));
-        list.add(CraftingTweaksAPI.createBalanceButtonRelative(0, guiContainer, startX, startY + 18));
-        list.add(CraftingTweaksAPI.createClearButtonRelative(0, guiContainer, startX, startY + 36));
+        event.addButton(CraftingTweaksAPI.createRotateButtonRelative(0, guiContainer, startX, startY));
+        event.addButton(CraftingTweaksAPI.createBalanceButtonRelative(0, guiContainer, startX, startY + 18));
+        event.addButton(CraftingTweaksAPI.createClearButtonRelative(0, guiContainer, startX, startY + 36));
     }
 
 }

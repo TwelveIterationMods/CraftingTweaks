@@ -3,21 +3,24 @@ package net.blay09.mods.craftingtweaks.client;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import net.blay09.mods.craftingtweaks.CompressType;
-import net.blay09.mods.craftingtweaks.CraftingTweaks;
+import net.blay09.mods.craftingtweaks.CraftingTweaksConfig;
 import net.blay09.mods.craftingtweaks.InventoryCraftingCompress;
 import net.blay09.mods.craftingtweaks.api.RotationHandler;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.gui.recipebook.RecipeList;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.Collection;
+import java.util.Objects;
 
 public class ClientProvider {
 
@@ -76,7 +79,7 @@ public class ClientProvider {
     private boolean hasLastCraftedMatrix;
 
     private PlayerControllerMP getController() {
-        return Minecraft.getMinecraft().playerController;
+        return Minecraft.getInstance().playerController;
     }
 
     private boolean canBalance(TweakProvider<Container> provider, EntityPlayer entityPlayer, Container container, int id) {
@@ -94,8 +97,8 @@ public class ClientProvider {
             Slot slot = container.inventorySlots.get(i);
             if (slot.getHasStack()) {
                 ItemStack itemStack = slot.getStack();
-                if(!itemStack.isEmpty()) {
-                    balanceSlots.put(itemStack.getUnlocalizedName() + "@" + itemStack.getItemDamage(), slot);
+                if (!itemStack.isEmpty()) {
+                    balanceSlots.put(Objects.toString(itemStack.getItem().getRegistryName()), slot);
                 }
             }
         }
@@ -104,13 +107,13 @@ public class ClientProvider {
             int average = 0;
             for (Slot slot : slotList) {
                 ItemStack itemStack = slot.getStack();
-                if(!itemStack.isEmpty()) {
+                if (!itemStack.isEmpty()) {
                     average += itemStack.getCount();
                 }
             }
             average = (int) Math.floor((float) average / (float) slotList.size());
             for (Slot slot : slotList) {
-                if(!slot.getHasStack()) {
+                if (!slot.getHasStack()) {
                     continue;
                 }
                 ItemStack itemStack = slot.getStack();
@@ -124,7 +127,7 @@ public class ClientProvider {
                             continue;
                         }
                         ItemStack otherStack = otherSlot.getStack();
-                        if(!otherStack.isEmpty()) {
+                        if (!otherStack.isEmpty()) {
                             int otherStackSize = otherStack.getCount();
                             if (otherStackSize < average) {
                                 while (otherStackSize < average && mouseStackSize > average) {
@@ -145,7 +148,7 @@ public class ClientProvider {
 
     public void spreadGrid(TweakProvider<Container> provider, EntityPlayer entityPlayer, Container container, int id) {
         int tries = 0;
-        while(tries < 9) {
+        while (tries < 9) {
             tries++;
             Slot biggestSlot = null;
             int biggestSlotSize = 1;
@@ -164,15 +167,15 @@ public class ClientProvider {
             }
             getController().windowClick(container.windowId, biggestSlot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
             for (int i = start; i < start + size; i++) {
-                if(i == biggestSlot.slotNumber) {
+                if (i == biggestSlot.slotNumber) {
                     continue;
                 }
                 ItemStack itemStack = container.inventorySlots.get(i).getStack();
                 if (itemStack.isEmpty()) {
-                    if(biggestSlotSize > 1) {
+                    if (biggestSlotSize > 1) {
                         getController().windowClick(container.windowId, i, 1, ClickType.PICKUP, entityPlayer);
                         biggestSlotSize--;
-                        if(biggestSlotSize == 1) {
+                        if (biggestSlotSize == 1) {
                             break;
                         }
                     }
@@ -196,7 +199,7 @@ public class ClientProvider {
         for (int i = start; i < start + size; i++) {
             getController().windowClick(container.windowId, i, 0, ClickType.QUICK_MOVE, entityPlayer);
             container.transferStackInSlot(entityPlayer, i);
-            if(forced && container.inventorySlots.get(i).getHasStack()) {
+            if (forced && container.inventorySlots.get(i).getHasStack()) {
                 getController().windowClick(container.windowId, i, 0, ClickType.THROW, entityPlayer);
             }
         }
@@ -266,17 +269,21 @@ public class ClientProvider {
         if (!canTransfer(provider, entityPlayer, container, id)) {
             return false;
         }
+
         if (!sourceSlot.getHasStack() || !sourceSlot.canTakeStack(entityPlayer) || !provider.canTransferFrom(entityPlayer, container, id, sourceSlot)) {
             return false;
         }
+
         if (!dropOffMouseStack(entityPlayer, container)) {
             return false;
         }
+
         getController().windowClick(container.windowId, sourceSlot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
         ItemStack mouseStack = entityPlayer.inventory.getItemStack();
         if (mouseStack.isEmpty()) {
             return false;
         }
+
         boolean itemMoved = false;
         int firstEmptySlot = -1;
         int start = provider.getCraftingGridStart(entityPlayer, container, id);
@@ -299,13 +306,16 @@ public class ClientProvider {
                 firstEmptySlot = i;
             }
         }
+
         if (firstEmptySlot != -1) {
             getController().windowClick(container.windowId, firstEmptySlot, 0, ClickType.PICKUP, entityPlayer);
             itemMoved = true;
         }
+
         if (!entityPlayer.inventory.getItemStack().isEmpty()) {
             getController().windowClick(container.windowId, sourceSlot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
         }
+
         dropOffMouseStack(entityPlayer, container);
         return itemMoved;
     }
@@ -318,19 +328,22 @@ public class ClientProvider {
         if (entityPlayer.inventory.getItemStack().isEmpty()) {
             return true;
         }
+
         for (int i = 0; i < container.inventorySlots.size(); i++) {
-            if(i == ignoreSlot) {
+            if (i == ignoreSlot) {
                 continue;
             }
+
             Slot slot = container.inventorySlots.get(i);
             if (slot.inventory == entityPlayer.inventory) {
                 ItemStack mouseItem = entityPlayer.inventory.getItemStack();
                 ItemStack slotStack = slot.getStack();
                 if (slotStack.isEmpty()) {
                     getController().windowClick(container.windowId, i, 0, ClickType.PICKUP, entityPlayer);
-                } else if (mouseItem.getItem() == slotStack.getItem() && (!slotStack.getHasSubtypes() || slotStack.getMetadata() == mouseItem.getMetadata()) && ItemStack.areItemStackTagsEqual(slotStack, mouseItem)) {
+                } else if (mouseItem.getItem() == slotStack.getItem() && ItemStack.areItemStackTagsEqual(slotStack, mouseItem)) {
                     getController().windowClick(container.windowId, i, 0, ClickType.PICKUP, entityPlayer);
                 }
+
                 if (entityPlayer.inventory.getItemStack().isEmpty()) {
                     return true;
                 }
@@ -343,6 +356,7 @@ public class ClientProvider {
         if (!mouseSlot.getHasStack() || !canClear(provider, entityPlayer, container, 0)) {
             return;
         }
+
         boolean decompressAll = compressType != CompressType.DECOMPRESS_ONE;
         // Clear the crafting grid
         clearGrid(provider, entityPlayer, container, 0, false);
@@ -354,12 +368,13 @@ public class ClientProvider {
                 return;
             }
         }
+
         // Perform decompression on all valid slots
-        for(Slot slot : container.inventorySlots) {
-            if(compressType != CompressType.DECOMPRESS_ALL && slot != mouseSlot) {
+        for (Slot slot : container.inventorySlots) {
+            if (compressType != CompressType.DECOMPRESS_ALL && slot != mouseSlot) {
                 continue;
             }
-            if(slot.inventory instanceof InventoryPlayer && slot.getHasStack() && ItemStack.areItemsEqual(slot.getStack(), mouseSlot.getStack()) && ItemStack.areItemStackTagsEqual(slot.getStack(), mouseSlot.getStack())) {
+            if (slot.inventory instanceof InventoryPlayer && slot.getHasStack() && ItemStack.areItemsEqual(slot.getStack(), mouseSlot.getStack()) && ItemStack.areItemStackTagsEqual(slot.getStack(), mouseSlot.getStack())) {
                 // Move stack to crafting grid
                 getController().windowClick(container.windowId, mouseSlot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
                 getController().windowClick(container.windowId, start, 0, ClickType.PICKUP, entityPlayer);
@@ -370,6 +385,7 @@ public class ClientProvider {
                         break;
                     }
                 }
+
                 dropOffMouseStack(entityPlayer, container, mouseSlot.slotNumber);
                 // Take remaining stack back out of the crafting grid
                 getController().windowClick(container.windowId, start, 0, ClickType.PICKUP, entityPlayer);
@@ -378,27 +394,30 @@ public class ClientProvider {
         }
     }
 
-    public void compress(TweakProvider<Container> provider, EntityPlayer entityPlayer, Container container, Slot mouseSlot, CompressType compressType) {
-        if(compressType == CompressType.DECOMPRESS_ALL || compressType == CompressType.DECOMPRESS_ONE || compressType == CompressType.DECOMPRESS_STACK) {
-            decompress(provider, entityPlayer, container, mouseSlot, compressType);
+    public void compress(TweakProvider<Container> provider, EntityPlayerSP player, Container container, Slot mouseSlot, CompressType compressType) {
+        if (compressType == CompressType.DECOMPRESS_ALL || compressType == CompressType.DECOMPRESS_ONE || compressType == CompressType.DECOMPRESS_STACK) {
+            decompress(provider, player, container, mouseSlot, compressType);
             return;
         }
-        if (!mouseSlot.getHasStack() || !canClear(provider, entityPlayer, container, 0)) {
+
+        if (!mouseSlot.getHasStack() || !canClear(provider, player, container, 0)) {
             return;
         }
+
         boolean compressAll = compressType != CompressType.COMPRESS_ONE;
         // Clear the crafting grid
-        clearGrid(provider, entityPlayer, container, 0, false);
-        int start = provider.getCraftingGridStart(entityPlayer, container, 0);
-        int size = provider.getCraftingGridSize(entityPlayer, container, 0);
+        clearGrid(provider, player, container, 0, false);
+        int start = provider.getCraftingGridStart(player, container, 0);
+        int size = provider.getCraftingGridSize(player, container, 0);
         // Ensure the crafting grid is empty
         for (int i = start; i < start + size; i++) {
             if (container.inventorySlots.get(i).getHasStack()) {
                 return;
             }
         }
+
         // Perform decompression on all valid slots
-        for(Slot slot : container.inventorySlots) {
+        for (Slot slot : container.inventorySlots) {
             if (compressType != CompressType.COMPRESS_ALL && slot != mouseSlot) {
                 continue;
             }
@@ -406,67 +425,80 @@ public class ClientProvider {
                 ItemStack result;
                 ItemStack mouseStack = slot.getStack();
                 if (size == 9 && !mouseStack.isEmpty() && mouseStack.getCount() >= 9) {
-                    result = CraftingManager.findMatchingResult(new InventoryCraftingCompress(container, 3, mouseStack), entityPlayer.world);
+                    result = findMatchingResult(new InventoryCraftingCompress(container, 3, mouseStack), player);
                     if (!result.isEmpty() && !isCompressBlacklisted(result)) {
-                        getController().windowClick(container.windowId, slot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
-                        getController().windowClick(container.windowId, -999, getDragSplittingButton(0, 0), ClickType.QUICK_CRAFT, entityPlayer);
+                        getController().windowClick(container.windowId, slot.slotNumber, 0, ClickType.PICKUP, player);
+                        getController().windowClick(container.windowId, -999, getDragSplittingButton(0, 0), ClickType.QUICK_CRAFT, player);
                         for (int i = start; i < start + size; i++) {
-                            getController().windowClick(container.windowId, i, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, entityPlayer);
+                            getController().windowClick(container.windowId, i, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, player);
                         }
-                        getController().windowClick(container.windowId, -999, getDragSplittingButton(2, 0), ClickType.QUICK_CRAFT, entityPlayer);
-                        getController().windowClick(container.windowId, slot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
+                        getController().windowClick(container.windowId, -999, getDragSplittingButton(2, 0), ClickType.QUICK_CRAFT, player);
+                        getController().windowClick(container.windowId, slot.slotNumber, 0, ClickType.PICKUP, player);
                     } else {
-                        result = CraftingManager.findMatchingResult(new InventoryCraftingCompress(container, 2, mouseStack), entityPlayer.world);
+                        result = findMatchingResult(new InventoryCraftingCompress(container, 2, mouseStack), player);
                         if (!result.isEmpty() && !isCompressBlacklisted(result)) {
-                            getController().windowClick(container.windowId, slot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
-                            getController().windowClick(container.windowId, -999, getDragSplittingButton(0, 0), ClickType.QUICK_CRAFT, entityPlayer);
-                            getController().windowClick(container.windowId, start, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, entityPlayer);
-                            getController().windowClick(container.windowId, start + 1, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, entityPlayer);
-                            getController().windowClick(container.windowId, start + 3, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, entityPlayer);
-                            getController().windowClick(container.windowId, start + 4, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, entityPlayer);
-                            getController().windowClick(container.windowId, -999, getDragSplittingButton(2, 0), ClickType.QUICK_CRAFT, entityPlayer);
-                            getController().windowClick(container.windowId, slot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
+                            getController().windowClick(container.windowId, slot.slotNumber, 0, ClickType.PICKUP, player);
+                            getController().windowClick(container.windowId, -999, getDragSplittingButton(0, 0), ClickType.QUICK_CRAFT, player);
+                            getController().windowClick(container.windowId, start, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, player);
+                            getController().windowClick(container.windowId, start + 1, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, player);
+                            getController().windowClick(container.windowId, start + 3, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, player);
+                            getController().windowClick(container.windowId, start + 4, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, player);
+                            getController().windowClick(container.windowId, -999, getDragSplittingButton(2, 0), ClickType.QUICK_CRAFT, player);
+                            getController().windowClick(container.windowId, slot.slotNumber, 0, ClickType.PICKUP, player);
                         } else {
                             return;
                         }
                     }
                 } else if (size >= 4 && !mouseStack.isEmpty() && mouseStack.getCount() >= 4) {
-                    result = CraftingManager.findMatchingResult(new InventoryCraftingCompress(container, 2, mouseStack), entityPlayer.world);
+                    result = findMatchingResult(new InventoryCraftingCompress(container, 2, mouseStack), player);
                     if (!result.isEmpty() && !isCompressBlacklisted(result)) {
-                        getController().windowClick(container.windowId, slot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
-                        getController().windowClick(container.windowId, -999, getDragSplittingButton(0, 0), ClickType.QUICK_CRAFT, entityPlayer);
-                        if(size == 4) {
+                        getController().windowClick(container.windowId, slot.slotNumber, 0, ClickType.PICKUP, player);
+                        getController().windowClick(container.windowId, -999, getDragSplittingButton(0, 0), ClickType.QUICK_CRAFT, player);
+                        if (size == 4) {
                             for (int i = start; i < start + size; i++) {
-                                getController().windowClick(container.windowId, i, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, entityPlayer);
+                                getController().windowClick(container.windowId, i, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, player);
                             }
                         } else {
-                            getController().windowClick(container.windowId, start, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, entityPlayer);
-                            getController().windowClick(container.windowId, start + 1, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, entityPlayer);
-                            getController().windowClick(container.windowId, start + 3, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, entityPlayer);
-                            getController().windowClick(container.windowId, start + 4, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, entityPlayer);
+                            getController().windowClick(container.windowId, start, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, player);
+                            getController().windowClick(container.windowId, start + 1, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, player);
+                            getController().windowClick(container.windowId, start + 3, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, player);
+                            getController().windowClick(container.windowId, start + 4, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, player);
                         }
-                        getController().windowClick(container.windowId, -999, getDragSplittingButton(2, 0), ClickType.QUICK_CRAFT, entityPlayer);
-                        getController().windowClick(container.windowId, slot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
+                        getController().windowClick(container.windowId, -999, getDragSplittingButton(2, 0), ClickType.QUICK_CRAFT, player);
+                        getController().windowClick(container.windowId, slot.slotNumber, 0, ClickType.PICKUP, player);
                     } else {
                         return;
                     }
                 }
                 for (Slot resultSlot : container.inventorySlots) {
                     if (resultSlot instanceof SlotCrafting && resultSlot.getHasStack()) {
-                        getController().windowClick(container.windowId, resultSlot.slotNumber, 0, compressAll ? ClickType.QUICK_MOVE : ClickType.PICKUP, entityPlayer);
+                        getController().windowClick(container.windowId, resultSlot.slotNumber, 0, compressAll ? ClickType.QUICK_MOVE : ClickType.PICKUP, player);
                         break;
                     }
                 }
-                dropOffMouseStack(entityPlayer, container, slot.slotNumber);
+                dropOffMouseStack(player, container, slot.slotNumber);
                 for (int i = start; i < start + size; i++) {
                     if (container.inventorySlots.get(i).getHasStack()) {
-                        getController().windowClick(container.windowId, i, 0, ClickType.PICKUP, entityPlayer);
-                        getController().windowClick(container.windowId, slot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
+                        getController().windowClick(container.windowId, i, 0, ClickType.PICKUP, player);
+                        getController().windowClick(container.windowId, slot.slotNumber, 0, ClickType.PICKUP, player);
                     }
                 }
-                dropOffMouseStack(entityPlayer, container);
+
+                dropOffMouseStack(player, container);
             }
         }
+    }
+
+    private static <T extends InventoryCrafting & IRecipeHolder> ItemStack findMatchingResult(T craftingInventory, EntityPlayerSP player) {
+        for (RecipeList recipeList : player.getRecipeBook().getRecipes()) {
+            for (IRecipe recipe : recipeList.getRecipes()) {
+                if (recipe.matches(craftingInventory, player.world)) {
+                    return recipe.getCraftingResult(craftingInventory);
+                }
+            }
+        }
+
+        return ItemStack.EMPTY;
     }
 
     private static int getDragSplittingButton(int id, int limit) {
@@ -475,13 +507,13 @@ public class ClientProvider {
 
     private boolean isCompressBlacklisted(ItemStack result) {
         ResourceLocation registryName = result.getItem().getRegistryName();
-        return registryName != null && CraftingTweaks.compressBlacklist.contains(registryName.toString());
+        return registryName != null && CraftingTweaksConfig.COMMON.compressBlacklist.get().contains(registryName.toString());
     }
 
     public void onItemCrafted(IInventory craftMatrix) {
-        if(craftMatrix.getSizeInventory() <= 9) {
-            for(int i = 0; i < lastCraftedMatrix.getSlots(); i++) {
-                if(i < craftMatrix.getSizeInventory()) {
+        if (craftMatrix.getSizeInventory() <= 9) {
+            for (int i = 0; i < lastCraftedMatrix.getSlots(); i++) {
+                if (i < craftMatrix.getSizeInventory()) {
                     lastCraftedMatrix.setStackInSlot(i, craftMatrix.getStackInSlot(i).copy());
                 } else {
                     lastCraftedMatrix.setStackInSlot(i, ItemStack.EMPTY);
@@ -491,12 +523,12 @@ public class ClientProvider {
         }
     }
 
-    private boolean canRefillLastCrafted(TweakProvider<Container> provider, EntityPlayer entityPlayer, Container container, int id) {
+    private boolean canRefillLastCrafted(TweakProvider<Container> provider, EntityPlayer player, Container container, int id) {
         return !provider.requiresServerSide() && hasLastCraftedMatrix;
     }
 
     public void refillLastCrafted(TweakProvider<Container> provider, EntityPlayer entityPlayer, Container container, int id, boolean fullStack) {
-        if(!canRefillLastCrafted(provider, entityPlayer, container, id)) {
+        if (!canRefillLastCrafted(provider, entityPlayer, container, id)) {
             return;
         }
 
@@ -507,11 +539,11 @@ public class ClientProvider {
         int gridSize = provider.getCraftingGridSize(entityPlayer, container, id);
 
         // Now refill the grid
-        for(int i = 0; i < lastCraftedMatrix.getSlots(); i++) {
+        for (int i = 0; i < lastCraftedMatrix.getSlots(); i++) {
             ItemStack itemStack = lastCraftedMatrix.getStackInSlot(i);
-            if(!itemStack.isEmpty()) {
+            if (!itemStack.isEmpty()) {
                 // Search for this item in the inventory
-                for(Slot slot : container.inventorySlots) {
+                for (Slot slot : container.inventorySlots) {
                     if (slot.inventory instanceof InventoryPlayer && slot.getHasStack() && ItemStack.areItemsEqual(slot.getStack(), itemStack) && ItemStack.areItemStackTagsEqual(slot.getStack(), itemStack)) {
                         getController().windowClick(container.windowId, slot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
                         getController().windowClick(container.windowId, gridStart + i, fullStack ? 0 : 1, ClickType.PICKUP, entityPlayer);
@@ -520,9 +552,9 @@ public class ClientProvider {
                     }
                 }
             } else {
-                if(container.inventorySlots.get(gridStart + i).getHasStack()) {
+                if (container.inventorySlots.get(gridStart + i).getHasStack()) {
                     getController().windowClick(container.windowId, gridStart + i, 0, ClickType.PICKUP, entityPlayer);
-                    if(!dropOffMouseStack(entityPlayer, container)) {
+                    if (!dropOffMouseStack(entityPlayer, container)) {
                         getController().windowClick(container.windowId, gridStart + i, 0, ClickType.PICKUP, entityPlayer);
                         return;
                     }
@@ -530,15 +562,16 @@ public class ClientProvider {
             }
         }
 
-        if(fullStack) {
+        if (fullStack) {
             // Check if there's items missing and if so, try to find them in the crafting grid and distribute
-            for(int i = 0; i < lastCraftedMatrix.getSlots(); i++) {
+            for (int i = 0; i < lastCraftedMatrix.getSlots(); i++) {
                 ItemStack itemStack = lastCraftedMatrix.getStackInSlot(i);
-                if(!itemStack.isEmpty() && !container.inventorySlots.get(gridStart + i).getHasStack()) {
-                    for(int j = gridStart; j < gridStart + gridSize; j++) {
-                        if(j == gridStart + i) {
+                if (!itemStack.isEmpty() && !container.inventorySlots.get(gridStart + i).getHasStack()) {
+                    for (int j = gridStart; j < gridStart + gridSize; j++) {
+                        if (j == gridStart + i) {
                             continue;
                         }
+
                         ItemStack gridStack = container.inventorySlots.get(j).getStack();
                         if (gridStack.getCount() > 1 && ItemStack.areItemsEqual(gridStack, itemStack) && ItemStack.areItemStackTagsEqual(gridStack, itemStack)) {
                             getController().windowClick(container.windowId, j, 0, ClickType.PICKUP, entityPlayer);

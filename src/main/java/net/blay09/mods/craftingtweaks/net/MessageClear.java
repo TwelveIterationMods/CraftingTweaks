@@ -1,37 +1,52 @@
 package net.blay09.mods.craftingtweaks.net;
 
-import io.netty.buffer.ByteBuf;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.blay09.mods.craftingtweaks.CraftingTweaks;
+import net.blay09.mods.craftingtweaks.CraftingTweaksProviderManager;
+import net.blay09.mods.craftingtweaks.api.TweakProvider;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.network.NetworkEvent;
 
-public class MessageClear implements IMessage {
+import java.util.function.Supplier;
 
-    private int id;
-    private boolean force;
+public class MessageClear {
 
-    public MessageClear() {}
+    private final int id;
+    private final boolean forced;
 
-    public MessageClear(int id, boolean force) {
+    public MessageClear(int id, boolean forced) {
         this.id = id;
-        this.force = force;
+        this.forced = forced;
     }
 
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        id = buf.readByte();
-        force = buf.readBoolean();
+    public static MessageClear decode(PacketBuffer buf) {
+        int id = buf.readByte();
+        boolean force = buf.readBoolean();
+        return new MessageClear(id, force);
     }
 
-    @Override
-    public void toBytes(ByteBuf buf) {
-        buf.writeByte(id);
-        buf.writeBoolean(force);
+    public static void encode(MessageClear message, PacketBuffer buf) {
+        buf.writeByte(message.id);
+        buf.writeBoolean(message.forced);
     }
 
-    public int getId() {
-        return id;
+    public static void handle(MessageClear message, Supplier<NetworkEvent.Context> contextSupplier) {
+        NetworkEvent.Context context = contextSupplier.get();
+        context.enqueueWork(() -> {
+            EntityPlayer player = context.getSender();
+            if (player == null) {
+                return;
+            }
+
+            Container container = player.openContainer;
+            if (container != null) {
+                TweakProvider<Container> tweakProvider = CraftingTweaksProviderManager.getProvider(container);
+                if (tweakProvider != null) {
+                    tweakProvider.clearGrid(player, container, message.id, message.forced);
+                }
+            }
+        });
     }
 
-    public boolean isForced() {
-        return force;
-    }
 }

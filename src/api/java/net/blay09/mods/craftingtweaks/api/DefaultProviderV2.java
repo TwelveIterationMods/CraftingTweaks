@@ -36,20 +36,6 @@ public interface DefaultProviderV2 {
 
     /**
      * Default implementation for grid clearing.
-     * @deprecated Use clearGrid with forced parameter instead.
-     * @param provider the TweakProvider invoking this function
-     * @param id the crafting grid id invoking this function (usually 0 unless the container has multiple grids)
-     * @param entityPlayer the player who's clearing the grid
-     * @param container the container the grid is part of
-     * @param phantomItems true if the grid contains phantom items (i.e. they should be deleted, not put into the player's inventory)
-     */
-    @Deprecated
-    default <T extends Container> void clearGrid(TweakProvider<T> provider, int id, EntityPlayer entityPlayer, T container, boolean phantomItems) {
-        clearGrid(provider, id, entityPlayer, container, phantomItems, false);
-    }
-
-    /**
-     * Default implementation for grid clearing.
      * @param provider the TweakProvider invoking this function
      * @param id the crafting grid id invoking this function (usually 0 unless the container has multiple grids)
      * @param entityPlayer the player who's clearing the grid

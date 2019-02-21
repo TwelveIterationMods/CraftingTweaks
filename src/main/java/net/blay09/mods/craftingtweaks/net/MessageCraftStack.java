@@ -1,30 +1,65 @@
 package net.blay09.mods.craftingtweaks.net;
 
-import io.netty.buffer.ByteBuf;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.blay09.mods.craftingtweaks.CraftingTweaks;
+import net.blay09.mods.craftingtweaks.CraftingTweaksProviderManager;
+import net.blay09.mods.craftingtweaks.api.TweakProvider;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.ClickType;
+import net.minecraft.inventory.Container;
+import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.play.server.SPacketSetSlot;
+import net.minecraftforge.fml.network.NetworkEvent;
 
-public class MessageCraftStack implements IMessage {
+import java.util.function.Supplier;
 
-    private int slotNumber;
+public class MessageCraftStack {
 
-    public MessageCraftStack() {}
+    private final int slotNumber;
 
     public MessageCraftStack(int slotId) {
         this.slotNumber = slotId;
     }
 
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        slotNumber = buf.readByte();
+    public static MessageCraftStack decode(PacketBuffer buf) {
+        int slotNumber = buf.readByte();
+        return new MessageCraftStack(slotNumber);
     }
 
-    @Override
-    public void toBytes(ByteBuf buf) {
-        buf.writeByte(slotNumber);
+    public static void encode(MessageCraftStack message, PacketBuffer buf) {
+        buf.writeByte(message.slotNumber);
     }
 
-    public int getSlotNumber() {
-        return slotNumber;
+    public static void handle(MessageCraftStack message, Supplier<NetworkEvent.Context> contextSupplier) {
+        NetworkEvent.Context context = contextSupplier.get();
+        context.enqueueWork(() -> {
+            EntityPlayerMP player = context.getSender();
+            if (player == null) {
+                return;
+            }
+
+            Container container = player.openContainer;
+            if (container == null || message.slotNumber < 0 || message.slotNumber >= container.inventorySlots.size()) {
+                return;
+            }
+
+            TweakProvider<Container> tweakProvider = CraftingTweaksProviderManager.getProvider(container);
+            if (tweakProvider == null) {
+                return;
+            }
+
+            Slot mouseSlot = container.inventorySlots.get(message.slotNumber);
+            ItemStack mouseStack = player.inventory.getItemStack();
+            int maxTries = 64;
+            while (maxTries > 0 && mouseSlot.getHasStack() && (mouseStack.isEmpty() || mouseStack.getCount() + mouseSlot.getStack().getCount() <= mouseStack.getMaxStackSize())) {
+                container.slotClick(mouseSlot.slotNumber, 0, ClickType.PICKUP, player);
+                mouseStack = player.inventory.getItemStack();
+                maxTries--;
+            }
+
+            player.connection.sendPacket(new SPacketSetSlot(-1, -1, player.inventory.getItemStack()));
+        });
     }
 
 }
