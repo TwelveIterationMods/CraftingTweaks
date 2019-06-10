@@ -30,6 +30,7 @@ public class CraftingTweaksClient {
 
     private boolean ignoreMouseUp;
     private int rightClickCraftingSlot = -1;
+    private int guiLeftOnMistakeFix;
 
     @SubscribeEvent
     public void onGuiKeyboardEvent(GuiScreenEvent.KeyboardKeyPressedEvent.Post event) {
@@ -204,6 +205,7 @@ public class CraftingTweaksClient {
         // We need to do this as soon as possible because EnderIO wraps the button and gives it a new id, completely hiding it from other mods...
         if (event.getGui() instanceof ContainerScreen<?>) {
             CraftingGuideButtonFixer.fixMistakes((ContainerScreen<?>) event.getGui(), event.getWidgetList());
+            guiLeftOnMistakeFix = ((ContainerScreen<?>) event.getGui()).getGuiLeft();
         }
     }
 
@@ -211,14 +213,6 @@ public class CraftingTweaksClient {
     public void onInitGui(GuiScreenEvent.InitGuiEvent.Post event) {
         if (event.getGui() instanceof ContainerScreen<?>) {
             initGui((ContainerScreen<?>) event.getGui(), event);
-        }
-    }
-
-    @SubscribeEvent
-    public void onActionPerformed(GuiScreenEvent.ActionPerformedEvent.Post event) {
-        // TODO ActionPerformed is no longer fired, need alternative recipe book toggle detection https://github.com/MinecraftForge/MinecraftForge/issues/5548
-        if (event.getGui() instanceof ContainerScreen<?>) {
-            CraftingGuideButtonFixer.fixMistakes((ContainerScreen<?>) event.getGui(), event.getButtonList());
         }
     }
 
@@ -274,6 +268,16 @@ public class CraftingTweaksClient {
         if (event.getGui() == null) {
             // WAILA somehow breaks the DrawScreenEvent, so we have to null-check here. o_o
             return;
+        }
+
+        // Detect changes on guiLeft to fix the recipe book button positioning (guiLeft changes on recipe book toggle)
+        if (event.getGui() instanceof ContainerScreen<?>) {
+            ContainerScreen containerScreen = (ContainerScreen) event.getGui();
+            int guiLeft = containerScreen.getGuiLeft();
+            if (guiLeft != guiLeftOnMistakeFix) {
+                CraftingGuideButtonFixer.fixMistakes(containerScreen, containerScreen.children());
+                guiLeftOnMistakeFix = guiLeft;
+            }
         }
 
         handleRightClickCrafting();

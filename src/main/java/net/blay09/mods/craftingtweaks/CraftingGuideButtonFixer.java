@@ -1,5 +1,6 @@
 package net.blay09.mods.craftingtweaks;
 
+import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.client.gui.widget.Widget;
@@ -12,7 +13,7 @@ import java.util.List;
 
 public class CraftingGuideButtonFixer {
 
-    public static void fixMistakes(ContainerScreen<?> guiContainer, List<? extends Widget> widgets) {
+    public static void fixMistakes(ContainerScreen<?> guiContainer, List<? extends IGuiEventListener> widgets) {
         Button button = findCraftButton(widgets);
         if (button != null) {
             if (CraftingTweaksConfig.CLIENT.hideVanillaCraftingGuide.get()) {
@@ -36,7 +37,7 @@ public class CraftingGuideButtonFixer {
     }
 
     @Nullable
-    private static Button findCraftButton(List<? extends Widget> buttonList) {
+    private static Button findCraftButton(List<? extends IGuiEventListener> buttonList) {
         return (Button) buttonList
                 .stream()
                 .filter(p -> p instanceof ImageButton && ((ImageButton) p).resourceLocation.getPath().equals("textures/gui/recipe_button.png"))
