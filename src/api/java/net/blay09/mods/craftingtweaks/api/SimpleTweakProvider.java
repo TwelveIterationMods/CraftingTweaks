@@ -1,7 +1,7 @@
 package net.blay09.mods.craftingtweaks.api;
 
-import net.minecraft.inventory.Container;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.util.Direction;
 
 import javax.annotation.Nullable;
 import java.util.function.Function;
@@ -11,6 +11,7 @@ public interface SimpleTweakProvider<T extends Container> extends TweakProvider<
 
     /**
      * Sets the settings for the rotation tweak.
+     *
      * @param enabled if false, this tweak will not be executed and the button will not show up
      * @param buttonX the x position of the tweak button, relative to the top left corner of the GUI
      * @param buttonY the y position of the tweak button, relative to the top left corner of the GUI
@@ -19,6 +20,7 @@ public interface SimpleTweakProvider<T extends Container> extends TweakProvider<
 
     /**
      * Sets the settings for the balance tweak.
+     *
      * @param enabled if false, this tweak will not be executed and the button will not show up
      * @param buttonX the x position of the tweak button, relative to the top left corner of the GUI
      * @param buttonY the y position of the tweak button, relative to the top left corner of the GUI
@@ -27,6 +29,7 @@ public interface SimpleTweakProvider<T extends Container> extends TweakProvider<
 
     /**
      * Sets the settings for the clear tweak.
+     *
      * @param enabled if false, this tweak will not be executed and the button will not show up
      * @param buttonX the x position of the tweak button, relative to the top left corner of the GUI
      * @param buttonY the y position of the tweak button, relative to the top left corner of the GUI
@@ -35,8 +38,9 @@ public interface SimpleTweakProvider<T extends Container> extends TweakProvider<
 
     /**
      * Sets the crafting grid index within the inventorySlots list in the container.
+     *
      * @param slotNumber the index of the first crafting matrix slot within the inventorySlots list (NOT within the inventory)
-     * @param size the size of the crafting grid
+     * @param size       the size of the crafting grid
      */
     void setGrid(int slotNumber, int size);
 
@@ -52,18 +56,21 @@ public interface SimpleTweakProvider<T extends Container> extends TweakProvider<
 
     /**
      * Setting this will make the buttons always align to the grid and ignore their offset settings.
+     *
      * @param alignToGrid the direction the buttons should be aligned towards
      */
-    void setAlignToGrid(@Nullable EnumFacing alignToGrid);
+    void setAlignToGrid(@Nullable Direction alignToGrid);
 
     /**
      * Allows specifying a predicate that determines whether a container contains a valid crafting grid.
+     *
      * @param predicate should return true for valid crafting containers
      */
     void setContainerValidPredicate(Predicate<Container> predicate);
 
     /**
      * Allows specifying a function that determines the starting slot of a crafting grid. Overrides the slotNumber given in {@link SimpleTweakProvider#setGrid(int, int)}.
+     *
      * @param function the slot number of the first crafting grid slot
      */
     void setGetGridStartFunction(Function<Container, Integer> function);

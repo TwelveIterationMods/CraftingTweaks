@@ -4,13 +4,6 @@ buildscript {
         maven { url = "http://files.minecraftforge.net/maven" }
         mavenCentral()
     }
-    // This is only here while FG is under active development
-    configurations.classpath {
-        resolutionStrategy {
-            cacheDynamicVersionsFor 10, "seconds"
-            cacheChangingModulesFor 0, "seconds"
-        }
-    }
     dependencies {
         classpath group: "net.minecraftforge.gradle", name: "ForgeGradle", version: "3.+", changing: true
     }

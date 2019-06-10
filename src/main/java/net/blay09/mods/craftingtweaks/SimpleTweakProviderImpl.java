@@ -5,20 +5,18 @@ import net.blay09.mods.craftingtweaks.api.DefaultProviderV2;
 import net.blay09.mods.craftingtweaks.api.RotationHandler;
 import net.blay09.mods.craftingtweaks.api.SimpleTweakProvider;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
+import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Slot;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.GuiScreenEvent;
 
 import javax.annotation.Nullable;
-import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -85,13 +83,13 @@ public class SimpleTweakProviderImpl<T extends Container> implements SimpleTweak
     private TweakSettings tweakRotate = new TweakSettings(true, true, -16, 16);
     private TweakSettings tweakBalance = new TweakSettings(true, true, -16, 16 + 18);
     private TweakSettings tweakClear = new TweakSettings(true, true, -16, 16 + 18 + 18);
-    private EnumFacing alignToGrid;
+    private Direction alignToGrid;
 
     public SimpleTweakProviderImpl(String modid) {
         this.modid = modid;
     }
 
-    public void setAlignToGrid(@Nullable EnumFacing direction) {
+    public void setAlignToGrid(@Nullable Direction direction) {
         this.alignToGrid = direction;
     }
 
@@ -137,50 +135,50 @@ public class SimpleTweakProviderImpl<T extends Container> implements SimpleTweak
     }
 
     @Override
-    public void clearGrid(EntityPlayer entityPlayer, T container, int id, boolean forced) {
+    public void clearGrid(PlayerEntity entityPlayer, T container, int id, boolean forced) {
         if (tweakClear.enabled) {
             defaultProvider.clearGrid(this, id, entityPlayer, container, phantomItems, forced);
         }
     }
 
     @Override
-    public void rotateGrid(EntityPlayer entityPlayer, T container, int id, boolean counterClockwise) {
+    public void rotateGrid(PlayerEntity entityPlayer, T container, int id, boolean counterClockwise) {
         if (tweakRotate.enabled) {
             defaultProvider.rotateGrid(this, id, entityPlayer, container, getCraftingGridSize(entityPlayer, container, id) == 4 ? smallRotationHandler : defaultProvider.getRotationHandler(), counterClockwise);
         }
     }
 
     @Override
-    public void balanceGrid(EntityPlayer entityPlayer, T container, int id) {
+    public void balanceGrid(PlayerEntity entityPlayer, T container, int id) {
         if (tweakBalance.enabled) {
             defaultProvider.balanceGrid(this, id, entityPlayer, container);
         }
     }
 
     @Override
-    public void spreadGrid(EntityPlayer entityPlayer, T container, int id) {
+    public void spreadGrid(PlayerEntity entityPlayer, T container, int id) {
         if (tweakBalance.enabled) {
             defaultProvider.spreadGrid(this, id, entityPlayer, container);
         }
     }
 
     @Override
-    public boolean canTransferFrom(EntityPlayer entityPlayer, T container, int id, Slot sourceSlot) {
+    public boolean canTransferFrom(PlayerEntity entityPlayer, T container, int id, Slot sourceSlot) {
         return defaultProvider.canTransferFrom(entityPlayer, container, sourceSlot);
     }
 
     @Override
-    public boolean transferIntoGrid(EntityPlayer entityPlayer, T container, int id, Slot sourceSlot) {
+    public boolean transferIntoGrid(PlayerEntity entityPlayer, T container, int id, Slot sourceSlot) {
         return defaultProvider.transferIntoGrid(this, id, entityPlayer, container, sourceSlot);
     }
 
     @Override
-    public ItemStack putIntoGrid(EntityPlayer entityPlayer, T container, int id, ItemStack itemStack, int index) {
+    public ItemStack putIntoGrid(PlayerEntity entityPlayer, T container, int id, ItemStack itemStack, int index) {
         return defaultProvider.putIntoGrid(this, id, entityPlayer, container, itemStack, index);
     }
 
     @Override
-    public IInventory getCraftMatrix(EntityPlayer entityPlayer, T container, int id) {
+    public IInventory getCraftMatrix(PlayerEntity entityPlayer, T container, int id) {
         return container.inventorySlots.get(getCraftingGridStart(entityPlayer, container, id)).inventory;
     }
 
@@ -190,21 +188,21 @@ public class SimpleTweakProviderImpl<T extends Container> implements SimpleTweak
     }
 
     @Override
-    public int getCraftingGridStart(EntityPlayer entityPlayer, T container, int id) {
-        if(getGridStartFunction != null) {
+    public int getCraftingGridStart(PlayerEntity entityPlayer, T container, int id) {
+        if (getGridStartFunction != null) {
             return getGridStartFunction.apply(container);
         }
         return gridSlotNumber;
     }
 
     @Override
-    public int getCraftingGridSize(EntityPlayer entityPlayer, T container, int id) {
+    public int getCraftingGridSize(PlayerEntity entityPlayer, T container, int id) {
         return gridSize;
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void initGui(GuiContainer guiContainer, GuiScreenEvent.InitGuiEvent event) {
+    public void initGui(ContainerScreen<T> guiContainer, GuiScreenEvent.InitGuiEvent event) {
         if (!hideButtons) {
             int index = 0;
             if (tweakRotate.enabled && tweakRotate.showButton) {
@@ -214,7 +212,7 @@ public class SimpleTweakProviderImpl<T extends Container> implements SimpleTweak
                     buttonX = getButtonX(guiContainer, index);
                     buttonY = getButtonY(guiContainer, index);
                 }
-                event.addButton(CraftingTweaksAPI.createRotateButtonRelative(0, guiContainer, buttonX, buttonY));
+                event.addWidget(CraftingTweaksAPI.createRotateButtonRelative(0, guiContainer, buttonX, buttonY));
                 index++;
             }
 
@@ -225,7 +223,7 @@ public class SimpleTweakProviderImpl<T extends Container> implements SimpleTweak
                     buttonX = getButtonX(guiContainer, index);
                     buttonY = getButtonY(guiContainer, index);
                 }
-                event.addButton(CraftingTweaksAPI.createBalanceButtonRelative(0, guiContainer, buttonX, buttonY));
+                event.addWidget(CraftingTweaksAPI.createBalanceButtonRelative(0, guiContainer, buttonX, buttonY));
                 index++;
             }
 
@@ -236,15 +234,14 @@ public class SimpleTweakProviderImpl<T extends Container> implements SimpleTweak
                     buttonX = getButtonX(guiContainer, index);
                     buttonY = getButtonY(guiContainer, index);
                 }
-                event.addButton(CraftingTweaksAPI.createClearButtonRelative(0, guiContainer, buttonX, buttonY));
+                event.addWidget(CraftingTweaksAPI.createClearButtonRelative(0, guiContainer, buttonX, buttonY));
             }
         }
     }
 
     @OnlyIn(Dist.CLIENT)
-    @SuppressWarnings("unchecked")
-    private int getButtonX(GuiContainer guiContainer, int index) {
-        Slot firstSlot = guiContainer.inventorySlots.inventorySlots.get(getCraftingGridStart(Minecraft.getInstance().player, (T) guiContainer.inventorySlots, 0));
+    private int getButtonX(ContainerScreen<T> guiContainer, int index) {
+        Slot firstSlot = guiContainer.getContainer().inventorySlots.get(getCraftingGridStart(Minecraft.getInstance().player, guiContainer.getContainer(), 0));
         switch (alignToGrid) {
             case NORTH:
             case UP:
@@ -260,9 +257,8 @@ public class SimpleTweakProviderImpl<T extends Container> implements SimpleTweak
     }
 
     @OnlyIn(Dist.CLIENT)
-    @SuppressWarnings("unchecked")
-    private int getButtonY(GuiContainer guiContainer, int index) {
-        Slot firstSlot = guiContainer.inventorySlots.inventorySlots.get(getCraftingGridStart(Minecraft.getInstance().player, (T) guiContainer.inventorySlots, 0));
+    private int getButtonY(ContainerScreen<T> guiContainer, int index) {
+        Slot firstSlot = guiContainer.getContainer().inventorySlots.get(getCraftingGridStart(Minecraft.getInstance().player, guiContainer.getContainer(), 0));
         switch (alignToGrid) {
             case NORTH:
             case UP:

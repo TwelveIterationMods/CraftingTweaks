@@ -3,8 +3,8 @@ package net.blay09.mods.craftingtweaks.addons;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
 import net.blay09.mods.craftingtweaks.api.SimpleTweakProvider;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
-import net.minecraft.inventory.Container;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.util.Direction;
 import net.minecraftforge.fml.ModList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,7 +30,7 @@ public class CraftingTweaksAddons {
             provider.setTweakRotate(true, true, 0, 0);
             provider.setTweakBalance(false, false, 0, 0);
             provider.setTweakClear(true, true, 0, 0);
-            provider.setAlignToGrid(EnumFacing.WEST);
+            provider.setAlignToGrid(Direction.WEST);
         }
     }
 

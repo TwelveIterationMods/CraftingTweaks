@@ -1,15 +1,14 @@
 package net.blay09.mods.craftingtweaks.net;
 
-import net.blay09.mods.craftingtweaks.CraftingTweaks;
 import net.blay09.mods.craftingtweaks.CraftingTweaksProviderManager;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.ClickType;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.Slot;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.ClickType;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.network.play.server.SPacketSetSlot;
+import net.minecraft.network.play.server.SSetSlotPacket;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -34,7 +33,7 @@ public class MessageCraftStack {
     public static void handle(MessageCraftStack message, Supplier<NetworkEvent.Context> contextSupplier) {
         NetworkEvent.Context context = contextSupplier.get();
         context.enqueueWork(() -> {
-            EntityPlayerMP player = context.getSender();
+            ServerPlayerEntity player = context.getSender();
             if (player == null) {
                 return;
             }
@@ -58,7 +57,7 @@ public class MessageCraftStack {
                 maxTries--;
             }
 
-            player.connection.sendPacket(new SPacketSetSlot(-1, -1, player.inventory.getItemStack()));
+            player.connection.sendPacket(new SSetSlotPacket(-1, -1, player.inventory.getItemStack()));
         });
     }
 

@@ -10,11 +10,11 @@ import net.blay09.mods.craftingtweaks.net.MessageBalance;
 import net.blay09.mods.craftingtweaks.net.MessageClear;
 import net.blay09.mods.craftingtweaks.net.MessageRotate;
 import net.blay09.mods.craftingtweaks.net.NetworkHandler;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.container.Container;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -41,11 +41,11 @@ public class InternalMethodsImpl implements InternalMethods {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public GuiButton createBalanceButton(int id, @Nullable GuiContainer parentGui, int x, int y) {
+    public Button createBalanceButton(int id, @Nullable ContainerScreen<?> parentGui, int x, int y) {
         return new GuiTweakButton(parentGui, x, y, 48, 0, GuiTweakButton.TweakOption.Balance, id) {
             @Override
-            protected void onTweakButtonClicked(EntityPlayer player, Container container, TweakProvider<Container> provider, ClientProvider clientProvider) {
-                boolean isShiftDown = GuiScreen.isShiftKeyDown();
+            protected void onTweakButtonClicked(PlayerEntity player, Container container, TweakProvider<Container> provider, ClientProvider clientProvider) {
+                boolean isShiftDown = Screen.hasShiftDown();
                 if (CraftingTweaks.isServerSideInstalled) {
                     NetworkHandler.channel.sendToServer(new MessageBalance(this.getTweakId(), isShiftDown));
                 } else {
@@ -61,11 +61,11 @@ public class InternalMethodsImpl implements InternalMethods {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public GuiButton createRotateButton(int id, @Nullable GuiContainer parentGui, int x, int y) {
+    public Button createRotateButton(int id, @Nullable ContainerScreen<?> parentGui, int x, int y) {
         return new GuiTweakButton(parentGui, x, y, 16, 0, GuiTweakButton.TweakOption.Rotate, id) {
             @Override
-            protected void onTweakButtonClicked(EntityPlayer player, Container container, TweakProvider<Container> provider, ClientProvider clientProvider) {
-                boolean isShiftDown = GuiScreen.isShiftKeyDown();
+            protected void onTweakButtonClicked(PlayerEntity player, Container container, TweakProvider<Container> provider, ClientProvider clientProvider) {
+                boolean isShiftDown = Screen.hasShiftDown();
                 if (CraftingTweaks.isServerSideInstalled) {
                     NetworkHandler.channel.sendToServer(new MessageRotate(this.getTweakId(), isShiftDown));
                 } else {
@@ -77,11 +77,11 @@ public class InternalMethodsImpl implements InternalMethods {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public GuiButton createClearButton(int id, @Nullable GuiContainer parentGui, int x, int y) {
+    public Button createClearButton(int id, @Nullable ContainerScreen<?> parentGui, int x, int y) {
         return new GuiTweakButton(parentGui, x, y, 32, 0, GuiTweakButton.TweakOption.Clear, id) {
             @Override
-            protected void onTweakButtonClicked(EntityPlayer player, Container container, TweakProvider<Container> provider, ClientProvider clientProvider) {
-                boolean isShiftDown = GuiScreen.isShiftKeyDown();
+            protected void onTweakButtonClicked(PlayerEntity player, Container container, TweakProvider<Container> provider, ClientProvider clientProvider) {
+                boolean isShiftDown = Screen.hasShiftDown();
                 if (CraftingTweaks.isServerSideInstalled) {
                     NetworkHandler.channel.sendToServer(new MessageClear(this.getTweakId(), isShiftDown));
                 } else {

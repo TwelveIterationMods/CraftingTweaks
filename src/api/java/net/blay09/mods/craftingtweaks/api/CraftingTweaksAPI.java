@@ -1,8 +1,8 @@
 package net.blay09.mods.craftingtweaks.api;
 
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.inventory.Container;
+import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.inventory.container.Container;
 
 public class CraftingTweaksAPI {
 
@@ -52,7 +52,7 @@ public class CraftingTweaksAPI {
      * @param y the y position the button should be placed at
      * @return a new GuiButton instance that you should add to the buttonList
      */
-    public static GuiButton createBalanceButton(int id, int x, int y) {
+    public static Button createBalanceButton(int id, int x, int y) {
         return internalMethods.createBalanceButton(id, null, x, y);
     }
 
@@ -64,7 +64,7 @@ public class CraftingTweaksAPI {
      * @param relX the relative position the button should be placed at
      * @param relY the relative position the button should be placed at
      */
-    public static GuiButton createBalanceButtonRelative(int id, GuiContainer parentGui, int relX, int relY) {
+    public static Button createBalanceButtonRelative(int id, ContainerScreen<?> parentGui, int relX, int relY) {
         return internalMethods.createBalanceButton(id, parentGui, relX, relY);
     }
 
@@ -76,7 +76,7 @@ public class CraftingTweaksAPI {
      * @param y the y position the button should be placed at
      * @return a new GuiButton instance that you should add to the buttonList
      */
-    public static GuiButton createRotateButton(int id, int x, int y) {
+    public static Button createRotateButton(int id, int x, int y) {
         return internalMethods.createRotateButton(id, null, x, y);
     }
 
@@ -88,7 +88,7 @@ public class CraftingTweaksAPI {
      * @param relX the relative position the button should be placed at
      * @param relY the relative position the button should be placed at
      */
-    public static GuiButton createRotateButtonRelative(int id, GuiContainer parentGui, int relX, int relY) {
+    public static Button createRotateButtonRelative(int id, ContainerScreen<?> parentGui, int relX, int relY) {
         return internalMethods.createRotateButton(id, parentGui, relX, relY);
     }
 
@@ -99,7 +99,7 @@ public class CraftingTweaksAPI {
      * @param y the y position the button should be placed at
      * @return a new GuiButton instance that you should add to the buttonList
      */
-    public static GuiButton createClearButton(int id, int x, int y) {
+    public static Button createClearButton(int id, int x, int y) {
         return internalMethods.createClearButton(id, null, x, y);
     }
 
@@ -111,7 +111,7 @@ public class CraftingTweaksAPI {
      * @param relX the relative position the button should be placed at
      * @param relY the relative position the button should be placed at
      */
-    public static GuiButton createClearButtonRelative(int id, GuiContainer parentGui, int relX, int relY) {
+    public static Button createClearButtonRelative(int id, ContainerScreen<?> parentGui, int relX, int relY) {
         return internalMethods.createClearButton(id, parentGui, relX, relY);
     }
 }

@@ -2,17 +2,18 @@ package net.blay09.mods.craftingtweaks.net;
 
 import net.blay09.mods.craftingtweaks.*;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.IRecipeHolder;
-import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.inventory.Slot;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.IRecipeType;
+import net.minecraft.item.crafting.RecipeManager;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.crafting.VanillaRecipeTypes;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.Objects;
@@ -42,7 +43,7 @@ public class MessageCompress {
     public static void handle(MessageCompress message, Supplier<NetworkEvent.Context> contextSupplier) {
         NetworkEvent.Context context = contextSupplier.get();
         context.enqueueWork(() -> {
-            EntityPlayerMP player = context.getSender();
+            ServerPlayerEntity player = context.getSender();
             if (player == null) {
                 return;
             }
@@ -54,7 +55,7 @@ public class MessageCompress {
 
             CompressType compressType = message.type;
             Slot mouseSlot = container.inventorySlots.get(message.slotNumber);
-            if (!(mouseSlot.inventory instanceof InventoryPlayer)) {
+            if (!(mouseSlot.inventory instanceof PlayerInventory)) {
                 return;
             }
 
@@ -76,7 +77,7 @@ public class MessageCompress {
                         continue;
                     }
 
-                    if (slot.inventory instanceof InventoryPlayer && slot.getHasStack() && ItemStack.areItemsEqual(slot.getStack(), mouseSlot.getStack()) && ItemStack.areItemStackTagsEqual(slot.getStack(), mouseSlot.getStack())) {
+                    if (slot.inventory instanceof PlayerInventory && slot.getHasStack() && ItemStack.areItemsEqual(slot.getStack(), mouseSlot.getStack()) && ItemStack.areItemStackTagsEqual(slot.getStack(), mouseSlot.getStack())) {
                         ItemStack result = findMatchingResult(new InventoryCraftingDecompress(container, slot.getStack()), player);
                         if (!result.isEmpty() && !isBlacklisted(result) && !slot.getStack().isEmpty() && slot.getStack().getCount() >= 1) {
                             do {
@@ -98,7 +99,7 @@ public class MessageCompress {
                         continue;
                     }
 
-                    if (slot.inventory instanceof InventoryPlayer && slot.getHasStack() && ItemStack.areItemsEqual(slot.getStack(), mouseSlot.getStack()) && ItemStack.areItemStackTagsEqual(slot.getStack(), mouseSlot.getStack())) {
+                    if (slot.inventory instanceof PlayerInventory && slot.getHasStack() && ItemStack.areItemsEqual(slot.getStack(), mouseSlot.getStack()) && ItemStack.areItemStackTagsEqual(slot.getStack(), mouseSlot.getStack())) {
                         if (size == 9 && !slot.getStack().isEmpty() && slot.getStack().getCount() >= 9) {
                             ItemStack result = findMatchingResult(new InventoryCraftingCompress(container, 3, slot.getStack()), player);
                             if (!result.isEmpty() && !isBlacklisted(result)) {
@@ -143,8 +144,9 @@ public class MessageCompress {
         });
     }
 
-    private static <T extends InventoryCrafting & IRecipeHolder> ItemStack findMatchingResult(T craftingInventory, EntityPlayerMP player) {
-        IRecipe recipe = Objects.requireNonNull(player.getServer()).getRecipeManager().getRecipe(craftingInventory, player.world, VanillaRecipeTypes.CRAFTING);
+    private static <T extends CraftingInventory & IRecipeHolder> ItemStack findMatchingResult(T craftingInventory, ServerPlayerEntity player) {
+        RecipeManager recipeManager = Objects.requireNonNull(player.getServer()).getRecipeManager();
+        IRecipe<CraftingInventory> recipe = recipeManager.func_215371_a(IRecipeType.field_222149_a, craftingInventory, player.world).orElse(null);
         if (recipe != null && craftingInventory.canUseRecipe(player.world, player, recipe)) {
             return recipe.getCraftingResult(craftingInventory);
         }

@@ -1,14 +1,14 @@
 package net.blay09.mods.craftingtweaks;
 
-import net.minecraft.inventory.Container;
+import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.IRecipeHolder;
-import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 
 import javax.annotation.Nullable;
 
-public class InventoryCraftingDecompress extends InventoryCrafting implements IRecipeHolder {
+public class InventoryCraftingDecompress extends CraftingInventory implements IRecipeHolder {
 
     private IRecipe recipeUsed;
 

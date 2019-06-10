@@ -8,14 +8,21 @@ import net.blay09.mods.craftingtweaks.InventoryCraftingCompress;
 import net.blay09.mods.craftingtweaks.api.RotationHandler;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.recipebook.RecipeList;
-import net.minecraft.client.multiplayer.PlayerControllerMP;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.*;
+import net.minecraft.client.multiplayer.PlayerController;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.CraftingInventory;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.IRecipeHolder;
+import net.minecraft.inventory.container.ClickType;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.CraftingResultSlot;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -78,15 +85,15 @@ public class ClientProvider {
     private final ItemStackHandler lastCraftedMatrix = new ItemStackHandler(9);
     private boolean hasLastCraftedMatrix;
 
-    private PlayerControllerMP getController() {
-        return Minecraft.getInstance().playerController;
+    private PlayerController getController() {
+        return Minecraft.getInstance().field_71442_b;
     }
 
-    private boolean canBalance(TweakProvider<Container> provider, EntityPlayer entityPlayer, Container container, int id) {
+    private boolean canBalance(TweakProvider<Container> provider, PlayerEntity entityPlayer, Container container, int id) {
         return !provider.requiresServerSide();
     }
 
-    public void balanceGrid(TweakProvider<Container> provider, EntityPlayer entityPlayer, Container container, int id) {
+    public void balanceGrid(TweakProvider<Container> provider, PlayerEntity entityPlayer, Container container, int id) {
         if (!canBalance(provider, entityPlayer, container, id)) {
             return;
         }
@@ -146,7 +153,7 @@ public class ClientProvider {
         }
     }
 
-    public void spreadGrid(TweakProvider<Container> provider, EntityPlayer entityPlayer, Container container, int id) {
+    public void spreadGrid(TweakProvider<Container> provider, PlayerEntity entityPlayer, Container container, int id) {
         int tries = 0;
         while (tries < 9) {
             tries++;
@@ -186,11 +193,11 @@ public class ClientProvider {
         balanceGrid(provider, entityPlayer, container, id);
     }
 
-    private boolean canClear(TweakProvider<Container> provider, EntityPlayer entityPlayer, Container container, int id) {
+    private boolean canClear(TweakProvider<Container> provider, PlayerEntity entityPlayer, Container container, int id) {
         return !provider.requiresServerSide();
     }
 
-    public void clearGrid(TweakProvider<Container> provider, EntityPlayer entityPlayer, Container container, int id, boolean forced) {
+    public void clearGrid(TweakProvider<Container> provider, PlayerEntity entityPlayer, Container container, int id, boolean forced) {
         if (!canClear(provider, entityPlayer, container, id)) {
             return;
         }
@@ -205,11 +212,11 @@ public class ClientProvider {
         }
     }
 
-    private boolean canRotate(TweakProvider<Container> provider, EntityPlayer entityPlayer, Container container, int id) {
+    private boolean canRotate(TweakProvider<Container> provider, PlayerEntity entityPlayer, Container container, int id) {
         return !provider.requiresServerSide() && provider.getCraftingGridSize(entityPlayer, container, id) == 9;
     }
 
-    public void rotateGrid(TweakProvider<Container> provider, EntityPlayer entityPlayer, Container container, int id, boolean counterClockwise) {
+    public void rotateGrid(TweakProvider<Container> provider, PlayerEntity entityPlayer, Container container, int id, boolean counterClockwise) {
         if (!canRotate(provider, entityPlayer, container, id)) {
             return;
         }
@@ -228,12 +235,12 @@ public class ClientProvider {
         } while (currentSlot != startSlot);
     }
 
-    private boolean rotateGridWithBuffer(TweakProvider<Container> provider, EntityPlayer entityPlayer, Container container, int id, boolean counterClockwise) {
+    private boolean rotateGridWithBuffer(TweakProvider<Container> provider, PlayerEntity entityPlayer, Container container, int id, boolean counterClockwise) {
         int emptyBuffer = 0;
         int[] bufferSlot = new int[2];
         for (Object obj : container.inventorySlots) {
             Slot slot = (Slot) obj;
-            if (slot.inventory instanceof InventoryPlayer && !slot.getHasStack()) {
+            if (slot.inventory instanceof PlayerInventory && !slot.getHasStack()) {
                 bufferSlot[emptyBuffer] = slot.slotNumber;
                 emptyBuffer++;
                 if (emptyBuffer >= 2) {
@@ -261,11 +268,11 @@ public class ClientProvider {
         return true;
     }
 
-    private boolean canTransfer(TweakProvider<Container> provider, EntityPlayer entityPlayer, Container container, int id) {
+    private boolean canTransfer(TweakProvider<Container> provider, PlayerEntity entityPlayer, Container container, int id) {
         return !provider.requiresServerSide();
     }
 
-    public boolean transferIntoGrid(TweakProvider<Container> provider, EntityPlayer entityPlayer, Container container, int id, Slot sourceSlot) {
+    public boolean transferIntoGrid(TweakProvider<Container> provider, PlayerEntity entityPlayer, Container container, int id, Slot sourceSlot) {
         if (!canTransfer(provider, entityPlayer, container, id)) {
             return false;
         }
@@ -320,11 +327,11 @@ public class ClientProvider {
         return itemMoved;
     }
 
-    private boolean dropOffMouseStack(EntityPlayer entityPlayer, Container container) {
+    private boolean dropOffMouseStack(PlayerEntity entityPlayer, Container container) {
         return dropOffMouseStack(entityPlayer, container, -1);
     }
 
-    private boolean dropOffMouseStack(EntityPlayer entityPlayer, Container container, int ignoreSlot) {
+    private boolean dropOffMouseStack(PlayerEntity entityPlayer, Container container, int ignoreSlot) {
         if (entityPlayer.inventory.getItemStack().isEmpty()) {
             return true;
         }
@@ -352,7 +359,7 @@ public class ClientProvider {
         return entityPlayer.inventory.getItemStack().isEmpty();
     }
 
-    private void decompress(TweakProvider<Container> provider, EntityPlayer entityPlayer, Container container, Slot mouseSlot, CompressType compressType) {
+    private void decompress(TweakProvider<Container> provider, PlayerEntity entityPlayer, Container container, Slot mouseSlot, CompressType compressType) {
         if (!mouseSlot.getHasStack() || !canClear(provider, entityPlayer, container, 0)) {
             return;
         }
@@ -374,13 +381,13 @@ public class ClientProvider {
             if (compressType != CompressType.DECOMPRESS_ALL && slot != mouseSlot) {
                 continue;
             }
-            if (slot.inventory instanceof InventoryPlayer && slot.getHasStack() && ItemStack.areItemsEqual(slot.getStack(), mouseSlot.getStack()) && ItemStack.areItemStackTagsEqual(slot.getStack(), mouseSlot.getStack())) {
+            if (slot.inventory instanceof PlayerInventory && slot.getHasStack() && ItemStack.areItemsEqual(slot.getStack(), mouseSlot.getStack()) && ItemStack.areItemStackTagsEqual(slot.getStack(), mouseSlot.getStack())) {
                 // Move stack to crafting grid
                 getController().windowClick(container.windowId, mouseSlot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
                 getController().windowClick(container.windowId, start, 0, ClickType.PICKUP, entityPlayer);
                 for (Slot resultSlot : container.inventorySlots) {
                     // Search for result slot and grab result
-                    if (resultSlot instanceof SlotCrafting && resultSlot.getHasStack()) {
+                    if (resultSlot instanceof CraftingResultSlot && resultSlot.getHasStack()) {
                         getController().windowClick(container.windowId, resultSlot.slotNumber, 0, decompressAll ? ClickType.QUICK_MOVE : ClickType.PICKUP, entityPlayer);
                         break;
                     }
@@ -394,7 +401,7 @@ public class ClientProvider {
         }
     }
 
-    public void compress(TweakProvider<Container> provider, EntityPlayerSP player, Container container, Slot mouseSlot, CompressType compressType) {
+    public void compress(TweakProvider<Container> provider, ClientPlayerEntity player, Container container, Slot mouseSlot, CompressType compressType) {
         if (compressType == CompressType.DECOMPRESS_ALL || compressType == CompressType.DECOMPRESS_ONE || compressType == CompressType.DECOMPRESS_STACK) {
             decompress(provider, player, container, mouseSlot, compressType);
             return;
@@ -421,7 +428,7 @@ public class ClientProvider {
             if (compressType != CompressType.COMPRESS_ALL && slot != mouseSlot) {
                 continue;
             }
-            if (slot.inventory instanceof InventoryPlayer && slot.getHasStack() && ItemStack.areItemsEqual(slot.getStack(), mouseSlot.getStack()) && ItemStack.areItemStackTagsEqual(slot.getStack(), mouseSlot.getStack())) {
+            if (slot.inventory instanceof PlayerInventory && slot.getHasStack() && ItemStack.areItemsEqual(slot.getStack(), mouseSlot.getStack()) && ItemStack.areItemStackTagsEqual(slot.getStack(), mouseSlot.getStack())) {
                 ItemStack result;
                 ItemStack mouseStack = slot.getStack();
                 if (size == 9 && !mouseStack.isEmpty() && mouseStack.getCount() >= 9) {
@@ -471,7 +478,7 @@ public class ClientProvider {
                     }
                 }
                 for (Slot resultSlot : container.inventorySlots) {
-                    if (resultSlot instanceof SlotCrafting && resultSlot.getHasStack()) {
+                    if (resultSlot instanceof CraftingResultSlot && resultSlot.getHasStack()) {
                         getController().windowClick(container.windowId, resultSlot.slotNumber, 0, compressAll ? ClickType.QUICK_MOVE : ClickType.PICKUP, player);
                         break;
                     }
@@ -489,11 +496,15 @@ public class ClientProvider {
         }
     }
 
-    private static <T extends InventoryCrafting & IRecipeHolder> ItemStack findMatchingResult(T craftingInventory, EntityPlayerSP player) {
+    @SuppressWarnings("unchecked")
+    private static <T extends CraftingInventory & IRecipeHolder> ItemStack findMatchingResult(T craftingInventory, ClientPlayerEntity player) {
         for (RecipeList recipeList : player.getRecipeBook().getRecipes()) {
-            for (IRecipe recipe : recipeList.getRecipes()) {
-                if (recipe.matches(craftingInventory, player.world)) {
-                    return recipe.getCraftingResult(craftingInventory);
+            for (IRecipe<?> recipe : recipeList.getRecipes()) {
+                if (recipe.func_222127_g() == IRecipeType.field_222149_a) {
+                    IRecipe<CraftingInventory> craftingRecipe = (IRecipe<CraftingInventory>) recipe;
+                    if (craftingRecipe.matches(craftingInventory, player.world)) {
+                        return craftingRecipe.getCraftingResult(craftingInventory);
+                    }
                 }
             }
         }
@@ -523,11 +534,11 @@ public class ClientProvider {
         }
     }
 
-    private boolean canRefillLastCrafted(TweakProvider<Container> provider, EntityPlayer player, Container container, int id) {
+    private boolean canRefillLastCrafted(TweakProvider<Container> provider, PlayerEntity player, Container container, int id) {
         return !provider.requiresServerSide() && hasLastCraftedMatrix;
     }
 
-    public void refillLastCrafted(TweakProvider<Container> provider, EntityPlayer entityPlayer, Container container, int id, boolean fullStack) {
+    public void refillLastCrafted(TweakProvider<Container> provider, PlayerEntity entityPlayer, Container container, int id, boolean fullStack) {
         if (!canRefillLastCrafted(provider, entityPlayer, container, id)) {
             return;
         }
@@ -544,7 +555,7 @@ public class ClientProvider {
             if (!itemStack.isEmpty()) {
                 // Search for this item in the inventory
                 for (Slot slot : container.inventorySlots) {
-                    if (slot.inventory instanceof InventoryPlayer && slot.getHasStack() && ItemStack.areItemsEqual(slot.getStack(), itemStack) && ItemStack.areItemStackTagsEqual(slot.getStack(), itemStack)) {
+                    if (slot.inventory instanceof PlayerInventory && slot.getHasStack() && ItemStack.areItemsEqual(slot.getStack(), itemStack) && ItemStack.areItemStackTagsEqual(slot.getStack(), itemStack)) {
                         getController().windowClick(container.windowId, slot.slotNumber, 0, ClickType.PICKUP, entityPlayer);
                         getController().windowClick(container.windowId, gridStart + i, fullStack ? 0 : 1, ClickType.PICKUP, entityPlayer);
                         getController().windowClick(container.windowId, slot.slotNumber, 0, ClickType.PICKUP, entityPlayer);

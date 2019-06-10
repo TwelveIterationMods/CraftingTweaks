@@ -2,7 +2,7 @@ package net.blay09.mods.craftingtweaks;
 
 import com.google.common.collect.Maps;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
-import net.minecraft.inventory.Container;
+import net.minecraft.inventory.container.Container;
 import net.minecraftforge.fml.ModList;
 
 import javax.annotation.Nullable;

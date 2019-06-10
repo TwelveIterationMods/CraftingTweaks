@@ -1,12 +1,11 @@
 package net.blay09.mods.craftingtweaks.net;
 
-import net.blay09.mods.craftingtweaks.CraftingTweaks;
 import net.blay09.mods.craftingtweaks.CraftingTweaksProviderManager;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.Slot;
-import net.minecraft.inventory.SlotCrafting;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.CraftingResultSlot;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -37,7 +36,7 @@ public class MessageTransferStack {
     public static void handle(MessageTransferStack message, Supplier<NetworkEvent.Context> contextSupplier) {
         NetworkEvent.Context context = contextSupplier.get();
         context.enqueueWork(() -> {
-            EntityPlayer player = context.getSender();
+            PlayerEntity player = context.getSender();
             if (player == null) {
                 return;
             }
@@ -54,7 +53,7 @@ public class MessageTransferStack {
 
             // Check if the slot can be transferred from. SlotCrafting is always blacklisted.
             Slot slot = container.inventorySlots.get(message.slotNumber);
-            if (!tweakProvider.canTransferFrom(player, container, message.id, slot) || slot instanceof SlotCrafting) {
+            if (!tweakProvider.canTransferFrom(player, container, message.id, slot) || slot instanceof CraftingResultSlot) {
                 return;
             }
 

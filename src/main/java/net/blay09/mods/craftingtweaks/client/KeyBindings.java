@@ -60,7 +60,7 @@ public class KeyBindings {
     }
 
     public static boolean isActiveIgnoreContext(KeyBinding keyBinding) {
-        return keyBinding.getKey().getType() == InputMappings.Type.KEYSYM && InputMappings.isKeyDown(keyBinding.getKey().getKeyCode());
+        return keyBinding.getKey().getType() == InputMappings.Type.KEYSYM && InputMappings.func_216506_a(Minecraft.getInstance().mainWindow.getHandle(), keyBinding.getKey().getKeyCode());
     }
 
     @Nullable

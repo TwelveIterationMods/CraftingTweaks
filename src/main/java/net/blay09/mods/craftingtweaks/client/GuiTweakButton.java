@@ -4,11 +4,11 @@ import net.blay09.mods.craftingtweaks.CraftingTweaks;
 import net.blay09.mods.craftingtweaks.CraftingTweaksProviderManager;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.container.Container;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -23,12 +23,12 @@ public abstract class GuiTweakButton extends GuiImageButton implements ITooltipP
 
     private final TweakOption tweakOption;
     private final int tweakId;
-    private final GuiContainer parentGui;
+    private final ContainerScreen<?> parentGui;
     private int lastGuiLeft;
     private int lastGuiTop;
 
-    public GuiTweakButton(@Nullable GuiContainer parentGui, int xPosition, int yPosition, int texCoordX, int texCoordY, TweakOption tweakOption, int tweakId) {
-        super(-1, xPosition, yPosition, texCoordX, texCoordY);
+    public GuiTweakButton(@Nullable ContainerScreen<?> parentGui, int xPosition, int yPosition, int texCoordX, int texCoordY, TweakOption tweakOption, int tweakId) {
+        super(xPosition, yPosition, texCoordX, texCoordY);
         this.parentGui = parentGui;
         this.tweakOption = tweakOption;
         this.tweakId = tweakId;
@@ -59,8 +59,8 @@ public abstract class GuiTweakButton extends GuiImageButton implements ITooltipP
 
     @Override
     public void onClick(double mouseX, double mouseY) {
-        playPressSound(Minecraft.getInstance().getSoundHandler());
-        EntityPlayer player = Minecraft.getInstance().player;
+        playDownSound(Minecraft.getInstance().getSoundHandler());
+        PlayerEntity player = Minecraft.getInstance().player;
         Container container = player.openContainer;
         TweakProvider<Container> provider = CraftingTweaksProviderManager.getProvider(container);
         if (provider != null) {
@@ -72,7 +72,7 @@ public abstract class GuiTweakButton extends GuiImageButton implements ITooltipP
         }
     }
 
-    protected abstract void onTweakButtonClicked(EntityPlayer player, Container container, TweakProvider<Container> provider, ClientProvider clientProvider);
+    protected abstract void onTweakButtonClicked(PlayerEntity player, Container container, TweakProvider<Container> provider, ClientProvider clientProvider);
 
     @Override
     public void render(int mouseX, int mouseY, float partialTicks) {
@@ -80,13 +80,13 @@ public abstract class GuiTweakButton extends GuiImageButton implements ITooltipP
         int oldY = y;
         // If parentGui is set, we only store the relative position in the button for mods that do hacky things where guiLeft/guiTop constantly changes
         if (parentGui != null) {
-            lastGuiLeft = parentGui.guiLeft;
-            lastGuiTop = parentGui.guiTop;
+            lastGuiLeft = parentGui.getGuiLeft();
+            lastGuiTop = parentGui.getGuiTop();
             x += lastGuiLeft;
             y += lastGuiTop;
         }
         int oldTexCoordX = texCoordX;
-        if (GuiScreen.isShiftKeyDown()) {
+        if (Screen.hasShiftDown()) {
             texCoordX += 48;
         }
 
@@ -103,7 +103,7 @@ public abstract class GuiTweakButton extends GuiImageButton implements ITooltipP
                 tooltip.add(I18n.format("tooltip.craftingtweaks.rotate"));
                 break;
             case Clear:
-                if (GuiScreen.isShiftKeyDown()) {
+                if (Screen.hasShiftDown()) {
                     tooltip.add(I18n.format("tooltip.craftingtweaks.forceClear"));
                     tooltip.add("\u00a77" + I18n.format("tooltip.craftingtweaks.forceClearInfo"));
                 } else {
@@ -111,7 +111,7 @@ public abstract class GuiTweakButton extends GuiImageButton implements ITooltipP
                 }
                 break;
             case Balance:
-                if (GuiScreen.isShiftKeyDown()) {
+                if (Screen.hasShiftDown()) {
                     tooltip.add(I18n.format("tooltip.craftingtweaks.spread"));
                 } else {
                     tooltip.add(I18n.format("tooltip.craftingtweaks.balance"));

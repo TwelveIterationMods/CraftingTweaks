@@ -6,9 +6,9 @@ import net.blay09.mods.craftingtweaks.api.SimpleTweakProvider;
 import net.blay09.mods.craftingtweaks.client.CraftingTweaksClient;
 import net.blay09.mods.craftingtweaks.client.KeyBindings;
 import net.blay09.mods.craftingtweaks.net.NetworkHandler;
-import net.minecraft.inventory.Container;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.DeferredWorkQueue;
@@ -53,31 +53,32 @@ public class CraftingTweaks {
     @SuppressWarnings("unchecked")
     private void processInterMod(InterModProcessEvent event) {
         event.getIMCStream(it -> it.equals("RegisterProvider") || it.equals("RegisterProviderV2") || it.equals("RegisterProviderV3")).forEach(message -> {
-            NBTTagCompound tagCompound = (NBTTagCompound) message.getMessageSupplier().get();
-            String sender = message.getModId(); // TODO No way to get the sender of an IMC Message currently?
+            CompoundNBT tagCompound = (CompoundNBT) message.getMessageSupplier().get();
+            // TODO No way to get the sender of an IMC Message currently? https://github.com/MinecraftForge/MinecraftForge/issues/5746
+            String sender = message.getModId();
             String containerClassName = tagCompound.getString("ContainerClass");
             SimpleTweakProvider provider = new SimpleTweakProviderImpl(sender);
-            int buttonOffsetX = tagCompound.hasKey("ButtonOffsetX") ? tagCompound.getInt("ButtonOffsetX") : -16;
-            int buttonOffsetY = tagCompound.hasKey("ButtonOffsetY") ? tagCompound.getInt("ButtonOffsetY") : 16;
+            int buttonOffsetX = tagCompound.contains("ButtonOffsetX") ? tagCompound.getInt("ButtonOffsetX") : -16;
+            int buttonOffsetY = tagCompound.contains("ButtonOffsetY") ? tagCompound.getInt("ButtonOffsetY") : 16;
 
-            EnumFacing alignToGrid = null;
+            Direction alignToGrid = null;
             String alignToGridName = tagCompound.getString("AlignToGrid");
             switch (alignToGridName.toLowerCase()) {
                 case "north":
                 case "up":
-                    alignToGrid = EnumFacing.UP;
+                    alignToGrid = Direction.UP;
                     break;
                 case "south":
                 case "down":
-                    alignToGrid = EnumFacing.DOWN;
+                    alignToGrid = Direction.DOWN;
                     break;
                 case "east":
                 case "right":
-                    alignToGrid = EnumFacing.EAST;
+                    alignToGrid = Direction.EAST;
                     break;
                 case "west":
                 case "left":
-                    alignToGrid = EnumFacing.WEST;
+                    alignToGrid = Direction.WEST;
                     break;
             }
             provider.setAlignToGrid(alignToGrid);
@@ -86,15 +87,15 @@ public class CraftingTweaks {
             provider.setHideButtons(tagCompound.getBoolean("HideButtons"));
             provider.setPhantomItems(tagCompound.getBoolean("PhantomItems"));
 
-            NBTTagCompound rotateCompound = tagCompound.getCompound("TweakRotate");
+            CompoundNBT rotateCompound = tagCompound.getCompound("TweakRotate");
             provider.setTweakRotate(getBoolOr(rotateCompound, "Enabled", true), getBoolOr(rotateCompound, "ShowButton", true),
                     buttonOffsetX + getIntOr(rotateCompound, "ButtonX", 0), buttonOffsetY + getIntOr(rotateCompound, "ButtonY", 0));
 
-            NBTTagCompound balanceCompound = tagCompound.getCompound("TweakBalance");
+            CompoundNBT balanceCompound = tagCompound.getCompound("TweakBalance");
             provider.setTweakBalance(getBoolOr(balanceCompound, "Enabled", true), getBoolOr(balanceCompound, "ShowButton", true),
                     buttonOffsetX + getIntOr(balanceCompound, "ButtonX", 0), buttonOffsetY + getIntOr(balanceCompound, "ButtonY", 18));
 
-            NBTTagCompound clearCompound = tagCompound.getCompound("TweakClear");
+            CompoundNBT clearCompound = tagCompound.getCompound("TweakClear");
             provider.setTweakClear(getBoolOr(clearCompound, "Enabled", true), getBoolOr(clearCompound, "ShowButton", true),
                     buttonOffsetX + getIntOr(clearCompound, "ButtonX", 0), buttonOffsetY + getIntOr(clearCompound, "ButtonY", 36));
 
@@ -174,12 +175,12 @@ public class CraftingTweaks {
         });
     }
 
-    private static int getIntOr(NBTTagCompound tagCompound, String key, int defaultVal) {
-        return (tagCompound.hasKey(key) ? tagCompound.getInt(key) : defaultVal);
+    private static int getIntOr(CompoundNBT tagCompound, String key, int defaultVal) {
+        return (tagCompound.contains(key) ? tagCompound.getInt(key) : defaultVal);
     }
 
-    private static boolean getBoolOr(NBTTagCompound tagCompound, String key, boolean defaultVal) {
-        return (tagCompound.hasKey(key) ? tagCompound.getBoolean(key) : defaultVal);
+    private static boolean getBoolOr(CompoundNBT tagCompound, String key, boolean defaultVal) {
+        return (tagCompound.contains(key) ? tagCompound.getBoolean(key) : defaultVal);
     }
 
 
