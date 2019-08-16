@@ -146,7 +146,7 @@ public class MessageCompress {
 
     private static <T extends CraftingInventory & IRecipeHolder> ItemStack findMatchingResult(T craftingInventory, ServerPlayerEntity player) {
         RecipeManager recipeManager = Objects.requireNonNull(player.getServer()).getRecipeManager();
-        IRecipe<CraftingInventory> recipe = recipeManager.func_215371_a(IRecipeType.field_222149_a, craftingInventory, player.world).orElse(null);
+        IRecipe<CraftingInventory> recipe = recipeManager.getRecipe(IRecipeType.CRAFTING, craftingInventory, player.world).orElse(null);
         if (recipe != null && craftingInventory.canUseRecipe(player.world, player, recipe)) {
             return recipe.getCraftingResult(craftingInventory);
         }

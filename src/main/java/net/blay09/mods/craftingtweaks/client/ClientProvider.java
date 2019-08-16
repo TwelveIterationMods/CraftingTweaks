@@ -86,7 +86,7 @@ public class ClientProvider {
     private boolean hasLastCraftedMatrix;
 
     private PlayerController getController() {
-        return Minecraft.getInstance().field_71442_b;
+        return Minecraft.getInstance().playerController;
     }
 
     private boolean canBalance(TweakProvider<Container> provider, PlayerEntity entityPlayer, Container container, int id) {
@@ -500,7 +500,7 @@ public class ClientProvider {
     private static <T extends CraftingInventory & IRecipeHolder> ItemStack findMatchingResult(T craftingInventory, ClientPlayerEntity player) {
         for (RecipeList recipeList : player.getRecipeBook().getRecipes()) {
             for (IRecipe<?> recipe : recipeList.getRecipes()) {
-                if (recipe.func_222127_g() == IRecipeType.field_222149_a) {
+                if (recipe.getType() == IRecipeType.CRAFTING) {
                     IRecipe<CraftingInventory> craftingRecipe = (IRecipe<CraftingInventory>) recipe;
                     if (craftingRecipe.matches(craftingInventory, player.world)) {
                         return craftingRecipe.getCraftingResult(craftingInventory);

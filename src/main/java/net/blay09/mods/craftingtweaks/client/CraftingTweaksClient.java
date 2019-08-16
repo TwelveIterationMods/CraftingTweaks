@@ -18,9 +18,9 @@ import net.minecraft.inventory.container.CraftingResultSlot;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 
 import java.util.List;
 
@@ -44,7 +44,7 @@ public class CraftingTweaksClient {
             return;
         }
 
-        Screen guiScreen = Minecraft.getInstance().field_71462_r;
+        Screen guiScreen = Minecraft.getInstance().currentScreen;
         TweakProvider<Container> provider = CraftingTweaksProviderManager.getProvider(container);
         InputMappings.Input input = InputMappings.getInputByCode(event.getKeyCode(), event.getScanCode());
         CompressType compressType = KeyBindings.getCompressTypeForKey(input);
@@ -231,7 +231,7 @@ public class CraftingTweaksClient {
             return;
         }
 
-        PlayerController playerController = Minecraft.getInstance().field_71442_b;
+        PlayerController playerController = Minecraft.getInstance().playerController;
         if (playerController == null) {
             return;
         }
