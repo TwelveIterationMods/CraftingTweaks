@@ -54,8 +54,7 @@ public class CraftingTweaks {
     private void processInterMod(InterModProcessEvent event) {
         event.getIMCStream(it -> it.equals("RegisterProvider") || it.equals("RegisterProviderV2") || it.equals("RegisterProviderV3")).forEach(message -> {
             CompoundNBT tagCompound = (CompoundNBT) message.getMessageSupplier().get();
-            // TODO No way to get the sender of an IMC Message currently? https://github.com/MinecraftForge/MinecraftForge/issues/5746
-            String sender = message.getModId();
+            String sender = message.getSenderModId();
             String containerClassName = tagCompound.getString("ContainerClass");
             SimpleTweakProvider provider = new SimpleTweakProviderImpl(sender);
             int buttonOffsetX = tagCompound.contains("ButtonOffsetX") ? tagCompound.getInt("ButtonOffsetX") : -16;
@@ -109,6 +108,7 @@ public class CraftingTweaks {
                     }
                     Function<Container, Boolean> function = (Function<Container, Boolean>) functionClass.newInstance();
                     // This doesn't compile as a lambda for some weird Javaish reason, so leave it as is
+                    //noinspection Convert2Lambda
                     provider.setContainerValidPredicate(new Predicate<Container>() {
                         @Override
                         public boolean test(@Nullable Container input) {
