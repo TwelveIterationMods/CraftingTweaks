@@ -114,12 +114,14 @@ public class CraftingTweaksConfig {
     }
 
     public static void addModSupportOption(String modId) {
-        String path = "client.addons." + modId;
-        CommentedConfig configData = clientConfig.getConfigData();
-        if (!configData.contains(path)) {
-            configData.set(path, ModSupportState.ENABLED.name());
-            configData.setComment(path, "State of this addon. Can be ENABLED, BUTTONS_ONLY, HOTKEYS_ONLY or DISABLED.");
-            clientConfig.save();
+        if (clientConfig != null) {
+            String path = "client.addons." + modId;
+            CommentedConfig configData = clientConfig.getConfigData();
+            if (!configData.contains(path)) {
+                configData.set(path, ModSupportState.ENABLED.name());
+                configData.setComment(path, "State of this addon. Can be ENABLED, BUTTONS_ONLY, HOTKEYS_ONLY or DISABLED.");
+                clientConfig.save();
+            }
         }
     }
 
