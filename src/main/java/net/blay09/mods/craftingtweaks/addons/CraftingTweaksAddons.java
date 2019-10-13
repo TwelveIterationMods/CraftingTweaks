@@ -15,25 +15,6 @@ public class CraftingTweaksAddons {
 
     public static final Logger logger = LogManager.getLogger();
 
-    public static void loadAddons() {
-        progressiveAutomation();
-
-        if (ModList.get().isLoaded("storagesilo")) {
-            registerProvider("uk.binarycraft.storagesilo.blocks.craftingsilo.ContainerCraftingSilo", new ProviderCraftingSilo());
-        }
-    }
-
-    private static void progressiveAutomation() {
-        SimpleTweakProvider provider = registerSimpleProvider("progressiveAutomation", "com.vanhal.progressiveAutomation.gui.container.ContainerCrafter");
-        if (provider != null) {
-            provider.setGrid(2, 9);
-            provider.setTweakRotate(true, true, 0, 0);
-            provider.setTweakBalance(false, false, 0, 0);
-            provider.setTweakClear(true, true, 0, 0);
-            provider.setAlignToGrid(Direction.WEST);
-        }
-    }
-
     @SuppressWarnings("unchecked")
     @Nullable
     private static SimpleTweakProvider registerSimpleProvider(String modid, String className) {

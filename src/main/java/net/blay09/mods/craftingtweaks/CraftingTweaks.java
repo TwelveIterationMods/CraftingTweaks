@@ -1,6 +1,5 @@
 package net.blay09.mods.craftingtweaks;
 
-import net.blay09.mods.craftingtweaks.addons.CraftingTweaksAddons;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
 import net.blay09.mods.craftingtweaks.api.SimpleTweakProvider;
 import net.blay09.mods.craftingtweaks.client.CraftingTweaksClient;
@@ -160,7 +159,6 @@ public class CraftingTweaks {
         DeferredWorkQueue.runLater(NetworkHandler::init);
 
         Compatibility.vanilla();
-        CraftingTweaksAddons.loadAddons();
     }
 
     private void setupClient(FMLClientSetupEvent event) {
