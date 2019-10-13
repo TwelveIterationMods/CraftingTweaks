@@ -14,32 +14,33 @@ Most crafting grids can be registered using the IMC API.
 In order to register your container for Crafting Tweaks, send an IMC message as follows:
 
 ```java
-NBTTagCompound tagCompound = new NBTTagCompound();
-tagCompound.setString("ContainerClass", YourCraftingContainer.class.getName());
+InterModComms.sendTo("craftingtweaks", "RegisterProvider", () -> {
+    CompoundNBT tagCompound = new CompoundNBT();
+    tagCompound.putString("ContainerClass", YourCraftingContainer.class.getName());
 
-// tagCompound.setInteger("ValidContainerPredicate", YourContainerPredicate.class.getName()); // requires RegisterProviderV3 or higher
-// tagCompound.setInteger("GetGridStartFunction", YourGridStartFunction.class.getName()); // requires RegisterProviderV3 or higher
+    // tagCompound.putInteger("ValidContainerPredicate", YourContainerPredicate.class.getName());
+    // tagCompound.putInteger("GetGridStartFunction", YourGridStartFunction.class.getName());
 
-// tagCompound.setInteger("GridSlotNumber", 1);
-// tagCompound.setInteger("GridSize", 9);
-// tagCompound.setBoolean("HideButtons", false);
-// tagCompound.setBoolean("PhantomItems", true);
+    // tagCompound.putInteger("GridSlotNumber", 1);
+    // tagCompound.putInteger("GridSize", 9);
+    // tagCompound.putBoolean("HideButtons", false);
+    // tagCompound.putBoolean("PhantomItems", false);
 
-// tagCompound.setInteger("ButtonOffsetX", -16); // ignored if AlignToGrid is set
-// tagCompound.setInteger("ButtonOffsetY", 16); // ignored if AlignToGrid is set
-// ***** OR *****
-// tagCompound.setString("AlignToGrid", "left");
+    // tagCompound.putInteger("ButtonOffsetX", -16); // ignored if AlignToGrid is set
+    // tagCompound.putInteger("ButtonOffsetY", 16); // ignored if AlignToGrid is set
+    // ***** OR *****
+    // tagCompound.putString("AlignToGrid", "left");
 
-// NBTTagCompound tweakRotate = new NBTTagCompound();
-// tweakRotate.setBoolean("Enabled", true);
-// tweakRotate.setBoolean("ShowButton", true);
-// tweakRotate.setInteger("ButtonX", 0); // ignored if AlignToGrid is set
-// tweakRotate.setInteger("ButtonY", 18); // ignored if AlignToGrid is set
-// tagCompound.setTag("TweakRotate", tweakRotate);
-// [...] (same structure for "TweakBalance" and "TweakClear")
-
-FMLInterModComms.sendMessage("craftingtweaks", "RegisterProvider", tagCompound);
-// or FMLInterModComms.sendMessage("craftingtweaks", "RegisterProviderV3", tagCompound); if using V3 features
+    // CompoundNBT tweakRotate = new CompoundNBT();
+    // tweakRotate.putBoolean("Enabled", true);
+    // tweakRotate.putBoolean("ShowButton", true);
+    // tweakRotate.putInteger("ButtonX", 0); // ignored if AlignToGrid is set
+    // tweakRotate.putInteger("ButtonY", 18); // ignored if AlignToGrid is set
+    // tagCompound.put("TweakRotate", tweakRotate);
+    // [...] (same structure for "TweakBalance" and "TweakClear")
+    
+    return tagCompound;
+});
 ```
 
 The commented out lines are optional (the example above shows the default value).
@@ -82,7 +83,7 @@ Then, add a dependency to Crafting Tweaks:
 
 ```
 dependencies {
-    compile 'crafting-tweaks:CraftingTweaks_1.12.2:8.1.9'
+    compile 'crafting-tweaks:CraftingTweaks_1.14.4:10.1.3'
 }
 ```
 
