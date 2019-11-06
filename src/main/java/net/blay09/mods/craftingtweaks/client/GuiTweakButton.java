@@ -97,6 +97,22 @@ public abstract class GuiTweakButton extends GuiImageButton implements ITooltipP
     }
 
     @Override
+    public boolean isMouseOver(double mouseX, double mouseY) {
+        int oldX = x;
+        int oldY = y;
+        if (parentGui != null) {
+            lastGuiLeft = parentGui.getGuiLeft();
+            lastGuiTop = parentGui.getGuiTop();
+            x += lastGuiLeft;
+            y += lastGuiTop;
+        }
+        boolean result = super.isMouseOver(mouseX, mouseY);
+        x = oldX;
+        y = oldY;
+        return result;
+    }
+
+    @Override
     public void addInformation(List<String> tooltip) {
         switch (tweakOption) {
             case Rotate:
