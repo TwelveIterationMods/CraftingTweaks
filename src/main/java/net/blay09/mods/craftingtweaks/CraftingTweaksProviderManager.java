@@ -23,8 +23,6 @@ public class CraftingTweaksProviderManager {
 
     @SuppressWarnings("unchecked")
     public static void registerProvider(String className, TweakProvider provider) {
-        CraftingTweaksConfig.addModSupportOption(provider.getModId());
-
         if (ModList.get().isLoaded(provider.getModId())) {
             if (provider.load()) {
                 try {

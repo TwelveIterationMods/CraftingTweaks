@@ -1,23 +1,22 @@
 package net.blay09.mods.craftingtweaks;
 
-import com.electronwill.nightconfig.core.CommentedConfig;
-import com.google.common.collect.Maps;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = CraftingTweaks.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class CraftingTweaksConfig {
 
+
     public static class Common {
         public final ForgeConfigSpec.BooleanValue compressAnywhere;
-        public final ForgeConfigSpec.ConfigValue<List<String>> compressBlacklist;
+        public final ForgeConfigSpec.ConfigValue<List<? extends String>> compressBlacklist;
 
         Common(ForgeConfigSpec.Builder builder) {
             builder.comment("Crafting Tweaks Configuration").push("common");
@@ -30,10 +29,7 @@ public class CraftingTweaksConfig {
             compressBlacklist = builder
                     .comment("A list of modid:name entries that will not be crafted by the compress key.")
                     .translation("craftingtweaks.config.compressBlacklist")
-                    .define("compressBlacklist", Arrays.asList(
-                            "minecraft:sandstone",
-                            "minecraft:iron_trapdoor"
-                    ));
+                    .defineList("compressBlacklist", Arrays.asList("minecraft:sandstone", "minecraft:iron_trapdoor"), it -> it instanceof String);
         }
     }
 
@@ -42,6 +38,8 @@ public class CraftingTweaksConfig {
         public final ForgeConfigSpec.BooleanValue rightClickCraftsStack;
         public final ForgeConfigSpec.BooleanValue hideButtonTooltips;
         public final ForgeConfigSpec.BooleanValue hideVanillaCraftingGuide;
+        public final ForgeConfigSpec.EnumValue<CraftingTweaksMode> craftingTweaksMode;
+        public final ForgeConfigSpec.ConfigValue<List<? extends String>> disabledAddons;
 
         Client(ForgeConfigSpec.Builder builder) {
             builder.comment("Crafting Tweaks Client Configuration").push("client");
@@ -66,8 +64,15 @@ public class CraftingTweaksConfig {
                     .translation("craftingtweaks.config.hideButtonTooltips")
                     .define("hideButtonTooltips", false);
 
-            builder.comment("Here you can control whether support for a mod should be enabled, buttons_only, hotkeys_only or disabled. For Vanilla Minecraft, see the option 'minecraft'. Mods are identified by their mod ids.")
-                    .push("addons").pop();
+            craftingTweaksMode = builder
+                    .comment("Set to 'DEFAULT' to enable both buttons and hotkeys. Set to 'BUTTONS' to enable buttons only. Set to 'HOTKEYS' to enable hotkeys only.")
+                    .translation("craftingtweaks.config.craftingTweaksMode")
+                    .defineEnum("craftingTweaksMode", CraftingTweaksMode.DEFAULT);
+
+            disabledAddons = builder
+                    .comment("Add modids here of mods that you wish to disable Crafting Tweaks support for.")
+                    .translation("craftingtweaks.config.disabledAddons")
+                    .defineList("disabledAddons", ArrayList::new, it -> it instanceof String);
         }
     }
 
@@ -89,7 +94,6 @@ public class CraftingTweaksConfig {
         CLIENT = specPair.getLeft();
     }
 
-    private static final Map<String, ModSupportState> configMap = Maps.newHashMap();
     private static ModConfig clientConfig;
 
     public static void setHideButtons(boolean hideButtons) {
@@ -101,31 +105,14 @@ public class CraftingTweaksConfig {
     public static void onConfigLoad(ModConfig.ModConfigEvent event) {
         if (event.getConfig().getType() == ModConfig.Type.CLIENT) {
             clientConfig = event.getConfig();
-            addModSupportOption("minecraft");
-
-            // Load all options (including those from non-included addons)
-            CommentedConfig subConfig = clientConfig.getConfigData().get("client.addons");
-            for (Map.Entry<String, Object> entry : subConfig.valueMap().entrySet()) {
-                String modId = entry.getKey();
-                ModSupportState state = ModSupportState.fromName(entry.getValue().toString());
-                configMap.put(modId, state);
-            }
         }
     }
 
-    public static void addModSupportOption(String modId) {
-        if (clientConfig != null) {
-            String path = "client.addons." + modId;
-            CommentedConfig configData = clientConfig.getConfigData();
-            if (!configData.contains(path)) {
-                configData.set(path, ModSupportState.ENABLED.name());
-                configData.setComment(path, "State of this addon. Can be ENABLED, BUTTONS_ONLY, HOTKEYS_ONLY or DISABLED.");
-                clientConfig.save();
-            }
+    public static CraftingTweaksMode getCraftingTweaksMode(String modId) {
+        if (CLIENT.disabledAddons.get().contains(modId)) {
+            return CraftingTweaksMode.DISABLED;
         }
-    }
 
-    public static ModSupportState getModSupportState(String modId) {
-        return configMap.computeIfAbsent(modId, k -> ModSupportState.ENABLED);
+        return CLIENT.craftingTweaksMode.get();
     }
 }

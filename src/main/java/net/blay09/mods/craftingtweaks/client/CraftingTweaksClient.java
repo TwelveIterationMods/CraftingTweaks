@@ -49,8 +49,8 @@ public class CraftingTweaksClient {
         InputMappings.Input input = InputMappings.getInputByCode(event.getKeyCode(), event.getScanCode());
         CompressType compressType = KeyBindings.getCompressTypeForKey(input);
         if (provider != null && provider.isValidContainer(container)) {
-            ModSupportState config = CraftingTweaksConfig.getModSupportState(provider.getModId());
-            if (config == ModSupportState.ENABLED || config == ModSupportState.HOTKEYS_ONLY) {
+            CraftingTweaksMode config = CraftingTweaksConfig.getCraftingTweaksMode(provider.getModId());
+            if (config == CraftingTweaksMode.DEFAULT || config == CraftingTweaksMode.HOTKEYS) {
                 boolean isRotate = KeyBindings.keyRotate.isActiveAndMatches(input);
                 boolean isRotateCCW = KeyBindings.keyRotateCounterClockwise.isActiveAndMatches(input);
                 boolean isBalance = KeyBindings.keyBalance.isActiveAndMatches(input);
@@ -191,8 +191,8 @@ public class CraftingTweaksClient {
     private <T extends Container> void initGui(ContainerScreen<T> guiContainer, GuiScreenEvent.InitGuiEvent event) {
         TweakProvider<T> provider = CraftingTweaksProviderManager.getProvider(guiContainer.getContainer());
         if (provider != null) {
-            ModSupportState config = CraftingTweaksConfig.getModSupportState(provider.getModId());
-            if (config == ModSupportState.ENABLED || config == ModSupportState.BUTTONS_ONLY) {
+            CraftingTweaksMode config = CraftingTweaksConfig.getCraftingTweaksMode(provider.getModId());
+            if (config == CraftingTweaksMode.DEFAULT || config == CraftingTweaksMode.BUTTONS) {
                 if (provider.isValidContainer(guiContainer.getContainer())) {
                     provider.initGui(guiContainer, event);
                 }
