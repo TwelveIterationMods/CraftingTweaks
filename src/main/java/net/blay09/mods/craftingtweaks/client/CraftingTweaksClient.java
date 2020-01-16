@@ -192,7 +192,7 @@ public class CraftingTweaksClient {
         TweakProvider<T> provider = CraftingTweaksProviderManager.getProvider(guiContainer.getContainer());
         if (provider != null) {
             CraftingTweaksMode config = CraftingTweaksConfig.getCraftingTweaksMode(provider.getModId());
-            if (config == CraftingTweaksMode.DEFAULT || config == CraftingTweaksMode.BUTTONS) {
+            if ((config == CraftingTweaksMode.DEFAULT || config == CraftingTweaksMode.BUTTONS) && !CraftingTweaksConfig.CLIENT.hideButtons.get()) {
                 if (provider.isValidContainer(guiContainer.getContainer())) {
                     provider.initGui(guiContainer, event);
                 }

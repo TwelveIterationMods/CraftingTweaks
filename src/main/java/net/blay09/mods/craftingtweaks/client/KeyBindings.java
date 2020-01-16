@@ -13,19 +13,19 @@ import javax.annotation.Nullable;
 
 public class KeyBindings {
 
-    public static final KeyBinding keyRotate = new KeyBinding("key.craftingtweaks.rotate", KeyConflictContext.GUI, KeyModifier.NONE, InputMappings.INPUT_INVALID, "key.categories.craftingtweaks");
-    public static final KeyBinding keyRotateCounterClockwise = new KeyBinding("key.craftingtweaks.rotate_counter_clockwise", KeyConflictContext.GUI, KeyModifier.NONE, InputMappings.INPUT_INVALID, "key.categories.craftingtweaks");
-    public static final KeyBinding keyBalance = new KeyBinding("key.craftingtweaks.balance", KeyConflictContext.GUI, KeyModifier.NONE, InputMappings.INPUT_INVALID, "key.categories.craftingtweaks");
-    public static final KeyBinding keySpread = new KeyBinding("key.craftingtweaks.spread", KeyConflictContext.GUI, KeyModifier.NONE, InputMappings.INPUT_INVALID, "key.categories.craftingtweaks");
-    public static final KeyBinding keyClear = new KeyBinding("key.craftingtweaks.clear", KeyConflictContext.GUI, KeyModifier.NONE, InputMappings.INPUT_INVALID, "key.categories.craftingtweaks");
-    public static final KeyBinding keyForceClear = new KeyBinding("key.craftingtweaks.force_clear", KeyConflictContext.GUI, KeyModifier.NONE, InputMappings.INPUT_INVALID, "key.categories.craftingtweaks");
-    public static final KeyBinding keyToggleButtons = new KeyBinding("key.craftingtweaks.toggleButtons", KeyConflictContext.GUI, KeyModifier.NONE, InputMappings.INPUT_INVALID, "key.categories.craftingtweaks");
+    public static final KeyBinding keyRotate = new KeyBinding("key.craftingtweaks.rotate", KeyConflictContext.GUI, KeyModifier.NONE, InputMappings.Type.KEYSYM, InputMappings.INPUT_INVALID.getKeyCode(), "key.categories.craftingtweaks");
+    public static final KeyBinding keyRotateCounterClockwise = new KeyBinding("key.craftingtweaks.rotate_counter_clockwise", KeyConflictContext.GUI, KeyModifier.NONE, InputMappings.Type.KEYSYM, InputMappings.INPUT_INVALID.getKeyCode(), "key.categories.craftingtweaks");
+    public static final KeyBinding keyBalance = new KeyBinding("key.craftingtweaks.balance", KeyConflictContext.GUI, KeyModifier.NONE, InputMappings.Type.KEYSYM, InputMappings.INPUT_INVALID.getKeyCode(), "key.categories.craftingtweaks");
+    public static final KeyBinding keySpread = new KeyBinding("key.craftingtweaks.spread", KeyConflictContext.GUI, KeyModifier.NONE, InputMappings.Type.KEYSYM, InputMappings.INPUT_INVALID.getKeyCode(), "key.categories.craftingtweaks");
+    public static final KeyBinding keyClear = new KeyBinding("key.craftingtweaks.clear", KeyConflictContext.GUI, KeyModifier.NONE, InputMappings.Type.KEYSYM, InputMappings.INPUT_INVALID.getKeyCode(), "key.categories.craftingtweaks");
+    public static final KeyBinding keyForceClear = new KeyBinding("key.craftingtweaks.force_clear", KeyConflictContext.GUI, KeyModifier.NONE, InputMappings.Type.KEYSYM, InputMappings.INPUT_INVALID.getKeyCode(), "key.categories.craftingtweaks");
+    public static final KeyBinding keyToggleButtons = new KeyBinding("key.craftingtweaks.toggleButtons", KeyConflictContext.GUI, KeyModifier.NONE, InputMappings.Type.KEYSYM, InputMappings.INPUT_INVALID.getKeyCode(), "key.categories.craftingtweaks");
     public static final KeyBinding keyCompressOne = new KeyBinding("key.craftingtweaks.compressOne", KeyConflictContext.GUI, KeyModifier.CONTROL, InputMappings.getInputByCode(GLFW.GLFW_KEY_K, 0), "key.categories.craftingtweaks");
     public static final KeyBinding keyCompressStack = new KeyBinding("key.craftingtweaks.compressStack", KeyConflictContext.GUI, KeyModifier.NONE, InputMappings.getInputByCode(GLFW.GLFW_KEY_K, 0), "key.categories.craftingtweaks");
     public static final KeyBinding keyCompressAll = new KeyBinding("key.craftingtweaks.compressAll", KeyConflictContext.GUI, KeyModifier.SHIFT, InputMappings.getInputByCode(GLFW.GLFW_KEY_K, 0), "key.categories.craftingtweaks");
-    public static final KeyBinding keyDecompressOne = new KeyBinding("key.craftingtweaks.decompressOne", KeyConflictContext.GUI, KeyModifier.NONE, InputMappings.INPUT_INVALID, "key.categories.craftingtweaks");
-    public static final KeyBinding keyDecompressStack = new KeyBinding("key.craftingtweaks.decompressStack", KeyConflictContext.GUI, KeyModifier.NONE, InputMappings.INPUT_INVALID, "key.categories.craftingtweaks");
-    public static final KeyBinding keyDecompressAll = new KeyBinding("key.craftingtweaks.decompressAll", KeyConflictContext.GUI, KeyModifier.NONE, InputMappings.INPUT_INVALID, "key.categories.craftingtweaks");
+    public static final KeyBinding keyDecompressOne = new KeyBinding("key.craftingtweaks.decompressOne", KeyConflictContext.GUI, KeyModifier.NONE, InputMappings.Type.KEYSYM, InputMappings.INPUT_INVALID.getKeyCode(), "key.categories.craftingtweaks");
+    public static final KeyBinding keyDecompressStack = new KeyBinding("key.craftingtweaks.decompressStack", KeyConflictContext.GUI, KeyModifier.NONE, InputMappings.Type.KEYSYM, InputMappings.INPUT_INVALID.getKeyCode(), "key.categories.craftingtweaks");
+    public static final KeyBinding keyDecompressAll = new KeyBinding("key.craftingtweaks.decompressAll", KeyConflictContext.GUI, KeyModifier.NONE, InputMappings.Type.KEYSYM, InputMappings.INPUT_INVALID.getKeyCode(), "key.categories.craftingtweaks");
     public static final KeyBinding keyRefillLast = new KeyBinding("key.craftingtweaks.refill_last", KeyConflictContext.GUI, KeyModifier.NONE, InputMappings.getInputByCode(GLFW.GLFW_KEY_TAB, 0), "key.categories.craftingtweaks");
     public static final KeyBinding keyRefillLastStack = new KeyBinding("key.craftingtweaks.refill_last_stack", KeyConflictContext.GUI, KeyModifier.NONE, InputMappings.getInputByCode(GLFW.GLFW_KEY_TAB, 0), "key.categories.craftingtweaks");
     public static KeyBinding keyTransferStack;

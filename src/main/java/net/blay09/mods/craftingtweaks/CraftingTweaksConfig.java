@@ -97,7 +97,7 @@ public class CraftingTweaksConfig {
     private static ModConfig clientConfig;
 
     public static void setHideButtons(boolean hideButtons) {
-        clientConfig.getConfigData().set(CLIENT.hideButtons.getPath(), hideButtons);
+        CLIENT.hideButtons.set(hideButtons);
         clientConfig.save();
     }
 
