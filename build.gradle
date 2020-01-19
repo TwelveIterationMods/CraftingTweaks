@@ -11,7 +11,7 @@ buildscript {
 
 apply plugin: "net.minecraftforge.gradle"
 
-def BUILD_NUMBER = System.getenv("BUILD_NUMBER") ?: "0"
+def BUILD_NUMBER = System.getenv("BUILD_NUMBER") ?: patch_version
 
 sourceCompatibility = targetCompatibility = '1.8'
 compileJava {
