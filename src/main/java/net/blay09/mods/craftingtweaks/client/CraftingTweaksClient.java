@@ -104,7 +104,7 @@ public class CraftingTweaksClient {
                 } else if (KeyBindings.keyToggleButtons.isActiveAndMatches(input)) {
                     CraftingTweaksConfig.setHideButtons(!CraftingTweaksConfig.CLIENT.hideButtons.get());
                     Minecraft mc = Minecraft.getInstance();
-                    guiScreen.init(mc, mc.func_228018_at_().getScaledWidth(), mc.func_228018_at_().getScaledHeight());
+                    guiScreen.init(mc, mc.getMainWindow().getScaledWidth(), mc.getMainWindow().getScaledHeight());
                     event.setCanceled(true);
                 }
             }
