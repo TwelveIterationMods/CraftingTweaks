@@ -13,7 +13,6 @@ In order to get a development environment set up, clone the repository and run `
 If you need help, feel free to join us on [Discord](https://discord.gg/scGAfXC).
 
 ## Useful Links
-* [Latest Builds](http://jenkins.blay09.net) on my Jenkins
 * [@BlayTheNinth](https://twitter.com/BlayTheNinth) on Twitter
 
 ## IMC API
