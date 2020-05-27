@@ -46,6 +46,7 @@ public class MessageClear {
                 }
             }
         });
+        context.setPacketHandled(true);
     }
 
 }

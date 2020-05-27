@@ -142,6 +142,7 @@ public class MessageCompress {
             }
             container.detectAndSendChanges();
         });
+        context.setPacketHandled(true);
     }
 
     private static <T extends CraftingInventory & IRecipeHolder> ItemStack findMatchingResult(T craftingInventory, ServerPlayerEntity player) {

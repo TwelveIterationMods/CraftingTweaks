@@ -46,5 +46,6 @@ public class MessageRotate {
                 }
             }
         });
+        context.setPacketHandled(true);
     }
 }

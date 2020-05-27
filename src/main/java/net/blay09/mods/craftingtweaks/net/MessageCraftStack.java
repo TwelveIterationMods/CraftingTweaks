@@ -59,6 +59,7 @@ public class MessageCraftStack {
 
             player.connection.sendPacket(new SSetSlotPacket(-1, -1, player.inventory.getItemStack()));
         });
+        context.setPacketHandled(true);
     }
 
 }

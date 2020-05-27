@@ -78,5 +78,6 @@ public class MessageTransferStack {
                 }
             }
         });
+        context.setPacketHandled(true);
     }
 }

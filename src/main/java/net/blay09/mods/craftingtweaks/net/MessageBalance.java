@@ -50,5 +50,6 @@ public class MessageBalance {
                 }
             }
         });
+        context.setPacketHandled(true);
     }
 }
