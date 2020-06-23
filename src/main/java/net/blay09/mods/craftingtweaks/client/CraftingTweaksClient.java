@@ -1,5 +1,6 @@
 package net.blay09.mods.craftingtweaks.client;
 
+
 import com.google.common.collect.Lists;
 import net.blay09.mods.craftingtweaks.*;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
@@ -24,6 +25,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.List;
 
+
 public class CraftingTweaksClient {
 
     private final ClientProvider clientProvider = new ClientProvider();
@@ -45,6 +47,10 @@ public class CraftingTweaksClient {
         }
 
         Screen guiScreen = Minecraft.getInstance().currentScreen;
+        if (!(guiScreen instanceof ContainerScreen<?>)) {
+            return;
+        }
+
         TweakProvider<Container> provider = CraftingTweaksProviderManager.getProvider(container);
         InputMappings.Input input = InputMappings.getInputByCode(event.getKeyCode(), event.getScanCode());
         CompressType compressType = KeyBindings.getCompressTypeForKey(input);
@@ -89,26 +95,25 @@ public class CraftingTweaksClient {
                     event.setCanceled(true);
                 }
             }
-            if (guiScreen instanceof ContainerScreen<?>) {
-                ContainerScreen<?> guiContainer = (ContainerScreen<?>) guiScreen;
-                if (compressType != null) {
-                    Slot mouseSlot = guiContainer.getSlotUnderMouse();
-                    if (mouseSlot != null) {
-                        if (CraftingTweaks.isServerSideInstalled) {
-                            NetworkHandler.channel.sendToServer(new MessageCompress(mouseSlot.slotNumber, compressType));
-                        } else {
-                            clientProvider.compress(provider, player, container, mouseSlot, compressType);
-                        }
-                        event.setCanceled(true);
+
+            ContainerScreen<?> guiContainer = (ContainerScreen<?>) guiScreen;
+            if (compressType != null) {
+                Slot mouseSlot = guiContainer.getSlotUnderMouse();
+                if (mouseSlot != null) {
+                    if (CraftingTweaks.isServerSideInstalled) {
+                        NetworkHandler.channel.sendToServer(new MessageCompress(mouseSlot.slotNumber, compressType));
+                    } else {
+                        clientProvider.compress(provider, player, container, mouseSlot, compressType);
                     }
-                } else if (KeyBindings.keyToggleButtons.isActiveAndMatches(input)) {
-                    CraftingTweaksConfig.setHideButtons(!CraftingTweaksConfig.CLIENT.hideButtons.get());
-                    Minecraft mc = Minecraft.getInstance();
-                    guiScreen.init(mc, mc.getMainWindow().getScaledWidth(), mc.getMainWindow().getScaledHeight());
                     event.setCanceled(true);
                 }
+            } else if (KeyBindings.keyToggleButtons.isActiveAndMatches(input)) {
+                CraftingTweaksConfig.setHideButtons(!CraftingTweaksConfig.CLIENT.hideButtons.get());
+                Minecraft mc = Minecraft.getInstance();
+                guiScreen.init(mc, mc.getMainWindow().getScaledWidth(), mc.getMainWindow().getScaledHeight());
+                event.setCanceled(true);
             }
-        } else if (CraftingTweaks.isServerSideInstalled && guiScreen instanceof ContainerScreen<?>) {
+        } else if (CraftingTweaks.isServerSideInstalled) {
             ContainerScreen<?> guiContainer = (ContainerScreen<?>) guiScreen;
             if (compressType != null) {
                 Slot mouseSlot = guiContainer.getSlotUnderMouse();
