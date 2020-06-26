@@ -3,7 +3,6 @@ package net.blay09.mods.craftingtweaks;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
-import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.button.ImageButton;
 import net.minecraftforge.fml.ModList;
@@ -17,20 +16,20 @@ public class CraftingGuideButtonFixer {
         Button button = findCraftButton(widgets);
         if (button != null) {
             if (CraftingTweaksConfig.CLIENT.hideVanillaCraftingGuide.get()) {
-                button.visible = false;
+                button.field_230694_p_ = false; // visible
             } else if (!CraftingTweaksConfig.CLIENT.hideButtons.get() && !(guiContainer instanceof InventoryScreen)) {
-                button.x = guiContainer.getGuiLeft() + guiContainer.getXSize() - 25;
+                button.field_230690_l_ = guiContainer.getGuiLeft() + guiContainer.getXSize() - 25; // x
 
                 // Let's be hacky because fuck this button. Hopefully no one else adds it to their GUIs.
                 if (guiContainer.getClass().getSimpleName().equals("GuiCraftingStation")) {
-                    button.y = guiContainer.getGuiTop() + 37;
+                    button.field_230691_m_ = guiContainer.getGuiTop() + 37; // y
                 } else {
-                    button.y = guiContainer.getGuiTop() + 5;
+                    button.field_230691_m_ = guiContainer.getGuiTop() + 5; // y
                 }
 
                 // Let's be hacky again!
                 if (ModList.get().isLoaded("inventorytweaks")) {
-                    button.x -= 15;
+                    button.field_230690_l_ -= 15; // x
                 }
             }
         }

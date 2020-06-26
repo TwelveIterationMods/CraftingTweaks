@@ -212,7 +212,7 @@ public class SimpleTweakProviderImpl<T extends Container> implements SimpleTweak
                     buttonX = getButtonX(guiContainer, index);
                     buttonY = getButtonY(guiContainer, index);
                 }
-                event.addWidget(CraftingTweaksAPI.createRotateButtonRelative(0, guiContainer, buttonX, buttonY));
+                event.addWidget(CraftingTweaksAPI.createRotateButton(0, guiContainer, buttonX + guiContainer.getGuiLeft(), buttonY + guiContainer.getGuiTop()));
                 index++;
             }
 
@@ -223,7 +223,7 @@ public class SimpleTweakProviderImpl<T extends Container> implements SimpleTweak
                     buttonX = getButtonX(guiContainer, index);
                     buttonY = getButtonY(guiContainer, index);
                 }
-                event.addWidget(CraftingTweaksAPI.createBalanceButtonRelative(0, guiContainer, buttonX, buttonY));
+                event.addWidget(CraftingTweaksAPI.createBalanceButton(0, guiContainer, buttonX + guiContainer.getGuiLeft(), buttonY + guiContainer.getGuiTop()));
                 index++;
             }
 
@@ -234,7 +234,7 @@ public class SimpleTweakProviderImpl<T extends Container> implements SimpleTweak
                     buttonX = getButtonX(guiContainer, index);
                     buttonY = getButtonY(guiContainer, index);
                 }
-                event.addWidget(CraftingTweaksAPI.createClearButtonRelative(0, guiContainer, buttonX, buttonY));
+                event.addWidget(CraftingTweaksAPI.createClearButton(0, guiContainer, buttonX + guiContainer.getGuiLeft(), buttonY + guiContainer.getGuiTop()));
             }
         }
     }

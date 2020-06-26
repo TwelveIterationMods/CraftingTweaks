@@ -1,16 +1,20 @@
 package net.blay09.mods.craftingtweaks.client;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.blay09.mods.craftingtweaks.CraftingTweaks;
 import net.blay09.mods.craftingtweaks.CraftingTweaksProviderManager;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.Container;
+import net.minecraft.util.text.ITextProperties;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class GuiTweakButton extends GuiImageButton implements ITooltipProvider {
@@ -30,6 +34,10 @@ public abstract class GuiTweakButton extends GuiImageButton implements ITooltipP
     public GuiTweakButton(@Nullable ContainerScreen<?> parentGui, int xPosition, int yPosition, int texCoordX, int texCoordY, TweakOption tweakOption, int tweakId) {
         super(xPosition, yPosition, texCoordX, texCoordY);
         this.parentGui = parentGui;
+        if (parentGui != null) {
+            lastGuiLeft = parentGui.getGuiLeft();
+            lastGuiTop = parentGui.getGuiTop();
+        }
         this.tweakOption = tweakOption;
         this.tweakId = tweakId;
     }
@@ -42,24 +50,9 @@ public abstract class GuiTweakButton extends GuiImageButton implements ITooltipP
         return tweakId;
     }
 
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        int oldX = x;
-        int oldY = y;
-        // If parentGui is set, we only store the relative position in the button for mods that do hacky things where guiLeft/guiTop constantly changes
-        if (parentGui != null) {
-            x += lastGuiLeft;
-            y += lastGuiTop;
-        }
-        boolean result = super.mouseClicked(mouseX, mouseY, button);
-        x = oldX;
-        y = oldY;
-        return result;
-    }
-
-    @Override
-    public void onClick(double mouseX, double mouseY) {
-        playDownSound(Minecraft.getInstance().getSoundHandler());
+    @Override // onClick
+    public void func_230982_a_(double mouseX, double mouseY) {
+        func_230988_a_(Minecraft.getInstance().getSoundHandler());
         PlayerEntity player = Minecraft.getInstance().player;
         Container container = player.openContainer;
         TweakProvider<Container> provider = CraftingTweaksProviderManager.getProvider(container);
@@ -74,65 +67,52 @@ public abstract class GuiTweakButton extends GuiImageButton implements ITooltipP
 
     protected abstract void onTweakButtonClicked(PlayerEntity player, Container container, TweakProvider<Container> provider, ClientProvider clientProvider);
 
-    @Override
-    public void render(int mouseX, int mouseY, float partialTicks) {
-        int oldX = x;
-        int oldY = y;
-        // If parentGui is set, we only store the relative position in the button for mods that do hacky things where guiLeft/guiTop constantly changes
+    @Override // render
+    public void func_230431_b_(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         if (parentGui != null) {
-            lastGuiLeft = parentGui.getGuiLeft();
-            lastGuiTop = parentGui.getGuiTop();
-            x += lastGuiLeft;
-            y += lastGuiTop;
+            final int guiLeft = parentGui.getGuiLeft();
+            final int guiTop = parentGui.getGuiTop();
+            if (guiLeft != lastGuiLeft || guiTop != lastGuiTop) {
+                field_230690_l_ += guiLeft - lastGuiLeft;
+                field_230691_m_ += guiTop - lastGuiTop;
+            }
+            lastGuiLeft = guiLeft;
+            lastGuiTop = guiTop;
         }
+
         int oldTexCoordX = texCoordX;
-        if (Screen.hasShiftDown()) {
+        if (Screen.func_231173_s_()) { // hasShiftDown
             texCoordX += 48;
         }
 
-        super.render(mouseX, mouseY, partialTicks);
+        super.func_230431_b_(matrixStack, mouseX, mouseY, partialTicks);
         texCoordX = oldTexCoordX;
-        x = oldX;
-        y = oldY;
     }
 
-    @Override
-    public boolean isMouseOver(double mouseX, double mouseY) {
-        int oldX = x;
-        int oldY = y;
-        if (parentGui != null) {
-            lastGuiLeft = parentGui.getGuiLeft();
-            lastGuiTop = parentGui.getGuiTop();
-            x += lastGuiLeft;
-            y += lastGuiTop;
-        }
-        boolean result = super.isMouseOver(mouseX, mouseY);
-        x = oldX;
-        y = oldY;
-        return result;
-    }
-
-    @Override
-    public void addInformation(List<String> tooltip) {
+    public List<ITextProperties> getTooltip() {
+        List<ITextProperties> tooltip = new ArrayList<>();
         switch (tweakOption) {
             case Rotate:
-                tooltip.add(I18n.format("tooltip.craftingtweaks.rotate"));
+                tooltip.add(new TranslationTextComponent("tooltip.craftingtweaks.rotate"));
                 break;
             case Clear:
-                if (Screen.hasShiftDown()) {
-                    tooltip.add(I18n.format("tooltip.craftingtweaks.forceClear"));
-                    tooltip.add("\u00a77" + I18n.format("tooltip.craftingtweaks.forceClearInfo"));
+                if (Screen.func_231173_s_()) { // hasShiftDown
+                    tooltip.add(new TranslationTextComponent("tooltip.craftingtweaks.forceClear"));
+                    final TranslationTextComponent forceClearInfoText = new TranslationTextComponent("tooltip.craftingtweaks.forceClear");
+                    forceClearInfoText.getStyle().func_240712_a_(TextFormatting.GRAY);
+                    tooltip.add(forceClearInfoText);
                 } else {
-                    tooltip.add(I18n.format("tooltip.craftingtweaks.clear"));
+                    tooltip.add(new TranslationTextComponent("tooltip.craftingtweaks.clear"));
                 }
                 break;
             case Balance:
-                if (Screen.hasShiftDown()) {
-                    tooltip.add(I18n.format("tooltip.craftingtweaks.spread"));
+                if (Screen.func_231173_s_()) { // hasShiftDown
+                    tooltip.add(new TranslationTextComponent("tooltip.craftingtweaks.spread"));
                 } else {
-                    tooltip.add(I18n.format("tooltip.craftingtweaks.balance"));
+                    tooltip.add(new TranslationTextComponent("tooltip.craftingtweaks.balance"));
                 }
                 break;
         }
+        return tooltip;
     }
 }

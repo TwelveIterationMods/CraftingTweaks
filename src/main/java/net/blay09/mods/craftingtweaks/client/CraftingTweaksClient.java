@@ -7,7 +7,6 @@ import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.blay09.mods.craftingtweaks.net.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.multiplayer.PlayerController;
@@ -110,7 +109,7 @@ public class CraftingTweaksClient {
             } else if (KeyBindings.keyToggleButtons.isActiveAndMatches(input)) {
                 CraftingTweaksConfig.setHideButtons(!CraftingTweaksConfig.CLIENT.hideButtons.get());
                 Minecraft mc = Minecraft.getInstance();
-                guiScreen.init(mc, mc.getMainWindow().getScaledWidth(), mc.getMainWindow().getScaledHeight());
+                guiScreen.func_231158_b_(mc, mc.getMainWindow().getScaledWidth(), mc.getMainWindow().getScaledHeight());
                 event.setCanceled(true);
             }
         } else if (CraftingTweaks.isServerSideInstalled) {
@@ -155,7 +154,7 @@ public class CraftingTweaksClient {
                 if (mouseSlot != null && mouseSlot.getHasStack()) {
                     List<Slot> transferSlots = Lists.newArrayList();
                     transferSlots.add(mouseSlot);
-                    if (Screen.hasShiftDown()) {
+                    if (Screen.func_231173_s_()) { // hasShiftDown
                         ItemStack mouseSlotStack = mouseSlot.getStack();
                         for (Slot slot : container.inventorySlots) {
                             if (!slot.getHasStack() || mouseSlot == slot) {
@@ -221,8 +220,6 @@ public class CraftingTweaksClient {
         }
     }
 
-    private static final List<String> tooltipList = Lists.newArrayList();
-
     private void handleRightClickCrafting() {
         if (rightClickCraftingSlot == -1) {
             return;
@@ -277,28 +274,15 @@ public class CraftingTweaksClient {
 
         // Detect changes on guiLeft to fix the recipe book button positioning (guiLeft changes on recipe book toggle)
         if (event.getGui() instanceof ContainerScreen<?>) {
-            ContainerScreen containerScreen = (ContainerScreen) event.getGui();
+            ContainerScreen<?> containerScreen = (ContainerScreen<?>) event.getGui();
             int guiLeft = containerScreen.getGuiLeft();
             if (guiLeft != guiLeftOnMistakeFix) {
-                CraftingGuideButtonFixer.fixMistakes(containerScreen, containerScreen.children());
+                CraftingGuideButtonFixer.fixMistakes(containerScreen, containerScreen.func_231039_at__()); // children()
                 guiLeftOnMistakeFix = guiLeft;
             }
         }
 
         handleRightClickCrafting();
-
-        if (!CraftingTweaksConfig.CLIENT.hideButtonTooltips.get()) {
-            tooltipList.clear();
-            for (IGuiEventListener button : event.getGui().children()) {
-                if (button instanceof ITooltipProvider && button.isMouseOver(event.getMouseX(), event.getMouseY())) {
-                    ((ITooltipProvider) button).addInformation(tooltipList);
-                    break;
-                }
-            }
-            if (!tooltipList.isEmpty()) {
-                event.getGui().renderTooltip(tooltipList, event.getMouseX(), event.getMouseY());
-            }
-        }
     }
 
     @SubscribeEvent
