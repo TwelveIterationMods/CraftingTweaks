@@ -57,19 +57,6 @@ public class CraftingTweaksAPI {
     }
 
     /**
-     * Creates a Crafting Tweaks button to balance the grid. To be called from within TweakProvider.initGui().
-     * Buttons will stay relative to the initial guiLeft/guiTop of the passed in parentGui.
-     * @param id the crafting grid ID this button is for (usually 0 unless there's more grids in one GUI)
-     * @param parentGui the parent GUI for this button, used to obtain the absolute position
-     * @param x the x position the button should be placed at
-     * @param y the y position the button should be placed at
-     */
-    public static Button createBalanceButton(int id, ContainerScreen<?> parentGui, int x, int y) {
-        return internalMethods.createBalanceButton(id, parentGui, x, y);
-    }
-
-
-    /**
      * Creates a Crafting Tweaks button to rotate the grid. To be called from within TweakProvider.initGui()
      * @param id the crafting grid ID this button is for (usually 0 unless there's more grids in one GUI)
      * @param x the x position the button should be placed at
@@ -78,18 +65,6 @@ public class CraftingTweaksAPI {
      */
     public static Button createRotateButton(int id, int x, int y) {
         return internalMethods.createRotateButton(id, null, x, y);
-    }
-
-    /**
-     * Creates a Crafting Tweaks button to rotate the grid. To be called from within TweakProvider.initGui()
-     * Buttons will stay relative to the initial guiLeft/guiTop of the passed in parentGui.
-     * @param id the crafting grid ID this button is for (usually 0 unless there's more grids in one GUI)
-     * @param parentGui the parent GUI for this button, used to obtain the absolute position
-     * @param x the x position the button should be placed at
-     * @param y the y position the button should be placed at
-     */
-    public static Button createRotateButton(int id, ContainerScreen<?> parentGui, int x, int y) {
-        return internalMethods.createRotateButton(id, parentGui, x, y);
     }
 
     /**
@@ -104,38 +79,39 @@ public class CraftingTweaksAPI {
     }
 
     /**
+     * Creates a Crafting Tweaks button to balance the grid. To be called from within TweakProvider.initGui().
+     * Buttons will stay relative to the initial guiLeft/guiTop of the passed in parentGui.
+     * @param id the crafting grid ID this button is for (usually 0 unless there's more grids in one GUI)
+     * @param parentGui the parent GUI for this button, used to obtain the absolute position
+     * @param relX the relative x position the button should be placed at
+     * @param relY the relative y position the button should be placed at
+     */
+    public static Button createBalanceButtonRelative(int id, ContainerScreen<?> parentGui, int relX, int relY) {
+        return internalMethods.createBalanceButton(id, parentGui, relX + parentGui.getGuiLeft(), relY + parentGui.getGuiTop());
+    }
+
+
+    /**
+     * Creates a Crafting Tweaks button to rotate the grid. To be called from within TweakProvider.initGui()
+     * Buttons will stay relative to the initial guiLeft/guiTop of the passed in parentGui.
+     * @param id the crafting grid ID this button is for (usually 0 unless there's more grids in one GUI)
+     * @param parentGui the parent GUI for this button, used to obtain the absolute position
+     * @param relX the relative x position the button should be placed at
+     * @param relY the relative y position the button should be placed at
+     */
+    public static Button createRotateButtonRelative(int id, ContainerScreen<?> parentGui, int relX, int relY) {
+        return internalMethods.createRotateButton(id, parentGui, relX + parentGui.getGuiLeft(), relY + parentGui.getGuiTop());
+    }
+
+    /**
      * Creates a Crafting Tweaks button to clear the grid. To be called from within TweakProvider.initGui()
      * Buttons will stay relative to the initial guiLeft/guiTop of the passed in parentGui.
      * @param id the crafting grid ID this button is for (usually 0 unless there's more grids in one GUI)
      * @param parentGui the parent GUI for this button, used to obtain the absolute position
-     * @param x the x position the button should be placed at
-     * @param y the y position the button should be placed at
+     * @param relX the relative x position the button should be placed at
+     * @param relY the relative y position the button should be placed at
      */
-    public static Button createClearButton(int id, ContainerScreen<?> parentGui, int x, int y) {
-        return internalMethods.createClearButton(id, parentGui, x, y);
-    }
-
-    /**
-     * @deprecated Use createBalanceButton with parentGui and absolute position
-     */
-    @Deprecated
-    public static Button createBalanceButtonRelative(int id, ContainerScreen<?> parentGui, int x, int y) {
-        return createBalanceButton(id, parentGui, x + parentGui.getGuiLeft(), y + parentGui.getGuiTop());
-    }
-
-    /**
-     * @deprecated Use createRotateButton with parentGui and absolute position
-     */
-    @Deprecated
-    public static Button createRotateButtonRelative(int id, ContainerScreen<?> parentGui, int x, int y) {
-        return createRotateButton(id, parentGui, x + parentGui.getGuiLeft(), y + parentGui.getGuiTop());
-    }
-
-    /**
-     * @deprecated Use createClearButton with parentGui and absolute position
-     */
-    @Deprecated
-    public static Button createClearButtonRelative(int id, ContainerScreen<?> parentGui, int x, int y) {
-        return createClearButton(id, parentGui, x + parentGui.getGuiLeft(), y + parentGui.getGuiTop());
+    public static Button createClearButtonRelative(int id, ContainerScreen<?> parentGui, int relX, int relY) {
+        return internalMethods.createClearButton(id, parentGui, relX + parentGui.getGuiLeft(), relY + parentGui.getGuiTop());
     }
 }
