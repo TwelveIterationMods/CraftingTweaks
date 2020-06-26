@@ -10,6 +10,7 @@ buildscript {
 }
 
 apply plugin: "net.minecraftforge.gradle"
+apply plugin: "maven"
 
 def BUILD_NUMBER = System.getenv("BUILD_NUMBER") ?: patch_version
 
@@ -67,8 +68,6 @@ minecraft {
 //            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
 
-            property 'forge.logging.console.level', 'debug'
-
             args '--mod', 'craftingtweaks', '--all', '--output', file('src/generated/resources/')
 
             mods {
@@ -101,6 +100,8 @@ jar {
     from sourceSets.main.output.resourcesDir
     from sourceSets.api.output.resourcesDir
 
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
     manifest {
         attributes(["Specification-Title"     : mod_id,
                     "Specification-Vendor"    : "BlayTheNinth",
@@ -109,5 +110,34 @@ jar {
                     "Implementation-Version"  : "${version}",
                     "Implementation-Vendor"   : "BlayTheNinth",
                     "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")],)
+    }
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            def releasesRepoUrl = 'https://artifactory.blay09.net/artifactory/libs-release-local'
+            def snapshotsRepoUrl = 'https://artifactory.blay09.net/artifactory/libs-snapshot-local'
+            repository(url: version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl) {
+                authentication(userName: project.mavenUsername, password: project.mavenPassword)
+            }
+
+            pom {
+                groupId = project.group
+                version = project.version
+                artifactId = project.archivesBaseName
+            }
+
+            pom.withXml {
+                asNode().dependencies.dependency.findAll {
+                    it.scope.text() == "compile"
+                }.each {
+                    if(it.optional)
+                        it.optional.value = 'true'
+                    else
+                        it.appendNode('optional', 'true');
+                }
+            }
+        }
     }
 }
