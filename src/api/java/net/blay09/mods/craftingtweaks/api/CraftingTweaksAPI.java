@@ -120,7 +120,7 @@ public class CraftingTweaksAPI {
      */
     @Deprecated
     public static Button createBalanceButtonRelative(int id, ContainerScreen<?> parentGui, int x, int y) {
-        return createBalanceButton(id, parentGui, x - parentGui.getGuiLeft(), y - parentGui.getGuiTop());
+        return createBalanceButton(id, parentGui, x - parentGui.getGuiLeft(), y + parentGui.getGuiTop());
     }
 
     /**
@@ -128,7 +128,7 @@ public class CraftingTweaksAPI {
      */
     @Deprecated
     public static Button createRotateButtonRelative(int id, ContainerScreen<?> parentGui, int x, int y) {
-        return createRotateButton(id, parentGui, x - parentGui.getGuiLeft(), y - parentGui.getGuiTop());
+        return createRotateButton(id, parentGui, x - parentGui.getGuiLeft(), y + parentGui.getGuiTop());
     }
 
     /**
@@ -136,6 +136,6 @@ public class CraftingTweaksAPI {
      */
     @Deprecated
     public static Button createClearButtonRelative(int id, ContainerScreen<?> parentGui, int x, int y) {
-        return createClearButton(id, parentGui, x - parentGui.getGuiLeft(), y - parentGui.getGuiTop());
+        return createClearButton(id, parentGui, x - parentGui.getGuiLeft(), y + parentGui.getGuiTop());
     }
 }
