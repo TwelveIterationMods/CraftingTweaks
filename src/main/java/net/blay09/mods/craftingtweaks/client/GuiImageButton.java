@@ -20,7 +20,7 @@ public class GuiImageButton extends Button {
         }, (button, matrixStack, mouseX, mouseY) -> {
             Minecraft mc = Minecraft.getInstance();
             if (mc.currentScreen != null && button instanceof ITooltipProvider) {
-                mc.currentScreen.func_238654_b_(matrixStack, ((ITooltipProvider) button).getTooltip(), mouseX, mouseY, mc.fontRenderer);
+                mc.currentScreen.renderTooltip(matrixStack, ((ITooltipProvider) button).getTooltip(), mouseX, mouseY);
             }
         });
         this.texCoordX = texCoordX;
@@ -28,21 +28,14 @@ public class GuiImageButton extends Button {
     }
 
     @Override
-    public void func_230431_b_(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        final boolean active = field_230693_o_;
-        final boolean visible = field_230694_p_;
-        final int x = field_230690_l_;
-        final int y = field_230691_m_;
-        final int width = field_230688_j_;
-        final int height = field_230689_k_;
-        // field_230692_n_ isHovered
-        field_230692_n_ = active && visible && mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
+    public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        isHovered = active && visible && mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
         Minecraft.getInstance().getTextureManager().bindTexture(texture);
         RenderSystem.color4f(1f, 1f, 1f, 1f);
-        func_238474_b_(matrixStack, x, y, texCoordX, field_230693_o_ ? texCoordY + (field_230692_n_ ? 16 : 0) : texCoordY + 32, 16, 16);
+        blit(matrixStack, x, y, texCoordX, active ? texCoordY + (isHovered ? 16 : 0) : texCoordY + 32, 16, 16); // blit
 
-        if (this.func_230449_g_()) {
-            this.func_230443_a_(matrixStack, mouseX, mouseY);
+        if (this.isHovered()) {
+            this.renderToolTip(matrixStack, mouseX, mouseY);
         }
     }
 

@@ -109,7 +109,7 @@ public class CraftingTweaksClient {
             } else if (KeyBindings.keyToggleButtons.isActiveAndMatches(input)) {
                 CraftingTweaksConfig.setHideButtons(!CraftingTweaksConfig.CLIENT.hideButtons.get());
                 Minecraft mc = Minecraft.getInstance();
-                guiScreen.func_231158_b_(mc, mc.getMainWindow().getScaledWidth(), mc.getMainWindow().getScaledHeight());
+                guiScreen.init(mc, mc.getMainWindow().getScaledWidth(), mc.getMainWindow().getScaledHeight());
                 event.setCanceled(true);
             }
         } else if (CraftingTweaks.isServerSideInstalled) {
@@ -154,7 +154,7 @@ public class CraftingTweaksClient {
                 if (mouseSlot != null && mouseSlot.getHasStack()) {
                     List<Slot> transferSlots = Lists.newArrayList();
                     transferSlots.add(mouseSlot);
-                    if (Screen.func_231173_s_()) { // hasShiftDown
+                    if (Screen.hasShiftDown()) {
                         ItemStack mouseSlotStack = mouseSlot.getStack();
                         for (Slot slot : container.inventorySlots) {
                             if (!slot.getHasStack() || mouseSlot == slot) {
@@ -277,7 +277,7 @@ public class CraftingTweaksClient {
             ContainerScreen<?> containerScreen = (ContainerScreen<?>) event.getGui();
             int guiLeft = containerScreen.getGuiLeft();
             if (guiLeft != guiLeftOnMistakeFix) {
-                CraftingGuideButtonFixer.fixMistakes(containerScreen, containerScreen.func_231039_at__()); // children()
+                CraftingGuideButtonFixer.fixMistakes(containerScreen, containerScreen.children());
                 guiLeftOnMistakeFix = guiLeft;
             }
         }

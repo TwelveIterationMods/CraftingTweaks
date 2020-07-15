@@ -45,7 +45,7 @@ public class InternalMethodsImpl implements InternalMethods {
         return new GuiTweakButton(parentGui, x, y, 48, 0, GuiTweakButton.TweakOption.Balance, id) {
             @Override
             protected void onTweakButtonClicked(PlayerEntity player, Container container, TweakProvider<Container> provider, ClientProvider clientProvider) {
-                boolean isShiftDown = Screen.func_231173_s_(); // hasShiftDown
+                boolean isShiftDown = Screen.hasShiftDown();
                 if (CraftingTweaks.isServerSideInstalled) {
                     NetworkHandler.channel.sendToServer(new MessageBalance(this.getTweakId(), isShiftDown));
                 } else {
@@ -65,7 +65,7 @@ public class InternalMethodsImpl implements InternalMethods {
         return new GuiTweakButton(parentGui, x, y, 16, 0, GuiTweakButton.TweakOption.Rotate, id) {
             @Override
             protected void onTweakButtonClicked(PlayerEntity player, Container container, TweakProvider<Container> provider, ClientProvider clientProvider) {
-                boolean isShiftDown = Screen.func_231173_s_(); // hasShiftDown
+                boolean isShiftDown = Screen.hasShiftDown();
                 if (CraftingTweaks.isServerSideInstalled) {
                     NetworkHandler.channel.sendToServer(new MessageRotate(this.getTweakId(), isShiftDown));
                 } else {
@@ -81,7 +81,7 @@ public class InternalMethodsImpl implements InternalMethods {
         return new GuiTweakButton(parentGui, x, y, 32, 0, GuiTweakButton.TweakOption.Clear, id) {
             @Override
             protected void onTweakButtonClicked(PlayerEntity player, Container container, TweakProvider<Container> provider, ClientProvider clientProvider) {
-                boolean isShiftDown = Screen.func_231173_s_(); // hasShiftDown
+                boolean isShiftDown = Screen.hasShiftDown();
                 if (CraftingTweaks.isServerSideInstalled) {
                     NetworkHandler.channel.sendToServer(new MessageClear(this.getTweakId(), isShiftDown));
                 } else {

@@ -50,9 +50,9 @@ public abstract class GuiTweakButton extends GuiImageButton implements ITooltipP
         return tweakId;
     }
 
-    @Override // onClick
-    public void func_230982_a_(double mouseX, double mouseY) {
-        func_230988_a_(Minecraft.getInstance().getSoundHandler());
+    @Override
+    public void onClick(double mouseX, double mouseY) {
+        playDownSound(Minecraft.getInstance().getSoundHandler());
         PlayerEntity player = Minecraft.getInstance().player;
         Container container = player.openContainer;
         TweakProvider<Container> provider = CraftingTweaksProviderManager.getProvider(container);
@@ -67,25 +67,25 @@ public abstract class GuiTweakButton extends GuiImageButton implements ITooltipP
 
     protected abstract void onTweakButtonClicked(PlayerEntity player, Container container, TweakProvider<Container> provider, ClientProvider clientProvider);
 
-    @Override // render
-    public void func_230431_b_(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    @Override
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         if (parentGui != null) {
             final int guiLeft = parentGui.getGuiLeft();
             final int guiTop = parentGui.getGuiTop();
             if (guiLeft != lastGuiLeft || guiTop != lastGuiTop) {
-                field_230690_l_ += guiLeft - lastGuiLeft;
-                field_230691_m_ += guiTop - lastGuiTop;
+                x += guiLeft - lastGuiLeft;
+                y += guiTop - lastGuiTop;
             }
             lastGuiLeft = guiLeft;
             lastGuiTop = guiTop;
         }
 
         int oldTexCoordX = texCoordX;
-        if (Screen.func_231173_s_()) { // hasShiftDown
+        if (Screen.hasShiftDown()) {
             texCoordX += 48;
         }
 
-        super.func_230431_b_(matrixStack, mouseX, mouseY, partialTicks);
+        super.render(matrixStack, mouseX, mouseY, partialTicks);
         texCoordX = oldTexCoordX;
     }
 
@@ -96,17 +96,17 @@ public abstract class GuiTweakButton extends GuiImageButton implements ITooltipP
                 tooltip.add(new TranslationTextComponent("tooltip.craftingtweaks.rotate"));
                 break;
             case Clear:
-                if (Screen.func_231173_s_()) { // hasShiftDown
+                if (Screen.hasShiftDown()) {
                     tooltip.add(new TranslationTextComponent("tooltip.craftingtweaks.forceClear"));
                     final TranslationTextComponent forceClearInfoText = new TranslationTextComponent("tooltip.craftingtweaks.forceClear");
-                    forceClearInfoText.getStyle().func_240712_a_(TextFormatting.GRAY);
+                    forceClearInfoText.func_240699_a_(TextFormatting.GRAY);
                     tooltip.add(forceClearInfoText);
                 } else {
                     tooltip.add(new TranslationTextComponent("tooltip.craftingtweaks.clear"));
                 }
                 break;
             case Balance:
-                if (Screen.func_231173_s_()) { // hasShiftDown
+                if (Screen.hasShiftDown()) {
                     tooltip.add(new TranslationTextComponent("tooltip.craftingtweaks.spread"));
                 } else {
                     tooltip.add(new TranslationTextComponent("tooltip.craftingtweaks.balance"));

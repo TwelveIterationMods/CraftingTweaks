@@ -16,20 +16,20 @@ public class CraftingGuideButtonFixer {
         Button button = findCraftButton(widgets);
         if (button != null) {
             if (CraftingTweaksConfig.CLIENT.hideVanillaCraftingGuide.get()) {
-                button.field_230694_p_ = false; // visible
+                button.visible = false;
             } else if (!CraftingTweaksConfig.CLIENT.hideButtons.get() && !(guiContainer instanceof InventoryScreen)) {
-                button.field_230690_l_ = guiContainer.getGuiLeft() + guiContainer.getXSize() - 25; // x
+                button.x = guiContainer.getGuiLeft() + guiContainer.getXSize() - 25;
 
                 // Let's be hacky because fuck this button. Hopefully no one else adds it to their GUIs.
                 if (guiContainer.getClass().getSimpleName().equals("GuiCraftingStation")) {
-                    button.field_230691_m_ = guiContainer.getGuiTop() + 37; // y
+                    button.y = guiContainer.getGuiTop() + 37;
                 } else {
-                    button.field_230691_m_ = guiContainer.getGuiTop() + 5; // y
+                    button.y = guiContainer.getGuiTop() + 5;
                 }
 
                 // Let's be hacky again!
                 if (ModList.get().isLoaded("inventorytweaks")) {
-                    button.field_230690_l_ -= 15; // x
+                    button.x -= 15;
                 }
             }
         }
