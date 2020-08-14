@@ -9,7 +9,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.Container;
-import net.minecraft.util.text.ITextProperties;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 
@@ -89,8 +89,8 @@ public abstract class GuiTweakButton extends GuiImageButton implements ITooltipP
         texCoordX = oldTexCoordX;
     }
 
-    public List<ITextProperties> getTooltip() {
-        List<ITextProperties> tooltip = new ArrayList<>();
+    public List<ITextComponent> getTooltip() {
+        List<ITextComponent> tooltip = new ArrayList<>();
         switch (tweakOption) {
             case Rotate:
                 tooltip.add(new TranslationTextComponent("tooltip.craftingtweaks.rotate"));
@@ -99,7 +99,7 @@ public abstract class GuiTweakButton extends GuiImageButton implements ITooltipP
                 if (Screen.hasShiftDown()) {
                     tooltip.add(new TranslationTextComponent("tooltip.craftingtweaks.forceClear"));
                     final TranslationTextComponent forceClearInfoText = new TranslationTextComponent("tooltip.craftingtweaks.forceClear");
-                    forceClearInfoText.func_240699_a_(TextFormatting.GRAY);
+                    forceClearInfoText.mergeStyle(TextFormatting.GRAY);
                     tooltip.add(forceClearInfoText);
                 } else {
                     tooltip.add(new TranslationTextComponent("tooltip.craftingtweaks.clear"));

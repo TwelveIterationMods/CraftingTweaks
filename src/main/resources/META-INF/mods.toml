@@ -3,6 +3,7 @@ loaderVersion="[24,)"
 issueTrackerURL="https://github.com/blay09/CraftingTweaks/issues"
 displayURL="https://minecraft.curseforge.com/projects/crafting-tweaks"
 authors="BlayTheNinth"
+license="MIT"
 
 [[mods]]
 modId="craftingtweaks"

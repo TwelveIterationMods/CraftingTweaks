@@ -277,7 +277,7 @@ public class CraftingTweaksClient {
             ContainerScreen<?> containerScreen = (ContainerScreen<?>) event.getGui();
             int guiLeft = containerScreen.getGuiLeft();
             if (guiLeft != guiLeftOnMistakeFix) {
-                CraftingGuideButtonFixer.fixMistakes(containerScreen, containerScreen.children());
+                CraftingGuideButtonFixer.fixMistakes(containerScreen, containerScreen.getEventListeners());
                 guiLeftOnMistakeFix = guiLeft;
             }
         }

@@ -20,7 +20,7 @@ public class GuiImageButton extends Button {
         }, (button, matrixStack, mouseX, mouseY) -> {
             Minecraft mc = Minecraft.getInstance();
             if (mc.currentScreen != null && button instanceof ITooltipProvider) {
-                mc.currentScreen.renderTooltip(matrixStack, ((ITooltipProvider) button).getTooltip(), mouseX, mouseY);
+                mc.currentScreen.func_243308_b(matrixStack, ((ITooltipProvider) button).getTooltip(), mouseX, mouseY);
             }
         });
         this.texCoordX = texCoordX;
