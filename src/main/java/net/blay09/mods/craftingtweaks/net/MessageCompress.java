@@ -2,6 +2,7 @@ package net.blay09.mods.craftingtweaks.net;
 
 import net.blay09.mods.craftingtweaks.*;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.CraftingInventory;
@@ -99,42 +100,46 @@ public class MessageCompress {
                         continue;
                     }
 
-                    if (slot.inventory instanceof PlayerInventory && slot.getHasStack() && ItemStack.areItemsEqual(slot.getStack(), mouseSlot.getStack()) && ItemStack.areItemStackTagsEqual(slot.getStack(), mouseSlot.getStack())) {
-                        if (size == 9 && !slot.getStack().isEmpty() && slot.getStack().getCount() >= 9) {
-                            ItemStack result = findMatchingResult(new InventoryCraftingCompress(container, 3, slot.getStack()), player);
+                    final ItemStack slotStack = slot.getStack();
+                    if (slot.inventory instanceof PlayerInventory && slot.getHasStack() && ItemStack.areItemsEqual(slotStack, mouseSlot.getStack()) && ItemStack.areItemStackTagsEqual(slotStack, mouseSlot.getStack())) {
+                        if (size == 9 && !slotStack.isEmpty() && slotStack.getCount() >= 9) {
+                            ItemStack result = findMatchingResult(new InventoryCraftingCompress(container, 3, slotStack), player);
                             if (!result.isEmpty() && !isBlacklisted(result)) {
                                 do {
                                     if (player.inventory.addItemStackToInventory(result.copy())) {
+                                        giveLeftoverItems(player, slotStack, 9);
                                         slot.decrStackSize(9);
                                     } else {
                                         break;
                                     }
                                 }
-                                while (compressAll && slot.getHasStack() && slot.getStack().getCount() >= 9);
+                                while (compressAll && slot.getHasStack() && slotStack.getCount() >= 9);
                             } else {
-                                result = findMatchingResult(new InventoryCraftingCompress(container, 2, slot.getStack()), player);
+                                result = findMatchingResult(new InventoryCraftingCompress(container, 2, slotStack), player);
                                 if (!result.isEmpty() && !isBlacklisted(result)) {
                                     do {
                                         if (player.inventory.addItemStackToInventory(result.copy())) {
+                                            giveLeftoverItems(player, slotStack, 4);
                                             slot.decrStackSize(4);
                                         } else {
                                             break;
                                         }
                                     }
-                                    while (compressAll && slot.getHasStack() && slot.getStack().getCount() >= 4);
+                                    while (compressAll && slot.getHasStack() && slotStack.getCount() >= 4);
                                 }
                             }
-                        } else if (size >= 4 && !slot.getStack().isEmpty() && slot.getStack().getCount() >= 4) {
-                            ItemStack result = findMatchingResult(new InventoryCraftingCompress(container, 2, slot.getStack()), player);
+                        } else if (size >= 4 && !slotStack.isEmpty() && slotStack.getCount() >= 4) {
+                            ItemStack result = findMatchingResult(new InventoryCraftingCompress(container, 2, slotStack), player);
                             if (!result.isEmpty() && !isBlacklisted(result)) {
                                 do {
                                     if (player.inventory.addItemStackToInventory(result.copy())) {
+                                        giveLeftoverItems(player, slotStack, 4);
                                         slot.decrStackSize(4);
                                     } else {
                                         break;
                                     }
                                 }
-                                while (compressAll && slot.getHasStack() && slot.getStack().getCount() >= 4);
+                                while (compressAll && slot.getHasStack() && slotStack.getCount() >= 4);
                             }
                         }
                     }
@@ -143,6 +148,20 @@ public class MessageCompress {
             container.detectAndSendChanges();
         });
         context.setPacketHandled(true);
+    }
+
+    private static void giveLeftoverItems(ServerPlayerEntity player, ItemStack slotStack, int count) {
+        for (int i = 0; i < count; i++) {
+            // Must be inside loop as it's being shrunk in addItemStackToInventory
+            final ItemStack containerItem = slotStack.getContainerItem();
+            if (!player.addItemStackToInventory(containerItem)) {
+                ItemEntity itemEntity = player.dropItem(containerItem, false);
+                if (itemEntity != null) {
+                    itemEntity.setNoPickupDelay();
+                    itemEntity.setOwnerId(player.getUniqueID());
+                }
+            }
+        }
     }
 
     private static <T extends CraftingInventory & IRecipeHolder> ItemStack findMatchingResult(T craftingInventory, ServerPlayerEntity player) {
