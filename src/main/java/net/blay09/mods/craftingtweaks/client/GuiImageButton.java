@@ -17,11 +17,6 @@ public class GuiImageButton extends Button {
 
     public GuiImageButton(int x, int y, int texCoordX, int texCoordY) {
         super(x, y, 16, 16, new StringTextComponent(""), it -> {
-        }, (button, matrixStack, mouseX, mouseY) -> {
-            Minecraft mc = Minecraft.getInstance();
-            if (mc.currentScreen != null && button instanceof ITooltipProvider) {
-                mc.currentScreen.func_243308_b(matrixStack, ((ITooltipProvider) button).getTooltip(), mouseX, mouseY);
-            }
         });
         this.texCoordX = texCoordX;
         this.texCoordY = texCoordY;

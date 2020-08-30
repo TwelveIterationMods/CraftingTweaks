@@ -7,6 +7,7 @@ import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.blay09.mods.craftingtweaks.net.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.multiplayer.PlayerController;
@@ -17,11 +18,14 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.CraftingResultSlot;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -283,6 +287,19 @@ public class CraftingTweaksClient {
         }
 
         handleRightClickCrafting();
+
+        if (!CraftingTweaksConfig.CLIENT.hideButtonTooltips.get()) {
+            List<ITextComponent> tooltipList = Collections.emptyList();
+            for (IGuiEventListener button : event.getGui().getEventListeners()) {
+                if (button instanceof ITooltipProvider && button.isMouseOver(event.getMouseX(), event.getMouseY())) {
+                    tooltipList = ((ITooltipProvider) button).getTooltip();
+                    break;
+                }
+            }
+            if (!tooltipList.isEmpty()) {
+                event.getGui().func_243308_b(event.getMatrixStack(), tooltipList, event.getMouseX(), event.getMouseY());
+            }
+        }
     }
 
     @SubscribeEvent
