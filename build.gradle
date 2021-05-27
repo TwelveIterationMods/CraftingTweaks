@@ -82,7 +82,7 @@ minecraft {
 
 repositories {
     maven {
-        url "https://minecraft.curseforge.com/api/maven/"
+        url "https://www.cursemaven.com"
     }
 }
 
@@ -92,6 +92,8 @@ dependencies {
             name   : "forge",
             version: "${minecraft_version}-${forge_version}"
     ])
+
+    runtimeOnly fg.deobf("curse.maven:pams-harvestcraft-2-food-core-372534:3068560")
 }
 
 jar {

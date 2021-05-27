@@ -83,6 +83,7 @@ public class MessageCompress {
                         if (!result.isEmpty() && !isBlacklisted(result) && !slot.getStack().isEmpty() && slot.getStack().getCount() >= 1) {
                             do {
                                 if (player.inventory.addItemStackToInventory(result.copy())) {
+                                    giveLeftoverItems(player, slot.getStack(), 1);
                                     slot.decrStackSize(1);
                                 } else {
                                     break;
