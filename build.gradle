@@ -116,10 +116,12 @@ jar {
 uploadArchives {
     repositories {
         mavenDeployer {
+            def mavenUsername = project.hasProperty('mavenUsername') ? project.property('mavenUsername') : ''
+            def mavenPassword = project.hasProperty('mavenPassword') ? project.property('mavenPassword') : ''
             def releasesRepoUrl = 'https://artifactory.blay09.net/artifactory/libs-release-local'
             def snapshotsRepoUrl = 'https://artifactory.blay09.net/artifactory/libs-snapshot-local'
             repository(url: version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl) {
-                authentication(userName: project.mavenUsername, password: project.mavenPassword)
+                authentication(userName: mavenUsername, password: mavenPassword)
             }
 
             pom {
