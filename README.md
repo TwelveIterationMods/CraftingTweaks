@@ -2,20 +2,25 @@
 
 Minecraft Mod. Allows you to rotate, balance or clear the crafting matrix by the press of a button, in any (supported) crafting window.
 
-[![Versions](http://cf.way2muchnoise.eu/versions/crafting-tweaks.svg)](https://minecraft.curseforge.com/projects/crafting-tweaks) [![Downloads](http://cf.way2muchnoise.eu/full_crafting-tweaks_downloads.svg)](https://minecraft.curseforge.com/projects/crafting-tweaks)
+See [the license](LICENSE) for modpack permissions etc.
+
+This mod is available for both Forge and Fabric (starting Minecraft 1.17). This is a trial run to see if supporting both platforms is feasible.
+
+#### Forge
+
+[![Versions](http://cf.way2muchnoise.eu/versions/233071.svg)](https://minecraft.curseforge.com/projects/crafting-tweaks) [![Downloads](http://cf.way2muchnoise.eu/full_233071_downloads.svg)](https://minecraft.curseforge.com/projects/crafting-tweaks)
+
+#### Fabric
+
+[![Versions](http://cf.way2muchnoise.eu/versions/.svg)](https://minecraft.curseforge.com/projects/crafting-tweaks-fabric) [![Downloads](http://cf.way2muchnoise.eu/full__downloads.svg)](https://minecraft.curseforge.com/projects/crafting-tweaks-fabric)
 
 ## Contributing
 
-If you're interested in contributing to the mod, you can check out [issues labelled as "help wanted"](https://github.com/blay09/CraftingTweaks/issues?q=is%3Aopen+is%3Aissue+label%3A%22help+wanted%22). These should be ready to be implemented as they are.
-
-In order to get a development environment set up, clone the repository and run `./gradlew setupDecompWorkspace` and `./gradlew idea` or `./gradlew eclipse` depending on what IDE you use.
+If you're interested in contributing to the mod, you can check out [issues labelled as "help wanted"](https://github.com/ModdingForBlockheads/CraftingTweaks/issues?q=is%3Aopen+is%3Aissue+label%3A%22help+wanted%22). These should be ready to be implemented as they are.
 
 If you need help, feel free to join us on [Discord](https://discord.gg/scGAfXC).
 
-## Useful Links
-* [@BlayTheNinth](https://twitter.com/BlayTheNinth) on Twitter
-
-## IMC API
+## IMC API (Forge)
 Most crafting grids can be registered using the IMC API.
 
 In order to register your container for Crafting Tweaks, send an IMC message as follows:
@@ -75,14 +80,13 @@ The fields are described below:
 *Note*: If you're specifying custom button positions, they should be 18 pixels apart from each other. If you simply want the buttons next to the crafting grid, use AlignToGrid. If you just want to move all buttons at once, use ButtonOffsetX/Y. The buttons are set out vertically by default.
 
 ## API
+
 If your crafting grid is more complex or doesn't follow Vanilla standards, you may need to supply a custom tweak provider. In that case, follow these steps.
 The easiest way to add Crafting Tweaks to your development environment is to do some additions to your build.gradle file. First, register CurseForge's maven repository by adding the following lines:
 
 ```
 repositories {
-    maven {
-        url "https://minecraft.curseforge.com/api/maven/"
-    }
+    maven { url "https://www.cursemaven.com" }
 }
 ```
 
@@ -90,10 +94,10 @@ Then, add a dependency to Crafting Tweaks:
 
 ```
 dependencies {
-    compile 'crafting-tweaks:CraftingTweaks_1.14.4:10.1.3'
+    compile 'curse.maven:craftingtweaks-233071:3330406'
 }
 ```
 
-Make sure you enter the correct version number for the Minecraft version you're developing for. Check the CurseForge files page to see available versions.
+Make sure you enter the correct file id as version for the Minecraft version you're developing for. Check the CurseForge files page to see available files.
 
 Done! Run gradle to update your project and you'll be good to go.
