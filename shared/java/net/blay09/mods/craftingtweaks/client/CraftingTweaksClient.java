@@ -45,6 +45,7 @@ public class CraftingTweaksClient {
     public static void initialize() {
         ModKeyBindings.initialize();
 
+        ForbicEvents.onConnectedToServer(it -> CraftingTweaks.isServerSideInstalled = false);
         ForbicEvents.onItemCrafted(CraftingTweaksClient::onItemCrafted);
 
         ForbicEvents.onScreenInitialized(CraftingTweaksClient::screenInitialized);

@@ -10,8 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 public class ModNetworking extends ForbicNetworking {
 
     public static void initialize() {
-        // TODO CraftingTweaks.isServerSideInstalled = !CraftingTweaks.TEST_CLIENT_SIDE && it.equals("1.0");
-
+        registerClientboundPacket(id("hello"), HelloMessage.class, HelloMessage::encode, HelloMessage::decode, HelloMessage::handle);
         registerServerboundPacket(id("rotate"), RotateMessage.class, RotateMessage::encode, RotateMessage::decode, RotateMessage::handle);
         registerServerboundPacket(id("clear"), ClearMessage.class, ClearMessage::encode, ClearMessage::decode, ClearMessage::handle);
         registerServerboundPacket(id("balance"), BalanceMessage.class, BalanceMessage::encode, BalanceMessage::decode, BalanceMessage::handle);

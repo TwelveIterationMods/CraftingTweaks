@@ -14,7 +14,8 @@ public class CraftingTweaksConfig {
     }
 
     public static void setHideButtons(boolean hideButtons) {
-        ForbicConfigHolder.getFallback(CraftingTweaksConfigData.class).client.hideButtons = hideButtons;
-        // TODO save
+        ForbicConfigHolder.updateConfig(CraftingTweaksConfigData.class, config -> {
+            config.client.hideButtons = hideButtons;
+        });
     }
 }
