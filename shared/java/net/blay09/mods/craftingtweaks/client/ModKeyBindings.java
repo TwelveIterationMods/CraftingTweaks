@@ -2,15 +2,16 @@ package net.blay09.mods.craftingtweaks.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.blay09.mods.craftingtweaks.CompressType;
-import net.blay09.mods.forbic.client.ForbicKeybindings;
+import net.blay09.mods.forbic.client.ForbicKeyBindings;
 import net.blay09.mods.forbic.client.KeyConflictContext;
 import net.blay09.mods.forbic.client.KeyModifier;
+import net.blay09.mods.forbic.event.ForbicEvents;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
-public class KeyBindings extends ForbicKeybindings {
+public class ModKeyBindings extends ForbicKeyBindings {
 
     public static KeyMapping keyRotate;
     public static KeyMapping keyRotateCounterClockwise;
@@ -46,7 +47,9 @@ public class KeyBindings extends ForbicKeybindings {
         keyRefillLast = registerKeyBinding("key.craftingtweaks.refill_last", KeyConflictContext.GUI, KeyModifier.NONE, GLFW.GLFW_KEY_TAB, "key.categories.craftingtweaks");
         keyRefillLastStack = registerKeyBinding("key.craftingtweaks.refill_last_stack", KeyConflictContext.GUI, KeyModifier.NONE, GLFW.GLFW_KEY_TAB, "key.categories.craftingtweaks");
 
-        keyTransferStack = Minecraft.getInstance().options.keyUp;
+        ForbicEvents.onClientStarted(client -> {
+            keyTransferStack = Minecraft.getInstance().options.keyUp;
+        });
     }
 
     @Nullable

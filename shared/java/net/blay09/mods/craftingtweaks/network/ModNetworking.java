@@ -2,12 +2,14 @@ package net.blay09.mods.craftingtweaks.network;
 
 
 import net.blay09.mods.craftingtweaks.CraftingTweaks;
+import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfigData;
 import net.blay09.mods.forbic.network.ForbicNetworking;
+import net.blay09.mods.forbic.network.SyncConfigMessage;
 import net.minecraft.resources.ResourceLocation;
 
 public class ModNetworking extends ForbicNetworking {
 
-    public static void init() {
+    public static void initialize() {
         // TODO CraftingTweaks.isServerSideInstalled = !CraftingTweaks.TEST_CLIENT_SIDE && it.equals("1.0");
 
         registerServerboundPacket(id("rotate"), RotateMessage.class, RotateMessage::encode, RotateMessage::decode, RotateMessage::handle);
@@ -16,6 +18,8 @@ public class ModNetworking extends ForbicNetworking {
         registerServerboundPacket(id("transfer"), TransferStackMessage.class, TransferStackMessage::encode, TransferStackMessage::decode, TransferStackMessage::handle);
         registerServerboundPacket(id("compress"), CompressMessage.class, CompressMessage::encode, CompressMessage::decode, CompressMessage::handle);
         registerServerboundPacket(id("craft_stack"), CraftStackMessage.class, CraftStackMessage::encode, CraftStackMessage::decode, CraftStackMessage::handle);
+
+        SyncConfigMessage.register(id("sync_config"), SyncCraftingTweaksConfigMessage.class, SyncCraftingTweaksConfigMessage::new, CraftingTweaksConfigData.class, CraftingTweaksConfigData::new);
     }
 
     private static ResourceLocation id(String name) {

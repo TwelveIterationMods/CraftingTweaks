@@ -1,11 +1,9 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "net.blay09.mods.waystones.mixin",
+  "package": "net.blay09.mods.craftingtweaks.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
-    "JigsawPlacementMixin",
-    "StructureTemplatePoolAccessor"
   ],
   "client": [
   ],

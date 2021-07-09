@@ -5,6 +5,7 @@ import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfigData;
 import net.blay09.mods.forbic.ForbicModList;
 import net.blay09.mods.forbic.mixin.AbstractContainerScreenAccessor;
 import net.blay09.mods.forbic.mixin.ImageButtonAccessor;
+import net.blay09.mods.forbic.mixin.ScreenAccessor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -16,8 +17,8 @@ import java.util.List;
 
 public class CraftingGuideButtonFixer {
 
-    public static void fixMistakes(AbstractContainerScreen<?> screen, List<? extends GuiEventListener> widgets) {
-        Button button = findCraftButton(widgets);
+    public static void fixMistakes(AbstractContainerScreen<?> screen) {
+        Button button = findCraftButton(((ScreenAccessor) screen).getChildren());
         if (button != null) {
             CraftingTweaksConfigData config = CraftingTweaksConfig.getActive();
             if (config.client.hideVanillaCraftingGuide) {

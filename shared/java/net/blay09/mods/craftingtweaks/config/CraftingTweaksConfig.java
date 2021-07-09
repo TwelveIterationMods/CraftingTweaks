@@ -1,5 +1,6 @@
 package net.blay09.mods.craftingtweaks.config;
 
+import net.blay09.mods.craftingtweaks.network.SyncCraftingTweaksConfigMessage;
 import net.blay09.mods.forbic.config.ForbicConfigHolder;
 
 public class CraftingTweaksConfig {
@@ -9,6 +10,6 @@ public class CraftingTweaksConfig {
     }
 
     public static void initialize() {
-
+        ForbicConfigHolder.registerConfig(CraftingTweaksConfigData.class, SyncCraftingTweaksConfigMessage::new);
     }
 }

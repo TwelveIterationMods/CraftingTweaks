@@ -1,6 +1,5 @@
-package net.blay09.mods.waystones.client;
+package net.blay09.mods.craftingtweaks.client;
 
-import net.blay09.mods.craftingtweaks.client.CraftingTweaksClient;
 import net.fabricmc.api.ClientModInitializer;
 
 public class FabricCraftingTweaksClient implements ClientModInitializer {

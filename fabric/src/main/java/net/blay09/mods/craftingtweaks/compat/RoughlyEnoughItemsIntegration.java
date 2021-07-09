@@ -1,4 +1,4 @@
-package net.blay09.mods.waystones.compat;
+package net.blay09.mods.craftingtweaks.compat;
 
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import net.fabricmc.api.EnvType;

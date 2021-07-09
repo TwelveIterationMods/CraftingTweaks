@@ -1,7 +1,6 @@
 package net.blay09.mods.craftingtweaks.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.blay09.mods.craftingtweaks.CraftingTweaks;
 import net.blay09.mods.craftingtweaks.CraftingTweaksProviderManager;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.blay09.mods.forbic.mixin.AbstractContainerScreenAccessor;
@@ -58,10 +57,7 @@ public abstract class GuiTweakButton extends GuiImageButton implements ITooltipP
         AbstractContainerMenu container = player.containerMenu;
         TweakProvider<AbstractContainerMenu> provider = CraftingTweaksProviderManager.getProvider(container);
         if (provider != null) {
-            ClientProvider clientProvider = CraftingTweaks.craftingTweaksClient
-                    .map(CraftingTweaksClient::getClientProvider)
-                    .orElseThrow(() -> new IllegalStateException("Missing CraftingTweaks ClientProvider."));
-
+            ClientProvider clientProvider = CraftingTweaksClient.getClientProvider();
             onTweakButtonClicked(player, container, provider, clientProvider);
         }
     }

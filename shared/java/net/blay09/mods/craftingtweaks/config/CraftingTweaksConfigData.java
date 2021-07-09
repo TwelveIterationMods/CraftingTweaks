@@ -1,12 +1,16 @@
 package net.blay09.mods.craftingtweaks.config;
 
+import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
+import net.blay09.mods.craftingtweaks.CraftingTweaks;
 import net.blay09.mods.forbic.config.Comment;
 import net.blay09.mods.forbic.config.ForbicConfig;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Config(name = CraftingTweaks.MOD_ID)
 public class CraftingTweaksConfigData extends ForbicConfig {
 
     @ConfigEntry.Gui.CollapsibleObject
@@ -40,7 +44,7 @@ public class CraftingTweaksConfigData extends ForbicConfig {
         public CraftingTweaksMode craftingTweaksMode = CraftingTweaksMode.DEFAULT;
 
         @Comment("Add mod ids here of mods that you wish to disable Crafting Tweaks support for.")
-        public List<String> disabledAddons;
+        public List<String> disabledAddons = new ArrayList<>();
     }
 
     public void setHideButtons(boolean hideButtons) {

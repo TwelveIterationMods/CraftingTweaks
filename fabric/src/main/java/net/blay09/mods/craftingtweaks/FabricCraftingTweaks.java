@@ -1,6 +1,5 @@
-package net.blay09.mods.waystones;
+package net.blay09.mods.craftingtweaks;
 
-import net.blay09.mods.craftingtweaks.CraftingTweaks;
 import net.fabricmc.api.ModInitializer;
 
 public class FabricCraftingTweaks implements ModInitializer {
