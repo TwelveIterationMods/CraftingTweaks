@@ -12,4 +12,9 @@ public class CraftingTweaksConfig {
     public static void initialize() {
         ForbicConfigHolder.registerConfig(CraftingTweaksConfigData.class, SyncCraftingTweaksConfigMessage::new);
     }
+
+    public static void setHideButtons(boolean hideButtons) {
+        ForbicConfigHolder.getFallback(CraftingTweaksConfigData.class).client.hideButtons = hideButtons;
+        // TODO save
+    }
 }

@@ -1,6 +1,6 @@
 package net.blay09.mods.craftingtweaks.api;
 
-import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
@@ -150,7 +150,7 @@ public interface TweakProvider<T extends AbstractContainerMenu> {
      * @param screen        the gui container the buttons are being added to
      * @param addWidgetFunc function to call for adding widgets to the screen
      */
-    void initGui(AbstractContainerScreen<T> screen, Consumer<Widget> addWidgetFunc);
+    void initGui(AbstractContainerScreen<T> screen, Consumer<AbstractWidget> addWidgetFunc);
 
     /**
      * @param menu the menu to test

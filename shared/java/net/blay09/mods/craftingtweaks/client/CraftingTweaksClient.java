@@ -9,6 +9,7 @@ import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfig;
 import net.blay09.mods.craftingtweaks.config.CraftingTweaksMode;
 import net.blay09.mods.craftingtweaks.network.*;
 import net.blay09.mods.forbic.client.ForbicKeyBindings;
+import net.blay09.mods.forbic.client.ForbicScreens;
 import net.blay09.mods.forbic.event.ForbicEvents;
 import net.blay09.mods.forbic.mixin.AbstractContainerScreenAccessor;
 import net.blay09.mods.forbic.mixin.ScreenAccessor;
@@ -20,6 +21,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
@@ -43,6 +45,9 @@ public class CraftingTweaksClient {
     public static void initialize() {
         ModKeyBindings.initialize();
 
+        ForbicEvents.onItemCrafted(CraftingTweaksClient::onItemCrafted);
+
+        ForbicEvents.onScreenInitialized(CraftingTweaksClient::screenInitialized);
         ForbicEvents.onScreenInitialized(CraftingTweaksClient::screenInitialized);
         ForbicEvents.onScreenKeyPressed(CraftingTweaksClient::screenKeyPressed);
         ForbicEvents.onScreenMouseClick(CraftingTweaksClient::screenMouseClick);
@@ -121,7 +126,7 @@ public class CraftingTweaksClient {
                     return true;
                 }
             } else if (ForbicKeyBindings.isActiveAndMatches(ModKeyBindings.keyToggleButtons, key, scanCode)) {
-                CraftingTweaksConfig.getActive().setHideButtons(!CraftingTweaksConfig.getActive().client.hideButtons);
+                CraftingTweaksConfig.setHideButtons(!CraftingTweaksConfig.getActive().client.hideButtons);
                 Minecraft mc = Minecraft.getInstance();
                 screen.init(mc, mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
                 return true;
@@ -216,9 +221,7 @@ public class CraftingTweaksClient {
             CraftingTweaksMode config = CraftingTweaksConfig.getActive().getCraftingTweaksMode(provider.getModId());
             if ((config == CraftingTweaksMode.DEFAULT || config == CraftingTweaksMode.BUTTONS) && !CraftingTweaksConfig.getActive().client.hideButtons) {
                 if (provider.isValidContainer(screen.getMenu())) {
-                    provider.initGui(screen, it -> {
-// TODO
-                    });
+                    provider.initGui(screen, widget -> ForbicScreens.addRenderableWidget(screen, widget));
                 }
             }
         }
@@ -288,8 +291,7 @@ public class CraftingTweaksClient {
         }
 
         // Detect changes on guiLeft to fix the recipe book button positioning (guiLeft changes on recipe book toggle)
-        if (screen instanceof AbstractContainerScreen<?>) {
-            AbstractContainerScreen<?> containerScreen = (AbstractContainerScreen<?>) screen;
+        if (screen instanceof AbstractContainerScreen<?> containerScreen) {
             int guiLeft = ((AbstractContainerScreenAccessor) containerScreen).getLeftPos();
             if (guiLeft != guiLeftOnMistakeFix) {
                 CraftingGuideButtonFixer.fixMistakes(containerScreen);
@@ -313,9 +315,9 @@ public class CraftingTweaksClient {
         }
     }
 
-    /* TODO public void onItemCrafted(PlayerEvent.ItemCraftedEvent event) {
-        clientProvider.onItemCrafted(event.getInventory());
-    }*/
+    private static void onItemCrafted(Player player, ItemStack itemStack, Container craftMatrix) {
+        clientProvider.onItemCrafted(craftMatrix);
+    }
 
     public static ClientProvider getClientProvider() {
         return clientProvider;

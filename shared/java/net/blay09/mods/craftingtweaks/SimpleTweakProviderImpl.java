@@ -5,6 +5,7 @@ import net.blay09.mods.craftingtweaks.api.DefaultProviderV2;
 import net.blay09.mods.craftingtweaks.api.RotationHandler;
 import net.blay09.mods.craftingtweaks.api.SimpleTweakProvider;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.core.Direction;
@@ -200,7 +201,7 @@ public class SimpleTweakProviderImpl<T extends AbstractContainerMenu> implements
     }
 
     @Override
-    public void initGui(AbstractContainerScreen<T> screen, Consumer<Widget> addWidgetFunc) {
+    public void initGui(AbstractContainerScreen<T> screen, Consumer<AbstractWidget> addWidgetFunc) {
         if (!hideButtons) {
             int index = 0;
             if (tweakRotate.enabled && tweakRotate.showButton) {
