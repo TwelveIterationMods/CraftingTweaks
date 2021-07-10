@@ -30,7 +30,7 @@ repositories {
 	maven { url "https://maven.shedaniel.me/" }
 
 	// For ModMenu
-	maven { url "https://maven.terraformersmc.com/releases/" }
+	//maven { url "https://maven.terraformersmc.com/releases/" }
 
 	// For CurseForge
 	maven { url "https://www.cursemaven.com" }
@@ -60,8 +60,8 @@ dependencies {
 	modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:6.0.264-alpha"
 	modCompileOnly "me.shedaniel:architectury:2.0.9"
 
-	modImplementation "com.terraformersmc:modmenu:2.0.2"
-	// modImplementation "curse.maven:modmenu-308702:3348711"
+	//modImplementation "com.terraformersmc:modmenu:2.0.2"
+	modImplementation "curse.maven:modmenu-308702:3348711"
 }
 
 processResources {
