@@ -44,7 +44,7 @@ public class ModKeyBindings extends ForbicKeyBindings {
         keyDecompressOne = registerKeyBinding("key.craftingtweaks.decompressOne", KeyConflictContext.GUI, KeyModifier.NONE, InputConstants.UNKNOWN.getValue(), "key.categories.craftingtweaks");
         keyDecompressStack = registerKeyBinding("key.craftingtweaks.decompressStack", KeyConflictContext.GUI, KeyModifier.NONE, InputConstants.UNKNOWN.getValue(), "key.categories.craftingtweaks");
         keyDecompressAll = registerKeyBinding("key.craftingtweaks.decompressAll", KeyConflictContext.GUI, KeyModifier.NONE, InputConstants.UNKNOWN.getValue(), "key.categories.craftingtweaks");
-        keyRefillLast = registerKeyBinding("key.craftingtweaks.refill_last", KeyConflictContext.GUI, KeyModifier.NONE, GLFW.GLFW_KEY_TAB, "key.categories.craftingtweaks");
+        keyRefillLast = registerKeyBinding("key.craftingtweaks.refill_last", KeyConflictContext.GUI, KeyModifier.CONTROL, GLFW.GLFW_KEY_TAB, "key.categories.craftingtweaks");
         keyRefillLastStack = registerKeyBinding("key.craftingtweaks.refill_last_stack", KeyConflictContext.GUI, KeyModifier.NONE, GLFW.GLFW_KEY_TAB, "key.categories.craftingtweaks");
 
         ForbicEvents.onClientStarted(client -> {
