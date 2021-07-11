@@ -3,7 +3,7 @@ package net.blay09.mods.craftingtweaks.addons;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
 import net.blay09.mods.craftingtweaks.api.SimpleTweakProvider;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
-import net.blay09.mods.forbic.ForbicModList;
+import net.blay09.mods.balm.BalmModList;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,7 +17,7 @@ public class CraftingTweaksAddons {
     @Nullable
     private static SimpleTweakProvider registerSimpleProvider(String modid, String className) {
         try {
-            if (ForbicModList.isLoaded(modid)) {
+            if (BalmModList.isLoaded(modid)) {
                 return CraftingTweaksAPI.registerSimpleProvider(modid, (Class<? extends AbstractContainerMenu>) Class.forName(className));
             }
         } catch (ClassNotFoundException e) {

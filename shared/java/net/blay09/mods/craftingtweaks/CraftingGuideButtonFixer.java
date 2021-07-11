@@ -2,10 +2,10 @@ package net.blay09.mods.craftingtweaks;
 
 import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfig;
 import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfigData;
-import net.blay09.mods.forbic.ForbicModList;
-import net.blay09.mods.forbic.mixin.AbstractContainerScreenAccessor;
-import net.blay09.mods.forbic.mixin.ImageButtonAccessor;
-import net.blay09.mods.forbic.mixin.ScreenAccessor;
+import net.blay09.mods.balm.BalmModList;
+import net.blay09.mods.balm.mixin.AbstractContainerScreenAccessor;
+import net.blay09.mods.balm.mixin.ImageButtonAccessor;
+import net.blay09.mods.balm.mixin.ScreenAccessor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -35,7 +35,7 @@ public class CraftingGuideButtonFixer {
                 }
 
                 // Let's be hacky again!
-                if (ForbicModList.isLoaded("inventorytweaks")) {
+                if (BalmModList.isLoaded("inventorytweaks")) {
                     button.x -= 15;
                 }
             }

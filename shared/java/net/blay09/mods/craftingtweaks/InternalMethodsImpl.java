@@ -9,7 +9,7 @@ import net.blay09.mods.craftingtweaks.client.GuiTweakButton;
 import net.blay09.mods.craftingtweaks.network.BalanceMessage;
 import net.blay09.mods.craftingtweaks.network.ClearMessage;
 import net.blay09.mods.craftingtweaks.network.RotateMessage;
-import net.blay09.mods.forbic.network.ForbicNetworking;
+import net.blay09.mods.balm.network.BalmNetworking;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -43,7 +43,7 @@ public class InternalMethodsImpl implements InternalMethods {
             protected void onTweakButtonClicked(Player player, AbstractContainerMenu container, TweakProvider<AbstractContainerMenu> provider, ClientProvider clientProvider) {
                 boolean isShiftDown = Screen.hasShiftDown();
                 if (CraftingTweaks.isServerSideInstalled) {
-                    ForbicNetworking.sendToServer(new BalanceMessage(this.getTweakId(), isShiftDown));
+                    BalmNetworking.sendToServer(new BalanceMessage(this.getTweakId(), isShiftDown));
                 } else {
                     if (isShiftDown) {
                         clientProvider.spreadGrid(provider, player, container, this.getTweakId());
@@ -62,7 +62,7 @@ public class InternalMethodsImpl implements InternalMethods {
             protected void onTweakButtonClicked(Player player, AbstractContainerMenu container, TweakProvider<AbstractContainerMenu> provider, ClientProvider clientProvider) {
                 boolean isShiftDown = Screen.hasShiftDown();
                 if (CraftingTweaks.isServerSideInstalled) {
-                    ForbicNetworking.sendToServer(new RotateMessage(this.getTweakId(), isShiftDown));
+                    BalmNetworking.sendToServer(new RotateMessage(this.getTweakId(), isShiftDown));
                 } else {
                     clientProvider.rotateGrid(provider, player, container, this.getTweakId(), isShiftDown);
                 }
@@ -77,7 +77,7 @@ public class InternalMethodsImpl implements InternalMethods {
             protected void onTweakButtonClicked(Player player, AbstractContainerMenu container, TweakProvider<AbstractContainerMenu> provider, ClientProvider clientProvider) {
                 boolean isShiftDown = Screen.hasShiftDown();
                 if (CraftingTweaks.isServerSideInstalled) {
-                    ForbicNetworking.sendToServer(new ClearMessage(this.getTweakId(), isShiftDown));
+                    BalmNetworking.sendToServer(new ClearMessage(this.getTweakId(), isShiftDown));
                 } else {
                     clientProvider.clearGrid(provider, player, container, this.getTweakId(), isShiftDown);
                 }

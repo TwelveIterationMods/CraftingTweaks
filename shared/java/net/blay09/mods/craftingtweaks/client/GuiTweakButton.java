@@ -3,7 +3,7 @@ package net.blay09.mods.craftingtweaks.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.blay09.mods.craftingtweaks.CraftingTweaksProviderManager;
 import net.blay09.mods.craftingtweaks.api.TweakProvider;
-import net.blay09.mods.forbic.mixin.AbstractContainerScreenAccessor;
+import net.blay09.mods.balm.mixin.AbstractContainerScreenAccessor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;

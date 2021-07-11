@@ -3,11 +3,11 @@ package net.blay09.mods.craftingtweaks.network;
 
 import net.blay09.mods.craftingtweaks.CraftingTweaks;
 import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfigData;
-import net.blay09.mods.forbic.network.ForbicNetworking;
-import net.blay09.mods.forbic.network.SyncConfigMessage;
+import net.blay09.mods.balm.network.BalmNetworking;
+import net.blay09.mods.balm.network.SyncConfigMessage;
 import net.minecraft.resources.ResourceLocation;
 
-public class ModNetworking extends ForbicNetworking {
+public class ModNetworking extends BalmNetworking {
 
     public static void initialize() {
         registerClientboundPacket(id("hello"), HelloMessage.class, HelloMessage::encode, HelloMessage::decode, HelloMessage::handle);

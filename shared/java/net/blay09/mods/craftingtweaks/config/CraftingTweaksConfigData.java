@@ -3,16 +3,16 @@ package net.blay09.mods.craftingtweaks.config;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
 import net.blay09.mods.craftingtweaks.CraftingTweaks;
-import net.blay09.mods.forbic.config.Comment;
-import net.blay09.mods.forbic.config.ForbicConfig;
-import net.blay09.mods.forbic.config.ForbicConfigHolder;
+import net.blay09.mods.balm.config.Comment;
+import net.blay09.mods.balm.config.BalmConfig;
+import net.blay09.mods.balm.config.BalmConfigHolder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 @Config(name = CraftingTweaks.MOD_ID)
-public class CraftingTweaksConfigData extends ForbicConfig {
+public class CraftingTweaksConfigData extends BalmConfig {
 
     @ConfigEntry.Gui.CollapsibleObject
     public Common common = new Common();
