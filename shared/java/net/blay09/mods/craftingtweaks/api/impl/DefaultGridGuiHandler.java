@@ -24,10 +24,10 @@ public class DefaultGridGuiHandler implements GridGuiHandler {
         if (createTweakButton(screen, grid, addWidgetFunc, guiSettings, index, TweakType.Rotate)) {
             index++;
         }
-        if (createTweakButton(screen, grid, addWidgetFunc, guiSettings, index, TweakType.Rotate)) {
+        if (createTweakButton(screen, grid, addWidgetFunc, guiSettings, index, TweakType.Balance)) {
             index++;
         }
-        createTweakButton(screen, grid, addWidgetFunc, guiSettings, index, TweakType.Rotate);
+        createTweakButton(screen, grid, addWidgetFunc, guiSettings, index, TweakType.Clear);
     }
 
     private boolean createTweakButton(AbstractContainerScreen<?> screen, CraftingGrid grid, Consumer<AbstractWidget> addWidgetFunc, GridGuiSettings guiSettings, int index, TweakType tweak) {
@@ -46,8 +46,8 @@ public class DefaultGridGuiHandler implements GridGuiHandler {
         return switch (alignment) {
             case TOP -> new ButtonPosition(firstSlot.x + 18 * index, firstSlot.y - 18 - 1);
             case BOTTOM -> new ButtonPosition(firstSlot.x + 18 * index, firstSlot.y + 18 * 3 + 1);
-            case LEFT -> new ButtonPosition(firstSlot.x + 18 * 3 + 1, firstSlot.y + 18 * index);
-            case RIGHT -> new ButtonPosition(firstSlot.x - 19, firstSlot.y + 18 * index);
+            case RIGHT -> new ButtonPosition(firstSlot.x + 18 * 3 + 1, firstSlot.y + 18 * index);
+            case LEFT -> new ButtonPosition(firstSlot.x - 19, firstSlot.y + 18 * index);
         };
     }
 

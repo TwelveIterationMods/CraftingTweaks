@@ -16,7 +16,7 @@ public class CraftingTweaks {
     public static final Logger logger = LogManager.getLogger();
     public static final String MOD_ID = "craftingtweaks";
 
-    public static boolean isServerSideInstalled;
+    public static boolean isServerSideInstalled = true;
 
     public static void initialize() {
         CraftingTweaksConfig.initialize();
