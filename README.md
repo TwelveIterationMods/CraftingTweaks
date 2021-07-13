@@ -134,6 +134,10 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 
 public class YourCustomCraftingGridProvider implements CraftingGridProvider {
 
+    public YourCustomCraftingGridProvider() {
+        CraftingTweaksAPI.registerCraftingGridProvider(this);
+    }
+
     @Override
     public String getModId() {
         return "yourModId";
@@ -142,6 +146,11 @@ public class YourCustomCraftingGridProvider implements CraftingGridProvider {
     @Override
     public boolean requiresServerSide() {
         return false; // should be true if you use things such as phantom items, where simulating clicks would now result in desired behaviour
+    }
+
+    @Override
+    public boolean handles(AbstractContainerMenu menu) {
+        return menu instanceof MyCustomCraftingMenu; // buildCraftingGrids will only be called if this returns true for the given menu
     }
 
     @Override
@@ -169,17 +178,7 @@ public class YourCustomCraftingGridProvider implements CraftingGridProvider {
 }
 ```
 
-You will have to let Crafting Tweaks know about your provider by registering it:
-
-```java
-public class CraftingTweaksAddon {
-    public CraftingTweaksAddon() {
-        CraftingTweaksAPI.registerCraftingGridProvider(new YourCustomCraftingGridProvider());
-    }
-}
-```
-
-Finally, instantiate that addon class if Crafting Tweaks is loaded:
+Then instantiate that provider if Crafting Tweaks is loaded:
 
 ```java
 public class YourMod {
@@ -187,7 +186,7 @@ public class YourMod {
         // ...
         if (isModLoaded("craftingtweaks")) { // different calls depending on whether you use Forge or Fabric
             try {
-                Class.forName("your.mod.compat.CraftingTweaksAddon").getConstructor().newInstance();
+                Class.forName("your.mod.compat.craftingtweaks.YourCustomCraftingGridProvider").getConstructor().newInstance();
             } catch (Throwable e) {
                 e.printStackTrace();
             }

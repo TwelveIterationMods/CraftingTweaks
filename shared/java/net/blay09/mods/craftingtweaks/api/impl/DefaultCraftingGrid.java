@@ -19,7 +19,7 @@ public class DefaultCraftingGrid implements CraftingGrid, CraftingGridDecorator,
     private GridClearHandler<AbstractContainerMenu> clearHandler = CraftingGrid.super.clearHandler();
     private GridBalanceHandler<AbstractContainerMenu> balanceHandler = CraftingGrid.super.balanceHandler();
     private GridRotateHandler<AbstractContainerMenu> rotateHandler = CraftingGrid.super.rotateHandler();
-    private final GridTransferHandler<AbstractContainerMenu> transferHandler = CraftingGrid.super.transferHandler();
+    private GridTransferHandler<AbstractContainerMenu> transferHandler = CraftingGrid.super.transferHandler();
 
     private ButtonAlignment buttonAlignment = ButtonAlignment.LEFT;
 
@@ -88,6 +88,30 @@ public class DefaultCraftingGrid implements CraftingGrid, CraftingGridDecorator,
     @Override
     public GridRotateHandler<AbstractContainerMenu> rotateHandler() {
         return rotateHandler;
+    }
+
+    @Override
+    public CraftingGridDecorator rotateHandler(GridRotateHandler<AbstractContainerMenu> rotateHandler) {
+        this.rotateHandler = rotateHandler;
+        return this;
+    }
+
+    @Override
+    public CraftingGridDecorator balanceHandler(GridBalanceHandler<AbstractContainerMenu> balanceHandler) {
+        this.balanceHandler = balanceHandler;
+        return this;
+    }
+
+    @Override
+    public CraftingGridDecorator clearHandler(GridClearHandler<AbstractContainerMenu> clearHandler) {
+        this.clearHandler = clearHandler;
+        return this;
+    }
+
+    @Override
+    public CraftingGridDecorator transferHandler(GridTransferHandler<AbstractContainerMenu> transferHandler) {
+        this.transferHandler = transferHandler;
+        return this;
     }
 
     @Override

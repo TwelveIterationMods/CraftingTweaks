@@ -25,9 +25,11 @@ public class CraftingTweaksProviderManager {
     public static List<CraftingGrid> getCraftingGrids(AbstractContainerMenu menu) {
         CraftingGridBuilderImpl builder = new CraftingGridBuilderImpl();
         for (CraftingGridProvider provider : craftingGridProviders) {
-            builder.setActiveModId(provider.getModId());
-            if (!provider.requiresServerSide() || CraftingTweaks.isServerSideInstalled) {
-                provider.buildCraftingGrids(builder, menu);
+            if (provider.handles(menu)) {
+                builder.setActiveModId(provider.getModId());
+                if (!provider.requiresServerSide() || CraftingTweaks.isServerSideInstalled) {
+                    provider.buildCraftingGrids(builder, menu);
+                }
             }
         }
         return builder.getGrids();

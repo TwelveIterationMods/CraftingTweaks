@@ -5,11 +5,13 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 public interface CraftingGridProvider {
     String getModId();
 
-    void onInitialize();
+    boolean handles(AbstractContainerMenu menu);
+
+    void buildCraftingGrids(CraftingGridBuilder builder, AbstractContainerMenu menu);
+
+    default void onInitialize() {}
 
     default boolean requiresServerSide() {
         return true;
     }
-
-    void buildCraftingGrids(CraftingGridBuilder builder, AbstractContainerMenu menu);
 }

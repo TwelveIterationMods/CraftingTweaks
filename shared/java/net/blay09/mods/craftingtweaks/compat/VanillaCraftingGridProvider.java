@@ -14,12 +14,13 @@ public class VanillaCraftingGridProvider implements CraftingGridProvider {
     }
 
     @Override
-    public void onInitialize() {
+    public boolean requiresServerSide() {
+        return false;
     }
 
     @Override
-    public boolean requiresServerSide() {
-        return false;
+    public boolean handles(AbstractContainerMenu menu) {
+        return menu instanceof CraftingMenu || menu instanceof InventoryMenu;
     }
 
     @Override
