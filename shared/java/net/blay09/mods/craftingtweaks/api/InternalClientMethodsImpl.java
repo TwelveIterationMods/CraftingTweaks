@@ -4,6 +4,7 @@ import net.blay09.mods.balm.network.BalmNetworking;
 import net.blay09.mods.craftingtweaks.CraftingTweaks;
 import net.blay09.mods.craftingtweaks.client.ClientProvider;
 import net.blay09.mods.craftingtweaks.client.CraftingTweaksClient;
+import net.blay09.mods.craftingtweaks.client.CraftingTweaksClientProviderManager;
 import net.blay09.mods.craftingtweaks.client.GuiTweakButton;
 import net.blay09.mods.craftingtweaks.network.BalanceMessage;
 import net.blay09.mods.craftingtweaks.network.ClearMessage;
@@ -66,5 +67,10 @@ public class InternalClientMethodsImpl implements InternalClientMethods {
                 }
             }
         };
+    }
+
+    @Override
+    public <TScreen extends AbstractContainerScreen<TMenu>, TMenu extends AbstractContainerMenu> void registerCraftingGridGuiHandler(Class<TScreen> clazz, GridGuiHandler handler) {
+        CraftingTweaksClientProviderManager.registerCraftingGridGuiHandler(clazz, handler);
     }
 }

@@ -4,9 +4,14 @@ package net.blay09.mods.craftingtweaks.client;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.blay09.mods.balm.client.keybinds.BalmKeyMappings;
+import net.blay09.mods.balm.client.screen.BalmScreens;
 import net.blay09.mods.balm.event.client.BalmClientEvents;
 import net.blay09.mods.craftingtweaks.*;
 import net.blay09.mods.craftingtweaks.api.CraftingGrid;
+import net.blay09.mods.craftingtweaks.api.CraftingTweaksClientAPI;
+import net.blay09.mods.craftingtweaks.api.GridGuiHandler;
+import net.blay09.mods.craftingtweaks.api.InternalClientMethodsImpl;
+import net.blay09.mods.craftingtweaks.api.impl.DefaultGridGuiHandler;
 import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfig;
 import net.blay09.mods.craftingtweaks.config.CraftingTweaksMode;
 import net.blay09.mods.craftingtweaks.network.*;
@@ -43,6 +48,11 @@ public class CraftingTweaksClient {
     private static int guiLeftOnMistakeFix;
 
     public static void initialize() {
+        CraftingTweaksClientAPI.setupAPI(new InternalClientMethodsImpl());
+
+        //noinspection unchecked
+        CraftingTweaksClientAPI.registerCraftingGridGuiHandler(AbstractContainerScreen.class, new DefaultGridGuiHandler());
+
         ModKeyMappings.initialize();
 
         BalmEvents.onItemCrafted(CraftingTweaksClient::onItemCrafted);
@@ -225,13 +235,14 @@ public class CraftingTweaksClient {
             guiLeftOnMistakeFix = ((AbstractContainerScreenAccessor) screen).getLeftPos();
         }
 
-        if (screen instanceof AbstractContainerScreen<?>) {
+        if (screen instanceof AbstractContainerScreen<?> containerScreen) {
+            GridGuiHandler guiHandler = CraftingTweaksClientProviderManager.getGridGuiHandler(containerScreen);
             List<CraftingGrid> grids = CraftingTweaksProviderManager.getCraftingGrids(((AbstractContainerScreen<?>) screen).getMenu());
             for (CraftingGrid grid : grids) {
                 String modId = grid.getId().getNamespace();
                 CraftingTweaksMode config = CraftingTweaksConfig.getActive().getCraftingTweaksMode(modId);
                 if ((config == CraftingTweaksMode.DEFAULT || config == CraftingTweaksMode.BUTTONS) && !CraftingTweaksConfig.getActive().client.hideButtons) {
-                    // TODO provider.initGui(screen, widget -> BalmScreens.addRenderableWidget(screen, widget));
+                    guiHandler.createButtons(containerScreen, grid, widget -> BalmScreens.addRenderableWidget(screen, widget));
                 }
             }
         }

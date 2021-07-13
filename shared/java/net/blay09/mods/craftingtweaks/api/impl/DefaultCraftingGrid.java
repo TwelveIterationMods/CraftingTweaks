@@ -7,7 +7,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 
 import java.util.*;
 
-public class DefaultCraftingGrid implements CraftingGrid, CraftingGridDecorator, GridGuiSettingsProvider {
+public class DefaultCraftingGrid implements CraftingGrid, CraftingGridDecorator, GridGuiSettings {
 
     private final ResourceLocation id;
     private final int start;

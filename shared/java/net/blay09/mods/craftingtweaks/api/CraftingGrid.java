@@ -21,6 +21,10 @@ public interface CraftingGrid {
         return 9;
     }
 
+    default boolean isTweakActive(TweakType tweak) {
+        return true;
+    }
+
     default GridTransferHandler<AbstractContainerMenu> transferHandler() {
         return CraftingTweaksDefaultHandlers.defaultTransferHandler();
     }
