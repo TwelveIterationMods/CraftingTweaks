@@ -2,6 +2,7 @@ package net.blay09.mods.craftingtweaks.client;
 
 
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.blay09.mods.balm.client.keybinds.BalmKeyMappings;
 import net.blay09.mods.balm.client.screen.BalmScreens;
@@ -26,6 +27,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -33,6 +35,7 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.ResultSlot;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.Collections;
 import java.util.List;
@@ -80,6 +83,17 @@ public class CraftingTweaksClient {
 
         if (!(screen instanceof AbstractContainerScreen<?>)) {
             return false;
+        }
+
+        // Toggle client-only mode for testing if BLAY is held
+        Window window = Minecraft.getInstance().getWindow();
+        if (CraftingTweaks.isServerSideInstalled
+                && GLFW.glfwGetKey(window.getWindow(), GLFW.GLFW_KEY_B) == 1
+                && GLFW.glfwGetKey(window.getWindow(), GLFW.GLFW_KEY_L) == 1
+                && GLFW.glfwGetKey(window.getWindow(), GLFW.GLFW_KEY_A) == 1
+                && (GLFW.glfwGetKey(window.getWindow(), GLFW.GLFW_KEY_Y) == 1 || GLFW.glfwGetKey(window.getWindow(), GLFW.GLFW_KEY_Z) == 1)) {
+            CraftingTweaks.isServerSideInstalled = false;
+            player.displayClientMessage(new TextComponent("[CraftingTweaks] Enabled client-side testing mode"), false);
         }
 
         CraftingGrid grid = CraftingTweaksProviderManager.getDefaultCraftingGrid(menu).orElse(null);
