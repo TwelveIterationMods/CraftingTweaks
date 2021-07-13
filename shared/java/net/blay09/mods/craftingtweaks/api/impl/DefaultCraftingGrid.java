@@ -45,26 +45,29 @@ public class DefaultCraftingGrid implements CraftingGrid, CraftingGridDecorator,
     }
 
     @Override
-    public void disableTweak(TweakType tweak) {
+    public CraftingGridDecorator disableTweak(TweakType tweak) {
         switch (tweak) {
             case Clear -> clearHandler = new NoopHandler();
             case Balance -> balanceHandler = new NoopHandler();
             case Rotate -> rotateHandler = new NoopHandler();
         }
+        return this;
     }
 
     @Override
-    public void disableAllTweaks() {
+    public CraftingGridDecorator disableAllTweaks() {
         disableTweak(TweakType.Balance);
         disableTweak(TweakType.Rotate);
         disableTweak(TweakType.Clear);
+        return this;
     }
 
     @Override
-    public void usePhantomItems() {
+    public CraftingGridDecorator usePhantomItems() {
         if (clearHandler instanceof DefaultGridClearHandler defaultClearHandler) {
             defaultClearHandler.setPhantomItems(true);
         }
+        return this;
     }
 
     @Override
@@ -88,25 +91,29 @@ public class DefaultCraftingGrid implements CraftingGrid, CraftingGridDecorator,
     }
 
     @Override
-    public void hideTweakButton(TweakType tweak) {
+    public CraftingGridDecorator hideTweakButton(TweakType tweak) {
         hiddenButtons.add(tweak);
+        return this;
     }
 
     @Override
-    public void hideAllTweakButtons() {
+    public CraftingGridDecorator hideAllTweakButtons() {
         hideTweakButton(TweakType.Clear);
         hideTweakButton(TweakType.Balance);
         hideTweakButton(TweakType.Rotate);
+        return this;
     }
 
     @Override
-    public void setButtonAlignment(ButtonAlignment alignment) {
+    public CraftingGridDecorator setButtonAlignment(ButtonAlignment alignment) {
         buttonAlignment = alignment;
+        return this;
     }
 
     @Override
-    public void setButtonPosition(TweakType tweak, int x, int y) {
+    public CraftingGridDecorator setButtonPosition(TweakType tweak, int x, int y) {
         buttonPositions.put(tweak, new ButtonPosition(x, y));
+        return this;
     }
 
     @Override

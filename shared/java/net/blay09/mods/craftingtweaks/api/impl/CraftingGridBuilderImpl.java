@@ -15,7 +15,9 @@ public class CraftingGridBuilderImpl implements CraftingGridBuilder {
 
     @Override
     public CraftingGridDecorator addGrid(String name, int start, int size) {
-        return new DefaultCraftingGrid(new ResourceLocation(activeModId, name), start, size);
+        DefaultCraftingGrid grid = new DefaultCraftingGrid(new ResourceLocation(activeModId, name), start, size);
+        grids.add(grid);
+        return grid;
     }
 
     @Override

@@ -9,7 +9,7 @@ public interface CraftingGridProvider {
 
     default boolean requiresServerSide() {
         return true;
-    }
+    } // TODO
 
     void buildCraftingGrids(CraftingGridBuilder builder, AbstractContainerMenu menu);
 }
