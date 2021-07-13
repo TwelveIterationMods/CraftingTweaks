@@ -1,9 +1,9 @@
 package net.blay09.mods.craftingtweaks.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.blay09.mods.craftingtweaks.CraftingTweaksProviderManager;
-import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.blay09.mods.balm.mixin.AbstractContainerScreenAccessor;
+import net.blay09.mods.craftingtweaks.api.CraftingGrid;
+import net.blay09.mods.craftingtweaks.api.TweakType;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -19,56 +19,39 @@ import java.util.List;
 
 public abstract class GuiTweakButton extends GuiImageButton implements ITooltipProvider {
 
-    public enum TweakOption {
-        Rotate,
-        Balance,
-        Clear
-    }
-
-    private final TweakOption tweakOption;
-    private final int tweakId;
-    private final AbstractContainerScreen<?> parentGui;
+    private final AbstractContainerScreen<?> screen;
+    private final CraftingGrid grid;
+    private final TweakType tweak;
     private int lastGuiLeft;
     private int lastGuiTop;
 
-    public GuiTweakButton(@Nullable AbstractContainerScreen<?> parentGui, int xPosition, int yPosition, int texCoordX, int texCoordY, TweakOption tweakOption, int tweakId) {
-        super(xPosition, yPosition, texCoordX, texCoordY);
-        this.parentGui = parentGui;
-        if (parentGui != null) {
-            lastGuiLeft = ((AbstractContainerScreenAccessor) parentGui).getLeftPos();
-            lastGuiTop = ((AbstractContainerScreenAccessor) parentGui).getTopPos();
+    public GuiTweakButton(@Nullable AbstractContainerScreen<?> screen, int x, int y, int textureX, int textureY, CraftingGrid grid, TweakType tweak) {
+        super(x, y, textureX, textureY);
+        this.screen = screen;
+        if (screen != null) {
+            lastGuiLeft = ((AbstractContainerScreenAccessor) screen).getLeftPos();
+            lastGuiTop = ((AbstractContainerScreenAccessor) screen).getTopPos();
         }
-        this.tweakOption = tweakOption;
-        this.tweakId = tweakId;
-    }
-
-    public TweakOption getTweakOption() {
-        return tweakOption;
-    }
-
-    public int getTweakId() {
-        return tweakId;
+        this.grid = grid;
+        this.tweak = tweak;
     }
 
     @Override
     public void onClick(double mouseX, double mouseY) {
         playDownSound(Minecraft.getInstance().getSoundManager());
         Player player = Minecraft.getInstance().player;
-        AbstractContainerMenu container = player.containerMenu;
-        TweakProvider<AbstractContainerMenu> provider = CraftingTweaksProviderManager.getProvider(container);
-        if (provider != null) {
-            ClientProvider clientProvider = CraftingTweaksClient.getClientProvider();
-            onTweakButtonClicked(player, container, provider, clientProvider);
+        if (player != null) {
+            onTweakButtonClicked(player, screen != null ? screen.getMenu() : player.containerMenu, grid);
         }
     }
 
-    protected abstract void onTweakButtonClicked(Player player, AbstractContainerMenu container, TweakProvider<AbstractContainerMenu> provider, ClientProvider clientProvider);
+    protected abstract void onTweakButtonClicked(Player player, AbstractContainerMenu container, CraftingGrid grid);
 
     @Override
     public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        if (parentGui != null) {
-            final int guiLeft = ((AbstractContainerScreenAccessor) parentGui).getLeftPos();
-            final int guiTop = ((AbstractContainerScreenAccessor) parentGui).getTopPos();
+        if (screen != null) {
+            final int guiLeft = ((AbstractContainerScreenAccessor) screen).getLeftPos();
+            final int guiTop = ((AbstractContainerScreenAccessor) screen).getTopPos();
             if (guiLeft != lastGuiLeft || guiTop != lastGuiTop) {
                 x += guiLeft - lastGuiLeft;
                 y += guiTop - lastGuiTop;
@@ -89,7 +72,7 @@ public abstract class GuiTweakButton extends GuiImageButton implements ITooltipP
     @Override
     public List<Component> getTooltip() {
         List<Component> tooltip = new ArrayList<>();
-        switch (tweakOption) {
+        switch (tweak) {
             case Rotate:
                 tooltip.add(new TranslatableComponent("tooltip.craftingtweaks.rotate"));
                 break;

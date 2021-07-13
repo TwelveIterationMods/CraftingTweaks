@@ -4,10 +4,9 @@ package net.blay09.mods.craftingtweaks.client;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.blay09.mods.balm.client.keybinds.BalmKeyMappings;
-import net.blay09.mods.balm.client.screen.BalmScreens;
 import net.blay09.mods.balm.event.client.BalmClientEvents;
 import net.blay09.mods.craftingtweaks.*;
-import net.blay09.mods.craftingtweaks.api.TweakProvider;
+import net.blay09.mods.craftingtweaks.api.CraftingGrid;
 import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfig;
 import net.blay09.mods.craftingtweaks.config.CraftingTweaksMode;
 import net.blay09.mods.craftingtweaks.network.*;
@@ -64,8 +63,8 @@ public class CraftingTweaksClient {
             return false;
         }
 
-        AbstractContainerMenu container = player.containerMenu;
-        if (container == null) {
+        AbstractContainerMenu menu = player.containerMenu;
+        if (menu == null) {
             return false;
         }
 
@@ -73,10 +72,11 @@ public class CraftingTweaksClient {
             return false;
         }
 
-        TweakProvider<AbstractContainerMenu> provider = CraftingTweaksProviderManager.getProvider(container);
+        CraftingGrid grid = CraftingTweaksProviderManager.getDefaultCraftingGrid(menu).orElse(null);
         CompressType compressType = ModKeyMappings.getCompressTypeForKey(key, scanCode);
-        if (provider != null && provider.isValidContainer(container)) {
-            CraftingTweaksMode config = CraftingTweaksConfig.getActive().getCraftingTweaksMode(provider.getModId());
+        if (grid != null) {
+            String modId = grid.getId().getNamespace();
+            CraftingTweaksMode config = CraftingTweaksConfig.getActive().getCraftingTweaksMode(modId);
             if (config == CraftingTweaksMode.DEFAULT || config == CraftingTweaksMode.HOTKEYS) {
                 boolean isRotate = BalmKeyMappings.isActiveAndMatches(ModKeyMappings.keyRotate, key, scanCode);
                 boolean isRotateCCW = BalmKeyMappings.isActiveAndMatches(ModKeyMappings.keyRotateCounterClockwise, key, scanCode);
@@ -88,31 +88,31 @@ public class CraftingTweaksClient {
                 boolean isRefillStack = BalmKeyMappings.isActiveAndMatches(ModKeyMappings.keyRefillLastStack, key, scanCode);
                 if (isRotate || isRotateCCW) {
                     if (CraftingTweaks.isServerSideInstalled) {
-                        BalmNetworking.sendToServer(new RotateMessage(0, isRotateCCW));
+                        BalmNetworking.sendToServer(new RotateMessage(grid.getId(), isRotateCCW));
                     } else {
-                        clientProvider.rotateGrid(provider, player, container, 0, isRotateCCW);
+                        clientProvider.rotateGrid(player, menu, grid, isRotateCCW);
                     }
                     return true;
                 } else if (isClear || isForceClear) {
                     if (CraftingTweaks.isServerSideInstalled) {
-                        BalmNetworking.sendToServer(new ClearMessage(0, isForceClear));
+                        BalmNetworking.sendToServer(new ClearMessage(grid.getId(), isForceClear));
                     } else {
-                        clientProvider.clearGrid(provider, player, container, 0, isForceClear);
+                        clientProvider.clearGrid(player, menu, grid, isForceClear);
                     }
                     return true;
                 } else if (isBalance || isSpread) {
                     if (CraftingTweaks.isServerSideInstalled) {
-                        BalmNetworking.sendToServer(new BalanceMessage(0, isSpread));
+                        BalmNetworking.sendToServer(new BalanceMessage(grid.getId(), isSpread));
                     } else {
                         if (isSpread) {
-                            clientProvider.spreadGrid(provider, player, container, 0);
+                            clientProvider.spreadGrid(player, menu, grid);
                         } else {
-                            clientProvider.balanceGrid(provider, player, container, 0);
+                            clientProvider.balanceGrid(player, menu, grid);
                         }
                     }
                     return true;
                 } else if (isRefill || isRefillStack) {
-                    clientProvider.refillLastCrafted(provider, player, container, 0, isRefillStack);
+                    clientProvider.refillLastCrafted(player, menu, grid, isRefillStack);
                     return true;
                 }
             }
@@ -124,7 +124,7 @@ public class CraftingTweaksClient {
                     if (CraftingTweaks.isServerSideInstalled) {
                         BalmNetworking.sendToServer(new CompressMessage(mouseSlot.index, compressType));
                     } else {
-                        clientProvider.compress(provider, player, container, mouseSlot, compressType);
+                        clientProvider.compress(player, menu, grid, mouseSlot, compressType);
                     }
                     return true;
                 }
@@ -166,21 +166,21 @@ public class CraftingTweaksClient {
             return false;
         }
 
-        AbstractContainerMenu container = player.containerMenu;
-        if (container == null) {
+        AbstractContainerMenu menu = player.containerMenu;
+        if (menu == null) {
             return false;
         }
 
         Slot mouseSlot = screen instanceof AbstractContainerScreen<?> ? ((AbstractContainerScreenAccessor) screen).getHoveredSlot() : null;
-        TweakProvider<AbstractContainerMenu> provider = CraftingTweaksProviderManager.getProvider(container);
-        if (provider != null && provider.isValidContainer(container)) {
+        CraftingGrid grid = CraftingTweaksProviderManager.getDefaultCraftingGrid(menu).orElse(null);
+        if (grid != null) {
             if (BalmKeyMappings.isKeyDownIgnoreContext(ModKeyMappings.keyTransferStack)) {
                 if (mouseSlot != null && mouseSlot.hasItem()) {
                     List<Slot> transferSlots = Lists.newArrayList();
                     transferSlots.add(mouseSlot);
                     if (Screen.hasShiftDown()) {
                         ItemStack mouseSlotStack = mouseSlot.getItem();
-                        for (Slot slot : container.slots) {
+                        for (Slot slot : menu.slots) {
                             if (!slot.hasItem() || mouseSlot == slot) {
                                 continue;
                             }
@@ -193,11 +193,11 @@ public class CraftingTweaksClient {
 
                     if (CraftingTweaks.isServerSideInstalled) {
                         for (Slot slot : transferSlots) {
-                            BalmNetworking.sendToServer(new TransferStackMessage(0, slot.index));
+                            BalmNetworking.sendToServer(new TransferStackMessage(grid.getId(), slot.index));
                         }
                     } else {
                         for (Slot slot : transferSlots) {
-                            clientProvider.transferIntoGrid(provider, player, container, 0, slot);
+                            clientProvider.transferIntoGrid(player, menu, grid, slot);
                         }
                         ignoreMouseUp = true;
                     }
@@ -218,18 +218,6 @@ public class CraftingTweaksClient {
         return false;
     }
 
-    private static <T extends AbstractContainerMenu> void initGui(AbstractContainerScreen<T> screen) {
-        TweakProvider<T> provider = CraftingTweaksProviderManager.getProvider(screen.getMenu());
-        if (provider != null) {
-            CraftingTweaksMode config = CraftingTweaksConfig.getActive().getCraftingTweaksMode(provider.getModId());
-            if ((config == CraftingTweaksMode.DEFAULT || config == CraftingTweaksMode.BUTTONS) && !CraftingTweaksConfig.getActive().client.hideButtons) {
-                if (provider.isValidContainer(screen.getMenu())) {
-                    provider.initGui(screen, widget -> BalmScreens.addRenderableWidget(screen, widget));
-                }
-            }
-        }
-    }
-
     public static void screenInitialized(Screen screen) {
         // We need to do this as soon as possible because EnderIO wraps the button and gives it a new id, completely hiding it from other mods...
         if (screen instanceof AbstractContainerScreen<?>) {
@@ -238,7 +226,14 @@ public class CraftingTweaksClient {
         }
 
         if (screen instanceof AbstractContainerScreen<?>) {
-            initGui((AbstractContainerScreen<?>) screen);
+            List<CraftingGrid> grids = CraftingTweaksProviderManager.getCraftingGrids(((AbstractContainerScreen<?>) screen).getMenu());
+            for (CraftingGrid grid : grids) {
+                String modId = grid.getId().getNamespace();
+                CraftingTweaksMode config = CraftingTweaksConfig.getActive().getCraftingTweaksMode(modId);
+                if ((config == CraftingTweaksMode.DEFAULT || config == CraftingTweaksMode.BUTTONS) && !CraftingTweaksConfig.getActive().client.hideButtons) {
+                    // TODO provider.initGui(screen, widget -> BalmScreens.addRenderableWidget(screen, widget));
+                }
+            }
         }
     }
 
@@ -250,8 +245,8 @@ public class CraftingTweaksClient {
         int craftingSlot = rightClickCraftingSlot;
         rightClickCraftingSlot = -1;
 
-        Player entityPlayer = Minecraft.getInstance().player;
-        if (entityPlayer == null) {
+        Player player = Minecraft.getInstance().player;
+        if (player == null) {
             return;
         }
 
@@ -260,13 +255,8 @@ public class CraftingTweaksClient {
             return;
         }
 
-        AbstractContainerMenu menu = entityPlayer.containerMenu;
+        AbstractContainerMenu menu = player.containerMenu;
         if (menu == null) {
-            return;
-        }
-
-        TweakProvider<AbstractContainerMenu> provider = CraftingTweaksProviderManager.getProvider(menu);
-        if (provider == null || !provider.isValidContainer(menu)) {
             return;
         }
 
@@ -282,7 +272,7 @@ public class CraftingTweaksClient {
 
         ItemStack mouseStack = menu.getCarried();
         if (mouseStack.isEmpty() || mouseStack.getCount() + mouseSlot.getItem().getCount() <= mouseStack.getMaxStackSize()) {
-            playerController.handleInventoryMouseClick(menu.containerId, mouseSlot.index, 0, ClickType.PICKUP, entityPlayer);
+            playerController.handleInventoryMouseClick(menu.containerId, mouseSlot.index, 0, ClickType.PICKUP, player);
             rightClickCraftingSlot = mouseSlot.index;
         }
     }

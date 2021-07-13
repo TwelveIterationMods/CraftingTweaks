@@ -3,15 +3,12 @@ package net.blay09.mods.craftingtweaks.client;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import net.blay09.mods.craftingtweaks.CompressType;
+import net.blay09.mods.craftingtweaks.api.CraftingGrid;
 import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfig;
-import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfigData;
 import net.blay09.mods.craftingtweaks.InventoryCraftingCompress;
-import net.blay09.mods.craftingtweaks.api.RotationHandler;
-import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.recipebook.RecipeCollection;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
-import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
@@ -29,57 +26,6 @@ import java.util.Objects;
 
 public class ClientProvider {
 
-    private static final RotationHandler rotationHandler = new RotationHandler() {
-        @Override
-        public boolean ignoreSlotId(int slotId) {
-            return slotId == 4;
-        }
-
-        @Override
-        public int rotateSlotId(int slotId, boolean counterClockwise) {
-            if (!counterClockwise) {
-                switch (slotId) {
-                    case 0:
-                        return 1;
-                    case 1:
-                        return 2;
-                    case 2:
-                        return 5;
-                    case 5:
-                        return 8;
-                    case 8:
-                        return 7;
-                    case 7:
-                        return 6;
-                    case 6:
-                        return 3;
-                    case 3:
-                        return 0;
-                }
-            } else {
-                switch (slotId) {
-                    case 0:
-                        return 3;
-                    case 1:
-                        return 0;
-                    case 2:
-                        return 1;
-                    case 3:
-                        return 6;
-                    case 5:
-                        return 2;
-                    case 6:
-                        return 7;
-                    case 7:
-                        return 8;
-                    case 8:
-                        return 5;
-                }
-            }
-            return 0;
-        }
-    };
-
     private final SimpleContainer lastCraftedMatrix = new SimpleContainer(9);
     private boolean hasLastCraftedMatrix;
 
@@ -87,17 +33,10 @@ public class ClientProvider {
         return Minecraft.getInstance().gameMode;
     }
 
-    private boolean canBalance(TweakProvider<AbstractContainerMenu> provider, Player entityPlayer, AbstractContainerMenu container, int id) {
-        return !provider.requiresServerSide();
-    }
-
-    public void balanceGrid(TweakProvider<AbstractContainerMenu> provider, Player entityPlayer, AbstractContainerMenu container, int id) {
-        if (!canBalance(provider, entityPlayer, container, id)) {
-            return;
-        }
+    public void balanceGrid(Player entityPlayer, AbstractContainerMenu container, CraftingGrid grid) {
         Multimap<String, Slot> balanceSlots = ArrayListMultimap.create();
-        int start = provider.getCraftingGridStart(entityPlayer, container, id);
-        int size = provider.getCraftingGridSize(entityPlayer, container, id);
+        int start = grid.getGridStartSlot(entityPlayer, container);
+        int size = grid.getGridSize(entityPlayer, container);
         for (int i = start; i < start + size; i++) {
             Slot slot = container.slots.get(i);
             if (slot.hasItem()) {
@@ -152,14 +91,14 @@ public class ClientProvider {
         }
     }
 
-    public void spreadGrid(TweakProvider<AbstractContainerMenu> provider, Player entityPlayer, AbstractContainerMenu menu, int id) {
+    public void spreadGrid(Player player, AbstractContainerMenu menu, CraftingGrid grid) {
         int tries = 0;
         while (tries < 9) {
             tries++;
             Slot biggestSlot = null;
             int biggestSlotSize = 1;
-            int start = provider.getCraftingGridStart(entityPlayer, menu, id);
-            int size = provider.getCraftingGridSize(entityPlayer, menu, id);
+            int start = grid.getGridStartSlot(player, menu);
+            int size = grid.getGridSize(player, menu);
             for (int i = start; i < start + size; i++) {
                 Slot slot = menu.slots.get(i);
                 ItemStack itemStack = slot.getItem();
@@ -171,7 +110,7 @@ public class ClientProvider {
             if (biggestSlot == null) {
                 return;
             }
-            getController().handleInventoryMouseClick(menu.containerId, biggestSlot.index, 0, ClickType.PICKUP, entityPlayer);
+            getController().handleInventoryMouseClick(menu.containerId, biggestSlot.index, 0, ClickType.PICKUP, player);
             for (int i = start; i < start + size; i++) {
                 if (i == biggestSlot.index) {
                     continue;
@@ -179,7 +118,7 @@ public class ClientProvider {
                 ItemStack itemStack = menu.slots.get(i).getItem();
                 if (itemStack.isEmpty()) {
                     if (biggestSlotSize > 1) {
-                        getController().handleInventoryMouseClick(menu.containerId, i, 1, ClickType.PICKUP, entityPlayer);
+                        getController().handleInventoryMouseClick(menu.containerId, i, 1, ClickType.PICKUP, player);
                         biggestSlotSize--;
                         if (biggestSlotSize == 1) {
                             break;
@@ -187,21 +126,15 @@ public class ClientProvider {
                     }
                 }
             }
-            getController().handleInventoryMouseClick(menu.containerId, biggestSlot.index, 0, ClickType.PICKUP, entityPlayer);
+            getController().handleInventoryMouseClick(menu.containerId, biggestSlot.index, 0, ClickType.PICKUP, player);
         }
-        balanceGrid(provider, entityPlayer, menu, id);
+
+        balanceGrid(player, menu, grid);
     }
 
-    private boolean canClear(TweakProvider<AbstractContainerMenu> provider, Player entityPlayer, AbstractContainerMenu container, int id) {
-        return !provider.requiresServerSide();
-    }
-
-    public void clearGrid(TweakProvider<AbstractContainerMenu> provider, Player player, AbstractContainerMenu menu, int id, boolean forced) {
-        if (!canClear(provider, player, menu, id)) {
-            return;
-        }
-        int start = provider.getCraftingGridStart(player, menu, id);
-        int size = provider.getCraftingGridSize(player, menu, id);
+    public void clearGrid(Player player, AbstractContainerMenu menu, CraftingGrid grid, boolean forced) {
+        int start = grid.getGridStartSlot(player, menu);
+        int size = grid.getGridSize(player, menu);
         for (int i = start; i < start + size; i++) {
             getController().handleInventoryMouseClick(menu.containerId, i, 0, ClickType.QUICK_MOVE, player);
             menu.quickMoveStack(player, i);
@@ -211,34 +144,32 @@ public class ClientProvider {
         }
     }
 
-    private boolean canRotate(TweakProvider<AbstractContainerMenu> provider, Player player, AbstractContainerMenu menu, int id) {
-        return !provider.requiresServerSide() && provider.getCraftingGridSize(player, menu, id) == 9;
-    }
-
-    public void rotateGrid(TweakProvider<AbstractContainerMenu> provider, Player player, AbstractContainerMenu menu, int id, boolean counterClockwise) {
-        if (!canRotate(provider, player, menu, id)) {
+    public void rotateGrid(Player player, AbstractContainerMenu menu, CraftingGrid grid, boolean reverse) {
+        if (grid.getGridSize(player, menu) != 9) {
             return;
         }
+
         if (!dropOffMouseStack(player, menu)) {
             return;
         }
-        if (rotateGridWithBuffer(provider, player, menu, id, counterClockwise)) {
+
+        if (rotateGridWithBuffer(player, menu, grid, reverse)) {
             return;
         }
-        int startSlot = provider.getCraftingGridStart(player, menu, id);
+
+        int startSlot = grid.getGridStartSlot(player, menu);
         getController().handleInventoryMouseClick(menu.containerId, startSlot, 0, ClickType.PICKUP, player);
         int currentSlot = startSlot;
         do {
-            currentSlot = startSlot + rotationHandler.rotateSlotId(currentSlot - startSlot, counterClockwise);
+            currentSlot = startSlot + rotateSlotId(currentSlot - startSlot, reverse);
             getController().handleInventoryMouseClick(menu.containerId, currentSlot, 0, ClickType.PICKUP, player);
         } while (currentSlot != startSlot);
     }
 
-    private boolean rotateGridWithBuffer(TweakProvider<AbstractContainerMenu> provider, Player entityPlayer, AbstractContainerMenu menu, int id, boolean counterClockwise) {
+    private boolean rotateGridWithBuffer(Player player, AbstractContainerMenu menu, CraftingGrid grid, boolean counterClockwise) {
         int emptyBuffer = 0;
         int[] bufferSlot = new int[2];
-        for (Object obj : menu.slots) {
-            Slot slot = (Slot) obj;
+        for (Slot slot : menu.slots) {
             if (slot.container instanceof Inventory && !slot.hasItem()) {
                 bufferSlot[emptyBuffer] = slot.index;
                 emptyBuffer++;
@@ -251,32 +182,24 @@ public class ClientProvider {
             return false;
         }
         emptyBuffer = 0;
-        int startSlot = provider.getCraftingGridStart(entityPlayer, menu, id);
+        int startSlot = grid.getGridStartSlot(player, menu);
         int currentSlot = startSlot;
         do {
-            getController().handleInventoryMouseClick(menu.containerId, currentSlot, 0, ClickType.PICKUP, entityPlayer);
-            getController().handleInventoryMouseClick(menu.containerId, bufferSlot[emptyBuffer], 0, ClickType.PICKUP, entityPlayer);
+            getController().handleInventoryMouseClick(menu.containerId, currentSlot, 0, ClickType.PICKUP, player);
+            getController().handleInventoryMouseClick(menu.containerId, bufferSlot[emptyBuffer], 0, ClickType.PICKUP, player);
             emptyBuffer = (emptyBuffer + 1) % 2;
-            getController().handleInventoryMouseClick(menu.containerId, bufferSlot[emptyBuffer], 0, ClickType.PICKUP, entityPlayer);
-            getController().handleInventoryMouseClick(menu.containerId, currentSlot, 0, ClickType.PICKUP, entityPlayer);
-            currentSlot = startSlot + rotationHandler.rotateSlotId(currentSlot - startSlot, counterClockwise);
+            getController().handleInventoryMouseClick(menu.containerId, bufferSlot[emptyBuffer], 0, ClickType.PICKUP, player);
+            getController().handleInventoryMouseClick(menu.containerId, currentSlot, 0, ClickType.PICKUP, player);
+            currentSlot = startSlot + rotateSlotId(currentSlot - startSlot, counterClockwise);
         } while (currentSlot != startSlot);
         emptyBuffer = (emptyBuffer + 1) % 2;
-        getController().handleInventoryMouseClick(menu.containerId, bufferSlot[emptyBuffer], 0, ClickType.PICKUP, entityPlayer);
-        getController().handleInventoryMouseClick(menu.containerId, startSlot, 0, ClickType.PICKUP, entityPlayer);
+        getController().handleInventoryMouseClick(menu.containerId, bufferSlot[emptyBuffer], 0, ClickType.PICKUP, player);
+        getController().handleInventoryMouseClick(menu.containerId, startSlot, 0, ClickType.PICKUP, player);
         return true;
     }
 
-    private boolean canTransfer(TweakProvider<AbstractContainerMenu> provider, Player player, AbstractContainerMenu menu, int id) {
-        return !provider.requiresServerSide();
-    }
-
-    public boolean transferIntoGrid(TweakProvider<AbstractContainerMenu> provider, Player player, AbstractContainerMenu menu, int id, Slot sourceSlot) {
-        if (!canTransfer(provider, player, menu, id)) {
-            return false;
-        }
-
-        if (!sourceSlot.hasItem() || !sourceSlot.mayPickup(player) || !provider.canTransferFrom(player, menu, id, sourceSlot)) {
+    public boolean transferIntoGrid(Player player, AbstractContainerMenu menu, CraftingGrid grid, Slot sourceSlot) {
+        if (!sourceSlot.hasItem() || !sourceSlot.mayPickup(player) || !grid.transferHandler().canTransferFrom(player, menu, sourceSlot, grid)) {
             return false;
         }
 
@@ -292,8 +215,8 @@ public class ClientProvider {
 
         boolean itemMoved = false;
         int firstEmptySlot = -1;
-        int start = provider.getCraftingGridStart(player, menu, id);
-        int size = provider.getCraftingGridSize(player, menu, id);
+        int start = grid.getGridStartSlot(player, menu);
+        int size = grid.getGridSize(player, menu);
         for (int i = start; i < start + size; i++) {
             Slot craftSlot = menu.slots.get(i);
             ItemStack craftStack = craftSlot.getItem();
@@ -358,16 +281,16 @@ public class ClientProvider {
         return menu.getCarried().isEmpty();
     }
 
-    private void decompress(TweakProvider<AbstractContainerMenu> provider, Player player, AbstractContainerMenu menu, Slot mouseSlot, CompressType compressType) {
-        if (!mouseSlot.hasItem() || !canClear(provider, player, menu, 0)) {
+    private void decompress(Player player, AbstractContainerMenu menu, CraftingGrid grid, Slot mouseSlot, CompressType compressType) {
+        if (!mouseSlot.hasItem()) {
             return;
         }
 
         boolean decompressAll = compressType != CompressType.DECOMPRESS_ONE;
         // Clear the crafting grid
-        clearGrid(provider, player, menu, 0, false);
-        int start = provider.getCraftingGridStart(player, menu, 0);
-        int size = provider.getCraftingGridSize(player, menu, 0);
+        clearGrid(player, menu, grid, false);
+        int start = grid.getGridStartSlot(player, menu);
+        int size = grid.getGridSize(player, menu);
         // Ensure the crafting grid is empty
         for (int i = start; i < start + size; i++) {
             if (menu.slots.get(i).hasItem()) {
@@ -401,21 +324,21 @@ public class ClientProvider {
         }
     }
 
-    public void compress(TweakProvider<AbstractContainerMenu> provider, LocalPlayer player, AbstractContainerMenu menu, Slot mouseSlot, CompressType compressType) {
+    public void compress(LocalPlayer player, AbstractContainerMenu menu, CraftingGrid grid, Slot mouseSlot, CompressType compressType) {
         if (compressType == CompressType.DECOMPRESS_ALL || compressType == CompressType.DECOMPRESS_ONE || compressType == CompressType.DECOMPRESS_STACK) {
-            decompress(provider, player, menu, mouseSlot, compressType);
+            decompress(player, menu, grid, mouseSlot, compressType);
             return;
         }
 
-        if (!mouseSlot.hasItem() || !canClear(provider, player, menu, 0)) {
+        if (!mouseSlot.hasItem()) {
             return;
         }
 
         boolean compressAll = compressType != CompressType.COMPRESS_ONE;
         // Clear the crafting grid
-        clearGrid(provider, player, menu, 0, false);
-        int start = provider.getCraftingGridStart(player, menu, 0);
-        int size = provider.getCraftingGridSize(player, menu, 0);
+        clearGrid(player, menu, grid, false);
+        int start = grid.getGridStartSlot(player, menu);
+        int size = grid.getGridSize(player, menu);
         // Ensure the crafting grid is empty
         for (int i = start; i < start + size; i++) {
             if (menu.slots.get(i).hasItem()) {
@@ -534,20 +457,16 @@ public class ClientProvider {
         }
     }
 
-    private boolean canRefillLastCrafted(TweakProvider<AbstractContainerMenu> provider, Player player, AbstractContainerMenu container, int id) {
-        return !provider.requiresServerSide() && hasLastCraftedMatrix;
-    }
-
-    public void refillLastCrafted(TweakProvider<AbstractContainerMenu> provider, Player entityPlayer, AbstractContainerMenu menu, int id, boolean fullStack) {
-        if (!canRefillLastCrafted(provider, entityPlayer, menu, id)) {
+    public void refillLastCrafted(Player player, AbstractContainerMenu menu, CraftingGrid grid, boolean fullStack) {
+        if (hasLastCraftedMatrix) {
             return;
         }
 
         // Make sure the mouse is empty
-        dropOffMouseStack(entityPlayer, menu);
+        dropOffMouseStack(player, menu);
 
-        int gridStart = provider.getCraftingGridStart(entityPlayer, menu, id);
-        int gridSize = provider.getCraftingGridSize(entityPlayer, menu, id);
+        int gridStart = grid.getGridStartSlot(player, menu);
+        int gridSize = grid.getGridSize(player, menu);
 
         // Now refill the grid
         for (int i = 0; i < lastCraftedMatrix.getContainerSize(); i++) {
@@ -556,17 +475,17 @@ public class ClientProvider {
                 // Search for this item in the inventory
                 for (Slot slot : menu.slots) {
                     if (slot.container instanceof Inventory && slot.hasItem() && ItemStack.isSame(slot.getItem(), itemStack) && ItemStack.tagMatches(slot.getItem(), itemStack)) {
-                        getController().handleInventoryMouseClick(menu.containerId, slot.index, 0, ClickType.PICKUP, entityPlayer);
-                        getController().handleInventoryMouseClick(menu.containerId, gridStart + i, fullStack ? 0 : 1, ClickType.PICKUP, entityPlayer);
-                        getController().handleInventoryMouseClick(menu.containerId, slot.index, 0, ClickType.PICKUP, entityPlayer);
+                        getController().handleInventoryMouseClick(menu.containerId, slot.index, 0, ClickType.PICKUP, player);
+                        getController().handleInventoryMouseClick(menu.containerId, gridStart + i, fullStack ? 0 : 1, ClickType.PICKUP, player);
+                        getController().handleInventoryMouseClick(menu.containerId, slot.index, 0, ClickType.PICKUP, player);
                         break;
                     }
                 }
             } else {
                 if (menu.slots.get(gridStart + i).hasItem()) {
-                    getController().handleInventoryMouseClick(menu.containerId, gridStart + i, 0, ClickType.PICKUP, entityPlayer);
-                    if (!dropOffMouseStack(entityPlayer, menu)) {
-                        getController().handleInventoryMouseClick(menu.containerId, gridStart + i, 0, ClickType.PICKUP, entityPlayer);
+                    getController().handleInventoryMouseClick(menu.containerId, gridStart + i, 0, ClickType.PICKUP, player);
+                    if (!dropOffMouseStack(player, menu)) {
+                        getController().handleInventoryMouseClick(menu.containerId, gridStart + i, 0, ClickType.PICKUP, player);
                         return;
                     }
                 }
@@ -585,9 +504,9 @@ public class ClientProvider {
 
                         ItemStack gridStack = menu.slots.get(j).getItem();
                         if (gridStack.getCount() > 1 && ItemStack.isSame(gridStack, itemStack) && ItemStack.tagMatches(gridStack, itemStack)) {
-                            getController().handleInventoryMouseClick(menu.containerId, j, 0, ClickType.PICKUP, entityPlayer);
-                            getController().handleInventoryMouseClick(menu.containerId, gridStart + i, 1, ClickType.PICKUP, entityPlayer);
-                            getController().handleInventoryMouseClick(menu.containerId, j, 0, ClickType.PICKUP, entityPlayer);
+                            getController().handleInventoryMouseClick(menu.containerId, j, 0, ClickType.PICKUP, player);
+                            getController().handleInventoryMouseClick(menu.containerId, gridStart + i, 1, ClickType.PICKUP, player);
+                            getController().handleInventoryMouseClick(menu.containerId, j, 0, ClickType.PICKUP, player);
                             break;
                         }
                     }
@@ -595,9 +514,56 @@ public class ClientProvider {
             }
 
             // Balance the grid
-            balanceGrid(provider, entityPlayer, menu, id);
+            balanceGrid(player, menu, grid);
         }
 
-        dropOffMouseStack(entityPlayer, menu);
+        dropOffMouseStack(player, menu);
+    }
+
+    public boolean rotateIgnoresSlotId(int slotId) {
+        return slotId == 4;
+    }
+
+    public int rotateSlotId(int slotId, boolean counterClockwise) {
+        if (!counterClockwise) {
+            switch (slotId) {
+                case 0:
+                    return 1;
+                case 1:
+                    return 2;
+                case 2:
+                    return 5;
+                case 5:
+                    return 8;
+                case 8:
+                    return 7;
+                case 7:
+                    return 6;
+                case 6:
+                    return 3;
+                case 3:
+                    return 0;
+            }
+        } else {
+            switch (slotId) {
+                case 0:
+                    return 3;
+                case 1:
+                    return 0;
+                case 2:
+                    return 1;
+                case 3:
+                    return 6;
+                case 5:
+                    return 2;
+                case 6:
+                    return 7;
+                case 7:
+                    return 8;
+                case 8:
+                    return 5;
+            }
+        }
+        return 0;
     }
 }

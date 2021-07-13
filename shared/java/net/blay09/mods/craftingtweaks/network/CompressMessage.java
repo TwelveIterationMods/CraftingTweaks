@@ -1,9 +1,8 @@
 package net.blay09.mods.craftingtweaks.network;
 
 import net.blay09.mods.craftingtweaks.*;
-import net.blay09.mods.craftingtweaks.api.TweakProvider;
+import net.blay09.mods.craftingtweaks.api.CraftingGrid;
 import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfig;
-import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfigData;
 import net.blay09.mods.balm.item.BalmItems;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
@@ -64,8 +63,8 @@ public class CompressMessage {
             return;
         }
 
-        TweakProvider<AbstractContainerMenu> provider = CraftingTweaksProviderManager.getProvider(menu);
-        if (!CraftingTweaksConfig.getActive().common.compressAnywhere && provider == null) {
+        CraftingGrid grid = CraftingTweaksProviderManager.getDefaultCraftingGrid(menu).orElse(null);
+        if (!CraftingTweaksConfig.getActive().common.compressAnywhere && grid == null) {
             return;
         }
 
@@ -93,7 +92,7 @@ public class CompressMessage {
             }
         } else {
             boolean compressAll = compressType != CompressType.COMPRESS_ONE;
-            int size = provider != null ? provider.getCraftingGridSize(player, menu, 0) : 9;
+            int size = grid != null ? grid.getGridSize(player, menu) : 9;
             // Perform decompression on all valid slots
             for (Slot slot : menu.slots) {
                 if (compressType != CompressType.COMPRESS_ALL && slot != mouseSlot) {

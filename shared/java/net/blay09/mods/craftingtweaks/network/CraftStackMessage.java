@@ -1,7 +1,5 @@
 package net.blay09.mods.craftingtweaks.network;
 
-import net.blay09.mods.craftingtweaks.CraftingTweaksProviderManager;
-import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -34,11 +32,6 @@ public class CraftStackMessage {
 
         AbstractContainerMenu menu = player.containerMenu;
         if (menu == null || message.slotNumber < 0 || message.slotNumber >= menu.slots.size()) {
-            return;
-        }
-
-        TweakProvider<AbstractContainerMenu> tweakProvider = CraftingTweaksProviderManager.getProvider(menu);
-        if (tweakProvider == null) {
             return;
         }
 

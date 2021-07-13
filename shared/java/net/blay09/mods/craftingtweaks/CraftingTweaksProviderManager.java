@@ -1,58 +1,46 @@
 package net.blay09.mods.craftingtweaks;
 
-import com.google.common.collect.Maps;
-import net.blay09.mods.craftingtweaks.api.TweakProvider;
 import net.blay09.mods.balm.BalmModList;
+import net.blay09.mods.craftingtweaks.api.CraftingGrid;
+import net.blay09.mods.craftingtweaks.api.CraftingGridProvider;
+import net.blay09.mods.craftingtweaks.api.impl.CraftingGridBuilderImpl;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class CraftingTweaksProviderManager {
 
-    private static final Map<Class<? extends AbstractContainerMenu>, TweakProvider> providerMap = Maps.newHashMap();
+    private static final List<CraftingGridProvider> craftingGridProviders = new ArrayList<>();
 
-    public static <T extends AbstractContainerMenu> void registerProvider(Class<T> clazz, TweakProvider<T> provider) {
-        if (!provider.getModId().equals("minecraft") && !BalmModList.isLoaded(provider.getModId())) {
-            return;
-        }
-        if (provider.load()) {
-            providerMap.put(clazz, provider);
+    public static void registerProvider(CraftingGridProvider provider) {
+        if (provider.getModId().equals("minecraft") || BalmModList.isLoaded(provider.getModId())) {
+            provider.onInitialize();
+            craftingGridProviders.add(provider);
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public static void registerProvider(String className, TweakProvider<?> provider) {
-        if (BalmModList.isLoaded(provider.getModId())) {
-            if (provider.load()) {
-                try {
-                    Class<? extends AbstractContainerMenu> clazz = (Class<? extends AbstractContainerMenu>) Class.forName(className);
-                    if (AbstractContainerMenu.class.isAssignableFrom(clazz)) {
-                        providerMap.put(clazz, provider);
-                    }
-                } catch (ClassNotFoundException ignored) {
-                }
-            }
+    public static List<CraftingGrid> getCraftingGrids(AbstractContainerMenu menu) {
+        CraftingGridBuilderImpl builder = new CraftingGridBuilderImpl();
+        for (CraftingGridProvider provider : craftingGridProviders) {
+            builder.setActiveModId(provider.getModId());
+            provider.buildCraftingGrids(builder, menu);
         }
+        return builder.getGrids();
     }
 
-    @SuppressWarnings("unchecked")
-    @Nullable
-    public static <T extends AbstractContainerMenu> TweakProvider<T> getProvider(@Nullable T container) {
-        if (container == null) {
-            return null;
+    public static Optional<CraftingGrid> getDefaultCraftingGrid(AbstractContainerMenu menu) {
+        List<CraftingGrid> grids = getCraftingGrids(menu);
+        if (grids.isEmpty()) {
+            return Optional.empty();
         }
-        for (Class<? extends AbstractContainerMenu> clazz : providerMap.keySet()) {
-            if (container.getClass() == clazz) {
-                return (TweakProvider<T>) providerMap.get(clazz);
-            }
-        }
-        for (Class<? extends AbstractContainerMenu> clazz : providerMap.keySet()) {
-            if (clazz.isAssignableFrom(container.getClass())) {
-                return (TweakProvider<T>) providerMap.get(clazz);
-            }
-        }
-        return null;
+
+        return Optional.of(grids.stream().filter(it -> it.getId().getPath().equals("default")).findFirst().orElse(grids.get(0)));
     }
 
+    public static Optional<CraftingGrid> getCraftingGrid(AbstractContainerMenu menu, ResourceLocation gridId) {
+        return getCraftingGrids(menu).stream().filter(it -> gridId.equals(it.getId())).findFirst();
+    }
 }
