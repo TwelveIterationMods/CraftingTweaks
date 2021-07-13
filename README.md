@@ -150,13 +150,13 @@ public class YourCustomCraftingGridProvider implements CraftingGridProvider {
 
     @Override
     public boolean handles(AbstractContainerMenu menu) {
-        return menu instanceof MyCustomCraftingMenu; // buildCraftingGrids will only be called if this returns true for the given menu
+        return menu instanceof YourCustomCraftingMenu; // buildCraftingGrids will only be called if this returns true for the given menu
     }
 
     @Override
     public void buildCraftingGrids(CraftingGridBuilder builder, AbstractContainerMenu menu) {
         // this is where you define crafting grids
-        if (menu instanceof MyCustomCraftingMenu) {
+        if (menu instanceof YourCustomCraftingMenu) {
             builder.addGrid(1, 9); // you can register a simple default grid like this
 
             builder.addGrid("secondary_grid", 1, 9); // you can also specify names (default: "default") if you have multiple grids in one screen
@@ -168,7 +168,11 @@ public class YourCustomCraftingGridProvider implements CraftingGridProvider {
                     .hideAllTweakButtons() // or by hiding all tweak buttons
                     .usePhantomItems() // or by marking this grid to contain phantom items, which ensures that Crafting Tweaks doesn't perceive these items as real items
                     .setButtonAlignment(ButtonAlignment.TOP) // or by changing the alignment of the buttons, e.g. having them be at the top of the grid instead of at the left
-                    .setButtonPosition(TweakType.Balance, 10, 10); // or be overriding the position of the buttons directly, ignoring alignment
+                    .setButtonPosition(TweakType.Balance, 10, 10) // or by overriding the position of the buttons directly, ignoring alignment
+                    .rotateHandler(/*...*/) // or by overriding the rotation handling
+                    .balanceHandler(/*...*/) // or by overriding the balance handling
+                    .clearHandler(/*...*/) // or by overriding the clear handling
+                    .transferHandler(/*...*/); // or by overriding the transfer handling
 
             builder.addCustomGrid(new CraftingGrid() { // you can also add completely custom crafting grids with your own implementations
                 // ...
@@ -195,3 +199,32 @@ public class YourMod {
     }
 }
 ```
+
+### Registering a GUI handler for custom tweak button placement
+
+You shouldn't really need to do this, but in case you want to handle the button placement in your screen yourself, you can define a GUI handler for it:
+
+```java
+import net.blay09.mods.craftingtweaks.api.CraftingGrid;
+import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
+import net.blay09.mods.craftingtweaks.api.CraftingTweaksClientAPI;
+import net.blay09.mods.craftingtweaks.api.GridGuiHandler;
+import net.blay09.mods.craftingtweaks.client.CraftingTweaksClient;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+
+import java.util.function.Consumer;
+
+public class YourCustomGridGuiHandler implements GridGuiHandler {
+    public YourCustomGridGuiHandler() {
+        CraftingTweaksClientAPI.registerCraftingGridGuiHandler(this);
+    }
+    
+  @Override
+  public void createButtons(AbstractContainerScreen<?> screen, CraftingGrid grid, Consumer<AbstractWidget> addWidgetFunc) {
+    // CraftingTweaksClientAPI.createTweakButton(/* ... */); ...
+  }
+}
+```
+
+Remember to instantiate the handler (so that it gets registered) as done in the previous section.

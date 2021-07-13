@@ -12,6 +12,6 @@ public interface CraftingGridProvider {
     default void onInitialize() {}
 
     default boolean requiresServerSide() {
-        return true;
+        return false;
     }
 }
