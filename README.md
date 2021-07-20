@@ -10,13 +10,13 @@ platforms is feasible.
 
 #### Forge
 
-[![Versions](http://cf.way2muchnoise.eu/versions/233071_latest.svg)](https://minecraft.curseforge.com/projects/crafting-tweaks)
-[![Downloads](http://cf.way2muchnoise.eu/full_233071_downloads.svg)](https://minecraft.curseforge.com/projects/crafting-tweaks)
+[![Versions](http://cf.way2muchnoise.eu/versions/233071_latest.svg)](https://www.curseforge.com/minecraft/mc-mods/crafting-tweaks)
+[![Downloads](http://cf.way2muchnoise.eu/full_233071_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/crafting-tweaks)
 
 #### Fabric
 
-[![Versions](http://cf.way2muchnoise.eu/versions/502516_latest.svg)](https://minecraft.curseforge.com/projects/crafting-tweaks-fabric)
-[![Downloads](http://cf.way2muchnoise.eu/full_502516_downloads.svg)](https://minecraft.curseforge.com/projects/crafting-tweaks-fabric)
+[![Versions](http://cf.way2muchnoise.eu/versions/502516_latest.svg)](https://www.curseforge.com/minecraft/mc-mods/crafting-tweaks-fabric)
+[![Downloads](http://cf.way2muchnoise.eu/full_502516_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/crafting-tweaks-fabric)
 
 ## Contributing
 
