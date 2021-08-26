@@ -1,6 +1,6 @@
 package net.blay09.mods.craftingtweaks.api;
 
-import net.blay09.mods.balm.network.BalmNetworking;
+import net.blay09.mods.balm.api.Balm;
 import net.blay09.mods.craftingtweaks.CraftingTweaks;
 import net.blay09.mods.craftingtweaks.client.ClientProvider;
 import net.blay09.mods.craftingtweaks.client.CraftingTweaksClient;
@@ -24,7 +24,7 @@ public class InternalClientMethodsImpl implements InternalClientMethods {
             protected void onTweakButtonClicked(Player player, AbstractContainerMenu container, CraftingGrid grid) {
                 boolean isShiftDown = Screen.hasShiftDown();
                 if (CraftingTweaks.isServerSideInstalled) {
-                    BalmNetworking.sendToServer(new BalanceMessage(grid.getId(), isShiftDown));
+                    Balm.getNetworking().sendToServer(new BalanceMessage(grid.getId(), isShiftDown));
                 } else {
                     ClientProvider clientProvider = CraftingTweaksClient.getClientProvider();
                     if (isShiftDown) {
@@ -44,7 +44,7 @@ public class InternalClientMethodsImpl implements InternalClientMethods {
             protected void onTweakButtonClicked(Player player, AbstractContainerMenu container, CraftingGrid grid) {
                 boolean isShiftDown = Screen.hasShiftDown();
                 if (CraftingTweaks.isServerSideInstalled) {
-                    BalmNetworking.sendToServer(new RotateMessage(grid.getId(), isShiftDown));
+                    Balm.getNetworking().sendToServer(new RotateMessage(grid.getId(), isShiftDown));
                 } else {
                     ClientProvider clientProvider = CraftingTweaksClient.getClientProvider();
                     clientProvider.rotateGrid(player, container, grid, isShiftDown);
@@ -60,7 +60,7 @@ public class InternalClientMethodsImpl implements InternalClientMethods {
             protected void onTweakButtonClicked(Player player, AbstractContainerMenu container, CraftingGrid grid) {
                 boolean isShiftDown = Screen.hasShiftDown();
                 if (CraftingTweaks.isServerSideInstalled) {
-                    BalmNetworking.sendToServer(new ClearMessage(grid.getId(), isShiftDown));
+                    Balm.getNetworking().sendToServer(new ClearMessage(grid.getId(), isShiftDown));
                 } else {
                     ClientProvider clientProvider = CraftingTweaksClient.getClientProvider();
                     clientProvider.clearGrid(player, container, grid, isShiftDown);

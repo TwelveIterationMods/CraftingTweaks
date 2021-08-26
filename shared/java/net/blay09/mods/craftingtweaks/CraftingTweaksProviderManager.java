@@ -1,6 +1,6 @@
 package net.blay09.mods.craftingtweaks;
 
-import net.blay09.mods.balm.BalmModList;
+import net.blay09.mods.balm.api.Balm;
 import net.blay09.mods.craftingtweaks.api.CraftingGrid;
 import net.blay09.mods.craftingtweaks.api.CraftingGridProvider;
 import net.blay09.mods.craftingtweaks.api.impl.CraftingGridBuilderImpl;
@@ -16,7 +16,7 @@ public class CraftingTweaksProviderManager {
     private static final List<CraftingGridProvider> craftingGridProviders = new ArrayList<>();
 
     public static void registerProvider(CraftingGridProvider provider) {
-        if (provider.getModId().equals("minecraft") || BalmModList.isLoaded(provider.getModId())) {
+        if (provider.getModId().equals("minecraft") || Balm.isModLoaded(provider.getModId())) {
             provider.onInitialize();
             craftingGridProviders.add(provider);
         }

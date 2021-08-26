@@ -1,9 +1,9 @@
 package net.blay09.mods.craftingtweaks.network;
 
+import net.blay09.mods.balm.api.Balm;
 import net.blay09.mods.craftingtweaks.*;
 import net.blay09.mods.craftingtweaks.api.CraftingGrid;
 import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfig;
-import net.blay09.mods.balm.item.BalmItems;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -150,7 +150,7 @@ public class CompressMessage {
     private static void giveLeftoverItems(ServerPlayer player, ItemStack slotStack, int count) {
         for (int i = 0; i < count; i++) {
             // Must be inside loop as it's being shrunk in addItemStackToInventory
-            final ItemStack containerItem = BalmItems.getCraftingRemainingItem(slotStack);
+            final ItemStack containerItem = Balm.getHooks().getCraftingRemainingItem(slotStack);
             if (!player.addItem(containerItem)) {
                 ItemEntity itemEntity = player.drop(containerItem, false);
                 if (itemEntity != null) {

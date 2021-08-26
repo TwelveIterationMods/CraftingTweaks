@@ -1,8 +1,8 @@
 package net.blay09.mods.craftingtweaks;
 
+import net.blay09.mods.balm.api.Balm;
 import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfig;
 import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfigData;
-import net.blay09.mods.balm.BalmModList;
 import net.blay09.mods.balm.mixin.AbstractContainerScreenAccessor;
 import net.blay09.mods.balm.mixin.ImageButtonAccessor;
 import net.blay09.mods.balm.mixin.ScreenAccessor;
@@ -35,7 +35,7 @@ public class CraftingGuideButtonFixer {
                 }
 
                 // Let's be hacky again!
-                if (BalmModList.isLoaded("inventorytweaks")) {
+                if (Balm.isModLoaded("inventorytweaks")) {
                     button.x -= 15;
                 }
             }

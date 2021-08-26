@@ -4,9 +4,15 @@ package net.blay09.mods.craftingtweaks.client;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.blay09.mods.balm.client.keybinds.BalmKeyMappings;
-import net.blay09.mods.balm.client.screen.BalmScreens;
-import net.blay09.mods.balm.event.client.BalmClientEvents;
+import net.blay09.mods.balm.api.Balm;
+import net.blay09.mods.balm.api.client.BalmClient;
+import net.blay09.mods.balm.api.client.keymappings.BalmKeyMappings;
+import net.blay09.mods.balm.api.event.ItemCraftedEvent;
+import net.blay09.mods.balm.api.event.client.ConnectedToServerEvent;
+import net.blay09.mods.balm.api.event.client.screen.ScreenDrawEvent;
+import net.blay09.mods.balm.api.event.client.screen.ScreenInitEvent;
+import net.blay09.mods.balm.api.event.client.screen.ScreenKeyEvent;
+import net.blay09.mods.balm.api.event.client.screen.ScreenMouseEvent;
 import net.blay09.mods.craftingtweaks.*;
 import net.blay09.mods.craftingtweaks.api.CraftingGrid;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksClientAPI;
@@ -16,10 +22,8 @@ import net.blay09.mods.craftingtweaks.api.impl.DefaultGridGuiHandler;
 import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfig;
 import net.blay09.mods.craftingtweaks.config.CraftingTweaksMode;
 import net.blay09.mods.craftingtweaks.network.*;
-import net.blay09.mods.balm.event.BalmEvents;
 import net.blay09.mods.balm.mixin.AbstractContainerScreenAccessor;
 import net.blay09.mods.balm.mixin.ScreenAccessor;
-import net.blay09.mods.balm.network.BalmNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
@@ -56,21 +60,23 @@ public class CraftingTweaksClient {
         //noinspection unchecked
         CraftingTweaksClientAPI.registerCraftingGridGuiHandler(AbstractContainerScreen.class, new DefaultGridGuiHandler());
 
-        ModKeyMappings.initialize();
+        ModKeyMappings.initialize(BalmClient.getKeyMappings());
 
-        BalmEvents.onItemCrafted(CraftingTweaksClient::onItemCrafted);
+        Balm.getEvents().onEvent(ItemCraftedEvent.class, CraftingTweaksClient::onItemCrafted);
 
-        BalmClientEvents.onConnectedToServer(it -> CraftingTweaks.isServerSideInstalled = false);
+        Balm.getEvents().onEvent(ConnectedToServerEvent.class, it -> CraftingTweaks.isServerSideInstalled = false);
 
-        BalmClientEvents.onScreenInitialized(CraftingTweaksClient::screenInitialized);
-        BalmClientEvents.onScreenInitialized(CraftingTweaksClient::screenInitialized);
-        BalmClientEvents.onScreenKeyPressed(CraftingTweaksClient::screenKeyPressed);
-        BalmClientEvents.onScreenMouseClick(CraftingTweaksClient::screenMouseClick);
-        BalmClientEvents.onScreenMouseRelease(CraftingTweaksClient::screenMouseRelease);
-        BalmClientEvents.onScreenDrawn(CraftingTweaksClient::screenDrawn);
+        Balm.getEvents().onEvent(ScreenInitEvent.Post.class, CraftingTweaksClient::screenInitialized);
+        Balm.getEvents().onEvent(ScreenKeyEvent.Press.Post.class,CraftingTweaksClient::screenKeyPressed);
+        Balm.getEvents().onEvent(ScreenMouseEvent.Click.Pre.class, CraftingTweaksClient::screenMouseClick);
+        Balm.getEvents().onEvent(ScreenMouseEvent.Release.Pre.class, CraftingTweaksClient::screenMouseRelease);
+        Balm.getEvents().onEvent(ScreenDrawEvent.Post.class, CraftingTweaksClient::screenDrawn);
     }
 
-    public static boolean screenKeyPressed(Screen screen, int key, int scanCode, int modifiers) {
+    public static boolean screenKeyPressed(ScreenKeyEvent event) {
+        Screen screen = event.getScreen();
+        int key = event.getKey();
+        int scanCode = event.getScanCode();
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) {
             return false;
@@ -102,31 +108,32 @@ public class CraftingTweaksClient {
             String modId = grid.getId().getNamespace();
             CraftingTweaksMode config = CraftingTweaksConfig.getActive().getCraftingTweaksMode(modId);
             if (config == CraftingTweaksMode.DEFAULT || config == CraftingTweaksMode.HOTKEYS) {
-                boolean isRotate = BalmKeyMappings.isActiveAndMatches(ModKeyMappings.keyRotate, key, scanCode);
-                boolean isRotateCCW = BalmKeyMappings.isActiveAndMatches(ModKeyMappings.keyRotateCounterClockwise, key, scanCode);
-                boolean isBalance = BalmKeyMappings.isActiveAndMatches(ModKeyMappings.keyBalance, key, scanCode);
-                boolean isSpread = BalmKeyMappings.isActiveAndMatches(ModKeyMappings.keySpread, key, scanCode);
-                boolean isClear = BalmKeyMappings.isActiveAndMatches(ModKeyMappings.keyClear, key, scanCode);
-                boolean isForceClear = BalmKeyMappings.isActiveAndMatches(ModKeyMappings.keyForceClear, key, scanCode);
-                boolean isRefill = BalmKeyMappings.isActiveAndMatches(ModKeyMappings.keyRefillLast, key, scanCode);
-                boolean isRefillStack = BalmKeyMappings.isActiveAndMatches(ModKeyMappings.keyRefillLastStack, key, scanCode);
+                BalmKeyMappings keyMappings = BalmClient.getKeyMappings();
+                boolean isRotate = keyMappings.isActiveAndMatches(ModKeyMappings.keyRotate, key, scanCode);
+                boolean isRotateCCW = keyMappings.isActiveAndMatches(ModKeyMappings.keyRotateCounterClockwise, key, scanCode);
+                boolean isBalance = keyMappings.isActiveAndMatches(ModKeyMappings.keyBalance, key, scanCode);
+                boolean isSpread = keyMappings.isActiveAndMatches(ModKeyMappings.keySpread, key, scanCode);
+                boolean isClear = keyMappings.isActiveAndMatches(ModKeyMappings.keyClear, key, scanCode);
+                boolean isForceClear = keyMappings.isActiveAndMatches(ModKeyMappings.keyForceClear, key, scanCode);
+                boolean isRefill = keyMappings.isActiveAndMatches(ModKeyMappings.keyRefillLast, key, scanCode);
+                boolean isRefillStack = keyMappings.isActiveAndMatches(ModKeyMappings.keyRefillLastStack, key, scanCode);
                 if (isRotate || isRotateCCW) {
                     if (CraftingTweaks.isServerSideInstalled) {
-                        BalmNetworking.sendToServer(new RotateMessage(grid.getId(), isRotateCCW));
+                        Balm.getNetworking().sendToServer(new RotateMessage(grid.getId(), isRotateCCW));
                     } else {
                         clientProvider.rotateGrid(player, menu, grid, isRotateCCW);
                     }
                     return true;
                 } else if (isClear || isForceClear) {
                     if (CraftingTweaks.isServerSideInstalled) {
-                        BalmNetworking.sendToServer(new ClearMessage(grid.getId(), isForceClear));
+                        Balm.getNetworking().sendToServer(new ClearMessage(grid.getId(), isForceClear));
                     } else {
                         clientProvider.clearGrid(player, menu, grid, isForceClear);
                     }
                     return true;
                 } else if (isBalance || isSpread) {
                     if (CraftingTweaks.isServerSideInstalled) {
-                        BalmNetworking.sendToServer(new BalanceMessage(grid.getId(), isSpread));
+                        Balm.getNetworking().sendToServer(new BalanceMessage(grid.getId(), isSpread));
                     } else {
                         if (isSpread) {
                             clientProvider.spreadGrid(player, menu, grid);
@@ -146,13 +153,13 @@ public class CraftingTweaksClient {
                 Slot mouseSlot = ((AbstractContainerScreenAccessor) containerScreen).getHoveredSlot();
                 if (mouseSlot != null) {
                     if (CraftingTweaks.isServerSideInstalled) {
-                        BalmNetworking.sendToServer(new CompressMessage(mouseSlot.index, compressType));
+                        Balm.getNetworking().sendToServer(new CompressMessage(mouseSlot.index, compressType));
                     } else {
                         clientProvider.compress(player, menu, grid, mouseSlot, compressType);
                     }
                     return true;
                 }
-            } else if (BalmKeyMappings.isActiveAndMatches(ModKeyMappings.keyToggleButtons, key, scanCode)) {
+            } else if (BalmClient.getKeyMappings().isActiveAndMatches(ModKeyMappings.keyToggleButtons, key, scanCode)) {
                 CraftingTweaksConfig.setHideButtons(!CraftingTweaksConfig.getActive().client.hideButtons);
                 Minecraft mc = Minecraft.getInstance();
                 screen.init(mc, mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
@@ -163,7 +170,7 @@ public class CraftingTweaksClient {
             if (compressType != null) {
                 Slot mouseSlot = ((AbstractContainerScreenAccessor) containerScreen).getHoveredSlot();
                 if (mouseSlot != null) {
-                    BalmNetworking.sendToServer(new CompressMessage(mouseSlot.index, compressType));
+                    Balm.getNetworking().sendToServer(new CompressMessage(mouseSlot.index, compressType));
                 }
                 return true;
             }
@@ -172,7 +179,7 @@ public class CraftingTweaksClient {
         return false;
     }
 
-    public static boolean screenMouseRelease(Screen screen, double mouseX, double mouseY, int button) {
+    public static boolean screenMouseRelease(ScreenMouseEvent event) {
         if (ignoreMouseUp) {
             ignoreMouseUp = false;
             return true;
@@ -181,7 +188,10 @@ public class CraftingTweaksClient {
         return false;
     }
 
-    public static boolean screenMouseClick(Screen screen, double mouseX, double mouseY, int button) {
+    public static boolean screenMouseClick(ScreenMouseEvent event) {
+        Screen screen = event.getScreen();
+        int button = event.getButton();
+
         /// Reset right-click crafting if any click happens
         rightClickCraftingSlot = -1;
 
@@ -198,7 +208,7 @@ public class CraftingTweaksClient {
         Slot mouseSlot = screen instanceof AbstractContainerScreen<?> ? ((AbstractContainerScreenAccessor) screen).getHoveredSlot() : null;
         CraftingGrid grid = CraftingTweaksProviderManager.getDefaultCraftingGrid(menu).orElse(null);
         if (grid != null) {
-            if (BalmKeyMappings.isKeyDownIgnoreContext(ModKeyMappings.keyTransferStack)) {
+            if (BalmClient.getKeyMappings().isKeyDownIgnoreContext(ModKeyMappings.keyTransferStack)) {
                 if (mouseSlot != null && mouseSlot.hasItem()) {
                     List<Slot> transferSlots = Lists.newArrayList();
                     transferSlots.add(mouseSlot);
@@ -217,7 +227,7 @@ public class CraftingTweaksClient {
 
                     if (CraftingTweaks.isServerSideInstalled) {
                         for (Slot slot : transferSlots) {
-                            BalmNetworking.sendToServer(new TransferStackMessage(grid.getId(), slot.index));
+                            Balm.getNetworking().sendToServer(new TransferStackMessage(grid.getId(), slot.index));
                         }
                     } else {
                         for (Slot slot : transferSlots) {
@@ -230,7 +240,7 @@ public class CraftingTweaksClient {
                 }
             } else if (CraftingTweaksConfig.getActive().client.rightClickCraftsStack && button == 1 && mouseSlot instanceof ResultSlot) {
                 if (CraftingTweaks.isServerSideInstalled) {
-                    BalmNetworking.sendToServer(new CraftStackMessage(mouseSlot.index));
+                    Balm.getNetworking().sendToServer(new CraftStackMessage(mouseSlot.index));
                 } else {
                     rightClickCraftingSlot = mouseSlot.index;
                 }
@@ -242,7 +252,8 @@ public class CraftingTweaksClient {
         return false;
     }
 
-    public static void screenInitialized(Screen screen) {
+    public static void screenInitialized(ScreenInitEvent event) {
+        Screen screen = event.getScreen();
         // We need to do this as soon as possible because EnderIO wraps the button and gives it a new id, completely hiding it from other mods...
         if (screen instanceof AbstractContainerScreen<?>) {
             CraftingGuideButtonFixer.fixMistakes((AbstractContainerScreen<?>) screen);
@@ -256,7 +267,7 @@ public class CraftingTweaksClient {
                 String modId = grid.getId().getNamespace();
                 CraftingTweaksMode config = CraftingTweaksConfig.getActive().getCraftingTweaksMode(modId);
                 if ((config == CraftingTweaksMode.DEFAULT || config == CraftingTweaksMode.BUTTONS) && !CraftingTweaksConfig.getActive().client.hideButtons) {
-                    guiHandler.createButtons(containerScreen, grid, widget -> BalmScreens.addRenderableWidget(screen, widget));
+                    guiHandler.createButtons(containerScreen, grid, widget -> BalmClient.getScreens().addRenderableWidget(screen, widget));
                 }
             }
         }
@@ -302,7 +313,11 @@ public class CraftingTweaksClient {
         }
     }
 
-    public static void screenDrawn(Screen screen, PoseStack poseStack, int mouseX, int mouseY) {
+    public static void screenDrawn(ScreenDrawEvent event) {
+        Screen screen = event.getScreen();
+        int mouseX = event.getMouseX();
+        int mouseY = event.getMouseY();
+        PoseStack poseStack = event.getPoseStack();
         if (screen == null) {
             // WAILA somehow breaks the DrawScreenEvent, so we have to null-check here. o_o
             return;
@@ -333,8 +348,8 @@ public class CraftingTweaksClient {
         }
     }
 
-    private static void onItemCrafted(Player player, ItemStack itemStack, Container craftMatrix) {
-        clientProvider.onItemCrafted(craftMatrix);
+    private static void onItemCrafted(ItemCraftedEvent event) {
+        clientProvider.onItemCrafted(event.getCraftMatrix());
     }
 
     public static ClientProvider getClientProvider() {
