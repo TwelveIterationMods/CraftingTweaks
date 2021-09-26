@@ -15,7 +15,7 @@
   },
 
   "license": "All Rights Reserved",
-  "icon": "assets/craftingtweaks/icon.png",
+  "icon": "craftingtweaks-icon.png",
 
   "environment": "*",
   "entrypoints": {

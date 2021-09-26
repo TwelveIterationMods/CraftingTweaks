@@ -93,10 +93,10 @@ java {
 sourceSets {
 	main {
 		java {
-			srcDirs '../shared/java/'
+			srcDirs '../shared/src/java/'
 		}
 		resources {
-			srcDirs '../shared/resources/'
+			srcDirs '../shared/src/resources/'
 		}
 	}
 }
