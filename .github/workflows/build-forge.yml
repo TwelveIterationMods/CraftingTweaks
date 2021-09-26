@@ -58,6 +58,6 @@ jobs:
       - name: publish
         run: ./gradlew publish
         env:
-          GPR_USERNAME: github
-          GPR_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          GPR_USERNAME: ${{secrets.GPR_USERNAME}}
+          GPR_TOKEN: ${{secrets.GPR_TOKEN}}
           GPR_BUILD_NUMBER: ${{github.run_number}}
