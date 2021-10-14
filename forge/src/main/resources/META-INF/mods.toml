@@ -25,3 +25,9 @@ Allows you to rotate, balance or clear the crafting matrix by the press of a but
     versionRange="[1.17.1,1.18)"
     ordering="NONE"
     side="BOTH"
+[[dependencies.craftingtweaks]]
+    modId="balm"
+    mandatory=true
+    versionRange="[1.6.0,)"
+    ordering="NONE"
+    side="BOTH"
