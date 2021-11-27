@@ -48,7 +48,7 @@ dependencies {
 
 	// PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
 	// You may need to force-disable transitiveness on them.
-	modImplementation "net.blay09.mods:balm-fabric:1.8.0+168"
+	modImplementation "net.blay09.mods:balm-fabric:1.9.0+172"
 
 	// Cloth Config
 	modApi("me.shedaniel.cloth:cloth-config-fabric:5.0.34") {
@@ -62,6 +62,7 @@ dependencies {
 
 	//modImplementation "com.terraformersmc:modmenu:2.0.2"
 	modImplementation "curse.maven:modmenu-308702:3348711"
+	modImplementation "curse.maven:antique-atlas-227795:3525016"
 }
 
 processResources {

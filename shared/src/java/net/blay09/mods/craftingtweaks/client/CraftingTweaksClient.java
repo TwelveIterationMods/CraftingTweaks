@@ -338,7 +338,7 @@ public class CraftingTweaksClient {
 
         if (!CraftingTweaksConfig.getActive().client.hideButtonTooltips) {
             List<Component> tooltipList = Collections.emptyList();
-            for (GuiEventListener button : ((ScreenAccessor) screen).getChildren()) {
+            for (GuiEventListener button : ((ScreenAccessor) screen).balm_getChildren()) {
                 if (button instanceof ITooltipProvider && button.isMouseOver(mouseX, mouseY)) {
                     tooltipList = ((ITooltipProvider) button).getTooltip();
                     break;
