@@ -1,10 +1,11 @@
 plugins {
-	id 'fabric-loom' version '0.8-SNAPSHOT'
+	id 'fabric-loom' version '0.10-SNAPSHOT'
 	id 'maven-publish'
+	id 'com.matthewprenger.cursegradle' version '1.4.0'
 }
 
-sourceCompatibility = JavaVersion.VERSION_16
-targetCompatibility = JavaVersion.VERSION_16
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
 archivesBaseName = project.archives_base_name
 def buildNumber = System.getenv("GPR_BUILD_NUMBER") ?: "0"
@@ -12,14 +13,9 @@ version = project.mod_version + "+" + buildNumber
 group = project.maven_group
 
 repositories {
-	// Add repositories to retrieve artifacts from in here.
-	// You should only use this when depending on other mods because
-	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
-	// for more information about repositories.
-
 	maven {
 		url "https://maven.pkg.github.com/ModdingForBlockheads/Balm"
+		// Why the fuck do you need credentials for public repo artifacts, GitHub?
 		credentials {
 			username project.findProperty("gpr.user") ?: System.getenv("GPR_USERNAME")
 			password project.findProperty("gpr.key") ?: System.getenv("GPR_TOKEN")
@@ -37,18 +33,13 @@ repositories {
 }
 
 dependencies {
-	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	// mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-	mappings minecraft.officialMojangMappings()
+	mappings loom.officialMojangMappings()
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	// PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
-	// You may need to force-disable transitiveness on them.
-	modImplementation "net.blay09.mods:balm-fabric:1.9.0+172"
+	modImplementation "net.blay09.mods:balm-fabric:${project.balm_version}"
 
 	// Cloth Config
 	modApi("me.shedaniel.cloth:cloth-config-fabric:5.0.34") {
@@ -62,7 +53,6 @@ dependencies {
 
 	//modImplementation "com.terraformersmc:modmenu:2.0.2"
 	modImplementation "curse.maven:modmenu-308702:3348711"
-	modImplementation "curse.maven:antique-atlas-227795:3525016"
 }
 
 processResources {
@@ -80,8 +70,8 @@ tasks.withType(JavaCompile).configureEach {
 	// If Javadoc is generated, this must be specified in that task too.
 	it.options.encoding = "UTF-8"
 
-	// Minecraft 1.17 (21w19a) upwards uses Java 16.
-	it.options.release = 16
+	// Minecraft 1.18 upwards uses Java 17.
+	it.options.release = 17
 }
 
 java {
@@ -114,22 +104,11 @@ publishing {
 		mavenJava(MavenPublication) {
 			artifactId = project.archivesBaseName
 
-			// add all the jars that should be included when publishing to maven
-			artifact(remapJar) {
-				builtBy remapJar
-			}
-			artifact(sourcesJar) {
-				builtBy remapSourcesJar
-			}
+			from components.java
 		}
 	}
 
-	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
 	repositories {
-		// Add repositories to publish to here.
-		// Notice: This block does NOT have the same function as the block in the top level.
-		// The repositories here will be used for publishing your artifact, not for
-		// retrieving dependencies.
 		maven {
 			name = "GitHubPackages"
 			url = uri("https://maven.pkg.github.com/" + project.github_publish)
@@ -138,5 +117,30 @@ publishing {
 				password = project.findProperty("gpr.key") ?: System.getenv("GPR_TOKEN")
 			}
 		}
+	}
+}
+
+curseforge {
+	apiKey = project.findProperty("curseforge.api_key") ?: System.getenv("CF_API_KEY") ?: "none"
+	project {
+		id = project.curseforge_project_id
+		releaseType = project.curseforge_release_type
+		changelogType = 'markdown'
+		changelog = file('../changelog.md')
+		addGameVersion project.minecraft_version
+		addGameVersion 'Fabric'
+
+		relations {
+			requiredLibrary 'balm-fabric'
+		}
+
+		afterEvaluate {
+			mainArtifact(remapJar)
+			uploadTask.dependsOn(remapJar)
+		}
+	}
+	options {
+		forgeGradleIntegration = false
+		debug = true
 	}
 }

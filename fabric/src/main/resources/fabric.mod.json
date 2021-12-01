@@ -9,7 +9,7 @@
     "BlayTheNinth"
   ],
   "contact": {
-    "homepage": "https://blay09.net/",
+    "homepage": "https://blay09.net/mods/craftingtweaks",
     "sources": "https://github.com/ModdingForBlockheads/CraftingTweaks",
     "issues": "https://github.com/ModdingForBlockheads/CraftingTweaks/issues"
   },
@@ -36,11 +36,11 @@
   ],
   "depends": {
     "cloth-config2": ">=5.0.34",
-    "balm-fabric": ">=1.9.0",
+    "balm-fabric": ">=2.0.0",
     "fabricloader": ">=0.11.3",
     "fabric": "*",
-    "minecraft": "1.17.x",
-    "java": ">=16"
+    "minecraft": "1.18.x",
+    "java": ">=17"
   },
   "suggests": {
     "modmenu": "*"

@@ -28,7 +28,7 @@ public class GuiImageButton extends Button {
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
         blit(matrixStack, x, y, texCoordX, active ? texCoordY + (isHovered ? 16 : 0) : texCoordY + 32, 16, 16); // blit
 
-        if (this.isHovered()) {
+        if (this.isHoveredOrFocused()) {
             this.renderToolTip(matrixStack, mouseX, mouseY);
         }
     }
