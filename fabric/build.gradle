@@ -1,61 +1,57 @@
 plugins {
 	id 'fabric-loom' version '0.10-SNAPSHOT'
 	id 'maven-publish'
+	id 'idea'
 	id 'com.matthewprenger.cursegradle' version '1.4.0'
 }
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
+def buildNumber = System.getenv("GPR_BUILD_NUMBER") ? "+" + System.getenv("GPR_BUILD_NUMBER") : ""
+version = mod_version + buildNumber
 
-archivesBaseName = project.archives_base_name
-def buildNumber = System.getenv("GPR_BUILD_NUMBER") ?: "0"
-version = project.mod_version + "+" + buildNumber
-group = project.maven_group
-
-repositories {
-	maven {
-		url "https://maven.pkg.github.com/ModdingForBlockheads/Balm"
-		// Why the fuck do you need credentials for public repo artifacts, GitHub?
-		credentials {
-			username project.findProperty("gpr.user") ?: System.getenv("GPR_USERNAME")
-			password project.findProperty("gpr.key") ?: System.getenv("GPR_TOKEN")
-		}
-	}
-
-	// For Cloth Config, Architectury, REI
-	maven { url "https://maven.shedaniel.me/" }
-
-	// For ModMenu
-	//maven { url "https://maven.terraformersmc.com/releases/" }
-
-	// For CurseForge
-	maven { url "https://www.cursemaven.com" }
-}
+archivesBaseName = "${mod_id}-fabric-${minecraft_version}"
+group = mod_group
 
 dependencies {
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	minecraft "com.mojang:minecraft:${minecraft_version}"
 	mappings loom.officialMojangMappings()
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	
+	modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+	implementation project(":shared")
 
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	modImplementation "net.blay09.mods:balm-fabric:${balm_fabric_version}"
 
-	modImplementation "net.blay09.mods:balm-fabric:${project.balm_version}"
-
-	// Cloth Config
 	modApi("me.shedaniel.cloth:cloth-config-fabric:5.0.34") {
 		exclude(group: "net.fabricmc.fabric-api")
 	}
+
+	modImplementation "curse.maven:modmenu-308702:3348711"
 
 	// Roughly Enough Items
 	modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:6.0.264-alpha"
 	modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:6.0.264-alpha"
 	modCompileOnly "me.shedaniel:architectury:2.0.9"
+}
 
-	//modImplementation "com.terraformersmc:modmenu:2.0.2"
-	modImplementation "curse.maven:modmenu-308702:3348711"
+loom {
+	runs {
+		client {
+			client()
+			setConfigName("fabric Client")
+			ideConfigGenerated(true)
+			runDir("run")
+		}
+		server {
+			server()
+			setConfigName("fabric Server")
+			ideConfigGenerated(true)
+			runDir("run")
+		}
+	}
 }
 
 processResources {
+	from project(":shared").sourceSets.main.resources
 	inputs.property "version", project.version
 
 	filesMatching("fabric.mod.json") {
@@ -63,42 +59,16 @@ processResources {
 	}
 }
 
-tasks.withType(JavaCompile).configureEach {
-	// ensure that the encoding is set to UTF-8, no matter what the system default is
-	// this fixes some edge cases with special characters not displaying correctly
-	// see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
-	// If Javadoc is generated, this must be specified in that task too.
-	it.options.encoding = "UTF-8"
-
-	// Minecraft 1.18 upwards uses Java 17.
-	it.options.release = 17
-}
-
-java {
-	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-	// if it is present.
-	// If you remove this line, sources will not be generated.
-	withSourcesJar()
-}
-
-sourceSets {
-	main {
-		java {
-			srcDirs '../shared/src/java/'
-		}
-		resources {
-			srcDirs '../shared/src/resources/'
-		}
-	}
+tasks.withType(JavaCompile) {
+    source(project(":shared").sourceSets.main.allSource)
 }
 
 jar {
 	from("LICENSE") {
-		rename { "${it}_${project.archivesBaseName}"}
+		rename { "${it}_${mod_id}"}
 	}
 }
 
-// configure the maven publication
 publishing {
 	publications {
 		mavenJava(MavenPublication) {
@@ -111,7 +81,7 @@ publishing {
 	repositories {
 		maven {
 			name = "GitHubPackages"
-			url = uri("https://maven.pkg.github.com/" + project.github_publish)
+			url = uri("https://maven.pkg.github.com/" + github_repo)
 			credentials {
 				username = project.findProperty("gpr.user") ?: System.getenv("GPR_USERNAME")
 				password = project.findProperty("gpr.key") ?: System.getenv("GPR_TOKEN")
@@ -123,11 +93,11 @@ publishing {
 curseforge {
 	apiKey = project.findProperty("curseforge.api_key") ?: System.getenv("CF_API_KEY") ?: "none"
 	project {
-		id = project.curseforge_project_id
-		releaseType = project.curseforge_release_type
+		id = curseforge_fabric_project_id
+		releaseType = curseforge_release_type
 		changelogType = 'markdown'
 		changelog = file('../changelog.md')
-		addGameVersion project.minecraft_version
+		addGameVersion minecraft_version
 		addGameVersion 'Fabric'
 
 		relations {
