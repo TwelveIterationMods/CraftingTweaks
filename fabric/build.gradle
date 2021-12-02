@@ -106,13 +106,13 @@ curseforge {
 			requiredLibrary 'balm-fabric'
 		}
 
+		mainArtifact(remapJar)
+
 		afterEvaluate {
-			mainArtifact(remapJar)
 			uploadTask.dependsOn(remapJar)
 		}
 	}
 	options {
 		forgeGradleIntegration = false
-		debug = true
 	}
 }

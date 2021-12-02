@@ -169,7 +169,4 @@ curseforge {
 			requiredLibrary 'balm'
 		}
 	}
-	options {
-		debug = true
-	}
 }
