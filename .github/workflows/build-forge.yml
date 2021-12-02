@@ -1,10 +1,6 @@
 name: build
 on: [push]
 
-defaults:
-  run:
-    working-directory: ./forge
-
 jobs:
   build:
     runs-on: ubuntu-20.04
