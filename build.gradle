@@ -1,10 +1,8 @@
 subprojects {
     apply plugin: 'java'
-    
+
     java.toolchain.languageVersion = JavaLanguageVersion.of(java_version)
-    java.withSourcesJar()
-    java.withJavadocJar()
-    
+
     jar {
         manifest {
             attributes([

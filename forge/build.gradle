@@ -10,7 +10,6 @@ buildscript {
 		classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.4.0'
     }
 }
-apply plugin: 'java'
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: "org.spongepowered.mixin"
 apply plugin: 'maven-publish'
@@ -119,8 +118,19 @@ dependencies {
 	compileOnly project(":shared")
 
     implementation fg.deobf("net.blay09.mods:balm:${balm_forge_version}")
+
     compileOnly fg.deobf("me.shedaniel.cloth:cloth-config-forge:5.0.38")
+    testCompileOnly fg.deobf("me.shedaniel.cloth:cloth-config-forge:5.0.38")
+
     implementation "org.jetbrains:annotations:22.0.0"
+}
+
+tasks.withType(JavaCompile) {
+    source(project(":shared").sourceSets.main.allSource)
+}
+
+processResources {
+    from project(":shared").sourceSets.main.resources
 }
 
 jar.finalizedBy('reobfJar')
