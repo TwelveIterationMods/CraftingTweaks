@@ -25,7 +25,9 @@ public class IMCHandler {
             String senderModId = message.senderModId();
 
             String containerClassName = tagCompound.getString("ContainerClass");
-            Predicate<AbstractContainerMenu> containerPredicate = it -> it.getClass().getName().equals(containerClassName);
+            // IMC API should always check the container class first, as it was previously possible to use specific generics in predicates
+            Predicate<AbstractContainerMenu> matchesContainerClass = it -> it.getClass().getName().equals(containerClassName);
+            Predicate<AbstractContainerMenu> containerPredicate = matchesContainerClass;
 
             String validContainerPredicateLegacy = tagCompound.getString("ContainerCallback");
             if (!validContainerPredicateLegacy.isEmpty()) {
@@ -36,7 +38,7 @@ public class IMCHandler {
                         return;
                     }
                     Function<AbstractContainerMenu, Boolean> function = (Function<AbstractContainerMenu, Boolean>) functionClass.getDeclaredConstructor().newInstance();
-                    containerPredicate = function::apply;
+                    containerPredicate = t -> matchesContainerClass.test(t) && function.apply(t);
                 } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                     logger.error("{} sent an invalid container callback.", senderModId);
                 }
@@ -50,7 +52,8 @@ public class IMCHandler {
                         logger.error("{} sent an invalid ValidContainerPredicate - it must implement Predicate<Container>", senderModId);
                         return;
                     }
-                    containerPredicate = (Predicate<AbstractContainerMenu>) predicateClass.getDeclaredConstructor().newInstance();
+                    Predicate<AbstractContainerMenu> providedPredicate = (Predicate<AbstractContainerMenu>) predicateClass.getDeclaredConstructor().newInstance();
+                    containerPredicate = it -> matchesContainerClass.test(it) && providedPredicate.test(it);
                 } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                     logger.error("{} sent an invalid ValidContainerPredicate: {}", senderModId, e.getMessage());
                 }
