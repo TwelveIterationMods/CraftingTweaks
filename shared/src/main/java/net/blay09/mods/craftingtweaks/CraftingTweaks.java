@@ -27,8 +27,6 @@ public class CraftingTweaks {
         CraftingTweaksAPI.registerCraftingGridProvider(new VanillaCraftingGridProvider());
 
         Balm.getEvents().onEvent(PlayerLoginEvent.class, event -> Balm.getNetworking().sendTo(event.getPlayer(), new HelloMessage()));
-
-        Balm.initialize(MOD_ID);
     }
 
 }
