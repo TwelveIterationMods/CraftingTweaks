@@ -123,7 +123,7 @@ dependencies {
     compileOnly fg.deobf("me.shedaniel.cloth:cloth-config-forge:5.0.38")
     testCompileOnly fg.deobf("me.shedaniel.cloth:cloth-config-forge:5.0.38")
 
-    implementation fg.deobf("curse.maven:refined-storage-243076:3567698")
+    compileOnly fg.deobf("curse.maven:refined-storage-243076:3567698")
 
     implementation "org.jetbrains:annotations:22.0.0"
 }

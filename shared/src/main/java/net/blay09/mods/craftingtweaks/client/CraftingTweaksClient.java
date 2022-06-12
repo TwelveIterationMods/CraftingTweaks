@@ -55,8 +55,6 @@ public class CraftingTweaksClient {
     private static int guiLeftOnMistakeFix;
 
     public static void initialize() {
-        BalmClient.initialize(CraftingTweaks.MOD_ID);
-
         CraftingTweaksClientAPI.setupAPI(new InternalClientMethodsImpl());
 
         //noinspection unchecked

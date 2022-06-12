@@ -458,7 +458,7 @@ public class ClientProvider {
     }
 
     public void refillLastCrafted(Player player, AbstractContainerMenu menu, CraftingGrid grid, boolean fullStack) {
-        if (hasLastCraftedMatrix) {
+        if (!hasLastCraftedMatrix) {
             return;
         }
 
