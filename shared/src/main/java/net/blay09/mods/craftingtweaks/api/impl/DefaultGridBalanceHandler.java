@@ -33,6 +33,9 @@ public class DefaultGridBalanceHandler implements GridBalanceHandler<AbstractCon
             if (!itemStack.isEmpty() && itemStack.getMaxStackSize() > 1) {
                 ResourceLocation registryName = Registry.ITEM.getKey(itemStack.getItem());
                 String key = Objects.toString(registryName);
+                if (itemStack.getTag() != null) {
+                    key = key + "@" + itemStack.getTag().toString();
+                }
                 itemMap.put(key, itemStack);
                 itemCount.add(key, itemStack.getCount());
             }
