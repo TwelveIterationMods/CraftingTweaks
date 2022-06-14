@@ -1,16 +1,3 @@
-### Version 14.0.3 for Minecraft 1.18.2
+### Version 15.0.0 for Minecraft 1.19
 
-- Fixed refill last not working
-- Fixed a bug where balancing the crafting grid would try to combine items of the same type but differing NBT data (by nathanrsfba)
-
-### Version 14.0.2 for Minecraft 1.18.x
-
-- Fixed crash on dedicated server
-
-### Version 14.0.1 for Minecraft 1.18.x
-
-- Fixed crash when mods with Crafting Tweaks IMC compatibility are loaded 
-
-### Version 14.0.0 for Minecraft 1.18.x
-
-- Updated to Minecraft 1.18
+- Updated to Minecraft 1.19

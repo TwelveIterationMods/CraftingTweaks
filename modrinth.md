@@ -1,5 +1,5 @@
 <p>
-    <a style="text-decoration: none;" href="https://www.curseforge.com/minecraft/mc-mods/balm-fabric"> 
+    <a style="text-decoration: none;" href="https://modrinth.com/mod/balm"> 
         <img src="https://blay09.net/files/brand/requires_balm.png" alt="Requires Balm" width="217" height="51" /> 
     </a>
     <img src="https://blay09.net/files/brand/spacer.png" alt="" width="20" height="51" />
