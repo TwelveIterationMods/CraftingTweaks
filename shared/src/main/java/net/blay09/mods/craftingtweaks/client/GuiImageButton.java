@@ -4,7 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.blay09.mods.craftingtweaks.CraftingTweaks;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 public class GuiImageButton extends Button {
@@ -15,7 +15,7 @@ public class GuiImageButton extends Button {
     protected int texCoordY;
 
     public GuiImageButton(int x, int y, int texCoordX, int texCoordY) {
-        super(x, y, 16, 16, new TextComponent(""), it -> {
+        super(x, y, 16, 16, Component.empty(), it -> {
         });
         this.texCoordX = texCoordX;
         this.texCoordY = texCoordY;

@@ -31,8 +31,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.world.Container;
+import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
@@ -99,7 +98,7 @@ public class CraftingTweaksClient {
                 && GLFW.glfwGetKey(window.getWindow(), GLFW.GLFW_KEY_A) == 1
                 && (GLFW.glfwGetKey(window.getWindow(), GLFW.GLFW_KEY_Y) == 1 || GLFW.glfwGetKey(window.getWindow(), GLFW.GLFW_KEY_Z) == 1)) {
             CraftingTweaks.isServerSideInstalled = false;
-            player.displayClientMessage(new TextComponent("[CraftingTweaks] Enabled client-side testing mode"), false);
+            player.displayClientMessage(Component.literal("[CraftingTweaks] Enabled client-side testing mode"), false);
         }
 
         CraftingGrid grid = CraftingTweaksProviderManager.getDefaultCraftingGrid(menu).orElse(null);

@@ -9,7 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import org.jetbrains.annotations.Nullable;
@@ -74,23 +74,23 @@ public abstract class GuiTweakButton extends GuiImageButton implements ITooltipP
         List<Component> tooltip = new ArrayList<>();
         switch (tweak) {
             case Rotate:
-                tooltip.add(new TranslatableComponent("tooltip.craftingtweaks.rotate"));
+                tooltip.add(Component.translatable("tooltip.craftingtweaks.rotate"));
                 break;
             case Clear:
                 if (Screen.hasShiftDown()) {
-                    tooltip.add(new TranslatableComponent("tooltip.craftingtweaks.forceClear"));
-                    final TranslatableComponent forceClearInfoText = new TranslatableComponent("tooltip.craftingtweaks.forceClear");
+                    tooltip.add(Component.translatable("tooltip.craftingtweaks.forceClear"));
+                    final MutableComponent forceClearInfoText = Component.translatable("tooltip.craftingtweaks.forceClear");
                     forceClearInfoText.withStyle(ChatFormatting.GRAY);
                     tooltip.add(forceClearInfoText);
                 } else {
-                    tooltip.add(new TranslatableComponent("tooltip.craftingtweaks.clear"));
+                    tooltip.add(Component.translatable("tooltip.craftingtweaks.clear"));
                 }
                 break;
             case Balance:
                 if (Screen.hasShiftDown()) {
-                    tooltip.add(new TranslatableComponent("tooltip.craftingtweaks.spread"));
+                    tooltip.add(Component.translatable("tooltip.craftingtweaks.spread"));
                 } else {
-                    tooltip.add(new TranslatableComponent("tooltip.craftingtweaks.balance"));
+                    tooltip.add(Component.translatable("tooltip.craftingtweaks.balance"));
                 }
                 break;
         }
