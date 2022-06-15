@@ -27,9 +27,6 @@
     ],
     "modmenu": [
       "net.blay09.mods.craftingtweaks.compat.ModMenuIntegration"
-    ],
-    "rei_plugins": [
-      "net.blay09.mods.craftingtweaks.compat.RoughlyEnoughItemsIntegration"
     ]
   },
   "mixins": [
