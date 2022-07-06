@@ -2,16 +2,19 @@ package net.blay09.mods.craftingtweaks.api;
 
 import net.minecraft.world.inventory.AbstractContainerMenu;
 
+import java.lang.reflect.InvocationTargetException;
+
 public class CraftingTweaksDefaultHandlers {
 
-    private static InternalMethods internalMethods;
+    private static final InternalMethods internalMethods = loadInternalMethods();
 
-    /**
-     * Internal Method. Stay away.
-     * @param internalMethods I said stay away.
-     */
-    public static void setupAPI(InternalMethods internalMethods) {
-        CraftingTweaksDefaultHandlers.internalMethods = internalMethods;
+    private static InternalMethods loadInternalMethods() {
+        try {
+            return (InternalMethods) Class.forName("net.blay09.mods.craftingtweaks.api.InternalMethodsImpl").getConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException |
+                 ClassNotFoundException e) {
+            return null;
+        }
     }
 
     public static GridTransferHandler<AbstractContainerMenu> defaultTransferHandler() {

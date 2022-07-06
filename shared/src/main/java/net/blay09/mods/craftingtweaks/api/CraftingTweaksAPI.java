@@ -1,16 +1,18 @@
 package net.blay09.mods.craftingtweaks.api;
 
+import java.lang.reflect.InvocationTargetException;
+
 public class CraftingTweaksAPI {
 
-    private static InternalMethods internalMethods;
+    private static final InternalMethods internalMethods = loadInternalMethods();
 
-    /**
-     * Internal Method. Stay away.
-     * @param internalMethods I said stay away.
-     */
-    public static void setupAPI(InternalMethods internalMethods) {
-        CraftingTweaksAPI.internalMethods = internalMethods;
-        CraftingTweaksDefaultHandlers.setupAPI(internalMethods);
+    private static InternalMethods loadInternalMethods() {
+        try {
+            return (InternalMethods) Class.forName("net.blay09.mods.craftingtweaks.api.InternalMethodsImpl").getConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException |
+                 ClassNotFoundException e) {
+            return null;
+        }
     }
 
     public static void registerCraftingGridProvider(CraftingGridProvider provider) {
