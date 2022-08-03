@@ -47,8 +47,7 @@ public class ModKeyMappings {
         keyDecompressAll = keyMappings.registerKeyMapping("key.craftingtweaks.decompressAll", KeyConflictContext.GUI, KeyModifier.NONE, InputConstants.UNKNOWN.getValue(), "key.categories.craftingtweaks");
         keyRefillLast = keyMappings.registerKeyMapping("key.craftingtweaks.refill_last", KeyConflictContext.GUI, KeyModifier.CONTROL, GLFW.GLFW_KEY_TAB, "key.categories.craftingtweaks");
         keyRefillLastStack = keyMappings.registerKeyMapping("key.craftingtweaks.refill_last_stack", KeyConflictContext.GUI, KeyModifier.NONE, GLFW.GLFW_KEY_TAB, "key.categories.craftingtweaks");
-
-        Balm.getEvents().onEvent(ClientStartedEvent.class, event -> keyTransferStack = event.getMinecraft().options.keyUp);
+        keyTransferStack = keyMappings.registerKeyMapping("key.craftingtweaks.transfer_stack", KeyConflictContext.GUI, KeyModifier.NONE, InputConstants.UNKNOWN.getValue(), "key.categories.craftingtweaks");
     }
 
     @Nullable
