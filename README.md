@@ -115,8 +115,8 @@ Then, add a dependency to Crafting Tweaks:
 
 ```
 dependencies {
-    compile 'curse.maven:craftingtweaks-233071:<fileId>' // for Forge; find the latest file id on CurseForge 
-    // compile 'curse.maven:craftingtweaks-fabric-502516:<fileId>' // for Fabric; find the latest file id on CurseForge
+    implementation fg.deobf('curse.maven:craftingtweaks-233071:<fileId>') // for Forge; find the latest file id on CurseForge 
+    // modImplementation 'curse.maven:craftingtweaks-fabric-502516:<fileId>' // for Fabric; find the latest file id on CurseForge
 }
 ```
 
