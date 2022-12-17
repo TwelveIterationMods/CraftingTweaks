@@ -6,6 +6,7 @@ import net.blay09.mods.craftingtweaks.api.CraftingGrid;
 import net.blay09.mods.craftingtweaks.api.TweakType;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -22,6 +23,8 @@ public abstract class GuiTweakButton extends GuiImageButton implements ITooltipP
     private final AbstractContainerScreen<?> screen;
     private final CraftingGrid grid;
     private final TweakType tweak;
+    private final Tooltip normalTooltip;
+    private final Tooltip shiftedTooltip;
     private int lastGuiLeft;
     private int lastGuiTop;
 
@@ -34,6 +37,9 @@ public abstract class GuiTweakButton extends GuiImageButton implements ITooltipP
         }
         this.grid = grid;
         this.tweak = tweak;
+
+        normalTooltip = createTooltip();
+        shiftedTooltip = createShiftedTooltip();
     }
 
     @Override
@@ -48,13 +54,15 @@ public abstract class GuiTweakButton extends GuiImageButton implements ITooltipP
     protected abstract void onTweakButtonClicked(Player player, AbstractContainerMenu container, CraftingGrid grid);
 
     @Override
-    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+        setTooltip(Screen.hasShiftDown() ? shiftedTooltip : normalTooltip);
+
         if (screen != null) {
             final int guiLeft = ((AbstractContainerScreenAccessor) screen).getLeftPos();
             final int guiTop = ((AbstractContainerScreenAccessor) screen).getTopPos();
             if (guiLeft != lastGuiLeft || guiTop != lastGuiTop) {
-                x += guiLeft - lastGuiLeft;
-                y += guiTop - lastGuiTop;
+                setX(getX() + guiLeft - lastGuiLeft);
+                setY(getY() + guiTop - lastGuiTop);
             }
             lastGuiLeft = guiLeft;
             lastGuiTop = guiTop;
@@ -65,8 +73,27 @@ public abstract class GuiTweakButton extends GuiImageButton implements ITooltipP
             texCoordX += 48;
         }
 
-        super.render(matrixStack, mouseX, mouseY, partialTicks);
+        super.render(poseStack, mouseX, mouseY, partialTicks);
         texCoordX = oldTexCoordX;
+    }
+
+    private Tooltip createTooltip() {
+        return switch (tweak) {
+            case Rotate -> Tooltip.create(Component.translatable("tooltip.craftingtweaks.rotate"));
+            case Clear -> Tooltip.create(Component.translatable("tooltip.craftingtweaks.clear"));
+            case Balance -> Tooltip.create(Component.translatable("tooltip.craftingtweaks.balance"));
+        };
+    }
+
+    private Tooltip createShiftedTooltip() {
+        return switch (tweak) {
+            case Rotate -> Tooltip.create(Component.translatable("tooltip.craftingtweaks.rotate"));
+            case Clear -> Tooltip.create(
+                    Component.translatable("tooltip.craftingtweaks.forceClear")
+                            .append(Component.literal("\n"))
+                            .append(Component.translatable("tooltip.craftingtweaks.forceClearInfo").withStyle(ChatFormatting.GRAY)));
+            case Balance -> Tooltip.create(Component.translatable("tooltip.craftingtweaks.spread"));
+        };
     }
 
     @Override
@@ -79,7 +106,7 @@ public abstract class GuiTweakButton extends GuiImageButton implements ITooltipP
             case Clear:
                 if (Screen.hasShiftDown()) {
                     tooltip.add(Component.translatable("tooltip.craftingtweaks.forceClear"));
-                    final MutableComponent forceClearInfoText = Component.translatable("tooltip.craftingtweaks.forceClear");
+                    final MutableComponent forceClearInfoText = Component.translatable("tooltip.craftingtweaks.forceClearInfo");
                     forceClearInfoText.withStyle(ChatFormatting.GRAY);
                     tooltip.add(forceClearInfoText);
                 } else {

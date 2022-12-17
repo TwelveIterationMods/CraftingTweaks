@@ -4,7 +4,7 @@ import net.blay09.mods.balm.api.Balm;
 import net.blay09.mods.craftingtweaks.*;
 import net.blay09.mods.craftingtweaks.api.CraftingGrid;
 import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfig;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -172,7 +172,7 @@ public class CompressMessage {
     }
 
     private static boolean isBlacklisted(ItemStack result) {
-        ResourceLocation registryName = Registry.ITEM.getKey(result.getItem());
+        ResourceLocation registryName = BuiltInRegistries.ITEM.getKey(result.getItem());
         return CraftingTweaksConfig.getActive().common.compressBlacklist.contains(registryName.toString());
     }
 }

@@ -31,7 +31,6 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
@@ -333,18 +332,19 @@ public class CraftingTweaksClient {
 
         handleRightClickCrafting();
 
-        if (!CraftingTweaksConfig.getActive().client.hideButtonTooltips) {
-            List<Component> tooltipList = Collections.emptyList();
-            for (GuiEventListener button : ((ScreenAccessor) screen).balm_getChildren()) {
-                if (button instanceof ITooltipProvider && button.isMouseOver(mouseX, mouseY)) {
-                    tooltipList = ((ITooltipProvider) button).getTooltip();
-                    break;
-                }
-            }
-            if (!tooltipList.isEmpty()) {
-                screen.renderTooltip(poseStack, tooltipList, Optional.empty(), mouseX, mouseY);
-            }
-        }
+        // TODO can probably be removed
+//        if (!CraftingTweaksConfig.getActive().client.hideButtonTooltips) {
+//            List<Component> tooltipList = Collections.emptyList();
+//            for (GuiEventListener button : ((ScreenAccessor) screen).balm_getChildren()) {
+//                if (button instanceof ITooltipProvider && button.isMouseOver(mouseX, mouseY)) {
+//                    tooltipList = ((ITooltipProvider) button).getTooltip();
+//                    break;
+//                }
+//            }
+//            if (!tooltipList.isEmpty()) {
+//                screen.renderTooltip(poseStack, tooltipList, Optional.empty(), mouseX, mouseY);
+//            }
+//        }
     }
 
     private static void onItemCrafted(ItemCraftedEvent event) {

@@ -10,7 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.recipebook.RecipeCollection;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -42,7 +42,7 @@ public class ClientProvider {
             if (slot.hasItem()) {
                 ItemStack itemStack = slot.getItem();
                 if (!itemStack.isEmpty()) {
-                    ResourceLocation registryName = Registry.ITEM.getKey(itemStack.getItem());
+                    ResourceLocation registryName = BuiltInRegistries.ITEM.getKey(itemStack.getItem());
                     balanceSlots.put(Objects.toString(registryName), slot);
                 }
             }
@@ -440,7 +440,7 @@ public class ClientProvider {
     }
 
     private boolean isCompressBlacklisted(ItemStack result) {
-        ResourceLocation registryName = Registry.ITEM.getKey(result.getItem());
+        ResourceLocation registryName = BuiltInRegistries.ITEM.getKey(result.getItem());
         return registryName != null && CraftingTweaksConfig.getActive().common.compressBlacklist.contains(registryName.toString());
     }
 

@@ -5,7 +5,7 @@ import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import net.blay09.mods.craftingtweaks.api.CraftingGrid;
 import net.blay09.mods.craftingtweaks.api.GridBalanceHandler;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
@@ -31,10 +31,10 @@ public class DefaultGridBalanceHandler implements GridBalanceHandler<AbstractCon
             int slotIndex = menu.slots.get(i).getContainerSlot();
             ItemStack itemStack = craftMatrix.getItem(slotIndex);
             if (!itemStack.isEmpty() && itemStack.getMaxStackSize() > 1) {
-                ResourceLocation registryName = Registry.ITEM.getKey(itemStack.getItem());
+                ResourceLocation registryName = BuiltInRegistries.ITEM.getKey(itemStack.getItem());
                 String key = Objects.toString(registryName);
                 if (itemStack.getTag() != null) {
-                    key = key + "@" + itemStack.getTag().toString();
+                    key = key + "@" + itemStack.getTag();
                 }
                 itemMap.put(key, itemStack);
                 itemCount.add(key, itemStack.getCount());

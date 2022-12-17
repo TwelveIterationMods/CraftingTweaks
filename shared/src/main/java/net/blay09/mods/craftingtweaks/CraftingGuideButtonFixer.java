@@ -25,18 +25,18 @@ public class CraftingGuideButtonFixer {
                 button.visible = false;
             } else if (!config.client.hideButtons && !(screen instanceof InventoryScreen)) {
                 AbstractContainerScreenAccessor accessor = (AbstractContainerScreenAccessor) screen;
-                button.x = accessor.getLeftPos() + accessor.getImageWidth() - 25;
+                button.setX(accessor.getLeftPos() + accessor.getImageWidth() - 25);
 
                 // Let's be hacky because fuck this button. Hopefully no one else adds it to their GUIs.
                 if (screen.getClass().getSimpleName().equals("GuiCraftingStation")) {
-                    button.y = accessor.getTopPos() + 37;
+                    button.setY(accessor.getTopPos() + 37);
                 } else {
-                    button.y = accessor.getTopPos() + 5;
+                    button.setY(accessor.getTopPos() + 5);
                 }
 
                 // Let's be hacky again!
                 if (Balm.isModLoaded("inventorytweaks")) {
-                    button.x -= 15;
+                    button.setX(button.getX() - 15);
                 }
             }
         }
