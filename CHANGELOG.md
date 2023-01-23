@@ -1,1 +1,2 @@
-- Updated to Minecraft 1.19.3
+- Fixed infinite loop when compressing or decompressing items with specific recipes
+- Fixed mod being required on both client and server 
