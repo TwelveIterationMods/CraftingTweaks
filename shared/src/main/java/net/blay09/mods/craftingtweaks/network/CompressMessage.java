@@ -76,17 +76,18 @@ public class CompressMessage {
                     continue;
                 }
 
-                if (slot.container instanceof Inventory && slot.hasItem() && ItemStack.isSame(slot.getItem(), mouseSlot.getItem()) && ItemStack.tagMatches(slot.getItem(), mouseSlot.getItem())) {
-                    ItemStack result = findMatchingResult(new InventoryCraftingDecompress(menu, slot.getItem()), player);
-                    if (!result.isEmpty() && !isBlacklisted(result) && !slot.getItem().isEmpty() && slot.getItem().getCount() >= 1) {
+                ItemStack slotStack = slot.getItem();
+                if (slot.container instanceof Inventory && slot.hasItem() && ItemStack.isSame(slotStack, mouseSlot.getItem()) && ItemStack.tagMatches(slotStack, mouseSlot.getItem())) {
+                    ItemStack result = findMatchingResult(new InventoryCraftingDecompress(menu, slotStack), player);
+                    if (!result.isEmpty() && !isBlacklisted(result) && !slotStack.isEmpty() && slotStack.getCount() >= 1) {
                         do {
                             if (player.getInventory().add(result.copy())) {
-                                giveLeftoverItems(player, slot.getItem(), 1);
+                                giveLeftoverItems(player, slotStack, 1);
                                 slot.remove(1);
                             } else {
                                 break;
                             }
-                        } while (decompressAll && slot.hasItem() && slot.getItem().getCount() >= 1);
+                        } while (decompressAll && slot.hasItem() && slotStack.getCount() >= 1 && slotStack.getItem() != result.getItem());
                     }
                 }
             }
@@ -112,7 +113,7 @@ public class CompressMessage {
                                     break;
                                 }
                             }
-                            while (compressAll && slot.hasItem() && slotStack.getCount() >= 9);
+                            while (compressAll && slot.hasItem() && slotStack.getCount() >= 9 && slotStack.getItem() != result.getItem());
                         } else {
                             result = findMatchingResult(new InventoryCraftingCompress(menu, 2, slotStack), player);
                             if (!result.isEmpty() && !isBlacklisted(result)) {
@@ -124,7 +125,7 @@ public class CompressMessage {
                                         break;
                                     }
                                 }
-                                while (compressAll && slot.hasItem() && slotStack.getCount() >= 4);
+                                while (compressAll && slot.hasItem() && slotStack.getCount() >= 4 && slotStack.getItem() != result.getItem());
                             }
                         }
                     } else if (size >= 4 && !slotStack.isEmpty() && slotStack.getCount() >= 4) {
@@ -138,7 +139,7 @@ public class CompressMessage {
                                     break;
                                 }
                             }
-                            while (compressAll && slot.hasItem() && slotStack.getCount() >= 4);
+                            while (compressAll && slot.hasItem() && slotStack.getCount() >= 4 && slotStack.getItem() != result.getItem());
                         }
                     }
                 }
