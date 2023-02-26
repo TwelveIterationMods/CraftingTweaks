@@ -10,8 +10,8 @@
   ],
   "contact": {
     "homepage": "https://blay09.net/mods/craftingtweaks",
-    "sources": "https://github.com/ModdingForBlockheads/CraftingTweaks",
-    "issues": "https://github.com/ModdingForBlockheads/CraftingTweaks/issues"
+    "sources": "https://github.com/TwelveIterationMods/CraftingTweaks",
+    "issues": "https://github.com/TwelveIterationMods/CraftingTweaks/issues"
   },
 
   "license": "All Rights Reserved",
@@ -45,7 +45,7 @@
   "custom": {
     "modmenu": {
       "links": {
-        "modmenu.discord": "https://discord.gg/scGAfXC"
+        "modmenu.discord": "https://discord.gg/VAfZ2Nau6j"
       }
     }
   }
