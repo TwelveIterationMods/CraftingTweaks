@@ -426,7 +426,7 @@ public class ClientProvider {
                 if (recipe.getType() == RecipeType.CRAFTING) {
                     Recipe<CraftingContainer> craftingRecipe = (Recipe<CraftingContainer>) recipe;
                     if (craftingRecipe.matches(craftingInventory, player.level)) {
-                        return craftingRecipe.assemble(craftingInventory);
+                        return craftingRecipe.assemble(craftingInventory, player.level.registryAccess());
                     }
                 }
             }

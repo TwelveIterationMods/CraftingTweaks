@@ -156,7 +156,7 @@ public class CompressMessage {
                 ItemEntity itemEntity = player.drop(containerItem, false);
                 if (itemEntity != null) {
                     itemEntity.setNoPickUpDelay();
-                    itemEntity.setOwner(player.getUUID());
+                    itemEntity.setTarget(player.getUUID());
                 }
             }
         }
@@ -166,7 +166,7 @@ public class CompressMessage {
         RecipeManager recipeManager = Objects.requireNonNull(player.getServer()).getRecipeManager();
         CraftingRecipe recipe = recipeManager.getRecipeFor(RecipeType.CRAFTING, craftingInventory, player.level).orElse(null);
         if (recipe != null && craftingInventory.setRecipeUsed(player.level, player, recipe)) {
-            return recipe.assemble(craftingInventory);
+            return recipe.assemble(craftingInventory, player.level.registryAccess());
         }
 
         return ItemStack.EMPTY;
