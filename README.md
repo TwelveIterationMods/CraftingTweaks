@@ -23,7 +23,7 @@ If you're interested in contributing to the mod, you can check
 out [issues labelled as "help wanted"](https://github.com/TwelveIterationMods/CraftingTweaks/issues?q=is%3Aopen+is%3Aissue+label%3A%22help+wanted%22)
 . These should be ready to be implemented as they are.
 
-If you need help, feel free to join us on [Discord](https://discord.gg/scGAfXC).
+If you need help, feel free to join us on [Discord](https://discord.gg/VAfZ2Nau6j).
 
 ## IMC API (Forge)
 
@@ -115,8 +115,8 @@ Then, add a dependency to Crafting Tweaks:
 
 ```
 dependencies {
-    compile 'curse.maven:craftingtweaks-233071:<fileId>' // for Forge; find the latest file id on CurseForge 
-    // compile 'curse.maven:craftingtweaks-fabric-502516:<fileId>' // for Fabric; find the latest file id on CurseForge
+    implementation fg.deobf('curse.maven:craftingtweaks-233071:<fileId>') // for Forge; find the latest file id on CurseForge 
+    // modImplementation 'curse.maven:craftingtweaks-fabric-502516:<fileId>' // for Fabric; find the latest file id on CurseForge
 }
 ```
 

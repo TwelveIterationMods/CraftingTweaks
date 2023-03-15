@@ -10,6 +10,8 @@ import net.minecraft.resources.ResourceLocation;
 public class ModNetworking {
 
     public static void initialize(BalmNetworking networking) {
+        networking.allowClientAndServerOnly(CraftingTweaks.MOD_ID);
+
         networking.registerClientboundPacket(id("hello"), HelloMessage.class, HelloMessage::encode, HelloMessage::decode, HelloMessage::handle);
         networking.registerServerboundPacket(id("rotate"), RotateMessage.class, RotateMessage::encode, RotateMessage::decode, RotateMessage::handle);
         networking.registerServerboundPacket(id("clear"), ClearMessage.class, ClearMessage::encode, ClearMessage::decode, ClearMessage::handle);
