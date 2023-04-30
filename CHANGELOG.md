@@ -1,3 +1,4 @@
-- Fixed IMC compat ignoring alignment even if no absolute position is set
+- Fixed IMC compat ignoring alignment even if no absolute position is set, causing issues e.g. in Refined Storage
+- Fixed compressAnywhere not working in inventory for 3x3 recipes
 - Fixed IMC compat aligning buttons to the wrong side
 - Fixed IMC compat ignoring absolute button y position for the clear button when set
