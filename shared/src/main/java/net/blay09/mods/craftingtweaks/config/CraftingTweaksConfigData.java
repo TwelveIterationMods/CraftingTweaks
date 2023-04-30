@@ -20,7 +20,7 @@ public class CraftingTweaksConfigData implements BalmConfigData {
     public Client client = new Client();
 
     public static class Common {
-        @Comment("Set this to true if you want the (de)compress feature to work outside of crafting GUIs (only works if installed on server)")
+        @Comment("Set this to true if you want the (de)compress feature to work outside of crafting GUIs (only works if installed on server, and still restricted to inventory slots)")
         public boolean compressAnywhere = false;
 
         @Comment("A list of modid:name entries that will not be crafted by the compress key.")
