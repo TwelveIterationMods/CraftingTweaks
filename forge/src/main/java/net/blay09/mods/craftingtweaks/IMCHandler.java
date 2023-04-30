@@ -37,7 +37,8 @@ public class IMCHandler {
                         logger.error("{} sent a container callback that's not even a function", senderModId);
                         return;
                     }
-                    Function<AbstractContainerMenu, Boolean> function = (Function<AbstractContainerMenu, Boolean>) functionClass.getDeclaredConstructor().newInstance();
+                    Function<AbstractContainerMenu, Boolean> function = (Function<AbstractContainerMenu, Boolean>) functionClass.getDeclaredConstructor()
+                            .newInstance();
                     containerPredicate = t -> matchesContainerClass.test(t) && function.apply(t);
                 } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                     logger.error("{} sent an invalid container callback.", senderModId);
@@ -52,7 +53,8 @@ public class IMCHandler {
                         logger.error("{} sent an invalid ValidContainerPredicate - it must implement Predicate<Container>", senderModId);
                         return;
                     }
-                    Predicate<AbstractContainerMenu> providedPredicate = (Predicate<AbstractContainerMenu>) predicateClass.getDeclaredConstructor().newInstance();
+                    Predicate<AbstractContainerMenu> providedPredicate = (Predicate<AbstractContainerMenu>) predicateClass.getDeclaredConstructor()
+                            .newInstance();
                     containerPredicate = it -> matchesContainerClass.test(it) && providedPredicate.test(it);
                 } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                     logger.error("{} sent an invalid ValidContainerPredicate: {}", senderModId, e.getMessage());
@@ -113,8 +115,8 @@ public class IMCHandler {
                     switch (alignToGridName.toLowerCase()) {
                         case "north", "up" -> alignToGrid = ButtonAlignment.TOP;
                         case "south", "down" -> alignToGrid = ButtonAlignment.BOTTOM;
-                        case "east", "right" -> alignToGrid = ButtonAlignment.LEFT;
-                        case "west", "left" -> alignToGrid = ButtonAlignment.RIGHT;
+                        case "east", "right" -> alignToGrid = ButtonAlignment.RIGHT;
+                        case "west", "left" -> alignToGrid = ButtonAlignment.LEFT;
                     }
                     grid.setButtonAlignment(alignToGrid);
 
@@ -133,7 +135,11 @@ public class IMCHandler {
                     if (!getBoolOr(rotateCompound, "ShowButton", true)) {
                         grid.hideTweakButton(TweakType.Rotate);
                     }
-                    grid.setButtonPosition(TweakType.Rotate, buttonOffsetX + getIntOr(rotateCompound, "ButtonX", 0), buttonOffsetY + getIntOr(rotateCompound, "ButtonY", 0));
+                    if (rotateCompound.contains("ButtonX") || rotateCompound.contains("ButtonY")) {
+                        grid.setButtonPosition(TweakType.Rotate,
+                                buttonOffsetX + getIntOr(rotateCompound, "ButtonX", 0),
+                                buttonOffsetY + getIntOr(rotateCompound, "ButtonY", 0));
+                    }
 
                     CompoundTag balanceCompound = tagCompound.getCompound("TweakBalance");
                     if (!getBoolOr(balanceCompound, "Enabled", true)) {
@@ -142,7 +148,11 @@ public class IMCHandler {
                     if (!getBoolOr(balanceCompound, "ShowButton", true)) {
                         grid.hideTweakButton(TweakType.Balance);
                     }
-                    grid.setButtonPosition(TweakType.Balance, buttonOffsetX + getIntOr(balanceCompound, "ButtonX", 0), buttonOffsetY + getIntOr(balanceCompound, "ButtonY", 0));
+                    if (balanceCompound.contains("ButtonX") || balanceCompound.contains("ButtonY")) {
+                        grid.setButtonPosition(TweakType.Balance,
+                                buttonOffsetX + getIntOr(balanceCompound, "ButtonX", 0),
+                                buttonOffsetY + getIntOr(balanceCompound, "ButtonY", 0));
+                    }
 
                     CompoundTag clearCompound = tagCompound.getCompound("TweakClear");
                     if (!getBoolOr(clearCompound, "Enabled", true)) {
@@ -151,7 +161,11 @@ public class IMCHandler {
                     if (!getBoolOr(clearCompound, "ShowButton", true)) {
                         grid.hideTweakButton(TweakType.Clear);
                     }
-                    grid.setButtonPosition(TweakType.Clear, buttonOffsetX + getIntOr(clearCompound, "ButtonX", 0), buttonOffsetY + getIntOr(balanceCompound, "ButtonY", 0));
+                    if (clearCompound.contains("ButtonX") || clearCompound.contains("ButtonY")) {
+                        grid.setButtonPosition(TweakType.Clear,
+                                buttonOffsetX + getIntOr(clearCompound, "ButtonX", 0),
+                                buttonOffsetY + getIntOr(clearCompound, "ButtonY", 0));
+                    }
                 }
             });
             logger.info("{} has registered {} for CraftingTweaks", senderModId, containerClassName);
