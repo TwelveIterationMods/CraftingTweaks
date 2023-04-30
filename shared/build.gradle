@@ -19,6 +19,10 @@ dependencies {
         exclude(group: "net.fabricmc", module: "fabric-loader")
         exclude(group: "net.fabricmc.fabric-api")
     }
+
+    compileOnly("me.shedaniel.cloth:cloth-config-fabric:$cloth_config_version") {
+        transitive = false
+    }
 }
 
 sourceSets {
