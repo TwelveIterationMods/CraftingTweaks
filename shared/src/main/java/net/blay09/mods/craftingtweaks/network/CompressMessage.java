@@ -10,6 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.RecipeHolder;
@@ -64,7 +65,8 @@ public class CompressMessage {
         }
 
         CraftingGrid grid = CraftingTweaksProviderManager.getDefaultCraftingGrid(menu).orElse(null);
-        if (!CraftingTweaksConfig.getActive().common.compressAnywhere && grid == null) {
+        boolean compressAnywhere = CraftingTweaksConfig.getActive().common.compressAnywhere;
+        if (!compressAnywhere && grid == null) {
             return;
         }
 
@@ -77,7 +79,7 @@ public class CompressMessage {
                 }
 
                 ItemStack slotStack = slot.getItem();
-                if (slot.container instanceof Inventory && slot.hasItem() && ItemStack.isSame(slotStack, mouseSlot.getItem()) && ItemStack.tagMatches(slotStack, mouseSlot.getItem())) {
+                if (slot.container instanceof Inventory && ItemStack.isSameItemSameTags(slot.getItem(), mouseSlot.getItem())) {
                     ItemStack result = findMatchingResult(new InventoryCraftingDecompress(menu, slotStack), player);
                     if (!result.isEmpty() && !isBlacklisted(result) && !slotStack.isEmpty() && slotStack.getCount() >= 1) {
                         do {
@@ -92,60 +94,55 @@ public class CompressMessage {
                 }
             }
         } else {
-            boolean compressAll = compressType != CompressType.COMPRESS_ONE;
-            int size = grid != null ? grid.getGridSize(player, menu) : 9;
-            // Perform decompression on all valid slots
-            for (Slot slot : menu.slots) {
-                if (compressType != CompressType.COMPRESS_ALL && slot != mouseSlot) {
-                    continue;
-                }
-
-                final ItemStack slotStack = slot.getItem();
-                if (slot.container instanceof Inventory && slot.hasItem() && ItemStack.isSame(slotStack, mouseSlot.getItem()) && ItemStack.tagMatches(slotStack, mouseSlot.getItem())) {
-                    if (size == 9 && !slotStack.isEmpty() && slotStack.getCount() >= 9) {
-                        ItemStack result = findMatchingResult(new InventoryCraftingCompress(menu, 3, slotStack), player);
-                        if (!result.isEmpty() && !isBlacklisted(result)) {
-                            do {
-                                if (player.getInventory().add(result.copy())) {
-                                    giveLeftoverItems(player, slotStack, 9);
-                                    slot.remove(9);
-                                } else {
-                                    break;
-                                }
-                            }
-                            while (compressAll && slot.hasItem() && slotStack.getCount() >= 9 && slotStack.getItem() != result.getItem());
-                        } else {
-                            result = findMatchingResult(new InventoryCraftingCompress(menu, 2, slotStack), player);
-                            if (!result.isEmpty() && !isBlacklisted(result)) {
-                                do {
-                                    if (player.getInventory().add(result.copy())) {
-                                        giveLeftoverItems(player, slotStack, 4);
-                                        slot.remove(4);
-                                    } else {
-                                        break;
-                                    }
-                                }
-                                while (compressAll && slot.hasItem() && slotStack.getCount() >= 4 && slotStack.getItem() != result.getItem());
-                            }
-                        }
-                    } else if (size >= 4 && !slotStack.isEmpty() && slotStack.getCount() >= 4) {
-                        ItemStack result = findMatchingResult(new InventoryCraftingCompress(menu, 2, slotStack), player);
-                        if (!result.isEmpty() && !isBlacklisted(result)) {
-                            do {
-                                if (player.getInventory().add(result.copy())) {
-                                    giveLeftoverItems(player, slotStack, 4);
-                                    slot.remove(4);
-                                } else {
-                                    break;
-                                }
-                            }
-                            while (compressAll && slot.hasItem() && slotStack.getCount() >= 4 && slotStack.getItem() != result.getItem());
-                        }
-                    }
-                }
+            switch (compressType) {
+                case COMPRESS_ONE -> compressMouseSlot(player, menu, mouseSlot, grid, compressAnywhere, false);
+                case COMPRESS_STACK -> compressMouseSlot(player, menu, mouseSlot, grid, compressAnywhere, true);
+                case COMPRESS_ALL -> compressAll(player, menu, mouseSlot, grid, compressAnywhere);
             }
         }
         menu.broadcastChanges();
+    }
+
+    private static void compressMouseSlot(ServerPlayer player, AbstractContainerMenu menu, Slot mouseSlot, CraftingGrid grid, boolean compressAnywhere, boolean wholeStack) {
+        int maxGridSize = grid != null && !compressAnywhere ? grid.getGridSize(player, menu) : 9;
+        ItemStack mouseStack = mouseSlot.getItem();
+        CompressionRecipe recipe = findRecipe(menu, player, mouseStack, maxGridSize);
+        int recipeSize = recipe.size();
+        if (recipeSize > 0) {
+            // Calculate the number of crafts possible
+            int craftsPossible = wholeStack ? mouseStack.getCount() / recipeSize : 1;
+
+            // Delete the source items from the inventory
+            int itemsToRemove = craftsPossible * recipeSize;
+            mouseStack.shrink(itemsToRemove);
+
+            // Add crafted items to the inventory
+            addCraftedItemsToInventory(player, recipe.result(), craftsPossible);
+        }
+    }
+
+    private static void compressAll(ServerPlayer player, AbstractContainerMenu menu, Slot mouseSlot, CraftingGrid grid, boolean compressAnywhere) {
+        int maxGridSize = grid != null && !compressAnywhere ? grid.getGridSize(player, menu) : 9;
+
+        // Count the total number of source items
+        ItemStack mouseStack = mouseSlot.getItem().copy();
+        int totalItemCount = countTotalItems(menu, mouseStack);
+
+        // Find the recipe and see if it's 2x2 or 3x3
+        CompressionRecipe recipe = findRecipe(menu, player, mouseStack, maxGridSize);
+        int recipeSize = recipe.size();
+
+        if (recipeSize > 0) {
+            // Calculate the number of crafts possible
+            int craftsPossible = totalItemCount / recipeSize;
+
+            // Delete the source items from the inventory
+            int itemsToRemove = craftsPossible * recipeSize;
+            removeSourceItems(menu, mouseStack, itemsToRemove);
+
+            // Add crafted items to the inventory
+            addCraftedItemsToInventory(player, recipe.result(), craftsPossible);
+        }
     }
 
     private static void giveLeftoverItems(ServerPlayer player, ItemStack slotStack, int count) {
@@ -175,5 +172,70 @@ public class CompressMessage {
     private static boolean isBlacklisted(ItemStack result) {
         ResourceLocation registryName = BuiltInRegistries.ITEM.getKey(result.getItem());
         return CraftingTweaksConfig.getActive().common.compressBlacklist.contains(registryName.toString());
+    }
+
+    private static int countTotalItems(AbstractContainerMenu menu, ItemStack sourceItem) {
+        int totalItemCount = 0;
+        for (Slot slot : menu.slots) {
+            final ItemStack slotStack = slot.getItem();
+            if (slot.container instanceof Inventory && ItemStack.isSameItemSameTags(slot.getItem(), sourceItem)) {
+                totalItemCount += slotStack.getCount();
+            }
+        }
+        return totalItemCount;
+    }
+
+    record CompressionRecipe(int size, ItemStack result) {
+    }
+
+    private static CompressionRecipe findRecipe(AbstractContainerMenu menu, ServerPlayer player, ItemStack exampleStack, int maxGridSize) {
+        int recipeSize = 0;
+        ItemStack result = ItemStack.EMPTY;
+
+        if (maxGridSize >= 9) {
+            InventoryCraftingCompress exampleInventory = new InventoryCraftingCompress(menu, 3, exampleStack);
+            result = findMatchingResult(exampleInventory, player);
+            if (!result.isEmpty() && !isBlacklisted(result)) {
+                recipeSize = 9;
+            }
+        }
+
+        if (recipeSize == 0 && maxGridSize >= 4) {
+            InventoryCraftingCompress exampleInventory = new InventoryCraftingCompress(menu, 2, exampleStack);
+            result = findMatchingResult(exampleInventory, player);
+            if (!result.isEmpty() && !isBlacklisted(result)) {
+                recipeSize = 4;
+            }
+        }
+
+        return new CompressionRecipe(recipeSize, result);
+    }
+
+    private static void removeSourceItems(AbstractContainerMenu menu, ItemStack sourceItem, int itemsToRemove) {
+        for (Slot slot : menu.slots) {
+            final ItemStack slotStack = slot.getItem();
+            if (slot.container instanceof Inventory && ItemStack.isSameItemSameTags(slot.getItem(), sourceItem)) {
+                int removedFromSlot = Math.min(slotStack.getCount(), itemsToRemove);
+                slot.remove(removedFromSlot);
+                itemsToRemove -= removedFromSlot;
+
+                if (itemsToRemove == 0) {
+                    break;
+                }
+            }
+        }
+    }
+
+    private static void addCraftedItemsToInventory(Player player, ItemStack result, int timesCrafted) {
+        int itemsCrafted = timesCrafted * result.getCount();
+        while (itemsCrafted > 0) {
+            ItemStack craftedStack = result.copy();
+            craftedStack.setCount(Math.min(itemsCrafted, result.getMaxStackSize()));
+            itemsCrafted -= craftedStack.getCount();
+            if (!player.getInventory().add(craftedStack)) {
+                // Drop the item on the ground if the inventory is full
+                player.drop(craftedStack, true);
+            }
+        }
     }
 }
