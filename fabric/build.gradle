@@ -94,13 +94,15 @@ publishing {
 }
 
 curseforge {
-	apiKey = project.findProperty("curseforge.api_key") ?: System.getenv("CF_API_KEY") ?: "none"
+	apiKey = project.findProperty("curseforge.api_key") ?: System.getenv("CURSEFORGE_TOKEN") ?: "none"
 	project {
 		id = curseforge_fabric_project_id
 		releaseType = curseforge_release_type
 		changelogType = 'markdown'
-		changelog = file('../changelog.md')
-		addGameVersion minecraft_version
+		changelog = file('../CHANGELOG.md')
+		project.minecraft_versions.split(',').each {
+			addGameVersion it
+		}
 		addGameVersion 'Fabric'
 
 		relations {
@@ -115,5 +117,21 @@ curseforge {
 	}
 	options {
 		forgeGradleIntegration = false
+	}
+}
+
+modrinth {
+	token = project.findProperty("modrinth.token") ?: System.getenv("MODRINTH_TOKEN") ?: "none"
+	projectId = project.modrinth_fabric_project_id
+	versionType = project.modrinth_release_type
+	versionNumber = project.version + "+fabric-" + project.minecraft_version
+	uploadFile = remapJar
+	changelog = rootProject.file("CHANGELOG.md").text
+	gameVersions = project.minecraft_versions.split(',').toList()
+	syncBodyFrom = rootProject.file("modrinth.md").text
+	loaders = ['fabric']
+	dependencies {
+		required.project "fabric-api"
+		required.project "balm"
 	}
 }
