@@ -64,7 +64,8 @@ public class CompressMessage {
         }
 
         CraftingGrid grid = CraftingTweaksProviderManager.getDefaultCraftingGrid(menu).orElse(null);
-        if (!CraftingTweaksConfig.getActive().common.compressAnywhere && grid == null) {
+        boolean compressAnywhere = CraftingTweaksConfig.getActive().common.compressAnywhere;
+        if (!compressAnywhere && grid == null) {
             return;
         }
 
@@ -93,7 +94,7 @@ public class CompressMessage {
             }
         } else {
             boolean compressAll = compressType != CompressType.COMPRESS_ONE;
-            int size = grid != null ? grid.getGridSize(player, menu) : 9;
+            int size = grid != null && !compressAnywhere ? grid.getGridSize(player, menu) : 9;
             // Perform decompression on all valid slots
             for (Slot slot : menu.slots) {
                 if (compressType != CompressType.COMPRESS_ALL && slot != mouseSlot) {
