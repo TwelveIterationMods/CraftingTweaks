@@ -1,2 +1,3 @@
-- Fixed being able to join with Crafting Tweaks installed on the client or server only
-- Fixed infinite loop when compressing/uncompressing recipes that result in itself
+- Fixed IMC compat ignoring alignment even if no absolute position is set
+- Fixed IMC compat aligning buttons to the wrong side
+- Fixed IMC compat ignoring absolute button y position for the clear button when set
