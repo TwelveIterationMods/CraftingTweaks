@@ -7,4 +7,6 @@ dependencies {
     compileOnly fg.deobf("curse.maven:wthit-455982:3856256")
     implementation fg.deobf("curse.maven:jade-324717:4010505")
     compileOnly fg.deobf("curse.maven:the-one-probe-245211:3430022")
+
+    implementation fg.deobf("curse.maven:refined-storage-243076:4465872")
 }
