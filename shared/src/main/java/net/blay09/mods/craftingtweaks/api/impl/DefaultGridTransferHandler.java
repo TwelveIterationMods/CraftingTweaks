@@ -19,7 +19,7 @@ public class DefaultGridTransferHandler implements GridTransferHandler<AbstractC
 
         ItemStack craftStack = craftMatrix.getItem(slotId);
         if (!craftStack.isEmpty()) {
-            if (craftStack.sameItem(itemStack) && ItemStack.tagMatches(craftStack, itemStack)) {
+            if (ItemStack.isSameItemSameTags(craftStack, itemStack)) {
                 int spaceLeft = Math.min(craftMatrix.getMaxStackSize(), craftStack.getMaxStackSize()) - craftStack.getCount();
                 if (spaceLeft > 0) {
                     ItemStack splitStack = itemStack.split(Math.min(spaceLeft, itemStack.getCount()));
@@ -60,7 +60,7 @@ public class DefaultGridTransferHandler implements GridTransferHandler<AbstractC
             int slotIndex = menu.slots.get(i).getContainerSlot();
             ItemStack craftStack = craftMatrix.getItem(slotIndex);
             if (!craftStack.isEmpty()) {
-                if (craftStack.sameItem(itemStack) && ItemStack.tagMatches(craftStack, itemStack)) {
+                if (ItemStack.isSameItemSameTags(craftStack, itemStack)) {
                     int spaceLeft = Math.min(craftMatrix.getMaxStackSize(), craftStack.getMaxStackSize()) - craftStack.getCount();
                     if (spaceLeft > 0) {
                         ItemStack splitStack = itemStack.split(Math.min(spaceLeft, itemStack.getCount()));

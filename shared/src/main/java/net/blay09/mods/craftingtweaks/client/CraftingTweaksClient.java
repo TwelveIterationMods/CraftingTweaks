@@ -217,7 +217,7 @@ public class CraftingTweaksClient {
                                 continue;
                             }
                             ItemStack slotStack = slot.getItem();
-                            if (slotStack.sameItem(mouseSlotStack) && ItemStack.tagMatches(slotStack, mouseSlotStack)) {
+                            if (ItemStack.isSameItemSameTags(slotStack, mouseSlotStack)) {
                                 transferSlots.add(slot);
                             }
                         }
@@ -315,7 +315,6 @@ public class CraftingTweaksClient {
         Screen screen = event.getScreen();
         int mouseX = event.getMouseX();
         int mouseY = event.getMouseY();
-        PoseStack poseStack = event.getPoseStack();
         if (screen == null) {
             // WAILA somehow breaks the DrawScreenEvent, so we have to null-check here. o_o
             return;

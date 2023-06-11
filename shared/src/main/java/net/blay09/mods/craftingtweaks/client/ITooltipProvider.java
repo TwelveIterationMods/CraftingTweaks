@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface ITooltipProvider {
 
-    List<Component> getTooltip();
+    List<Component> getTooltipComponents();
 
 }

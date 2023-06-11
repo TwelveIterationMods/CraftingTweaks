@@ -19,6 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Level;
 
 import java.util.Objects;
 
@@ -161,9 +162,10 @@ public class CompressMessage {
 
     private static <T extends CraftingContainer & RecipeHolder> ItemStack findMatchingResult(T craftingInventory, ServerPlayer player) {
         RecipeManager recipeManager = Objects.requireNonNull(player.getServer()).getRecipeManager();
-        CraftingRecipe recipe = recipeManager.getRecipeFor(RecipeType.CRAFTING, craftingInventory, player.level).orElse(null);
-        if (recipe != null && craftingInventory.setRecipeUsed(player.level, player, recipe)) {
-            return recipe.assemble(craftingInventory, player.level.registryAccess());
+        Level level = player.level();
+        CraftingRecipe recipe = recipeManager.getRecipeFor(RecipeType.CRAFTING, craftingInventory, level).orElse(null);
+        if (recipe != null && craftingInventory.setRecipeUsed(level, player, recipe)) {
+            return recipe.assemble(craftingInventory, level.registryAccess());
         }
 
         return ItemStack.EMPTY;

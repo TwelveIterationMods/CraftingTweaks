@@ -5,7 +5,7 @@ issueTrackerURL="https://github.com/TwelveIterationMods/CraftingTweaks/issues"
 
 [[mods]]
 modId="craftingtweaks"
-version="${file.jarVersion}"
+version="${mod_version}"
 displayName="CraftingTweaks"
 displayURL="https://mods.twelveiterations.com/mc/craftingtweaks"
 logoFile="craftingtweaks-icon.png"

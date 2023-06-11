@@ -1,22 +1,18 @@
 package net.blay09.mods.craftingtweaks.config;
 
-import me.shedaniel.autoconfig.annotation.Config;
-import me.shedaniel.autoconfig.annotation.ConfigEntry;
 import net.blay09.mods.balm.api.config.BalmConfigData;
 import net.blay09.mods.balm.api.config.Comment;
+import net.blay09.mods.balm.api.config.Config;
 import net.blay09.mods.craftingtweaks.CraftingTweaks;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Config(name = CraftingTweaks.MOD_ID)
+@Config(CraftingTweaks.MOD_ID)
 public class CraftingTweaksConfigData implements BalmConfigData {
 
-    @ConfigEntry.Gui.CollapsibleObject
     public Common common = new Common();
-
-    @ConfigEntry.Gui.CollapsibleObject
     public Client client = new Client();
 
     public static class Common {

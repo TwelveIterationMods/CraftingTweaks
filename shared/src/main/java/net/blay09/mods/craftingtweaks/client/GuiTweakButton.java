@@ -1,11 +1,11 @@
 package net.blay09.mods.craftingtweaks.client;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.blay09.mods.balm.mixin.AbstractContainerScreenAccessor;
 import net.blay09.mods.craftingtweaks.api.CraftingGrid;
 import net.blay09.mods.craftingtweaks.api.TweakType;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -54,7 +54,7 @@ public abstract class GuiTweakButton extends GuiImageButton implements ITooltipP
     protected abstract void onTweakButtonClicked(Player player, AbstractContainerMenu container, CraftingGrid grid);
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         setTooltip(Screen.hasShiftDown() ? shiftedTooltip : normalTooltip);
 
         if (screen != null) {
@@ -73,7 +73,7 @@ public abstract class GuiTweakButton extends GuiImageButton implements ITooltipP
             texCoordX += 48;
         }
 
-        super.render(poseStack, mouseX, mouseY, partialTicks);
+        super.render(guiGraphics, mouseX, mouseY, partialTicks);
         texCoordX = oldTexCoordX;
     }
 
@@ -97,7 +97,7 @@ public abstract class GuiTweakButton extends GuiImageButton implements ITooltipP
     }
 
     @Override
-    public List<Component> getTooltip() {
+    public List<Component> getTooltipComponents() {
         List<Component> tooltip = new ArrayList<>();
         switch (tweak) {
             case Rotate:

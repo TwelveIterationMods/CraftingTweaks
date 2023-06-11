@@ -221,7 +221,7 @@ public class ClientProvider {
             Slot craftSlot = menu.slots.get(i);
             ItemStack craftStack = craftSlot.getItem();
             if (!craftStack.isEmpty()) {
-                if (craftStack.sameItem(mouseStack) && ItemStack.tagMatches(craftStack, mouseStack)) {
+                if (ItemStack.isSameItemSameTags(craftStack, mouseStack)) {
                     int spaceLeft = Math.min(craftSlot.getMaxStackSize(), craftStack.getMaxStackSize()) - craftStack.getCount();
                     if (spaceLeft > 0) {
                         getController().handleInventoryMouseClick(menu.containerId, craftSlot.index, 0, ClickType.PICKUP, player);
@@ -269,7 +269,7 @@ public class ClientProvider {
                 ItemStack slotStack = slot.getItem();
                 if (slotStack.isEmpty()) {
                     getController().handleInventoryMouseClick(menu.containerId, i, 0, ClickType.PICKUP, player);
-                } else if (mouseItem.getItem() == slotStack.getItem() && ItemStack.tagMatches(slotStack, mouseItem)) {
+                } else if (ItemStack.isSameItemSameTags(slotStack, mouseItem)) {
                     getController().handleInventoryMouseClick(menu.containerId, i, 0, ClickType.PICKUP, player);
                 }
 
@@ -303,7 +303,7 @@ public class ClientProvider {
             if (compressType != CompressType.DECOMPRESS_ALL && slot != mouseSlot) {
                 continue;
             }
-            if (slot.container instanceof Inventory && slot.hasItem() && ItemStack.isSame(slot.getItem(), mouseSlot.getItem()) && ItemStack.tagMatches(slot.getItem(), mouseSlot.getItem()))
+            if (slot.container instanceof Inventory && slot.hasItem() && ItemStack.isSameItemSameTags(slot.getItem(), mouseSlot.getItem()))
             {
                 // Move stack to crafting grid
                 getController().handleInventoryMouseClick(menu.containerId, mouseSlot.index, 0, ClickType.PICKUP, player);
@@ -351,7 +351,7 @@ public class ClientProvider {
             if (compressType != CompressType.COMPRESS_ALL && slot != mouseSlot) {
                 continue;
             }
-            if (slot.container instanceof Inventory && slot.hasItem() && ItemStack.isSame(slot.getItem(), mouseSlot.getItem()) && ItemStack.tagMatches(slot.getItem(), mouseSlot.getItem())) {
+            if (slot.container instanceof Inventory && slot.hasItem() && ItemStack.isSameItemSameTags(slot.getItem(), mouseSlot.getItem())) {
                 ItemStack result;
                 ItemStack mouseStack = slot.getItem();
                 if (size == 9 && !mouseStack.isEmpty() && mouseStack.getCount() >= 9) {
@@ -425,8 +425,8 @@ public class ClientProvider {
             for (Recipe<?> recipe : recipeList.getRecipes()) {
                 if (recipe.getType() == RecipeType.CRAFTING) {
                     Recipe<CraftingContainer> craftingRecipe = (Recipe<CraftingContainer>) recipe;
-                    if (craftingRecipe.matches(craftingInventory, player.level)) {
-                        return craftingRecipe.assemble(craftingInventory, player.level.registryAccess());
+                    if (craftingRecipe.matches(craftingInventory, player.level())) {
+                        return craftingRecipe.assemble(craftingInventory, player.level().registryAccess());
                     }
                 }
             }
@@ -474,7 +474,7 @@ public class ClientProvider {
             if (!itemStack.isEmpty()) {
                 // Search for this item in the inventory
                 for (Slot slot : menu.slots) {
-                    if (slot.container instanceof Inventory && slot.hasItem() && ItemStack.isSame(slot.getItem(), itemStack) && ItemStack.tagMatches(slot.getItem(), itemStack)) {
+                    if (slot.container instanceof Inventory && slot.hasItem() && ItemStack.isSameItemSameTags(slot.getItem(), itemStack)) {
                         getController().handleInventoryMouseClick(menu.containerId, slot.index, 0, ClickType.PICKUP, player);
                         getController().handleInventoryMouseClick(menu.containerId, gridStart + i, fullStack ? 0 : 1, ClickType.PICKUP, player);
                         getController().handleInventoryMouseClick(menu.containerId, slot.index, 0, ClickType.PICKUP, player);
@@ -503,7 +503,7 @@ public class ClientProvider {
                         }
 
                         ItemStack gridStack = menu.slots.get(j).getItem();
-                        if (gridStack.getCount() > 1 && ItemStack.isSame(gridStack, itemStack) && ItemStack.tagMatches(gridStack, itemStack)) {
+                        if (gridStack.getCount() > 1 && ItemStack.isSameItemSameTags(gridStack, itemStack)) {
                             getController().handleInventoryMouseClick(menu.containerId, j, 0, ClickType.PICKUP, player);
                             getController().handleInventoryMouseClick(menu.containerId, gridStart + i, 1, ClickType.PICKUP, player);
                             getController().handleInventoryMouseClick(menu.containerId, j, 0, ClickType.PICKUP, player);

@@ -3,11 +3,12 @@ package net.blay09.mods.craftingtweaks;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.RecipeHolder;
+import net.minecraft.world.inventory.TransientCraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import org.jetbrains.annotations.Nullable;
 
-public class InventoryCraftingCompress extends CraftingContainer implements RecipeHolder {
+public class InventoryCraftingCompress extends TransientCraftingContainer implements RecipeHolder {
 
     private Recipe<?> recipeUsed;
 
