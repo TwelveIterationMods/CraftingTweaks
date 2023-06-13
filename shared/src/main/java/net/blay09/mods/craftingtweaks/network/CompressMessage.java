@@ -110,9 +110,12 @@ public class CompressMessage {
         CompressionRecipe recipe = findRecipe(menu, player, mouseStack, maxGridSize);
         int recipeSize = recipe.size();
         if (recipeSize > 0) {
+            // Get the maximum number of crafts possible
+            int maxResult = recipe.result().getMaxStackSize();
             // Calculate the number of crafts possible
-            int craftsPossible = wholeStack ? mouseStack.getCount() / recipeSize : 1;
+            int craftsPossible = Math.min(mouseStack.getCount() / recipeSize, wholeStack ? maxResult: 1);
 
+            if(craftsPossible == 0) return;
             // Delete the source items from the inventory
             int itemsToRemove = craftsPossible * recipeSize;
             mouseStack.shrink(itemsToRemove);
