@@ -16,11 +16,11 @@ public class CraftingTweaksConfigData implements BalmConfigData {
     public Client client = new Client();
 
     public static class Common {
-        @Comment("Set this to true if you want the (de)compress feature to work outside of crafting GUIs (only works if installed on server, and still restricted to inventory slots)")
-        public boolean compressAnywhere = false;
+        @Comment("Set this to false if you want the (de)compress feature to work outside of crafting GUIs (only works if installed on server while in the player inventory)")
+        public boolean compressRequiresCraftingGrid = true;
 
         @Comment("A list of modid:name entries that will not be crafted by the compress key.")
-        public List<String> compressBlacklist = Arrays.asList("minecraft:sandstone", "minecraft:iron_trapdoor");
+        public List<String> compressDenylist = Arrays.asList("minecraft:sandstone", "minecraft:iron_trapdoor");
     }
 
     public static class Client {
@@ -31,7 +31,7 @@ public class CraftingTweaksConfigData implements BalmConfigData {
         public boolean hideVanillaCraftingGuide = false;
 
         @Comment("Set to 'DEFAULT' to enable both buttons and hotkeys. Set to 'BUTTONS' to enable buttons only. Set to 'HOTKEYS' to enable hotkeys only. Set to 'DISABLED' to disable completely.")
-        public CraftingTweaksMode craftingTweaksMode = CraftingTweaksMode.DEFAULT;
+        public CraftingTweaksMode mode = CraftingTweaksMode.DEFAULT;
 
         @Comment("Add mod ids here of mods that you wish to disable Crafting Tweaks support for.")
         public List<String> disabledAddons = new ArrayList<>();
@@ -42,6 +42,6 @@ public class CraftingTweaksConfigData implements BalmConfigData {
             return CraftingTweaksMode.DISABLED;
         }
 
-        return client.craftingTweaksMode;
+        return client.mode;
     }
 }

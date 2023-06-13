@@ -66,8 +66,8 @@ public class CompressMessage {
         }
 
         CraftingGrid grid = CraftingTweaksProviderManager.getDefaultCraftingGrid(menu).orElse(null);
-        boolean compressAnywhere = CraftingTweaksConfig.getActive().common.compressAnywhere;
-        if (!compressAnywhere && grid == null) {
+        boolean compressRequiresCraftingGrid = CraftingTweaksConfig.getActive().common.compressRequiresCraftingGrid;
+        if (compressRequiresCraftingGrid && grid == null) {
             return;
         }
 
@@ -96,16 +96,16 @@ public class CompressMessage {
             }
         } else {
             switch (compressType) {
-                case COMPRESS_ONE -> compressMouseSlot(player, menu, mouseSlot, grid, compressAnywhere, false);
-                case COMPRESS_STACK -> compressMouseSlot(player, menu, mouseSlot, grid, compressAnywhere, true);
-                case COMPRESS_ALL -> compressAll(player, menu, mouseSlot, grid, compressAnywhere);
+                case COMPRESS_ONE -> compressMouseSlot(player, menu, mouseSlot, grid, compressRequiresCraftingGrid, false);
+                case COMPRESS_STACK -> compressMouseSlot(player, menu, mouseSlot, grid, compressRequiresCraftingGrid, true);
+                case COMPRESS_ALL -> compressAll(player, menu, mouseSlot, grid, compressRequiresCraftingGrid);
             }
         }
         menu.broadcastChanges();
     }
 
-    private static void compressMouseSlot(ServerPlayer player, AbstractContainerMenu menu, Slot mouseSlot, CraftingGrid grid, boolean compressAnywhere, boolean wholeStack) {
-        int maxGridSize = grid != null && !compressAnywhere ? grid.getGridSize(player, menu) : 9;
+    private static void compressMouseSlot(ServerPlayer player, AbstractContainerMenu menu, Slot mouseSlot, CraftingGrid grid, boolean compressRequiresCraftingGrid, boolean wholeStack) {
+        int maxGridSize = grid != null && compressRequiresCraftingGrid ? grid.getGridSize(player, menu) : 9;
         ItemStack mouseStack = mouseSlot.getItem();
         CompressionRecipe recipe = findRecipe(menu, player, mouseStack, maxGridSize);
         int recipeSize = recipe.size();
@@ -126,8 +126,8 @@ public class CompressMessage {
         }
     }
 
-    private static void compressAll(ServerPlayer player, AbstractContainerMenu menu, Slot mouseSlot, CraftingGrid grid, boolean compressAnywhere) {
-        int maxGridSize = grid != null && !compressAnywhere ? grid.getGridSize(player, menu) : 9;
+    private static void compressAll(ServerPlayer player, AbstractContainerMenu menu, Slot mouseSlot, CraftingGrid grid, boolean compressRequiresCraftingGrid) {
+        int maxGridSize = grid != null && compressRequiresCraftingGrid ? grid.getGridSize(player, menu) : 9;
 
         // Count the total number of source items
         ItemStack mouseStack = mouseSlot.getItem().copy();
@@ -177,7 +177,7 @@ public class CompressMessage {
 
     private static boolean isBlacklisted(ItemStack result) {
         ResourceLocation registryName = BuiltInRegistries.ITEM.getKey(result.getItem());
-        return CraftingTweaksConfig.getActive().common.compressBlacklist.contains(registryName.toString());
+        return CraftingTweaksConfig.getActive().common.compressDenylist.contains(registryName.toString());
     }
 
     private static int countTotalItems(AbstractContainerMenu menu, ItemStack sourceItem) {

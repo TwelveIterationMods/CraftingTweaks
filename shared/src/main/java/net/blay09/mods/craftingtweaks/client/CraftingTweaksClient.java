@@ -3,7 +3,6 @@ package net.blay09.mods.craftingtweaks.client;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.Window;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.blay09.mods.balm.api.Balm;
 import net.blay09.mods.balm.api.client.BalmClient;
 import net.blay09.mods.balm.api.client.keymappings.BalmKeyMappings;
@@ -23,9 +22,7 @@ import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfig;
 import net.blay09.mods.craftingtweaks.config.CraftingTweaksMode;
 import net.blay09.mods.craftingtweaks.network.*;
 import net.blay09.mods.balm.mixin.AbstractContainerScreenAccessor;
-import net.blay09.mods.balm.mixin.ScreenAccessor;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
@@ -39,9 +36,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 
 public class CraftingTweaksClient {

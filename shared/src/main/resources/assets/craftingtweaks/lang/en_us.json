@@ -21,5 +21,20 @@
   "tooltip.craftingtweaks.spread": "Spread Grid",
   "tooltip.craftingtweaks.clear": "Clear Grid",
   "tooltip.craftingtweaks.forceClear": "Force Clear Grid",
-  "tooltip.craftingtweaks.forceClearInfo": "Drops items if necessary"
+  "tooltip.craftingtweaks.forceClearInfo": "Drops items if necessary",
+  "config.craftingtweaks.title": "Crafting Tweaks",
+  "config.craftingtweaks.common": "Common",
+  "config.craftingtweaks.common.compressRequiresCraftingGrid": "Compress Requires Crafting Grid",
+  "config.craftingtweaks.common.compressRequiresCraftingGrid.tooltip": "Set this to false if you want the (de)compress feature to work outside of crafting GUIs (only works if installed on server while in the player inventory)",
+  "config.craftingtweaks.common.compressDenylist": "Compress Denylist",
+  "config.craftingtweaks.common.compressDenylist.tooltip": "A list of modid:name entries that will not be crafted by the compress key.",
+  "config.craftingtweaks.client": "Client",
+  "config.craftingtweaks.client.rightClickCraftsStack": "Right-click Crafts Stack",
+  "config.craftingtweaks.client.rightClickCraftsStack.tooltip": "If set to true, right-clicking the result slot in a crafting table will craft a full stack.",
+  "config.craftingtweaks.client.hideVanillaCraftingGuide": "Hide Vanilla Crafting Guide",
+  "config.craftingtweaks.client.hideVanillaCraftingGuide.tooltip": "We both know JEI is much better. This option hides Vanilla's crafting book button instead of moving it.",
+  "config.craftingtweaks.client.mode": "Mode",
+  "config.craftingtweaks.client.mode.tooltip": "Set to 'DEFAULT' to enable both buttons and hotkeys. Set to 'BUTTONS' to enable buttons only. Set to 'HOTKEYS' to enable hotkeys only. Set to 'DISABLED' to disable completely.",
+  "config.craftingtweaks.client.disabledAddons": "Disabled Addons",
+  "config.craftingtweaks.client.disabledAddons.tooltip": "Add mod ids here of mods that you wish to disable Crafting Tweaks support for."
 }

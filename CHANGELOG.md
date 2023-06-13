@@ -1,1 +1,3 @@
 - Updated to Minecraft 1.20
+- Removed Toggle Buttons keybind and separate hideButtons option as they cause confusion
+- Updated some config options for better clarity

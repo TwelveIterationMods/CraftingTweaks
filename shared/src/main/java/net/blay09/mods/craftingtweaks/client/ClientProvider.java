@@ -441,7 +441,7 @@ public class ClientProvider {
 
     private boolean isCompressBlacklisted(ItemStack result) {
         ResourceLocation registryName = BuiltInRegistries.ITEM.getKey(result.getItem());
-        return registryName != null && CraftingTweaksConfig.getActive().common.compressBlacklist.contains(registryName.toString());
+        return registryName != null && CraftingTweaksConfig.getActive().common.compressDenylist.contains(registryName.toString());
     }
 
     public void onItemCrafted(Container craftMatrix) {
