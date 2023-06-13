@@ -13,9 +13,4 @@ public class CraftingTweaksConfig {
         Balm.getConfig().registerConfig(CraftingTweaksConfigData.class, SyncCraftingTweaksConfigMessage::new);
     }
 
-    public static void setHideButtons(boolean hideButtons) {
-        Balm.getConfig().updateConfig(CraftingTweaksConfigData.class, config -> {
-            config.client.hideButtons = hideButtons;
-        });
-    }
 }

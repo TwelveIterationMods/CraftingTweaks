@@ -157,11 +157,6 @@ public class CraftingTweaksClient {
                     }
                     return true;
                 }
-            } else if (BalmClient.getKeyMappings().isActiveAndMatches(ModKeyMappings.keyToggleButtons, key, scanCode)) {
-                CraftingTweaksConfig.setHideButtons(!CraftingTweaksConfig.getActive().client.hideButtons);
-                Minecraft mc = Minecraft.getInstance();
-                screen.init(mc, mc.getWindow().getGuiScaledWidth(), mc.getWindow().getGuiScaledHeight());
-                return true;
             }
         } else if (CraftingTweaks.isServerSideInstalled) {
             AbstractContainerScreen<?> containerScreen = (AbstractContainerScreen<?>) screen;
@@ -264,7 +259,7 @@ public class CraftingTweaksClient {
             for (CraftingGrid grid : grids) {
                 String modId = grid.getId().getNamespace();
                 CraftingTweaksMode config = CraftingTweaksConfig.getActive().getCraftingTweaksMode(modId);
-                if ((config == CraftingTweaksMode.DEFAULT || config == CraftingTweaksMode.BUTTONS) && !CraftingTweaksConfig.getActive().client.hideButtons) {
+                if ((config == CraftingTweaksMode.DEFAULT || config == CraftingTweaksMode.BUTTONS)) {
                     guiHandler.createButtons(containerScreen, grid, widget -> BalmClient.getScreens().addRenderableWidget(screen, widget));
                 }
             }

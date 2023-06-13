@@ -24,19 +24,13 @@ public class CraftingTweaksConfigData implements BalmConfigData {
     }
 
     public static class Client {
-        @Comment("This option is toggled by the 'Toggle Buttons' key that can be defined in the Controls settings.")
-        public boolean hideButtons = false;
-
         @Comment("If set to true, right-clicking the result slot in a crafting table will craft a full stack.")
         public boolean rightClickCraftsStack = true;
-
-        @Comment("Set this to true if you don't want the tweak buttons' tooltips to show.")
-        public boolean hideButtonTooltips = false;
 
         @Comment("We both know JEI is much better. This option hides Vanilla's crafting book button instead of moving it.")
         public boolean hideVanillaCraftingGuide = false;
 
-        @Comment("Set to 'DEFAULT' to enable both buttons and hotkeys. Set to 'BUTTONS' to enable buttons only. Set to 'HOTKEYS' to enable hotkeys only.")
+        @Comment("Set to 'DEFAULT' to enable both buttons and hotkeys. Set to 'BUTTONS' to enable buttons only. Set to 'HOTKEYS' to enable hotkeys only. Set to 'DISABLED' to disable completely.")
         public CraftingTweaksMode craftingTweaksMode = CraftingTweaksMode.DEFAULT;
 
         @Comment("Add mod ids here of mods that you wish to disable Crafting Tweaks support for.")

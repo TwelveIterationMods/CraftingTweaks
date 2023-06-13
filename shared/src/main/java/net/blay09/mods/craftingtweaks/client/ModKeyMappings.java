@@ -1,12 +1,10 @@
 package net.blay09.mods.craftingtweaks.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import net.blay09.mods.balm.api.Balm;
 import net.blay09.mods.balm.api.client.BalmClient;
 import net.blay09.mods.balm.api.client.keymappings.BalmKeyMappings;
 import net.blay09.mods.balm.api.client.keymappings.KeyConflictContext;
 import net.blay09.mods.balm.api.client.keymappings.KeyModifier;
-import net.blay09.mods.balm.api.event.client.ClientStartedEvent;
 import net.blay09.mods.craftingtweaks.CompressType;
 import net.minecraft.client.KeyMapping;
 import org.jetbrains.annotations.Nullable;
@@ -20,7 +18,6 @@ public class ModKeyMappings {
     public static KeyMapping keySpread;
     public static KeyMapping keyClear;
     public static KeyMapping keyForceClear;
-    public static KeyMapping keyToggleButtons;
     public static KeyMapping keyCompressOne;
     public static KeyMapping keyCompressStack;
     public static KeyMapping keyCompressAll;
@@ -38,7 +35,6 @@ public class ModKeyMappings {
         keySpread = keyMappings.registerKeyMapping("key.craftingtweaks.spread", KeyConflictContext.GUI, KeyModifier.NONE, InputConstants.UNKNOWN.getValue(), "key.categories.craftingtweaks");
         keyClear = keyMappings.registerKeyMapping("key.craftingtweaks.clear", KeyConflictContext.GUI, KeyModifier.NONE, InputConstants.UNKNOWN.getValue(), "key.categories.craftingtweaks");
         keyForceClear = keyMappings.registerKeyMapping("key.craftingtweaks.force_clear", KeyConflictContext.GUI, KeyModifier.NONE, InputConstants.UNKNOWN.getValue(), "key.categories.craftingtweaks");
-        keyToggleButtons = keyMappings.registerKeyMapping("key.craftingtweaks.toggleButtons", KeyConflictContext.GUI, KeyModifier.NONE, InputConstants.UNKNOWN.getValue(), "key.categories.craftingtweaks");
         keyCompressOne = keyMappings.registerKeyMapping("key.craftingtweaks.compressOne", KeyConflictContext.GUI, KeyModifier.CONTROL, GLFW.GLFW_KEY_K, "key.categories.craftingtweaks");
         keyCompressStack = keyMappings.registerKeyMapping("key.craftingtweaks.compressStack", KeyConflictContext.GUI, KeyModifier.NONE, GLFW.GLFW_KEY_K, "key.categories.craftingtweaks");
         keyCompressAll = keyMappings.registerKeyMapping("key.craftingtweaks.compressAll", KeyConflictContext.GUI, KeyModifier.SHIFT, GLFW.GLFW_KEY_K, "key.categories.craftingtweaks");

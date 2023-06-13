@@ -23,7 +23,7 @@ public class CraftingGuideButtonFixer {
             CraftingTweaksConfigData config = CraftingTweaksConfig.getActive();
             if (config.client.hideVanillaCraftingGuide) {
                 button.visible = false;
-            } else if (!config.client.hideButtons && !(screen instanceof InventoryScreen)) {
+            } else if (!(screen instanceof InventoryScreen)) {
                 AbstractContainerScreenAccessor accessor = (AbstractContainerScreenAccessor) screen;
                 button.setX(accessor.getLeftPos() + accessor.getImageWidth() - 25);
 
