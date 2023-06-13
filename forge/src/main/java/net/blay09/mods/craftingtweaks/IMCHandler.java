@@ -110,7 +110,7 @@ public class IMCHandler {
                     int buttonOffsetX = tagCompound.contains("ButtonOffsetX") ? tagCompound.getInt("ButtonOffsetX") : -16;
                     int buttonOffsetY = tagCompound.contains("ButtonOffsetY") ? tagCompound.getInt("ButtonOffsetY") : 16;
 
-                    ButtonAlignment alignToGrid = null;
+                    ButtonAlignment alignToGrid = ButtonAlignment.LEFT;
                     String alignToGridName = tagCompound.getString("AlignToGrid");
                     switch (alignToGridName.toLowerCase()) {
                         case "north", "up" -> alignToGrid = ButtonAlignment.TOP;
