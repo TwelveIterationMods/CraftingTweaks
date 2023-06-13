@@ -3,9 +3,7 @@
 Minecraft Mod. Allows you to rotate, balance or clear the crafting matrix by the press of a button, in any (supported)
 crafting window.
 
-See [the license](LICENSE) for modpack permissions etc.
-
-This mod is available for both Forge and Fabric (starting Minecraft 1.17).
+- [Modpack Permissions](https://mods.twelveiterations.com/permissions)
 
 #### Forge
 
@@ -20,10 +18,11 @@ This mod is available for both Forge and Fabric (starting Minecraft 1.17).
 ## Contributing
 
 If you're interested in contributing to the mod, you can check
-out [issues labelled as "help wanted"](https://github.com/TwelveIterationMods/CraftingTweaks/issues?q=is%3Aopen+is%3Aissue+label%3A%22help+wanted%22)
-. These should be ready to be implemented as they are.
+out [issues labelled as "help wanted"](https://github.com/TwelveIterationMods/CraftingTweaks/issues?q=is%3Aopen+is%3Aissue+label%3A%22help+wanted%22).
 
-If you need help, feel free to join us on [Discord](https://discord.gg/VAfZ2Nau6j).
+When it comes to new features, it's best to confer with me first to ensure we share the same vision. You can join us on [Discord](https://discord.gg/VAfZ2Nau6j) if you'd like to talk.
+
+Contributions must be done through pull requests. I will not be able to accept translations, code or other assets through any other channels.
 
 ## IMC API (Forge)
 
@@ -102,25 +101,57 @@ ButtonOffsetX/Y. The buttons are set out vertically by default.
 If your crafting grid is more complex or doesn't follow Vanilla standards, you may need to supply a custom grid provider
 using the Java API.
 
-The easiest way to add Crafting Tweaks to your development environment is to do some additions to your build.gradle
-file. First, register CurseForge's maven repository by adding the following lines:
+## Adding Default Options to a development environment
 
-```
+Note that you will also need to add Balm if you want to test your integration in your environment.
+
+### Using CurseMaven
+
+Add the following to your `build.gradle`:
+
+```groovy
 repositories {
     maven { url "https://www.cursemaven.com" }
 }
-```
 
-Then, add a dependency to Crafting Tweaks:
-
-```
 dependencies {
-    implementation fg.deobf('curse.maven:craftingtweaks-233071:<fileId>') // for Forge; find the latest file id on CurseForge 
-    // modImplementation 'curse.maven:craftingtweaks-fabric-502516:<fileId>' // for Fabric; find the latest file id on CurseForge
+    // Replace ${craftingtweaks_file_id} and ${balm_file_id} with the id of the file you want to depend on.
+    // You can find it in the URL of the file on CurseForge (e.g. 3914527).
+    // Forge: implementation fg.deobf("curse.maven:balm-531761:${balm_file_id}")
+    // Fabric: modImplementation "curse.maven:balm-fabric-500525:${balm_file_id}"
+    
+    // Forge: implementation fg.deobf("curse.maven:crafting-tweaks-233071:${craftingtweaks_file_id}")
+    // Fabric: modImplementation "curse.maven:crafting-tweaks-fabric-502516:${craftingtweaks_file_id}"
 }
 ```
 
-Done! Run gradle to update your project and you'll be good to start developing your addon.
+### Using Twelve Iterations Maven (includes snapshot and mojmap versions)
+
+Add the following to your `build.gradle`:
+
+```groovy
+repositories {
+    maven { 
+        url "https://maven.twelveiterations.com/repository/maven-public/" 
+        
+        content {
+            includeGroup "net.blay09.mods"
+        }
+    }
+}
+
+dependencies {
+    // Replace ${craftingtweaks_version} and ${balm_version} with the version you want to depend on. 
+    // You can find the latest version for a given Minecraft version at https://maven.twelveiterations.com/service/rest/repository/browse/maven-public/net/blay09/mods/balm-common/ and https://maven.twelveiterations.com/service/rest/repository/browse/maven-public/net/blay09/mods/craftingtweaks-common/
+    // Common (mojmap): implementation "net.blay09.mods:balm-common:${balm_version}"
+    // Forge: implementation fg.deobf("net.blay09.mods:balm-forge:${balm_version}")
+    // Fabric: modImplementation "net.blay09.mods:balm-fabric:${balm_version}"
+    
+    // Common (mojmap): implementation "net.blay09.mods:craftingtweaks-common:${craftingtweaks_version}"
+    // Forge: implementation fg.deobf("net.blay09.mods:craftingtweaks-forge:${craftingtweaks_version}")
+    // Fabric: modImplementation "net.blay09.mods:craftingtweaks-fabric:${craftingtweaks_version}"
+}
+```
 
 ### Registering a Crafting Grid using the Java API
 
