@@ -3,6 +3,7 @@ package net.blay09.mods.craftingtweaks.config;
 import net.blay09.mods.balm.api.config.BalmConfigData;
 import net.blay09.mods.balm.api.config.Comment;
 import net.blay09.mods.balm.api.config.Config;
+import net.blay09.mods.balm.api.config.ExpectedType;
 import net.blay09.mods.craftingtweaks.CraftingTweaks;
 
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ public class CraftingTweaksConfigData implements BalmConfigData {
         @Comment("Set this to false if you want the (de)compress feature to work outside of crafting GUIs (only works if installed on server while in the player inventory)")
         public boolean compressRequiresCraftingGrid = true;
 
+        @ExpectedType(String.class)
         @Comment("A list of modid:name entries that will not be crafted by the compress key.")
         public List<String> compressDenylist = Arrays.asList("minecraft:sandstone", "minecraft:iron_trapdoor");
     }
@@ -33,6 +35,7 @@ public class CraftingTweaksConfigData implements BalmConfigData {
         @Comment("Set to 'DEFAULT' to enable both buttons and hotkeys. Set to 'BUTTONS' to enable buttons only. Set to 'HOTKEYS' to enable hotkeys only. Set to 'DISABLED' to disable completely.")
         public CraftingTweaksMode mode = CraftingTweaksMode.DEFAULT;
 
+        @ExpectedType(String.class)
         @Comment("Add mod ids here of mods that you wish to disable Crafting Tweaks support for.")
         public List<String> disabledAddons = new ArrayList<>();
     }
