@@ -1,3 +1,4 @@
 - Updated to Minecraft 1.20
+- Hotfix: Fixed config load failure on Fabric
 - Removed Toggle Buttons keybind and separate hideButtons option as they cause confusion
 - Updated some config options for better clarity
