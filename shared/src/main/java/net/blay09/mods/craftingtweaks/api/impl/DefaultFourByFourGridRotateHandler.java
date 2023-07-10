@@ -2,10 +2,12 @@ package net.blay09.mods.craftingtweaks.api.impl;
 
 public class DefaultFourByFourGridRotateHandler extends DefaultGridRotateHandler {
 
+    @Override
     protected boolean ignoresSlotId(int slotId) {
         return false;
     }
 
+    @Override
     protected int rotateSlotId(int slotId, boolean counterClockwise) {
         if (!counterClockwise) {
             switch (slotId) {
