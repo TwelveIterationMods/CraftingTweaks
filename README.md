@@ -20,9 +20,66 @@ crafting window.
 If you're interested in contributing to the mod, you can check
 out [issues labelled as "help wanted"](https://github.com/TwelveIterationMods/CraftingTweaks/issues?q=is%3Aopen+is%3Aissue+label%3A%22help+wanted%22).
 
-When it comes to new features, it's best to confer with me first to ensure we share the same vision. You can join us on [Discord](https://discord.gg/VAfZ2Nau6j) if you'd like to talk.
+When it comes to new features, it's best to confer with me first to ensure we share the same vision. You can join us
+on [Discord](https://discord.gg/VAfZ2Nau6j) if you'd like to talk.
 
-Contributions must be done through pull requests. I will not be able to accept translations, code or other assets through any other channels.
+Contributions must be done through pull requests. I will not be able to accept translations, code or other assets
+through any other channels.
+
+## Data Packs
+
+Most crafting grids can be registered using data packs. This works on both Fabric and Forge.
+
+Crafting Tweaks scans for JSON files inside `craftingtweaks_compat` within a data pack.
+This can be either an isolated datapack in the datapacks folder, or an embedded datapack in a mod jar (i.e. your `data`
+folder).
+
+A simple example (in this case, for the Vanilla crafting table) would be:
+
+```json
+{
+  "modid": "minecraft",
+  "containerClass": "net.minecraft.world.inventory.CraftingMenu",
+  "gridSlotNumber": 1,
+  "gridSize": 9
+}
+```
+
+```json5
+{
+  "modid": "yourmodid",
+  "silent": false, // currently not used, but it's mostly intended for CraftingTweaks' own embedded datapack
+  "containerClass": "net.minecraft.world.inventory.CraftingMenu", // the full name incl. package of your menu class
+  "containerCallbackClass": "", // legacy field for backwards compatibility, ignore me
+  "validContainerPredicateClass": "", // full name of a predicate class, see IMC API below for a description
+  "getGridStartFunctionClass": "", //  full name of an int function, see IMC API below for a description
+  "gridSlotNumber": 1, // the first slot in your crafting grid
+  "gridSize": 9, // the total size of your crafting grid
+  "alignToGrid": "left", // can be "up", "down", "left" or "right". Will automatically position buttons next to the grid.
+  "hideButtons": false, // allows you to hide all buttons and make only the keybinds work for your grid 
+  "phantomItems": false, // set to true if your grid has fake items to prevent item dupes
+  // "buttonOffsetX": 0, // allows specifying a manual offset for the tweak buttons, but I recommend alignToGrid instead
+  // "buttonOffsetY": 0, // allows specifying a manual offset for the tweak buttons, but I recommend alignToGrid instead
+  "tweakRotate": { // you can also manage some options in each individual tweak
+    "enabled": true,
+    "showButton": true
+    // "buttonX": 0, // allows specifying a manual offset for the tweak buttons, but I recommend alignToGrid instead
+    // "buttonY": 0, // allows specifying a manual offset for the tweak buttons, but I recommend alignToGrid instead
+  },
+  "tweakBalance": {
+    "enabled": true,
+    "showButton": true
+    // "buttonX": 0, // allows specifying a manual offset for the tweak buttons, but I recommend alignToGrid instead
+    // "buttonY": 0, // allows specifying a manual offset for the tweak buttons, but I recommend alignToGrid instead
+  },
+  "tweakClear": {
+    "enabled": true,
+    "showButton": true
+    // "buttonX": 0, // allows specifying a manual offset for the tweak buttons, but I recommend alignToGrid instead
+    // "buttonY": 0, // allows specifying a manual offset for the tweak buttons, but I recommend alignToGrid instead
+  }
+}
+```
 
 ## IMC API (Forge)
 
@@ -69,7 +126,7 @@ The fields are described below:
   callback; a class that implements Function<Container, Boolean> to determine whether a container is a valid crafting
   container
 * **GetGridStartFunction**: (V3 or higher) The full class name (including package name) of an optional slot callback; a
-  class t hat implements Function<Container, Integer> to determine the first slot of a crafting grid (overrides
+  class that implements Function<Container, Integer> to determine the first slot of a crafting grid (overrides
   GridSlotNumber)
 * **GridSlotNumber**: The slotNumber of the first slot in the crafting matrix (this is the index within
   Container.inventorySlots, NOT the index within the IInventory)
@@ -119,7 +176,7 @@ dependencies {
     // You can find it in the URL of the file on CurseForge (e.g. 3914527).
     // Forge: implementation fg.deobf("curse.maven:balm-531761:${balm_file_id}")
     // Fabric: modImplementation "curse.maven:balm-fabric-500525:${balm_file_id}"
-    
+
     // Forge: implementation fg.deobf("curse.maven:crafting-tweaks-233071:${craftingtweaks_file_id}")
     // Fabric: modImplementation "curse.maven:crafting-tweaks-fabric-502516:${craftingtweaks_file_id}"
 }
@@ -131,9 +188,9 @@ Add the following to your `build.gradle`:
 
 ```groovy
 repositories {
-    maven { 
-        url "https://maven.twelveiterations.com/repository/maven-public/" 
-        
+    maven {
+        url "https://maven.twelveiterations.com/repository/maven-public/"
+
         content {
             includeGroup "net.blay09.mods"
         }
@@ -146,7 +203,7 @@ dependencies {
     // Common (mojmap): implementation "net.blay09.mods:balm-common:${balm_version}"
     // Forge: implementation fg.deobf("net.blay09.mods:balm-forge:${balm_version}")
     // Fabric: modImplementation "net.blay09.mods:balm-fabric:${balm_version}"
-    
+
     // Common (mojmap): implementation "net.blay09.mods:craftingtweaks-common:${craftingtweaks_version}"
     // Forge: implementation fg.deobf("net.blay09.mods:craftingtweaks-forge:${craftingtweaks_version}")
     // Fabric: modImplementation "net.blay09.mods:craftingtweaks-fabric:${craftingtweaks_version}"
@@ -189,7 +246,9 @@ public class YourCustomCraftingGridProvider implements CraftingGridProvider {
         if (menu instanceof YourCustomCraftingMenu) {
             builder.addGrid(1, 9); // you can register a simple default grid like this
 
-            builder.addGrid("secondary_grid", 1, 9); // you can also specify names (default: "default") if you have multiple grids in one screen
+            builder.addGrid("secondary_grid",
+                    1,
+                    9); // you can also specify names (default: "default") if you have multiple grids in one screen
 
             builder.addGrid(1, 9) // you can also configure the default grid further
                     .disableTweak(TweakType.Rotate) // e.g. by disabling certain tweaks
@@ -198,7 +257,9 @@ public class YourCustomCraftingGridProvider implements CraftingGridProvider {
                     .hideAllTweakButtons() // or by hiding all tweak buttons
                     .usePhantomItems() // or by marking this grid to contain phantom items, which ensures that Crafting Tweaks doesn't perceive these items as real items
                     .setButtonAlignment(ButtonAlignment.TOP) // or by changing the alignment of the buttons, e.g. having them be at the top of the grid instead of at the left
-                    .setButtonPosition(TweakType.Balance, 10, 10) // or by overriding the position of the buttons directly, ignoring alignment
+                    .setButtonPosition(TweakType.Balance,
+                            10,
+                            10) // or by overriding the position of the buttons directly, ignoring alignment
                     .rotateHandler(/*...*/) // or by overriding the rotation handling
                     .balanceHandler(/*...*/) // or by overriding the balance handling
                     .clearHandler(/*...*/) // or by overriding the clear handling
@@ -220,7 +281,9 @@ public class YourMod {
         // ...
         if (isModLoaded("craftingtweaks")) { // different calls depending on whether you use Forge or Fabric
             try {
-                Class.forName("your.mod.compat.craftingtweaks.YourCustomCraftingGridProvider").getConstructor().newInstance();
+                Class.forName("your.mod.compat.craftingtweaks.YourCustomCraftingGridProvider")
+                        .getConstructor()
+                        .newInstance();
             } catch (Throwable e) {
                 e.printStackTrace();
             }
@@ -232,7 +295,8 @@ public class YourMod {
 
 ### Registering a GUI handler for custom tweak button placement
 
-You shouldn't really need to do this, but in case you want to handle the button placement in your screen yourself, you can define a GUI handler for it:
+You shouldn't really need to do this, but in case you want to handle the button placement in your screen yourself, you
+can define a GUI handler for it:
 
 ```java
 import net.blay09.mods.craftingtweaks.api.CraftingGrid;
@@ -249,11 +313,11 @@ public class YourCustomGridGuiHandler implements GridGuiHandler {
     public YourCustomGridGuiHandler() {
         CraftingTweaksClientAPI.registerCraftingGridGuiHandler(this);
     }
-    
-  @Override
-  public void createButtons(AbstractContainerScreen<?> screen, CraftingGrid grid, Consumer<AbstractWidget> addWidgetFunc) {
-    // CraftingTweaksClientAPI.createTweakButton(/* ... */); ...
-  }
+
+    @Override
+    public void createButtons(AbstractContainerScreen<?> screen, CraftingGrid grid, Consumer<AbstractWidget> addWidgetFunc) {
+        // CraftingTweaksClientAPI.createTweakButton(/* ... */); ...
+    }
 }
 ```
 
