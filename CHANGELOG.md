@@ -1,4 +1,3 @@
-- Updated to Minecraft 1.20
-- Hotfix: Fixed config load failure on Fabric
-- Removed Toggle Buttons keybind and separate hideButtons option as they cause confusion
-- Updated some config options for better clarity
+- Added support for data packs specifying crafting grids for compatibility https://github.com/TwelveIterationMods/CraftingTweaks#data-packs
+- Added /craftingtweaks debug command which allows for click-dragging over a crafting grid to print the appropriate data pack JSON
+- Fixed recipe book button positioning when used with EMI
