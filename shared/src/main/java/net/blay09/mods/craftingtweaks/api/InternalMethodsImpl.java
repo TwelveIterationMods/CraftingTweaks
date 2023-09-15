@@ -12,6 +12,11 @@ public class InternalMethodsImpl implements InternalMethods {
     }
 
     @Override
+    public void unregisterCraftingGridProvider(CraftingGridProvider provider) {
+        CraftingTweaksProviderManager.unregisterProvider(provider);
+    }
+
+    @Override
     public GridTransferHandler<AbstractContainerMenu> defaultTransferHandler() {
         return new DefaultGridTransferHandler();
     }

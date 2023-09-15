@@ -1,174 +1,78 @@
 package net.blay09.mods.craftingtweaks;
 
-import net.blay09.mods.craftingtweaks.api.*;
-import net.blay09.mods.craftingtweaks.api.impl.DefaultCraftingGrid;
+import net.blay09.mods.craftingtweaks.api.CraftingGridProvider;
+import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
+import net.blay09.mods.craftingtweaks.registry.CraftingTweaksRegistrationData;
+import net.blay09.mods.craftingtweaks.registry.DataDrivenGridFactory;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.function.Function;
-import java.util.function.Predicate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IMCHandler {
 
-    public static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(IMCHandler.class);
 
-    @SuppressWarnings("unchecked")
     public static void processInterMod(InterModProcessEvent event) {
         event.getIMCStream(it -> it.equals("RegisterProvider") || it.equals("RegisterProviderV2") || it.equals("RegisterProviderV3")).forEach(message -> {
             CompoundTag tagCompound = (CompoundTag) message.messageSupplier().get();
-            String senderModId = message.senderModId();
-
-            String containerClassName = tagCompound.getString("ContainerClass");
-            // IMC API should always check the container class first, as it was previously possible to use specific generics in predicates
-            Predicate<AbstractContainerMenu> matchesContainerClass = it -> it.getClass().getName().equals(containerClassName);
-            Predicate<AbstractContainerMenu> containerPredicate = matchesContainerClass;
-
-            String validContainerPredicateLegacy = tagCompound.getString("ContainerCallback");
-            if (!validContainerPredicateLegacy.isEmpty()) {
-                try {
-                    Class<?> functionClass = Class.forName(validContainerPredicateLegacy);
-                    if (!Function.class.isAssignableFrom(functionClass)) {
-                        logger.error("{} sent a container callback that's not even a function", senderModId);
-                        return;
-                    }
-                    Function<AbstractContainerMenu, Boolean> function = (Function<AbstractContainerMenu, Boolean>) functionClass.getDeclaredConstructor()
-                            .newInstance();
-                    containerPredicate = t -> matchesContainerClass.test(t) && function.apply(t);
-                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-                    logger.error("{} sent an invalid container callback.", senderModId);
-                }
+            var data = new CraftingTweaksRegistrationData();
+            data.setModId(message.senderModId());
+            data.setContainerClass(tagCompound.getString("ContainerClass"));
+            data.setContainerCallbackClass(tagCompound.getString("ContainerCallback"));
+            data.setValidContainerPredicateClass(tagCompound.getString("ValidContainerPredicate"));
+            data.setGetGridStartFunctionClass(tagCompound.getString("GetGridStartFunction"));
+            data.setGridSlotNumber(getIntOr(tagCompound, "GridSlotNumber", 1));
+            data.setGridSize(getIntOr(tagCompound, "GridSize", 9));
+            if (tagCompound.contains("ButtonOffsetX")) {
+                data.setButtonOffsetX(tagCompound.getInt("ButtonOffsetX"));
             }
-
-            String validContainerPredicate = tagCompound.getString("ValidContainerPredicate");
-            if (!validContainerPredicate.isEmpty()) {
-                try {
-                    Class<?> predicateClass = Class.forName(validContainerPredicate);
-                    if (!Predicate.class.isAssignableFrom(predicateClass)) {
-                        logger.error("{} sent an invalid ValidContainerPredicate - it must implement Predicate<Container>", senderModId);
-                        return;
-                    }
-                    Predicate<AbstractContainerMenu> providedPredicate = (Predicate<AbstractContainerMenu>) predicateClass.getDeclaredConstructor()
-                            .newInstance();
-                    containerPredicate = it -> matchesContainerClass.test(it) && providedPredicate.test(it);
-                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-                    logger.error("{} sent an invalid ValidContainerPredicate: {}", senderModId, e.getMessage());
-                }
+            if (tagCompound.contains("ButtonOffsetY")) {
+                data.setButtonOffsetY(tagCompound.getInt("ButtonOffsetY"));
             }
+            data.setAlignToGrid(tagCompound.getString("AlignToGrid"));
+            data.setHideButtons(tagCompound.getBoolean("HideButtons"));
+            data.setPhantomItems(tagCompound.getBoolean("PhantomItems"));
 
-            String getGridStartFunction = tagCompound.getString("GetGridStartFunction");
-            Function<AbstractContainerMenu, Integer> gridStartFunction = null;
-            if (!getGridStartFunction.isEmpty()) {
-                try {
-                    Class<?> functionClass = Class.forName(getGridStartFunction);
-                    if (!Function.class.isAssignableFrom(functionClass)) {
-                        logger.error("{} sent an invalid GetGridStartFunction - it must implement Function<Container, Integer>", senderModId);
-                        return;
-                    }
-                    gridStartFunction = (Function<AbstractContainerMenu, Integer>) functionClass.getDeclaredConstructor().newInstance();
-                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-                    logger.error("{} sent an invalid GetGridStartFunction: {}", senderModId, e.getMessage());
-                }
+            CompoundTag rotateCompound = tagCompound.getCompound("TweakRotate");
+            var rotateTweak = new CraftingTweaksRegistrationData.TweakData();
+            rotateTweak.setEnabled(getBoolOr(rotateCompound, "Enabled", true));
+            rotateTweak.setShowButton(getBoolOr(rotateCompound, "ShowButton", true));
+            if (rotateCompound.contains("ButtonX")) {
+                rotateTweak.setButtonX(rotateCompound.getInt("ButtonX"));
             }
+            if (rotateCompound.contains("ButtonY")) {
+                rotateTweak.setButtonY(rotateCompound.getInt("ButtonY"));
+            }
+            data.setTweakRotate(rotateTweak);
 
-            final Predicate<AbstractContainerMenu> effectiveContainerPredicate = containerPredicate;
-            final Function<AbstractContainerMenu, Integer> effectiveGridStartFunction = gridStartFunction;
-            CraftingTweaksAPI.registerCraftingGridProvider(new CraftingGridProvider() {
-                @Override
-                public String getModId() {
-                    return senderModId;
-                }
+            CompoundTag balanceCompound = tagCompound.getCompound("TweakBalance");
+            var balanceTweak = new CraftingTweaksRegistrationData.TweakData();
+            balanceTweak.setEnabled(getBoolOr(balanceCompound, "Enabled", true));
+            balanceTweak.setShowButton(getBoolOr(balanceCompound, "ShowButton", true));
+            if (balanceCompound.contains("ButtonX")) {
+                balanceTweak.setButtonX(balanceCompound.getInt("ButtonX"));
+            }
+            if (balanceCompound.contains("ButtonY")) {
+                balanceTweak.setButtonY(balanceCompound.getInt("ButtonY"));
+            }
+            data.setTweakBalance(balanceTweak);
 
-                @Override
-                public boolean handles(AbstractContainerMenu menu) {
-                    return effectiveContainerPredicate.test(menu);
-                }
+            CompoundTag clearCompound = tagCompound.getCompound("TweakClear");
+            var clearTweak = new CraftingTweaksRegistrationData.TweakData();
+            clearTweak.setEnabled(getBoolOr(clearCompound, "Enabled", true));
+            clearTweak.setShowButton(getBoolOr(clearCompound, "ShowButton", true));
+            if (clearCompound.contains("ButtonX")) {
+                clearTweak.setButtonX(clearCompound.getInt("ButtonX"));
+            }
+            if (clearCompound.contains("ButtonY")) {
+                clearTweak.setButtonY(clearCompound.getInt("ButtonY"));
+            }
+            data.setTweakClear(clearTweak);
 
-                @Override
-                public void buildCraftingGrids(CraftingGridBuilder builder, AbstractContainerMenu menu) {
-                    int gridSlotNumber = getIntOr(tagCompound, "GridSlotNumber", 1);
-                    int gridSize = getIntOr(tagCompound, "GridSize", 9);
-
-                    CraftingGridDecorator grid;
-                    if (effectiveGridStartFunction != null) {
-                        grid = new DefaultCraftingGrid(new ResourceLocation(senderModId, "default"), gridSlotNumber, gridSize) {
-                            @Override
-                            public int getGridStartSlot(Player player, AbstractContainerMenu menu) {
-                                return effectiveGridStartFunction.apply(menu);
-                            }
-                        };
-                        builder.addCustomGrid((CraftingGrid) grid);
-                    } else {
-                        grid = builder.addGrid(gridSlotNumber, gridSize);
-                    }
-
-                    int buttonOffsetX = tagCompound.contains("ButtonOffsetX") ? tagCompound.getInt("ButtonOffsetX") : -16;
-                    int buttonOffsetY = tagCompound.contains("ButtonOffsetY") ? tagCompound.getInt("ButtonOffsetY") : 16;
-
-                    ButtonAlignment alignToGrid = ButtonAlignment.LEFT;
-                    String alignToGridName = tagCompound.getString("AlignToGrid");
-                    switch (alignToGridName.toLowerCase()) {
-                        case "north", "up" -> alignToGrid = ButtonAlignment.TOP;
-                        case "south", "down" -> alignToGrid = ButtonAlignment.BOTTOM;
-                        case "east", "right" -> alignToGrid = ButtonAlignment.RIGHT;
-                        case "west", "left" -> alignToGrid = ButtonAlignment.LEFT;
-                    }
-                    grid.setButtonAlignment(alignToGrid);
-
-                    if (tagCompound.getBoolean("HideButtons")) {
-                        grid.hideAllTweakButtons();
-                    }
-
-                    if (tagCompound.getBoolean("PhantomItems")) {
-                        grid.usePhantomItems();
-                    }
-
-                    CompoundTag rotateCompound = tagCompound.getCompound("TweakRotate");
-                    if (!getBoolOr(rotateCompound, "Enabled", true)) {
-                        grid.disableTweak(TweakType.Rotate);
-                    }
-                    if (!getBoolOr(rotateCompound, "ShowButton", true)) {
-                        grid.hideTweakButton(TweakType.Rotate);
-                    }
-                    if (rotateCompound.contains("ButtonX") || rotateCompound.contains("ButtonY")) {
-                        grid.setButtonPosition(TweakType.Rotate,
-                                buttonOffsetX + getIntOr(rotateCompound, "ButtonX", 0),
-                                buttonOffsetY + getIntOr(rotateCompound, "ButtonY", 0));
-                    }
-
-                    CompoundTag balanceCompound = tagCompound.getCompound("TweakBalance");
-                    if (!getBoolOr(balanceCompound, "Enabled", true)) {
-                        grid.disableTweak(TweakType.Balance);
-                    }
-                    if (!getBoolOr(balanceCompound, "ShowButton", true)) {
-                        grid.hideTweakButton(TweakType.Balance);
-                    }
-                    if (balanceCompound.contains("ButtonX") || balanceCompound.contains("ButtonY")) {
-                        grid.setButtonPosition(TweakType.Balance,
-                                buttonOffsetX + getIntOr(balanceCompound, "ButtonX", 0),
-                                buttonOffsetY + getIntOr(balanceCompound, "ButtonY", 0));
-                    }
-
-                    CompoundTag clearCompound = tagCompound.getCompound("TweakClear");
-                    if (!getBoolOr(clearCompound, "Enabled", true)) {
-                        grid.disableTweak(TweakType.Clear);
-                    }
-                    if (!getBoolOr(clearCompound, "ShowButton", true)) {
-                        grid.hideTweakButton(TweakType.Clear);
-                    }
-                    if (clearCompound.contains("ButtonX") || clearCompound.contains("ButtonY")) {
-                        grid.setButtonPosition(TweakType.Clear,
-                                buttonOffsetX + getIntOr(clearCompound, "ButtonX", 0),
-                                buttonOffsetY + getIntOr(clearCompound, "ButtonY", 0));
-                    }
-                }
-            });
-            logger.info("{} has registered {} for CraftingTweaks", senderModId, containerClassName);
+            CraftingGridProvider gridProvider = DataDrivenGridFactory.createGridProvider(data);
+            CraftingTweaksAPI.registerCraftingGridProvider(gridProvider);
+            logger.info("{} has registered {} for CraftingTweaks via IMC", data.getModId(), data.getContainerClass());
         });
     }
 

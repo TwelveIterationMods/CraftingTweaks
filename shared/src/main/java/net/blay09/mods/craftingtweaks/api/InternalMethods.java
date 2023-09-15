@@ -4,6 +4,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 
 public interface InternalMethods {
     void registerCraftingGridProvider(CraftingGridProvider provider);
+    void unregisterCraftingGridProvider(CraftingGridProvider provider);
 
     GridTransferHandler<AbstractContainerMenu> defaultTransferHandler();
 

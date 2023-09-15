@@ -11,12 +11,16 @@ public class CraftingTweaksAPI {
             return (InternalMethods) Class.forName("net.blay09.mods.craftingtweaks.api.InternalMethodsImpl").getConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException |
                  ClassNotFoundException e) {
-            return null;
+            throw new RuntimeException("Failed to load Crafting Tweaks API", e);
         }
     }
 
     public static void registerCraftingGridProvider(CraftingGridProvider provider) {
         internalMethods.registerCraftingGridProvider(provider);
+    }
+
+    public static void unregisterCraftingGridProvider(CraftingGridProvider provider) {
+        internalMethods.unregisterCraftingGridProvider(provider);
     }
 
 }

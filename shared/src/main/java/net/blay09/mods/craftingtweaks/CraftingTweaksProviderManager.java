@@ -47,4 +47,8 @@ public class CraftingTweaksProviderManager {
     public static Optional<CraftingGrid> getCraftingGrid(AbstractContainerMenu menu, ResourceLocation gridId) {
         return getCraftingGrids(menu).stream().filter(it -> gridId.equals(it.getId())).findFirst();
     }
+
+    public static void unregisterProvider(CraftingGridProvider provider) {
+        craftingGridProviders.remove(provider);
+    }
 }
