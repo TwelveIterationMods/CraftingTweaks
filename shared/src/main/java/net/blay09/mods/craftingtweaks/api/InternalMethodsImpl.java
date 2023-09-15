@@ -41,4 +41,8 @@ public class InternalMethodsImpl implements InternalMethods {
         return new DefaultFourByFourGridRotateHandler();
     }
 
+    @Override
+    public GridRotateHandler<AbstractContainerMenu> defaultRectangularRotateHandler() {
+        return new DefaultRectangleGridRotateHandler();
+    }
 }

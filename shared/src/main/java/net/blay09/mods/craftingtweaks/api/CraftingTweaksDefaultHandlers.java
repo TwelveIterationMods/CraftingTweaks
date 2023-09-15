@@ -13,7 +13,7 @@ public class CraftingTweaksDefaultHandlers {
             return (InternalMethods) Class.forName("net.blay09.mods.craftingtweaks.api.InternalMethodsImpl").getConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException |
                  ClassNotFoundException e) {
-            return null;
+            throw new RuntimeException("Failed to load Crafting Tweaks API", e);
         }
     }
 
@@ -35,5 +35,9 @@ public class CraftingTweaksDefaultHandlers {
 
     public static GridRotateHandler<AbstractContainerMenu> defaultFourByFourRotateHandler() {
         return internalMethods.defaultFourByFourRotateHandler();
+    }
+
+    public static GridRotateHandler<AbstractContainerMenu> defaultRectangularRotateHandler() {
+        return internalMethods.defaultRectangularRotateHandler();
     }
 }

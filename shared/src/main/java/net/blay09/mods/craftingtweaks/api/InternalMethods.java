@@ -15,4 +15,6 @@ public interface InternalMethods {
     GridRotateHandler<AbstractContainerMenu> defaultRotateHandler();
 
     GridRotateHandler<AbstractContainerMenu> defaultFourByFourRotateHandler();
+
+    GridRotateHandler<AbstractContainerMenu> defaultRectangularRotateHandler();
 }
