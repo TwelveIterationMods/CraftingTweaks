@@ -23,6 +23,7 @@ import net.blay09.mods.craftingtweaks.config.CraftingTweaksMode;
 import net.blay09.mods.craftingtweaks.network.*;
 import net.blay09.mods.balm.mixin.AbstractContainerScreenAccessor;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
@@ -45,7 +46,8 @@ public class CraftingTweaksClient {
 
     private static boolean ignoreMouseUp;
     private static int rightClickCraftingSlot = -1;
-    private static int guiLeftOnMistakeFix;
+    private static Button unpleasantButton;
+    private static int fixedUnpleasantButtonX;
 
     public static void initialize() {
         CraftingTweaksClientAPI.setupAPI(new InternalClientMethodsImpl());
@@ -60,9 +62,10 @@ public class CraftingTweaksClient {
         Balm.getEvents().onEvent(ConnectedToServerEvent.class, it -> CraftingTweaks.isServerSideInstalled = false);
 
         Balm.getEvents().onEvent(ScreenInitEvent.Post.class, CraftingTweaksClient::screenInitialized);
-        Balm.getEvents().onEvent(ScreenKeyEvent.Press.Post.class,CraftingTweaksClient::screenKeyPressed);
+        Balm.getEvents().onEvent(ScreenKeyEvent.Press.Post.class, CraftingTweaksClient::screenKeyPressed);
         Balm.getEvents().onEvent(ScreenMouseEvent.Click.Pre.class, CraftingTweaksClient::screenMouseClick);
         Balm.getEvents().onEvent(ScreenMouseEvent.Release.Pre.class, CraftingTweaksClient::screenMouseRelease);
+        Balm.getEvents().onEvent(ScreenDrawEvent.Pre.class, CraftingTweaksClient::screenAboutToDraw);
         Balm.getEvents().onEvent(ScreenDrawEvent.Post.class, CraftingTweaksClient::screenDrawn);
     }
 
@@ -244,8 +247,12 @@ public class CraftingTweaksClient {
         Screen screen = event.getScreen();
         // We need to do this as soon as possible because EnderIO wraps the button and gives it a new id, completely hiding it from other mods...
         if (screen instanceof AbstractContainerScreen<?>) {
-            CraftingGuideButtonFixer.fixMistakes((AbstractContainerScreen<?>) screen);
-            guiLeftOnMistakeFix = ((AbstractContainerScreenAccessor) screen).getLeftPos();
+            unpleasantButton = CraftingGuideButtonFixer.fixMistakes((AbstractContainerScreen<?>) screen);
+            if (unpleasantButton != null) {
+                fixedUnpleasantButtonX = unpleasantButton.getX();
+            }
+        } else {
+            unpleasantButton = null;
         }
 
         if (screen instanceof AbstractContainerScreen<?> containerScreen) {
@@ -301,22 +308,30 @@ public class CraftingTweaksClient {
         }
     }
 
-    public static void screenDrawn(ScreenDrawEvent event) {
+    public static void screenAboutToDraw(ScreenDrawEvent event) {
         Screen screen = event.getScreen();
-        int mouseX = event.getMouseX();
-        int mouseY = event.getMouseY();
         if (screen == null) {
             // WAILA somehow breaks the DrawScreenEvent, so we have to null-check here. o_o
             return;
         }
 
-        // Detect changes on guiLeft to fix the recipe book button positioning (guiLeft changes on recipe book toggle)
-        if (screen instanceof AbstractContainerScreen<?> containerScreen) {
-            int guiLeft = ((AbstractContainerScreenAccessor) containerScreen).getLeftPos();
-            if (guiLeft != guiLeftOnMistakeFix) {
-                CraftingGuideButtonFixer.fixMistakes(containerScreen);
-                guiLeftOnMistakeFix = guiLeft;
+        // Detect changes on the button that shall not be named to fix its positioning
+        if (screen instanceof AbstractContainerScreen<?> containerScreen && unpleasantButton != null) {
+            int unpleasantX = unpleasantButton.getX();
+            if (unpleasantX != fixedUnpleasantButtonX) {
+                unpleasantButton = CraftingGuideButtonFixer.fixMistakes(containerScreen);
+                if (unpleasantButton != null) {
+                    fixedUnpleasantButtonX = unpleasantButton.getX();
+                }
             }
+        }
+    }
+
+    public static void screenDrawn(ScreenDrawEvent event) {
+        Screen screen = event.getScreen();
+        if (screen == null) {
+            // WAILA somehow breaks the DrawScreenEvent, so we have to null-check here. o_o
+            return;
         }
 
         handleRightClickCrafting();

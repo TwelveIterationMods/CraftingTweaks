@@ -17,7 +17,7 @@ import java.util.List;
 
 public class CraftingGuideButtonFixer {
 
-    public static void fixMistakes(AbstractContainerScreen<?> screen) {
+    public static Button fixMistakes(AbstractContainerScreen<?> screen) {
         Button button = findCraftButton(((ScreenAccessor) screen).balm_getChildren());
         if (button != null) {
             CraftingTweaksConfigData config = CraftingTweaksConfig.getActive();
@@ -40,6 +40,7 @@ public class CraftingGuideButtonFixer {
                 }
             }
         }
+        return button;
     }
 
     @Nullable
