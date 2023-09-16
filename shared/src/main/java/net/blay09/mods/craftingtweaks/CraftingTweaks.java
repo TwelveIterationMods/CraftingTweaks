@@ -3,7 +3,6 @@ package net.blay09.mods.craftingtweaks;
 import net.blay09.mods.balm.api.Balm;
 import net.blay09.mods.balm.api.event.PlayerLoginEvent;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
-import net.blay09.mods.craftingtweaks.client.CraftingTweaksDebugger;
 import net.blay09.mods.craftingtweaks.command.CraftingTweaksCommand;
 import net.blay09.mods.craftingtweaks.compat.VanillaCraftingGridProvider;
 import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfig;
@@ -30,8 +29,6 @@ public class CraftingTweaks {
         CraftingTweaksAPI.registerCraftingGridProvider(new VanillaCraftingGridProvider());
 
         Balm.getEvents().onEvent(PlayerLoginEvent.class, event -> Balm.getNetworking().sendTo(event.getPlayer(), new HelloMessage()));
-
-        CraftingTweaksDebugger.initialize();
     }
 
 }

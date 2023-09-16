@@ -67,6 +67,8 @@ public class CraftingTweaksClient {
         Balm.getEvents().onEvent(ScreenMouseEvent.Release.Pre.class, CraftingTweaksClient::screenMouseRelease);
         Balm.getEvents().onEvent(ScreenDrawEvent.Pre.class, CraftingTweaksClient::screenAboutToDraw);
         Balm.getEvents().onEvent(ScreenDrawEvent.Post.class, CraftingTweaksClient::screenDrawn);
+
+        CraftingTweaksDebugger.initialize();
     }
 
     public static boolean screenKeyPressed(ScreenKeyEvent event) {
