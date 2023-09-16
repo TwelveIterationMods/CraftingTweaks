@@ -1,3 +1,4 @@
+- **Hotfix:** Fixed crash on dedicated server
 - Added support for data packs specifying crafting grids for compatibility https://github.com/TwelveIterationMods/CraftingTweaks#data-packs
 - Added /craftingtweaks debug command which allows for click-dragging over a crafting grid to print the appropriate data pack JSON
 - Fixed recipe book button positioning when used with EMI
