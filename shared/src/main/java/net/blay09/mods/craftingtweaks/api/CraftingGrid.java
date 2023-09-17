@@ -30,7 +30,7 @@ public interface CraftingGrid {
     }
 
     default GridRotateHandler<AbstractContainerMenu> rotateHandler() {
-        return CraftingTweaksDefaultHandlers.defaultRotateHandler();
+        return CraftingTweaksDefaultHandlers.defaultRectangularRotateHandler();
     }
 
     default GridClearHandler<AbstractContainerMenu> clearHandler() {
