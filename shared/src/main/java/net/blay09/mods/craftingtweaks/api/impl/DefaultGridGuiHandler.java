@@ -33,7 +33,7 @@ public class DefaultGridGuiHandler implements GridGuiHandler {
     private boolean createTweakButton(AbstractContainerScreen<?> screen, CraftingGrid grid, Consumer<AbstractWidget> addWidgetFunc, GridGuiSettings guiSettings, int index, TweakType tweak) {
         if (guiSettings.isButtonVisible(tweak)) {
             ButtonPosition buttonPos = guiSettings.getButtonPosition(tweak).orElseGet(() -> getAlignedPosition(screen.getMenu(), grid, guiSettings.getButtonAlignment(), index));
-            addWidgetFunc.accept(CraftingTweaksClientAPI.createTweakButtonRelative(grid, screen, buttonPos.getX(), buttonPos.getY(), tweak));
+            addWidgetFunc.accept(CraftingTweaksClientAPI.createTweakButtonRelative(grid, screen, buttonPos.getX(), buttonPos.getY(), tweak, guiSettings.getButtonStyle()));
             return true;
         }
 

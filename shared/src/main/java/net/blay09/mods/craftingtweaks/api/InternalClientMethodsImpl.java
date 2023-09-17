@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class InternalClientMethodsImpl implements InternalClientMethods {
     @Override
-    public Button createBalanceButton(CraftingGrid grid, @Nullable AbstractContainerScreen<?> screen, int x, int y) {
+    public Button createBalanceButton(CraftingGrid grid, @Nullable AbstractContainerScreen<?> screen, int x, int y, ButtonStyle style) {
         return new GuiTweakButton(screen, x, y, 48, 0, grid, TweakType.Balance) {
             @Override
             protected void onTweakButtonClicked(Player player, AbstractContainerMenu container, CraftingGrid grid) {
@@ -38,7 +38,7 @@ public class InternalClientMethodsImpl implements InternalClientMethods {
     }
 
     @Override
-    public Button createRotateButton(CraftingGrid grid, @Nullable AbstractContainerScreen<?> screen, int x, int y) {
+    public Button createRotateButton(CraftingGrid grid, @Nullable AbstractContainerScreen<?> screen, int x, int y, ButtonStyle style) {
         return new GuiTweakButton(screen, x, y, 16, 0, grid, TweakType.Rotate) {
             @Override
             protected void onTweakButtonClicked(Player player, AbstractContainerMenu container, CraftingGrid grid) {
@@ -54,7 +54,7 @@ public class InternalClientMethodsImpl implements InternalClientMethods {
     }
 
     @Override
-    public Button createClearButton(CraftingGrid grid, @Nullable AbstractContainerScreen<?> parentGui, int x, int y) {
+    public Button createClearButton(CraftingGrid grid, @Nullable AbstractContainerScreen<?> parentGui, int x, int y, ButtonStyle style) {
         return new GuiTweakButton(parentGui, x, y, 32, 0, grid, TweakType.Clear) {
             @Override
             protected void onTweakButtonClicked(Player player, AbstractContainerMenu container, CraftingGrid grid) {

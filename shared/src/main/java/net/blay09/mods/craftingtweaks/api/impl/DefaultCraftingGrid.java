@@ -13,6 +13,7 @@ public class DefaultCraftingGrid implements CraftingGrid, CraftingGridDecorator,
     private final int start;
     private final int size;
 
+    private final Set<TweakType> disabledTweaks = new HashSet<>();
     private final Set<TweakType> hiddenButtons = new HashSet<>();
     private final Map<TweakType, ButtonPosition> buttonPositions = new HashMap<>();
 
@@ -21,6 +22,7 @@ public class DefaultCraftingGrid implements CraftingGrid, CraftingGridDecorator,
     private GridRotateHandler<AbstractContainerMenu> rotateHandler = CraftingGrid.super.rotateHandler();
     private GridTransferHandler<AbstractContainerMenu> transferHandler = CraftingGrid.super.transferHandler();
 
+    private ButtonStyle buttonStyle = ButtonStyle.DEFAULT;
     private ButtonAlignment buttonAlignment = ButtonAlignment.LEFT;
 
     public DefaultCraftingGrid(ResourceLocation id, int start, int size) {
@@ -46,6 +48,7 @@ public class DefaultCraftingGrid implements CraftingGrid, CraftingGridDecorator,
 
     @Override
     public CraftingGridDecorator disableTweak(TweakType tweak) {
+        disabledTweaks.add(tweak);
         switch (tweak) {
             case Clear -> clearHandler = new NoopHandler();
             case Balance -> balanceHandler = new NoopHandler();
@@ -135,9 +138,20 @@ public class DefaultCraftingGrid implements CraftingGrid, CraftingGridDecorator,
     }
 
     @Override
+    public CraftingGridDecorator setButtonStyle(ButtonStyle style) {
+        buttonStyle = style;
+        return this;
+    }
+
+    @Override
     public CraftingGridDecorator setButtonPosition(TweakType tweak, int x, int y) {
         buttonPositions.put(tweak, new ButtonPosition(x, y));
         return this;
+    }
+
+    @Override
+    public boolean isTweakActive(TweakType tweak) {
+        return !disabledTweaks.contains(tweak);
     }
 
     @Override
@@ -148,6 +162,11 @@ public class DefaultCraftingGrid implements CraftingGrid, CraftingGridDecorator,
     @Override
     public ButtonAlignment getButtonAlignment() {
         return buttonAlignment;
+    }
+
+    @Override
+    public ButtonStyle getButtonStyle() {
+        return buttonStyle;
     }
 
     @Override

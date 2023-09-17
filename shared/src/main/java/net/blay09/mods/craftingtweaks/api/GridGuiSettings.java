@@ -11,6 +11,10 @@ public interface GridGuiSettings {
         return ButtonAlignment.LEFT;
     }
 
+    default ButtonStyle getButtonStyle() {
+        return ButtonStyle.DEFAULT;
+    }
+
     default Optional<ButtonPosition> getButtonPosition(TweakType tweak) {
         return Optional.empty();
     }
