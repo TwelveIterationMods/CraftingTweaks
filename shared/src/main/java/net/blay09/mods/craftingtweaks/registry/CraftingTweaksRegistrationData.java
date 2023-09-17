@@ -56,6 +56,7 @@ public class CraftingTweaksRegistrationData {
     private Integer buttonOffsetX;
     private Integer buttonOffsetY;
     private String alignToGrid = "left";
+    private String buttonStyle = "default";
     private boolean hideButtons;
     private boolean phantomItems;
     private TweakData tweakRotate = new TweakData();
@@ -144,6 +145,14 @@ public class CraftingTweaksRegistrationData {
 
     public void setAlignToGrid(String alignToGrid) {
         this.alignToGrid = alignToGrid;
+    }
+
+    public String getButtonStyle() {
+        return buttonStyle;
+    }
+
+    public void setButtonStyle(String buttonStyle) {
+        this.buttonStyle = buttonStyle;
     }
 
     public boolean isHideButtons() {

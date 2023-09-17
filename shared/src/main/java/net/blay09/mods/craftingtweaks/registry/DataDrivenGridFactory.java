@@ -115,6 +115,16 @@ public class DataDrivenGridFactory {
                 }
                 grid.setButtonAlignment(alignToGrid);
 
+                ButtonStyle buttonStyle = CraftingTweaksButtonStyles.DEFAULT;
+                String buttonStyleName = data.getButtonStyle();
+                switch (buttonStyleName.toLowerCase()) {
+                    case "default" -> buttonStyle = CraftingTweaksButtonStyles.DEFAULT;
+                    case "small_width" -> buttonStyle = CraftingTweaksButtonStyles.SMALL_WIDTH;
+                    case "small_height" -> buttonStyle = CraftingTweaksButtonStyles.SMALL_HEIGHT;
+                    case "small" -> buttonStyle = CraftingTweaksButtonStyles.SMALL;
+                }
+                grid.setButtonStyle(buttonStyle);
+
                 if (data.isHideButtons()) {
                     grid.hideAllTweakButtons();
                 }
