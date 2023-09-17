@@ -32,7 +32,7 @@ public class DefaultGridGuiHandler implements GridGuiHandler {
 
     private boolean createTweakButton(AbstractContainerScreen<?> screen, CraftingGrid grid, Consumer<AbstractWidget> addWidgetFunc, GridGuiSettings guiSettings, int index, TweakType tweak) {
         if (guiSettings.isButtonVisible(tweak)) {
-            ButtonPosition buttonPos = guiSettings.getButtonPosition(tweak).orElseGet(() -> getAlignedPosition(screen.getMenu(), grid, guiSettings.getButtonAlignment(), index));
+            ButtonPosition buttonPos = guiSettings.getButtonPosition(tweak).orElseGet(() -> getAlignedPosition(screen.getMenu(), grid, guiSettings.getButtonAlignment(), guiSettings.getButtonStyle(), index));
             addWidgetFunc.accept(CraftingTweaksClientAPI.createTweakButtonRelative(grid, screen, buttonPos.getX(), buttonPos.getY(), tweak, guiSettings.getButtonStyle()));
             return true;
         }
@@ -40,14 +40,14 @@ public class DefaultGridGuiHandler implements GridGuiHandler {
         return false;
     }
 
-    private ButtonPosition getAlignedPosition(AbstractContainerMenu menu, CraftingGrid grid, ButtonAlignment alignment, int index) {
+    private ButtonPosition getAlignedPosition(AbstractContainerMenu menu, CraftingGrid grid, ButtonAlignment alignment, ButtonStyle style, int index) {
         Player player = Minecraft.getInstance().player;
         Slot firstSlot = menu.slots.get(grid.getGridStartSlot(player, menu));
         return switch (alignment) {
-            case TOP -> new ButtonPosition(firstSlot.x + 18 * index, firstSlot.y - 18 - 1);
-            case BOTTOM -> new ButtonPosition(firstSlot.x + 18 * index, firstSlot.y + 18 * 3 + 1);
-            case RIGHT -> new ButtonPosition(firstSlot.x + 18 * 3 + 1, firstSlot.y + 18 * index);
-            case LEFT -> new ButtonPosition(firstSlot.x - 19, firstSlot.y + 18 * index);
+            case TOP -> new ButtonPosition(firstSlot.x + style.getSpacingX() * index, firstSlot.y - style.getSpacingY() - 1);
+            case BOTTOM -> new ButtonPosition(firstSlot.x + style.getSpacingX() * index, firstSlot.y + 18 * 3 + 1);
+            case RIGHT -> new ButtonPosition(firstSlot.x + 18 * 3 + 1, firstSlot.y + style.getSpacingY() * index);
+            case LEFT -> new ButtonPosition(firstSlot.x - style.getSpacingX() - 1, firstSlot.y + style.getSpacingY() * index);
         };
     }
 

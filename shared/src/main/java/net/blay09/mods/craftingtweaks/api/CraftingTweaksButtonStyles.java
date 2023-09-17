@@ -1,7 +1,7 @@
 package net.blay09.mods.craftingtweaks.api;
 
 public class CraftingTweaksButtonStyles {
-    public static final ButtonStyle DEFAULT = new ButtonStyle()
+    public static final ButtonStyle DEFAULT = new ButtonStyle(18, 18)
             .withTweak(TweakType.Rotate, new ButtonProperties(16, 16)
                     .withState(ButtonState.NORMAL, 16, 0)
                     .withState(ButtonState.HOVER, 16, 16)
@@ -27,7 +27,7 @@ public class CraftingTweaksButtonStyles {
                     .withState(ButtonState.HOVER, 96, 16)
                     .withState(ButtonState.DISABLED, 96, 32));
 
-    public static final ButtonStyle SMALL_HEIGHT = new ButtonStyle()
+    public static final ButtonStyle SMALL_HEIGHT = new ButtonStyle(18, 12)
             .withTweak(TweakType.Rotate, new ButtonProperties(16, 10)
                     .withState(ButtonState.NORMAL, 16, 48)
                     .withState(ButtonState.HOVER, 16, 58)
@@ -53,7 +53,7 @@ public class CraftingTweaksButtonStyles {
                     .withState(ButtonState.HOVER, 96, 58)
                     .withState(ButtonState.DISABLED, 96, 68));
 
-    public static final ButtonStyle SMALL_WIDTH = new ButtonStyle()
+    public static final ButtonStyle SMALL_WIDTH = new ButtonStyle(12, 18)
             .withTweak(TweakType.Rotate, new ButtonProperties(10, 16)
                     .withState(ButtonState.NORMAL, 10, 78)
                     .withState(ButtonState.HOVER, 10, 94)
@@ -79,7 +79,7 @@ public class CraftingTweaksButtonStyles {
                     .withState(ButtonState.HOVER, 60, 94)
                     .withState(ButtonState.DISABLED, 60, 158110));
 
-    public static final ButtonStyle SMALL = new ButtonStyle()
+    public static final ButtonStyle SMALL = new ButtonStyle(12, 12)
             .withTweak(TweakType.Rotate, new ButtonProperties(10, 10)
                     .withState(ButtonState.NORMAL, 10, 126)
                     .withState(ButtonState.HOVER, 10, 136)
