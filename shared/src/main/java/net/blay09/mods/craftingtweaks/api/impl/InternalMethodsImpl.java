@@ -1,6 +1,7 @@
-package net.blay09.mods.craftingtweaks.api;
+package net.blay09.mods.craftingtweaks.api.impl;
 
 import net.blay09.mods.craftingtweaks.CraftingTweaksProviderManager;
+import net.blay09.mods.craftingtweaks.api.*;
 import net.blay09.mods.craftingtweaks.api.impl.*;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 

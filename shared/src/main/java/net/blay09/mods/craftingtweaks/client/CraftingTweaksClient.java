@@ -16,7 +16,7 @@ import net.blay09.mods.craftingtweaks.*;
 import net.blay09.mods.craftingtweaks.api.CraftingGrid;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksClientAPI;
 import net.blay09.mods.craftingtweaks.api.GridGuiHandler;
-import net.blay09.mods.craftingtweaks.api.InternalClientMethodsImpl;
+import net.blay09.mods.craftingtweaks.api.impl.InternalClientMethodsImpl;
 import net.blay09.mods.craftingtweaks.api.impl.DefaultGridGuiHandler;
 import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfig;
 import net.blay09.mods.craftingtweaks.config.CraftingTweaksMode;

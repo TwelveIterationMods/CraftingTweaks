@@ -12,7 +12,7 @@ public interface GridGuiSettings {
     }
 
     default ButtonStyle getButtonStyle() {
-        return ButtonStyle.DEFAULT;
+        return CraftingTweaksButtonStyles.DEFAULT;
     }
 
     default Optional<ButtonPosition> getButtonPosition(TweakType tweak) {

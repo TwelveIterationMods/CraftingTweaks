@@ -8,7 +8,7 @@ public class CraftingTweaksAPI {
 
     private static InternalMethods loadInternalMethods() {
         try {
-            return (InternalMethods) Class.forName("net.blay09.mods.craftingtweaks.api.InternalMethodsImpl").getConstructor().newInstance();
+            return (InternalMethods) Class.forName("net.blay09.mods.craftingtweaks.api.impl.InternalMethodsImpl").getConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException |
                  ClassNotFoundException e) {
             throw new RuntimeException("Failed to load Crafting Tweaks API", e);

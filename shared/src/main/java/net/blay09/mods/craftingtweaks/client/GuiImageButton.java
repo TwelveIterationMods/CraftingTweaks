@@ -1,8 +1,8 @@
 package net.blay09.mods.craftingtweaks.client;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.blay09.mods.craftingtweaks.CraftingTweaks;
+import net.blay09.mods.craftingtweaks.api.ButtonProperties;
+import net.blay09.mods.craftingtweaks.api.ButtonState;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
@@ -12,21 +12,24 @@ public class GuiImageButton extends Button {
 
     private static final ResourceLocation texture = new ResourceLocation(CraftingTweaks.MOD_ID, "gui.png");
 
-    protected int texCoordX;
-    protected int texCoordY;
+    protected ButtonProperties properties;
 
-    public GuiImageButton(int x, int y, int texCoordX, int texCoordY) {
-        super(x, y, 16, 16, Component.empty(), it -> {
+    public GuiImageButton(int x, int y, ButtonProperties properties) {
+        super(x, y, properties.getWidth(), properties.getHeight(), Component.empty(), it -> {
         }, Button.DEFAULT_NARRATION);
-        this.texCoordX = texCoordX;
-        this.texCoordY = texCoordY;
+        this.properties = properties;
     }
 
     @Override
     public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         isHovered = active && visible && mouseX >= getX() && mouseY >= getY() && mouseX < getX() + width && mouseY < getY() + height;
         guiGraphics.setColor(1f, 1f, 1f, 1f);
-        guiGraphics.blit(texture, getX(), getY(), texCoordX, active ? texCoordY + (isHovered ? 16 : 0) : texCoordY + 32, 16, 16);
+        var state = isHovered ? ButtonState.HOVER : ButtonState.NORMAL;
+        if(!active) {
+            state = ButtonState.DISABLED;
+        }
+        var stateProperties = properties.getState(state);
+        guiGraphics.blit(texture, getX(), getY(), stateProperties.getTextureX(), stateProperties.getTextureY(), width, height);
     }
 
 }

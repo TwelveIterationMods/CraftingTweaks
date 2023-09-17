@@ -22,7 +22,7 @@ public class DefaultCraftingGrid implements CraftingGrid, CraftingGridDecorator,
     private GridRotateHandler<AbstractContainerMenu> rotateHandler = CraftingGrid.super.rotateHandler();
     private GridTransferHandler<AbstractContainerMenu> transferHandler = CraftingGrid.super.transferHandler();
 
-    private ButtonStyle buttonStyle = ButtonStyle.DEFAULT;
+    private ButtonStyle buttonStyle = CraftingTweaksButtonStyles.DEFAULT;
     private ButtonAlignment buttonAlignment = ButtonAlignment.LEFT;
 
     public DefaultCraftingGrid(ResourceLocation id, int start, int size) {
