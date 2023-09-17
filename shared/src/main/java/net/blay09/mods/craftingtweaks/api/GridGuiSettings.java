@@ -11,6 +11,14 @@ public interface GridGuiSettings {
         return ButtonAlignment.LEFT;
     }
 
+    default int getButtonAlignmentOffsetX() {
+        return 0;
+    }
+
+    default int getButtonAlignmentOffsetY() {
+        return 0;
+    }
+
     default ButtonStyle getButtonStyle() {
         return CraftingTweaksButtonStyles.DEFAULT;
     }

@@ -102,8 +102,9 @@ public class DataDrivenGridFactory {
                     grid = builder.addGrid(gridSlotNumber, gridSize);
                 }
 
-                int buttonOffsetX = unwrapOr(data.getButtonOffsetX(), -16);
-                int buttonOffsetY = unwrapOr(data.getButtonOffsetY(), 16);
+                int buttonOffsetX = unwrapOr(data.getButtonOffsetX(), 0);
+                int buttonOffsetY = unwrapOr(data.getButtonOffsetY(), 0);
+                grid.setButtonAlignmentOffset(buttonOffsetX, buttonOffsetY);
 
                 ButtonAlignment alignToGrid = ButtonAlignment.LEFT;
                 String alignToGridName = data.getAlignToGrid();
@@ -140,10 +141,11 @@ public class DataDrivenGridFactory {
                 if (!rotateTweak.isShowButton()) {
                     grid.hideTweakButton(TweakType.Rotate);
                 }
+                // dunno why I did this but we gotta keep the -16/16 offset default for backwards compat
                 if (rotateTweak.getButtonX() != null || rotateTweak.getButtonY() != null) {
                     grid.setButtonPosition(TweakType.Rotate,
-                            buttonOffsetX + unwrapOr(rotateTweak.getButtonX(), 0),
-                            buttonOffsetY + unwrapOr(rotateTweak.getButtonY(), 0));
+                            unwrapOr(data.getButtonOffsetX(), -16) + unwrapOr(rotateTweak.getButtonX(), 0),
+                            unwrapOr(data.getButtonOffsetY(), 16) + unwrapOr(rotateTweak.getButtonY(), 0));
                 }
 
                 var balanceTweak = data.getTweakBalance();
@@ -155,8 +157,8 @@ public class DataDrivenGridFactory {
                 }
                 if (balanceTweak.getButtonX() != null || balanceTweak.getButtonY() != null) {
                     grid.setButtonPosition(TweakType.Balance,
-                            buttonOffsetX + unwrapOr(balanceTweak.getButtonX(), 0),
-                            buttonOffsetY + unwrapOr(balanceTweak.getButtonY(), 0));
+                            unwrapOr(data.getButtonOffsetX(), -16) + unwrapOr(balanceTweak.getButtonX(), 0),
+                            unwrapOr(data.getButtonOffsetY(), 16) + unwrapOr(balanceTweak.getButtonY(), 0));
                 }
 
                 var clearTweak = data.getTweakClear();
@@ -168,8 +170,8 @@ public class DataDrivenGridFactory {
                 }
                 if (clearTweak.getButtonX() != null || clearTweak.getButtonY() != null) {
                     grid.setButtonPosition(TweakType.Clear,
-                            buttonOffsetX + unwrapOr(clearTweak.getButtonX(), 0),
-                            buttonOffsetY + unwrapOr(clearTweak.getButtonY(), 0));
+                            unwrapOr(data.getButtonOffsetX(), -16) + unwrapOr(clearTweak.getButtonX(), 0),
+                            unwrapOr(data.getButtonOffsetY(), 16) + unwrapOr(clearTweak.getButtonY(), 0));
                 }
             }
         };

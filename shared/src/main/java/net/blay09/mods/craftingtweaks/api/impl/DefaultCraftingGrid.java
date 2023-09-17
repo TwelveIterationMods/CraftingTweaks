@@ -24,6 +24,8 @@ public class DefaultCraftingGrid implements CraftingGrid, CraftingGridDecorator,
 
     private ButtonStyle buttonStyle = CraftingTweaksButtonStyles.DEFAULT;
     private ButtonAlignment buttonAlignment = ButtonAlignment.LEFT;
+    private int buttonAlignmentOffsetX;
+    private int buttonAlignmentOffsetY;
 
     public DefaultCraftingGrid(ResourceLocation id, int start, int size) {
         this.id = id;
@@ -138,6 +140,13 @@ public class DefaultCraftingGrid implements CraftingGrid, CraftingGridDecorator,
     }
 
     @Override
+    public CraftingGridDecorator setButtonAlignmentOffset(int offsetX, int offsetY) {
+        buttonAlignmentOffsetX = offsetX;
+        buttonAlignmentOffsetY = offsetY;
+        return this;
+    }
+
+    @Override
     public CraftingGridDecorator setButtonStyle(ButtonStyle style) {
         buttonStyle = style;
         return this;
@@ -162,6 +171,14 @@ public class DefaultCraftingGrid implements CraftingGrid, CraftingGridDecorator,
     @Override
     public ButtonAlignment getButtonAlignment() {
         return buttonAlignment;
+    }
+
+    public int getButtonAlignmentOffsetX() {
+        return buttonAlignmentOffsetX;
+    }
+
+    public int getButtonAlignmentOffsetY() {
+        return buttonAlignmentOffsetY;
     }
 
     @Override

@@ -7,8 +7,8 @@
   "getGridStartFunctionClass": "",
   "gridSlotNumber": 1,
   "gridSize": 81,
-  "alignToGrid": "left",
-  "buttonStyle": "small_width",
+  "alignToGrid": "right",
+  "buttonStyle": "default",
   "hideButtons": false,
   "phantomItems": false,
   "tweakRotate": {

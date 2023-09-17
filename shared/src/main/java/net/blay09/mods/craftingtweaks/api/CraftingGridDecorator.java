@@ -13,6 +13,7 @@ public interface CraftingGridDecorator {
     CraftingGridDecorator hideTweakButton(TweakType tweak);
     CraftingGridDecorator hideAllTweakButtons();
     CraftingGridDecorator setButtonAlignment(ButtonAlignment alignment);
+    CraftingGridDecorator setButtonAlignmentOffset(int offsetX, int offsetY);
 
     CraftingGridDecorator setButtonStyle(ButtonStyle style);
 

@@ -32,22 +32,35 @@ public class DefaultGridGuiHandler implements GridGuiHandler {
 
     private boolean createTweakButton(AbstractContainerScreen<?> screen, CraftingGrid grid, Consumer<AbstractWidget> addWidgetFunc, GridGuiSettings guiSettings, int index, TweakType tweak) {
         if (guiSettings.isButtonVisible(tweak)) {
-            ButtonPosition buttonPos = guiSettings.getButtonPosition(tweak).orElseGet(() -> getAlignedPosition(screen.getMenu(), grid, guiSettings.getButtonAlignment(), guiSettings.getButtonStyle(), index));
-            addWidgetFunc.accept(CraftingTweaksClientAPI.createTweakButtonRelative(grid, screen, buttonPos.getX(), buttonPos.getY(), tweak, guiSettings.getButtonStyle()));
+            ButtonPosition buttonPos = guiSettings.getButtonPosition(tweak).orElseGet(() -> getAlignedPosition(screen.getMenu(), grid, guiSettings, index));
+            addWidgetFunc.accept(CraftingTweaksClientAPI.createTweakButtonRelative(grid,
+                    screen,
+                    buttonPos.getX(),
+                    buttonPos.getY(),
+                    tweak,
+                    guiSettings.getButtonStyle()));
             return true;
         }
 
         return false;
     }
 
-    private ButtonPosition getAlignedPosition(AbstractContainerMenu menu, CraftingGrid grid, ButtonAlignment alignment, ButtonStyle style, int index) {
+    private ButtonPosition getAlignedPosition(AbstractContainerMenu menu, CraftingGrid grid, GridGuiSettings guiSettings, int index) {
+        final var alignment = guiSettings.getButtonAlignment();
+        final var style = guiSettings.getButtonStyle();
+        final var offsetX = guiSettings.getButtonAlignmentOffsetX();
+        final var offsetY = guiSettings.getButtonAlignmentOffsetY();
         Player player = Minecraft.getInstance().player;
         Slot firstSlot = menu.slots.get(grid.getGridStartSlot(player, menu));
+        int gridLength = (int) Math.sqrt(grid.getGridSize(player, menu));
         return switch (alignment) {
-            case TOP -> new ButtonPosition(firstSlot.x + style.getSpacingX() * index, firstSlot.y - style.getSpacingY() - 1);
-            case BOTTOM -> new ButtonPosition(firstSlot.x + style.getSpacingX() * index, firstSlot.y + 18 * 3 + 1);
-            case RIGHT -> new ButtonPosition(firstSlot.x + 18 * 3 + 1, firstSlot.y + style.getSpacingY() * index);
-            case LEFT -> new ButtonPosition(firstSlot.x - style.getSpacingX() - 1, firstSlot.y + style.getSpacingY() * index);
+            case TOP ->
+                    new ButtonPosition(offsetX + firstSlot.x + style.getSpacingX() * index, offsetY + firstSlot.y - style.getSpacingY() - style.getMarginY());
+            case BOTTOM ->
+                    new ButtonPosition(offsetX + firstSlot.x + style.getSpacingX() * index, offsetY + firstSlot.y + 18 * gridLength + style.getMarginY());
+            case RIGHT -> new ButtonPosition(offsetX + firstSlot.x + 18 * gridLength + style.getMarginX(), offsetY + firstSlot.y + style.getSpacingY() * index);
+            case LEFT ->
+                    new ButtonPosition(offsetX + firstSlot.x - style.getSpacingX() - style.getMarginX(), offsetY + firstSlot.y + style.getSpacingY() * index);
         };
     }
 
