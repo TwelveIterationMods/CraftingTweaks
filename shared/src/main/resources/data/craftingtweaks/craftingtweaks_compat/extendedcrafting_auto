@@ -1,0 +1,25 @@
+{
+  "modid": "extendedcrafting",
+  "silent": false,
+  "containerClass": "com.blakebr0.extendedcrafting.container.BasicAutoTableContainer",
+  "containerCallbackClass": "",
+  "validContainerPredicateClass": "",
+  "getGridStartFunctionClass": "",
+  "gridSlotNumber": 1,
+  "gridSize": 9,
+  "alignToGrid": "left",
+  "hideButtons": false,
+  "phantomItems": false,
+  "tweakRotate": {
+    "enabled": true,
+    "showButton": true
+  },
+  "tweakBalance": {
+    "enabled": true,
+    "showButton": true
+  },
+  "tweakClear": {
+    "enabled": true,
+    "showButton": true
+  }
+}

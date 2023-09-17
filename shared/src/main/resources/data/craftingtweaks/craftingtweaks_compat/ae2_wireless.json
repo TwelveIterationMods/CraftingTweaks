@@ -1,0 +1,25 @@
+{
+  "modid": "ae2",
+  "silent": false,
+  "containerClass": "appeng.menu.me.items.WirelessCraftingTermMenu",
+  "containerCallbackClass": "",
+  "validContainerPredicateClass": "",
+  "getGridStartFunctionClass": "",
+  "gridSlotNumber": 2,
+  "gridSize": 9,
+  "alignToGrid": "left",
+  "hideButtons": false,
+  "phantomItems": false,
+  "tweakRotate": {
+    "enabled": true,
+    "showButton": true
+  },
+  "tweakBalance": {
+    "enabled": true,
+    "showButton": true
+  },
+  "tweakClear": {
+    "enabled": true,
+    "showButton": true
+  }
+}
