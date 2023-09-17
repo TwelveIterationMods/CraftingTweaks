@@ -8,6 +8,7 @@
   "gridSlotNumber": 1,
   "gridSize": 9,
   "alignToGrid": "left",
+  "buttonStyle": "small_width",
   "hideButtons": false,
   "phantomItems": false,
   "tweakRotate": {
