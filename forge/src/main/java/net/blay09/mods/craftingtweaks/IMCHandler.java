@@ -31,6 +31,7 @@ public class IMCHandler {
                 data.setButtonOffsetY(tagCompound.getInt("ButtonOffsetY"));
             }
             data.setAlignToGrid(tagCompound.getString("AlignToGrid"));
+            data.setButtonStyle(tagCompound.getString("ButtonStyle"));
             data.setHideButtons(tagCompound.getBoolean("HideButtons"));
             data.setPhantomItems(tagCompound.getBoolean("PhantomItems"));
 
