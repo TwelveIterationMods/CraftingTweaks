@@ -1,5 +1,6 @@
 {
   "modid": "ae2",
+  "enabled": false,
   "silent": false,
   "containerClass": "appeng.menu.me.items.CraftingTermMenu",
   "containerCallbackClass": "",

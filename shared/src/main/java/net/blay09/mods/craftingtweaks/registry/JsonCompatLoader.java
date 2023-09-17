@@ -51,13 +51,15 @@ public class JsonCompatLoader implements ResourceManagerReloadListener {
 
     private static CraftingGridProvider load(CraftingTweaksRegistrationData data) {
         String modId = data.getModId();
-        if ((!modId.equals("minecraft") && !Balm.isModLoaded(modId)) || !isCompatEnabled(modId)) {
+        if ((!modId.equals("minecraft") && !Balm.isModLoaded(modId)) || !isCompatEnabled(modId) || !data.isEnabled()) {
             return null;
         }
 
         CraftingGridProvider gridProvider = DataDrivenGridFactory.createGridProvider(data);
-        CraftingTweaksAPI.registerCraftingGridProvider(gridProvider);
-        logger.info("{} has registered {} for CraftingTweaks via data pack", data.getModId(), data.getContainerClass());
+        if (gridProvider != null) {
+            CraftingTweaksAPI.registerCraftingGridProvider(gridProvider);
+            logger.info("{} has registered {} for CraftingTweaks via data pack", data.getModId(), data.getContainerClass());
+        }
         return gridProvider;
     }
 

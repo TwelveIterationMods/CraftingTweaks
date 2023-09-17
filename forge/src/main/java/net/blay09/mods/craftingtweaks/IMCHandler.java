@@ -71,8 +71,10 @@ public class IMCHandler {
             data.setTweakClear(clearTweak);
 
             CraftingGridProvider gridProvider = DataDrivenGridFactory.createGridProvider(data);
-            CraftingTweaksAPI.registerCraftingGridProvider(gridProvider);
-            logger.info("{} has registered {} for CraftingTweaks via IMC", data.getModId(), data.getContainerClass());
+            if (gridProvider != null) {
+                CraftingTweaksAPI.registerCraftingGridProvider(gridProvider);
+                logger.info("{} has registered {} for CraftingTweaks via IMC", data.getModId(), data.getContainerClass());
+            }
         });
     }
 

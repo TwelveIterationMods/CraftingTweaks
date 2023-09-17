@@ -45,6 +45,8 @@ public class CraftingTweaksRegistrationData {
     @SerializedName("modid")
     private String modId;
 
+    private boolean enabled = true;
+
     private boolean silent;
 
     private String containerClass = "";
@@ -69,6 +71,14 @@ public class CraftingTweaksRegistrationData {
 
     public void setModId(String modId) {
         this.modId = modId;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public boolean isSilent() {
