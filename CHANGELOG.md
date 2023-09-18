@@ -1,3 +1,4 @@
+- **Hotfix:** Fixed key modifiers missing translations
 - Added support for Tom's Simple Storage
 - Added support for Extended Crafting
 - Added support for Simple Storage Network
