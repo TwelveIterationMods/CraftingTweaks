@@ -13,10 +13,11 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.CraftingContainer;
-import net.minecraft.world.inventory.RecipeHolder;
+import net.minecraft.world.inventory.RecipeCraftingHolder;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
@@ -164,12 +165,12 @@ public class CompressMessage {
         }
     }
 
-    private static <T extends CraftingContainer & RecipeHolder> ItemStack findMatchingResult(T craftingInventory, ServerPlayer player) {
+    private static <T extends CraftingContainer & RecipeCraftingHolder> ItemStack findMatchingResult(T craftingInventory, ServerPlayer player) {
         RecipeManager recipeManager = Objects.requireNonNull(player.getServer()).getRecipeManager();
         Level level = player.level();
-        CraftingRecipe recipe = recipeManager.getRecipeFor(RecipeType.CRAFTING, craftingInventory, level).orElse(null);
+        RecipeHolder<CraftingRecipe> recipe = recipeManager.getRecipeFor(RecipeType.CRAFTING, craftingInventory, level).orElse(null);
         if (recipe != null && craftingInventory.setRecipeUsed(level, player, recipe)) {
-            return recipe.assemble(craftingInventory, level.registryAccess());
+            return recipe.value().assemble(craftingInventory, level.registryAccess());
         }
 
         return ItemStack.EMPTY;

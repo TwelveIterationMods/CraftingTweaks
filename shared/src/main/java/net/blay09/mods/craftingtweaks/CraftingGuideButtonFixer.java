@@ -47,7 +47,7 @@ public class CraftingGuideButtonFixer {
     private static Button findCraftButton(List<? extends GuiEventListener> buttonList) {
         return (Button) buttonList
                 .stream()
-                .filter(p -> p instanceof ImageButton && ((ImageButtonAccessor) p).getResourceLocation() != null && ((ImageButtonAccessor) p).getResourceLocation().getPath().equals("textures/gui/recipe_button.png"))
+                .filter(p -> p instanceof ImageButtonAccessor imageButton && imageButton.getSprites().get(false, false).getPath().equals("recipe_book/button"))
                 .findFirst().orElse(null);
     }
 

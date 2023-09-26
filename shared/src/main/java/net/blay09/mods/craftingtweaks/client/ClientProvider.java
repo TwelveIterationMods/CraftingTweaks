@@ -19,6 +19,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 
 import java.util.Collection;
@@ -420,11 +421,11 @@ public class ClientProvider {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T extends CraftingContainer & RecipeHolder> ItemStack findMatchingResult(T craftingInventory, LocalPlayer player) {
+    private static <T extends CraftingContainer & RecipeCraftingHolder> ItemStack findMatchingResult(T craftingInventory, LocalPlayer player) {
         for (RecipeCollection recipeList : player.getRecipeBook().getCollections()) {
-            for (Recipe<?> recipe : recipeList.getRecipes()) {
-                if (recipe.getType() == RecipeType.CRAFTING) {
-                    Recipe<CraftingContainer> craftingRecipe = (Recipe<CraftingContainer>) recipe;
+            for (RecipeHolder<?> recipe : recipeList.getRecipes()) {
+                if (recipe.value().getType() == RecipeType.CRAFTING) {
+                    Recipe<CraftingContainer> craftingRecipe = (Recipe<CraftingContainer>) recipe.value();
                     if (craftingRecipe.matches(craftingInventory, player.level())) {
                         return craftingRecipe.assemble(craftingInventory, player.level().registryAccess());
                     }
