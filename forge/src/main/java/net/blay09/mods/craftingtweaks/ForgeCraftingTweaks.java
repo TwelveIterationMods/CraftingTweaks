@@ -9,7 +9,6 @@ import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.network.NetworkConstants;
 
 @Mod(CraftingTweaks.MOD_ID)
 public class ForgeCraftingTweaks {
@@ -18,7 +17,7 @@ public class ForgeCraftingTweaks {
         DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> BalmClient.initialize(CraftingTweaks.MOD_ID, CraftingTweaksClient::initialize));
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(IMCHandler::processInterMod);
-        ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true));
+        ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> IExtensionPoint.DisplayTest.IGNORESERVERONLY, (a, b) -> true));
     }
 
 }
