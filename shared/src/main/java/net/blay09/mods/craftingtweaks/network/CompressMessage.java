@@ -10,7 +10,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.RecipeHolder;
@@ -117,6 +116,7 @@ public class CompressMessage {
             if(craftsPossible == 0) return;
             // Delete the source items from the inventory
             int itemsToRemove = craftsPossible * recipeSize;
+            giveLeftoverItems(player, mouseStack, itemsToRemove);
             mouseStack.shrink(itemsToRemove);
 
             // Add crafted items to the inventory
@@ -141,7 +141,7 @@ public class CompressMessage {
 
             // Delete the source items from the inventory
             int itemsToRemove = craftsPossible * recipeSize;
-            removeSourceItems(menu, mouseStack, itemsToRemove);
+            removeSourceItems(player, menu, mouseStack, itemsToRemove);
 
             // Add crafted items to the inventory
             addCraftedItemsToInventory(player, recipe.result(), craftsPossible);
@@ -214,11 +214,12 @@ public class CompressMessage {
         return new CompressionRecipe(recipeSize, result);
     }
 
-    private static void removeSourceItems(AbstractContainerMenu menu, ItemStack sourceItem, int itemsToRemove) {
+    private static void removeSourceItems(ServerPlayer player, AbstractContainerMenu menu, ItemStack sourceItem, int itemsToRemove) {
         for (Slot slot : menu.slots) {
             final ItemStack slotStack = slot.getItem();
             if (slot.container instanceof Inventory && ItemStack.isSameItemSameTags(slot.getItem(), sourceItem)) {
                 int removedFromSlot = Math.min(slotStack.getCount(), itemsToRemove);
+                giveLeftoverItems(player, slotStack, removedFromSlot);
                 slot.remove(removedFromSlot);
                 itemsToRemove -= removedFromSlot;
 
@@ -229,7 +230,7 @@ public class CompressMessage {
         }
     }
 
-    private static void addCraftedItemsToInventory(Player player, ItemStack result, int timesCrafted) {
+    private static void addCraftedItemsToInventory(ServerPlayer player, ItemStack result, int timesCrafted) {
         int itemsCrafted = timesCrafted * result.getCount();
         while (itemsCrafted > 0) {
             ItemStack craftedStack = result.copy();
