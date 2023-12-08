@@ -1,3 +1,1 @@
-- Fixed crash with certain compatible mods
-- Fixed compress one always yielding one result even if required items weren't available (by LaunchInterceptor)
-- Updated Ukrainian Translation (by SKZGx)
+- Fix remainder items being voided when compressing items
