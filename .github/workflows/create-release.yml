@@ -11,11 +11,10 @@ on:
           - major
           - minor
           - patch
-          - none
 
 jobs:
   create-release:
-    uses: TwelveIterationMods/Workflows/.github/workflows/create-release.yml@main
+    uses: TwelveIterationMods/Workflows/.github/workflows/create-release.yml@v2
     with:
       bump: ${{ github.event.inputs.bump }}
     secrets: inherit
