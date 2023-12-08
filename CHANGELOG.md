@@ -1,1 +1,2 @@
-- Updated to Minecraft 1.20.2
+- Fix remainder items being voided when compressing items
+- Added Swedish Translation (by Regnander)
