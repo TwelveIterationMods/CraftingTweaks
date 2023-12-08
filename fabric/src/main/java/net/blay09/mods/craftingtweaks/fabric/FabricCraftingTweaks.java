@@ -1,6 +1,7 @@
-package net.blay09.mods.craftingtweaks;
+package net.blay09.mods.craftingtweaks.fabric;
 
 import net.blay09.mods.balm.api.Balm;
+import net.blay09.mods.craftingtweaks.CraftingTweaks;
 import net.fabricmc.api.ModInitializer;
 
 public class FabricCraftingTweaks implements ModInitializer {
