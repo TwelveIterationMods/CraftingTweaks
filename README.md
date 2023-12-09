@@ -158,7 +158,7 @@ ButtonOffsetX/Y. The buttons are set out vertically by default.
 If your crafting grid is more complex or doesn't follow Vanilla standards, you may need to supply a custom grid provider
 using the Java API.
 
-## Adding Default Options to a development environment
+## Adding the mod to a development environment
 
 Note that you will also need to add Balm if you want to test your integration in your environment.
 
