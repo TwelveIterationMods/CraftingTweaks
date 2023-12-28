@@ -59,7 +59,7 @@ public abstract class GuiTweakButton extends GuiImageButton implements ITooltipP
     protected abstract void onTweakButtonClicked(Player player, AbstractContainerMenu container, CraftingGrid grid, TweakType tweak);
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         setTooltip(Screen.hasShiftDown() ? altTooltip : normalTooltip);
 
         if (screen != null) {
