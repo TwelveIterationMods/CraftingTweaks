@@ -1,1 +1,1 @@
-- Updated to Minecraft 1.20.4
+- Fix crash when refilling crafting matrix on certain modded crafting grids
