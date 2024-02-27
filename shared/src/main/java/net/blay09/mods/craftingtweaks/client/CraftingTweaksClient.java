@@ -141,7 +141,12 @@ public class CraftingTweaksClient {
                     }
                     return true;
                 } else if (isRefill || isRefillStack) {
-                    clientProvider.refillLastCrafted(player, menu, grid, isRefillStack);
+                    if (CraftingTweaks.isServerSideInstalled) {
+                        //Balm.getNetworking().sendToServer(new RefillLastCraftedMessage(grid.getId(), isRefillStack));
+                        clientProvider.refillLastCrafted(player, menu, grid, isRefillStack);
+                    } else {
+                        clientProvider.refillLastCrafted(player, menu, grid, isRefillStack);
+                    }
                     return true;
                 }
             }
