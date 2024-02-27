@@ -1,1 +1,1 @@
-- Fix remainder items being voided when compressing items
+- Fix crash when refilling crafting matrix on certain modded crafting grids
