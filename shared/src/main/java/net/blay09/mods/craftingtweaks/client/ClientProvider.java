@@ -304,15 +304,18 @@ public class ClientProvider {
             if (compressType != CompressType.DECOMPRESS_ALL && slot != mouseSlot) {
                 continue;
             }
-            if (slot.container instanceof Inventory && slot.hasItem() && ItemStack.isSameItemSameTags(slot.getItem(), mouseSlot.getItem()))
-            {
+            if (slot.container instanceof Inventory && slot.hasItem() && ItemStack.isSameItemSameTags(slot.getItem(), mouseSlot.getItem())) {
                 // Move stack to crafting grid
                 getController().handleInventoryMouseClick(menu.containerId, mouseSlot.index, 0, ClickType.PICKUP, player);
                 getController().handleInventoryMouseClick(menu.containerId, start, 0, ClickType.PICKUP, player);
                 for (Slot resultSlot : menu.slots) {
                     // Search for result slot and grab result
                     if (resultSlot instanceof ResultSlot && resultSlot.hasItem()) {
-                        getController().handleInventoryMouseClick(menu.containerId, resultSlot.index, 0, decompressAll ? ClickType.QUICK_MOVE : ClickType.PICKUP, player);
+                        getController().handleInventoryMouseClick(menu.containerId,
+                                resultSlot.index,
+                                0,
+                                decompressAll ? ClickType.QUICK_MOVE : ClickType.PICKUP,
+                                player);
                         break;
                     }
                 }
@@ -403,7 +406,11 @@ public class ClientProvider {
                 }
                 for (Slot resultSlot : menu.slots) {
                     if (resultSlot instanceof ResultSlot && resultSlot.hasItem()) {
-                        getController().handleInventoryMouseClick(menu.containerId, resultSlot.index, 0, compressAll ? ClickType.QUICK_MOVE : ClickType.PICKUP, player);
+                        getController().handleInventoryMouseClick(menu.containerId,
+                                resultSlot.index,
+                                0,
+                                compressAll ? ClickType.QUICK_MOVE : ClickType.PICKUP,
+                                player);
                         break;
                     }
                 }
@@ -468,6 +475,9 @@ public class ClientProvider {
 
         int gridStart = grid.getGridStartSlot(player, menu);
         int gridSize = grid.getGridSize(player, menu);
+        if (menu.slots.size() < gridStart + gridSize || gridSize != lastCraftedMatrix.getContainerSize()) {
+            return;
+        }
 
         // Now refill the grid
         for (int i = 0; i < lastCraftedMatrix.getContainerSize(); i++) {
