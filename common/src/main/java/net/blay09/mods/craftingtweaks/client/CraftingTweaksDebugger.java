@@ -141,7 +141,7 @@ public class CraftingTweaksDebugger {
 
     private static String getModId(AbstractContainerMenu menu) {
         try {
-            var key = BuiltInRegistries.MENU.getKey(menu.getType()); // TODO move to Balm
+            var key = BuiltInRegistries.MENU.getKey(menu.getType());
             return key != null ? key.getNamespace() : "minecraft";
         } catch (UnsupportedOperationException e) {
             return "minecraft";

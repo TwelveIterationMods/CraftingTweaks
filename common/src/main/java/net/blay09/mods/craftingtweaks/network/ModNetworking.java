@@ -18,6 +18,7 @@ public class ModNetworking {
         networking.registerServerboundPacket(TransferStackMessage.TYPE, TransferStackMessage.class, TransferStackMessage::encode, TransferStackMessage::decode, TransferStackMessage::handle);
         networking.registerServerboundPacket(CompressMessage.TYPE, CompressMessage.class, CompressMessage::encode, CompressMessage::decode, CompressMessage::handle);
         networking.registerServerboundPacket(CraftStackMessage.TYPE, CraftStackMessage.class, CraftStackMessage::encode, CraftStackMessage::decode, CraftStackMessage::handle);
+        networking.registerServerboundPacket(RefillLastCraftedMessage.TYPE, RefillLastCraftedMessage.class, RefillLastCraftedMessage::encode, RefillLastCraftedMessage::decode, RefillLastCraftedMessage::handle);
 
         SyncConfigMessage.register(SyncCraftingTweaksConfigMessage.TYPE, SyncCraftingTweaksConfigMessage.class, SyncCraftingTweaksConfigMessage::new, CraftingTweaksConfigData.class, CraftingTweaksConfigData::new);
     }

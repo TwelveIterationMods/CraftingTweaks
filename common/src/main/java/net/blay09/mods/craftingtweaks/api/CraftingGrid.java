@@ -41,4 +41,8 @@ public interface CraftingGrid {
         return CraftingTweaksDefaultHandlers.defaultBalanceHandler();
     }
 
+    default GridRefillHandler<AbstractContainerMenu> refillHandler() {
+        return CraftingTweaksDefaultHandlers.defaultRefillHandler();
+    }
+
 }

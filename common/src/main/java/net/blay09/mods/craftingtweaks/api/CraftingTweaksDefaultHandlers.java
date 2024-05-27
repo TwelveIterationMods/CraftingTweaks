@@ -40,4 +40,8 @@ public class CraftingTweaksDefaultHandlers {
     public static GridRotateHandler<AbstractContainerMenu> defaultRectangularRotateHandler() {
         return internalMethods.defaultRectangularRotateHandler();
     }
+
+    public static GridRefillHandler<AbstractContainerMenu> defaultRefillHandler() {
+        return internalMethods.defaultRefillHandler();
+    }
 }

@@ -142,8 +142,7 @@ public class CraftingTweaksClient {
                     return true;
                 } else if (isRefill || isRefillStack) {
                     if (CraftingTweaks.isServerSideInstalled) {
-                        //Balm.getNetworking().sendToServer(new RefillLastCraftedMessage(grid.getId(), isRefillStack));
-                        clientProvider.refillLastCrafted(player, menu, grid, isRefillStack);
+                        Balm.getNetworking().sendToServer(new RefillLastCraftedMessage(grid.getId(), isRefillStack));
                     } else {
                         clientProvider.refillLastCrafted(player, menu, grid, isRefillStack);
                     }
