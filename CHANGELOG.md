@@ -1,3 +1,2 @@
-Updated to Minecraft 1.20.6
-
-- Fix crash when refilling crafting matrix on certain modded crafting grids
+- Updated to Minecraft 1.20.6
+- Added server-side variant of refilling the last crafted recipe, allowing for better mod compatibility support
