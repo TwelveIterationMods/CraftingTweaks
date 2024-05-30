@@ -1,2 +1,3 @@
 dependencies {
+    implementation("net.blay09.mods:kuma-api-forge:20.6.1-SNAPSHOT")
 }

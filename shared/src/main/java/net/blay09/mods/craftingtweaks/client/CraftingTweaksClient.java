@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.Window;
 import net.blay09.mods.balm.api.Balm;
 import net.blay09.mods.balm.api.client.BalmClient;
-import net.blay09.mods.balm.api.client.keymappings.BalmKeyMappings;
 import net.blay09.mods.balm.api.event.ItemCraftedEvent;
 import net.blay09.mods.balm.api.event.client.ConnectedToServerEvent;
 import net.blay09.mods.balm.api.event.client.screen.ScreenDrawEvent;
@@ -55,7 +54,7 @@ public class CraftingTweaksClient {
         //noinspection unchecked
         CraftingTweaksClientAPI.registerCraftingGridGuiHandler(AbstractContainerScreen.class, new DefaultGridGuiHandler());
 
-        ModKeyMappings.initialize(BalmClient.getKeyMappings());
+        ModKeyMappings.initialize();
 
         Balm.getEvents().onEvent(ItemCraftedEvent.class, CraftingTweaksClient::onItemCrafted);
 
@@ -101,20 +100,19 @@ public class CraftingTweaksClient {
         }
 
         CraftingGrid grid = CraftingTweaksProviderManager.getDefaultCraftingGrid(menu).orElse(null);
-        CompressType compressType = ModKeyMappings.getCompressTypeForKey(key, scanCode);
+        CompressType compressType = ModKeyMappings.getCompressTypeForKey(key, scanCode, event.getModifiers());
         if (grid != null) {
             String modId = grid.getId().getNamespace();
             CraftingTweaksMode config = CraftingTweaksConfig.getActive().getCraftingTweaksMode(modId);
             if (config == CraftingTweaksMode.DEFAULT || config == CraftingTweaksMode.HOTKEYS) {
-                BalmKeyMappings keyMappings = BalmClient.getKeyMappings();
-                boolean isRotate = keyMappings.isActiveAndMatches(ModKeyMappings.keyRotate, key, scanCode);
-                boolean isRotateCCW = keyMappings.isActiveAndMatches(ModKeyMappings.keyRotateCounterClockwise, key, scanCode);
-                boolean isBalance = keyMappings.isActiveAndMatches(ModKeyMappings.keyBalance, key, scanCode);
-                boolean isSpread = keyMappings.isActiveAndMatches(ModKeyMappings.keySpread, key, scanCode);
-                boolean isClear = keyMappings.isActiveAndMatches(ModKeyMappings.keyClear, key, scanCode);
-                boolean isForceClear = keyMappings.isActiveAndMatches(ModKeyMappings.keyForceClear, key, scanCode);
-                boolean isRefill = keyMappings.isActiveAndMatches(ModKeyMappings.keyRefillLast, key, scanCode);
-                boolean isRefillStack = keyMappings.isActiveAndMatches(ModKeyMappings.keyRefillLastStack, key, scanCode);
+                boolean isRotate = ModKeyMappings.keyRotate.isActiveAndMatchesKey(key, scanCode, event.getModifiers());
+                boolean isRotateCCW = ModKeyMappings.keyRotateCounterClockwise.isActiveAndMatchesKey(key, scanCode, event.getModifiers());
+                boolean isBalance = ModKeyMappings.keyBalance.isActiveAndMatchesKey(key, scanCode, event.getModifiers());
+                boolean isSpread = ModKeyMappings.keySpread.isActiveAndMatchesKey(key, scanCode, event.getModifiers());
+                boolean isClear = ModKeyMappings.keyClear.isActiveAndMatchesKey(key, scanCode, event.getModifiers());
+                boolean isForceClear = ModKeyMappings.keyForceClear.isActiveAndMatchesKey(key, scanCode, event.getModifiers());
+                boolean isRefill = ModKeyMappings.keyRefillLast.isActiveAndMatchesKey(key, scanCode, event.getModifiers());
+                boolean isRefillStack = ModKeyMappings.keyRefillLastStack.isActiveAndMatchesKey(key, scanCode, event.getModifiers());
                 if (isRotate || isRotateCCW) {
                     if (CraftingTweaks.isServerSideInstalled) {
                         Balm.getNetworking().sendToServer(new RotateMessage(grid.getId(), isRotateCCW));
@@ -206,7 +204,7 @@ public class CraftingTweaksClient {
         Slot mouseSlot = screen instanceof AbstractContainerScreen<?> ? ((AbstractContainerScreenAccessor) screen).getHoveredSlot() : null;
         CraftingGrid grid = CraftingTweaksProviderManager.getDefaultCraftingGrid(menu).orElse(null);
         if (grid != null) {
-            if (BalmClient.getKeyMappings().isKeyDownIgnoreContext(ModKeyMappings.keyTransferStack)) {
+            if (ModKeyMappings.keyTransferStack.isActiveAndDown()) {
                 if (mouseSlot != null && mouseSlot.hasItem()) {
                     List<Slot> transferSlots = Lists.newArrayList();
                     transferSlots.add(mouseSlot);
