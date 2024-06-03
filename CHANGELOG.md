@@ -1,1 +1,1 @@
-- Fix crash when refilling crafting matrix on certain modded crafting grids
+- Changed the way key mappings are treated. This should reduce compatibility issues, but will make key mappings non-configurable for the time being.
