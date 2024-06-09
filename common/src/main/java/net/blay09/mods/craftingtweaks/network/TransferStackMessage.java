@@ -1,5 +1,6 @@
 package net.blay09.mods.craftingtweaks.network;
 
+import net.blay09.mods.craftingtweaks.CraftingTweaks;
 import net.blay09.mods.craftingtweaks.CraftingTweaksProviderManager;
 import net.blay09.mods.craftingtweaks.api.GridTransferHandler;
 import net.minecraft.network.FriendlyByteBuf;
@@ -13,7 +14,7 @@ import net.minecraft.world.item.ItemStack;
 
 public class TransferStackMessage implements CustomPacketPayload {
 
-    public static CustomPacketPayload.Type<TransferStackMessage> TYPE = new CustomPacketPayload.Type<>(new ResourceLocation("craftingtweaks", "transfer_stack"));
+    public static CustomPacketPayload.Type<TransferStackMessage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(CraftingTweaks.MOD_ID, "transfer_stack"));
 
     private final ResourceLocation id;
     private final int slotNumber;

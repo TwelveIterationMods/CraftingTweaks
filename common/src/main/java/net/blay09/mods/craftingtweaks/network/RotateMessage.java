@@ -10,7 +10,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 
 public class RotateMessage implements CustomPacketPayload {
 
-    public static CustomPacketPayload.Type<RotateMessage> TYPE = new CustomPacketPayload.Type<>(new ResourceLocation(CraftingTweaks.MOD_ID, "rotate"));
+    public static CustomPacketPayload.Type<RotateMessage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(CraftingTweaks.MOD_ID, "rotate"));
 
     private final ResourceLocation id;
     private final boolean reverse;

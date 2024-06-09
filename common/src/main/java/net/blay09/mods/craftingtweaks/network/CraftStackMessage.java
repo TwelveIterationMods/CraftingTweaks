@@ -13,7 +13,7 @@ import net.minecraft.world.item.ItemStack;
 
 public class CraftStackMessage implements CustomPacketPayload {
 
-    public static CustomPacketPayload.Type<CraftStackMessage> TYPE = new CustomPacketPayload.Type<>(new ResourceLocation(CraftingTweaks.MOD_ID, "craft_stack"));
+    public static CustomPacketPayload.Type<CraftStackMessage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(CraftingTweaks.MOD_ID, "craft_stack"));
 
     private final int slotNumber;
 

@@ -10,7 +10,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 
 public class RefillLastCraftedMessage implements CustomPacketPayload {
 
-    public static Type<RefillLastCraftedMessage> TYPE = new Type<>(new ResourceLocation(CraftingTweaks.MOD_ID, "refill_last_crafted"));
+    public static Type<RefillLastCraftedMessage> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(CraftingTweaks.MOD_ID, "refill_last_crafted"));
 
     private final ResourceLocation id;
     private final boolean stack;

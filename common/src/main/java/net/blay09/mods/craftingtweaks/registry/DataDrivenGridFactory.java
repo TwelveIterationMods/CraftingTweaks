@@ -91,7 +91,7 @@ public class DataDrivenGridFactory {
 
                 CraftingGridDecorator grid;
                 if (effectiveGridStartFunction != null) {
-                    grid = new DefaultCraftingGrid(new ResourceLocation(senderModId, "default"), gridSlotNumber, gridSize) {
+                    grid = new DefaultCraftingGrid(ResourceLocation.fromNamespaceAndPath(senderModId, "default"), gridSlotNumber, gridSize) {
                         @Override
                         public int getGridStartSlot(Player player, AbstractContainerMenu menu) {
                             return effectiveGridStartFunction.apply(menu);

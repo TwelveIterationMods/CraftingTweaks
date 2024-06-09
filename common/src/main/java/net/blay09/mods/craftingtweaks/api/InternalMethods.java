@@ -5,6 +5,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeInput;
 
 import java.util.Optional;
 
@@ -28,9 +29,9 @@ public interface InternalMethods {
 
     Optional<RecipeHolder<?>> getLastCraftedRecipe(Player player);
 
-    <T extends Recipe<? extends Container>> void setLastCraftedRecipe(Player player, RecipeHolder<T> recipe);
+    <T extends Recipe<? extends RecipeInput>> void setLastCraftedRecipe(Player player, RecipeHolder<T> recipe);
 
-    <C extends Container, T extends Recipe<C>> void registerRecipeMatrixMapper(Class<T> recipeClass, RecipeMatrixMapper<T> recipeMatrixMapper);
+    <C extends RecipeInput, T extends Recipe<C>> void registerRecipeMatrixMapper(Class<T> recipeClass, RecipeMatrixMapper<T> recipeMatrixMapper);
 
-    <T extends Recipe<? extends Container>> RecipeMatrixMapper<T> getRecipeMatrixMapper(Class<T> recipeClass);
+    <T extends Recipe<? extends RecipeInput>> RecipeMatrixMapper<T> getRecipeMatrixMapper(Class<T> recipeClass);
 }

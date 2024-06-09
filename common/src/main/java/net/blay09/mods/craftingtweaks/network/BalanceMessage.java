@@ -1,5 +1,6 @@
 package net.blay09.mods.craftingtweaks.network;
 
+import net.blay09.mods.craftingtweaks.CraftingTweaks;
 import net.blay09.mods.craftingtweaks.CraftingTweaksProviderManager;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -9,7 +10,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 
 public class BalanceMessage implements CustomPacketPayload {
 
-    public static CustomPacketPayload.Type<BalanceMessage> TYPE = new CustomPacketPayload.Type<>(new ResourceLocation("craftingtweaks", "balance"));
+    public static CustomPacketPayload.Type<BalanceMessage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(CraftingTweaks.MOD_ID, "balance"));
 
     private final ResourceLocation id;
     private final boolean spread;

@@ -31,7 +31,7 @@ public class CraftingTweaks {
 
         Balm.getCommands().register(CraftingTweaksCommand::register);
 
-        Balm.addServerReloadListener(new ResourceLocation(MOD_ID, "json_registry"), new JsonCompatLoader());
+        Balm.addServerReloadListener(ResourceLocation.fromNamespaceAndPath(MOD_ID, "json_registry"), new JsonCompatLoader());
 
         CraftingTweaksAPI.registerCraftingGridProvider(new VanillaCraftingGridProvider());
         CraftingTweaksAPI.registerRecipeMatrixMapper(ShapedRecipe.class, new ShapedRecipeMatrixMapper());
@@ -44,7 +44,7 @@ public class CraftingTweaks {
             final var craftMatrix = event.getCraftMatrix();
             final var recipeManager = level.getRecipeManager();
             if (craftMatrix instanceof CraftingContainer craftingContainer) {
-                final var optionalRecipeHolder = recipeManager.getRecipeFor(RecipeType.CRAFTING, craftingContainer, level);
+                final var optionalRecipeHolder = recipeManager.getRecipeFor(RecipeType.CRAFTING, craftingContainer.asCraftInput(), level);
                 optionalRecipeHolder.ifPresent(recipeHolder -> CraftingTweaksAPI.setLastCraftedRecipe(player, recipeHolder));
             }
         });

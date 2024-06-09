@@ -20,6 +20,7 @@ import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeType;
 
 import java.util.Collection;
@@ -359,7 +360,8 @@ public class ClientProvider {
                 ItemStack result;
                 ItemStack mouseStack = slot.getItem();
                 if (size == 9 && !mouseStack.isEmpty() && mouseStack.getCount() >= 9) {
-                    result = findMatchingResult(new InventoryCraftingCompress(menu, 3, mouseStack), player);
+                    final var craftingContainer3x3 = new InventoryCraftingCompress(menu, 3, mouseStack);
+                    result = findMatchingResult(craftingContainer3x3.asCraftInput(), player);
                     if (!result.isEmpty() && !isCompressBlacklisted(result)) {
                         getController().handleInventoryMouseClick(menu.containerId, slot.index, 0, ClickType.PICKUP, player);
                         getController().handleInventoryMouseClick(menu.containerId, -999, getDragSplittingButton(0, 0), ClickType.QUICK_CRAFT, player);
@@ -369,7 +371,8 @@ public class ClientProvider {
                         getController().handleInventoryMouseClick(menu.containerId, -999, getDragSplittingButton(2, 0), ClickType.QUICK_CRAFT, player);
                         getController().handleInventoryMouseClick(menu.containerId, slot.index, 0, ClickType.PICKUP, player);
                     } else {
-                        result = findMatchingResult(new InventoryCraftingCompress(menu, 2, mouseStack), player);
+                        final var craftingContainer2x2 = new InventoryCraftingCompress(menu, 2, mouseStack);
+                        result = findMatchingResult(craftingContainer2x2.asCraftInput(), player);
                         if (!result.isEmpty() && !isCompressBlacklisted(result)) {
                             getController().handleInventoryMouseClick(menu.containerId, slot.index, 0, ClickType.PICKUP, player);
                             getController().handleInventoryMouseClick(menu.containerId, -999, getDragSplittingButton(0, 0), ClickType.QUICK_CRAFT, player);
@@ -384,7 +387,8 @@ public class ClientProvider {
                         }
                     }
                 } else if (size >= 4 && !mouseStack.isEmpty() && mouseStack.getCount() >= 4) {
-                    result = findMatchingResult(new InventoryCraftingCompress(menu, 2, mouseStack), player);
+                    final var craftingContainer = new InventoryCraftingCompress(menu, 2, mouseStack);
+                    result = findMatchingResult(craftingContainer.asCraftInput(), player);
                     if (!result.isEmpty() && !isCompressBlacklisted(result)) {
                         getController().handleInventoryMouseClick(menu.containerId, slot.index, 0, ClickType.PICKUP, player);
                         getController().handleInventoryMouseClick(menu.containerId, -999, getDragSplittingButton(0, 0), ClickType.QUICK_CRAFT, player);
@@ -428,11 +432,11 @@ public class ClientProvider {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T extends CraftingContainer & RecipeCraftingHolder> ItemStack findMatchingResult(T craftingInventory, LocalPlayer player) {
+    private static <T extends RecipeInput> ItemStack findMatchingResult(T craftingInventory, LocalPlayer player) {
         for (RecipeCollection recipeList : player.getRecipeBook().getCollections()) {
             for (RecipeHolder<?> recipe : recipeList.getRecipes()) {
                 if (recipe.value().getType() == RecipeType.CRAFTING) {
-                    Recipe<CraftingContainer> craftingRecipe = (Recipe<CraftingContainer>) recipe.value();
+                    final var craftingRecipe = (Recipe<RecipeInput>) recipe.value();
                     if (craftingRecipe.matches(craftingInventory, player.level())) {
                         return craftingRecipe.assemble(craftingInventory, player.level().registryAccess());
                     }

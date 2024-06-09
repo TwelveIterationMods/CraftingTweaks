@@ -9,6 +9,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeInput;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -77,19 +78,19 @@ public class InternalMethodsImpl implements InternalMethods {
     }
 
     @Override
-    public <T extends Recipe<? extends Container>> void setLastCraftedRecipe(Player player, RecipeHolder<T> recipe) {
+    public <T extends Recipe<? extends RecipeInput>> void setLastCraftedRecipe(Player player, RecipeHolder<T> recipe) {
         final var persistentData = Balm.getHooks().getPersistentData(player);
         persistentData.putString("LastCraftedRecipe", recipe.id().toString());
     }
 
     @Override
-    public <C extends Container, T extends Recipe<C>> void registerRecipeMatrixMapper(Class<T> recipeClass, RecipeMatrixMapper<T> recipeMatrixMapper) {
+    public <C extends RecipeInput, T extends Recipe<C>> void registerRecipeMatrixMapper(Class<T> recipeClass, RecipeMatrixMapper<T> recipeMatrixMapper) {
         recipeMatrixMappers.put(recipeClass, recipeMatrixMapper);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends Recipe<? extends Container>> RecipeMatrixMapper<T> getRecipeMatrixMapper(Class<T> recipeClass) {
+    public <T extends Recipe<? extends RecipeInput>> RecipeMatrixMapper<T> getRecipeMatrixMapper(Class<T> recipeClass) {
         for (Class<? extends Recipe<?>> handlerClass : recipeMatrixMappers.keySet()) {
             if (handlerClass.isAssignableFrom(recipeClass)) {
                 return (RecipeMatrixMapper<T>) recipeMatrixMappers.get(handlerClass);

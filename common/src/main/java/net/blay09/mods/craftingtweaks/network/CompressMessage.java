@@ -16,17 +16,14 @@ import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.RecipeCraftingHolder;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingRecipe;
-import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 
 import java.util.Objects;
 
 public class CompressMessage implements CustomPacketPayload {
 
-    public static CustomPacketPayload.Type<CompressMessage> TYPE = new CustomPacketPayload.Type<>(new ResourceLocation("craftingtweaks", "compress"));
+    public static CustomPacketPayload.Type<CompressMessage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("craftingtweaks", "compress"));
 
     private final int slotNumber;
     private final CompressType type;
@@ -84,7 +81,8 @@ public class CompressMessage implements CustomPacketPayload {
 
                 ItemStack slotStack = slot.getItem();
                 if (slot.container instanceof Inventory && ItemStack.isSameItemSameComponents(slot.getItem(), mouseSlot.getItem())) {
-                    ItemStack result = findMatchingResult(new InventoryCraftingDecompress(menu, slotStack), player);
+                    final var craftingContainer = new InventoryCraftingDecompress(menu, slotStack);
+                    ItemStack result = findMatchingResult(craftingContainer.asCraftInput(), craftingContainer, player);
                     if (!result.isEmpty() && !isBlacklisted(result) && !slotStack.isEmpty() && slotStack.getCount() >= 1) {
                         do {
                             if (player.getInventory().add(result.copy())) {
@@ -168,12 +166,12 @@ public class CompressMessage implements CustomPacketPayload {
         }
     }
 
-    private static <T extends CraftingContainer & RecipeCraftingHolder> ItemStack findMatchingResult(T craftingInventory, ServerPlayer player) {
+    private static <T extends CraftingInput> ItemStack findMatchingResult(T recipeInput, RecipeCraftingHolder recipeCraftingHolder, ServerPlayer player) {
         RecipeManager recipeManager = Objects.requireNonNull(player.getServer()).getRecipeManager();
         Level level = player.level();
-        RecipeHolder<CraftingRecipe> recipe = recipeManager.getRecipeFor(RecipeType.CRAFTING, craftingInventory, level).orElse(null);
-        if (recipe != null && craftingInventory.setRecipeUsed(level, player, recipe)) {
-            return recipe.value().assemble(craftingInventory, level.registryAccess());
+        RecipeHolder<CraftingRecipe> recipe = recipeManager.getRecipeFor(RecipeType.CRAFTING, recipeInput, level).orElse(null);
+        if (recipe != null && recipeCraftingHolder.setRecipeUsed(level, player, recipe)) {
+            return recipe.value().assemble(recipeInput, level.registryAccess());
         }
 
         return ItemStack.EMPTY;
@@ -204,7 +202,7 @@ public class CompressMessage implements CustomPacketPayload {
 
         if (maxGridSize >= 9) {
             InventoryCraftingCompress exampleInventory = new InventoryCraftingCompress(menu, 3, exampleStack);
-            result = findMatchingResult(exampleInventory, player);
+            result = findMatchingResult(exampleInventory.asCraftInput(), exampleInventory, player);
             if (!result.isEmpty() && !isBlacklisted(result)) {
                 recipeSize = 9;
             }
@@ -212,7 +210,7 @@ public class CompressMessage implements CustomPacketPayload {
 
         if (recipeSize == 0 && maxGridSize >= 4) {
             InventoryCraftingCompress exampleInventory = new InventoryCraftingCompress(menu, 2, exampleStack);
-            result = findMatchingResult(exampleInventory, player);
+            result = findMatchingResult(exampleInventory.asCraftInput(), exampleInventory, player);
             if (!result.isEmpty() && !isBlacklisted(result)) {
                 recipeSize = 4;
             }

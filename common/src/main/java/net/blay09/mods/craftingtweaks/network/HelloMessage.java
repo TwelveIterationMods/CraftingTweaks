@@ -8,7 +8,7 @@ import net.minecraft.world.entity.player.Player;
 
 public class HelloMessage implements CustomPacketPayload {
 
-    public static CustomPacketPayload.Type<HelloMessage> TYPE = new CustomPacketPayload.Type<>(new ResourceLocation(CraftingTweaks.MOD_ID, "hello"));
+    public static CustomPacketPayload.Type<HelloMessage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(CraftingTweaks.MOD_ID, "hello"));
 
     public static HelloMessage decode(FriendlyByteBuf buf) {
         return new HelloMessage();

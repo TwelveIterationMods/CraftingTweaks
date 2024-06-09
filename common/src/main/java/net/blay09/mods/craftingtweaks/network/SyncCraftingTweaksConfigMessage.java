@@ -7,7 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class SyncCraftingTweaksConfigMessage extends SyncConfigMessage<CraftingTweaksConfigData> {
 
-    public static final Type<SyncCraftingTweaksConfigMessage> TYPE = new Type<>(new ResourceLocation(CraftingTweaks.MOD_ID, "config"));
+    public static final Type<SyncCraftingTweaksConfigMessage> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(CraftingTweaks.MOD_ID, "config"));
 
     public SyncCraftingTweaksConfigMessage(CraftingTweaksConfigData craftingTweaksConfigData) {
         super(TYPE, craftingTweaksConfigData);

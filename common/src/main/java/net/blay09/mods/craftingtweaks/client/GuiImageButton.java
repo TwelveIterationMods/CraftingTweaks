@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class GuiImageButton extends Button {
 
-    private static final ResourceLocation texture = new ResourceLocation(CraftingTweaks.MOD_ID, "gui.png");
+    private static final ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(CraftingTweaks.MOD_ID, "gui.png");
 
     protected ButtonProperties properties;
 
