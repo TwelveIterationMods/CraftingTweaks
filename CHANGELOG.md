@@ -1,1 +1,2 @@
 - Updated to Minecraft 1.21.1
+- Fixed key mappings not being prioritized right when using key modifiers
