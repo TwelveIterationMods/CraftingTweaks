@@ -1,1 +1,1 @@
-- Changed the way key mappings are treated. This should reduce compatibility issues, but will make key mappings non-configurable for the time being.
+- Fixed key mappings not being prioritized right when using key modifiers
