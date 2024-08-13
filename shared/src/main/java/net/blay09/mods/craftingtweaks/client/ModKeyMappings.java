@@ -211,7 +211,7 @@ public class ModKeyMappings {
                             final var config = CraftingTweaksConfig.getActive().getCraftingTweaksMode(grid.getId().getNamespace());
                             if (config == CraftingTweaksMode.DEFAULT || config == CraftingTweaksMode.HOTKEYS) {
                                 if (CraftingTweaks.isServerSideInstalled) {
-                                    Balm.getNetworking().sendToServer(new RefillLastCraftedMessage(grid.getId(), false));
+                                    CraftingTweaksClient.getClientProvider().refillLastCrafted(Minecraft.getInstance().player, menu, grid, false);
                                 } else {
                                     CraftingTweaksClient.getClientProvider().refillLastCrafted(Minecraft.getInstance().player, menu, grid, false);
                                 }
@@ -234,7 +234,7 @@ public class ModKeyMappings {
                             final var config = CraftingTweaksConfig.getActive().getCraftingTweaksMode(grid.getId().getNamespace());
                             if (config == CraftingTweaksMode.DEFAULT || config == CraftingTweaksMode.HOTKEYS) {
                                 if (CraftingTweaks.isServerSideInstalled) {
-                                    Balm.getNetworking().sendToServer(new RefillLastCraftedMessage(grid.getId(), true));
+                                    CraftingTweaksClient.getClientProvider().refillLastCrafted(Minecraft.getInstance().player, menu, grid, true);
                                 } else {
                                     CraftingTweaksClient.getClientProvider().refillLastCrafted(Minecraft.getInstance().player, menu, grid, true);
                                 }
