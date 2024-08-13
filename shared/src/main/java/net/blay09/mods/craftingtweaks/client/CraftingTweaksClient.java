@@ -26,7 +26,6 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -70,109 +69,20 @@ public class CraftingTweaksClient {
         CraftingTweaksDebugger.initialize();
     }
 
-    public static boolean screenKeyPressed(ScreenKeyEvent event) {
-        Screen screen = event.getScreen();
-        int key = event.getKey();
-        int scanCode = event.getScanCode();
-        LocalPlayer player = Minecraft.getInstance().player;
-        if (player == null) {
-            return false;
-        }
-
-        AbstractContainerMenu menu = player.containerMenu;
-        if (menu == null) {
-            return false;
-        }
-
-        if (!(screen instanceof AbstractContainerScreen<?>)) {
-            return false;
-        }
-
-        // Toggle client-only mode for testing if BLAY is held
-        Window window = Minecraft.getInstance().getWindow();
-        if (CraftingTweaks.isServerSideInstalled
-                && GLFW.glfwGetKey(window.getWindow(), GLFW.GLFW_KEY_B) == 1
-                && GLFW.glfwGetKey(window.getWindow(), GLFW.GLFW_KEY_L) == 1
-                && GLFW.glfwGetKey(window.getWindow(), GLFW.GLFW_KEY_A) == 1
-                && (GLFW.glfwGetKey(window.getWindow(), GLFW.GLFW_KEY_Y) == 1 || GLFW.glfwGetKey(window.getWindow(), GLFW.GLFW_KEY_Z) == 1)) {
-            CraftingTweaks.isServerSideInstalled = false;
-            player.displayClientMessage(Component.literal("[CraftingTweaks] Enabled client-side testing mode"), false);
-        }
-
-        CraftingGrid grid = CraftingTweaksProviderManager.getDefaultCraftingGrid(menu).orElse(null);
-        CompressType compressType = ModKeyMappings.getCompressTypeForKey(key, scanCode, event.getModifiers());
-        if (grid != null) {
-            String modId = grid.getId().getNamespace();
-            CraftingTweaksMode config = CraftingTweaksConfig.getActive().getCraftingTweaksMode(modId);
-            if (config == CraftingTweaksMode.DEFAULT || config == CraftingTweaksMode.HOTKEYS) {
-                boolean isRotate = ModKeyMappings.keyRotate.isActiveAndMatchesKey(key, scanCode, event.getModifiers());
-                boolean isRotateCCW = ModKeyMappings.keyRotateCounterClockwise.isActiveAndMatchesKey(key, scanCode, event.getModifiers());
-                boolean isBalance = ModKeyMappings.keyBalance.isActiveAndMatchesKey(key, scanCode, event.getModifiers());
-                boolean isSpread = ModKeyMappings.keySpread.isActiveAndMatchesKey(key, scanCode, event.getModifiers());
-                boolean isClear = ModKeyMappings.keyClear.isActiveAndMatchesKey(key, scanCode, event.getModifiers());
-                boolean isForceClear = ModKeyMappings.keyForceClear.isActiveAndMatchesKey(key, scanCode, event.getModifiers());
-                boolean isRefill = ModKeyMappings.keyRefillLast.isActiveAndMatchesKey(key, scanCode, event.getModifiers());
-                boolean isRefillStack = ModKeyMappings.keyRefillLastStack.isActiveAndMatchesKey(key, scanCode, event.getModifiers());
-                if (isRotate || isRotateCCW) {
-                    if (CraftingTweaks.isServerSideInstalled) {
-                        Balm.getNetworking().sendToServer(new RotateMessage(grid.getId(), isRotateCCW));
-                    } else {
-                        clientProvider.rotateGrid(player, menu, grid, isRotateCCW);
-                    }
-                    return true;
-                } else if (isClear || isForceClear) {
-                    if (CraftingTweaks.isServerSideInstalled) {
-                        Balm.getNetworking().sendToServer(new ClearMessage(grid.getId(), isForceClear));
-                    } else {
-                        clientProvider.clearGrid(player, menu, grid, isForceClear);
-                    }
-                    return true;
-                } else if (isBalance || isSpread) {
-                    if (CraftingTweaks.isServerSideInstalled) {
-                        Balm.getNetworking().sendToServer(new BalanceMessage(grid.getId(), isSpread));
-                    } else {
-                        if (isSpread) {
-                            clientProvider.spreadGrid(player, menu, grid);
-                        } else {
-                            clientProvider.balanceGrid(player, menu, grid);
-                        }
-                    }
-                    return true;
-                } else if (isRefill || isRefillStack) {
-                    if (CraftingTweaks.isServerSideInstalled) {
-                        //Balm.getNetworking().sendToServer(new RefillLastCraftedMessage(grid.getId(), isRefillStack));
-                        clientProvider.refillLastCrafted(player, menu, grid, isRefillStack);
-                    } else {
-                        clientProvider.refillLastCrafted(player, menu, grid, isRefillStack);
-                    }
-                    return true;
-                }
-            }
-
-            AbstractContainerScreen<?> containerScreen = (AbstractContainerScreen<?>) screen;
-            if (compressType != null) {
-                Slot mouseSlot = ((AbstractContainerScreenAccessor) containerScreen).getHoveredSlot();
-                if (mouseSlot != null) {
-                    if (CraftingTweaks.isServerSideInstalled) {
-                        Balm.getNetworking().sendToServer(new CompressMessage(mouseSlot.index, compressType));
-                    } else {
-                        clientProvider.compress(player, menu, grid, mouseSlot, compressType);
-                    }
-                    return true;
-                }
-            }
-        } else if (CraftingTweaks.isServerSideInstalled) {
-            AbstractContainerScreen<?> containerScreen = (AbstractContainerScreen<?>) screen;
-            if (compressType != null) {
-                Slot mouseSlot = ((AbstractContainerScreenAccessor) containerScreen).getHoveredSlot();
-                if (mouseSlot != null) {
-                    Balm.getNetworking().sendToServer(new CompressMessage(mouseSlot.index, compressType));
-                }
-                return true;
+    public static void screenKeyPressed(ScreenKeyEvent event) {
+        final var player = Minecraft.getInstance().player;
+        if (player != null) {
+            // Toggle client-only mode for testing if BLAY is held
+            Window window = Minecraft.getInstance().getWindow();
+            if (CraftingTweaks.isServerSideInstalled
+                    && GLFW.glfwGetKey(window.getWindow(), GLFW.GLFW_KEY_B) == 1
+                    && GLFW.glfwGetKey(window.getWindow(), GLFW.GLFW_KEY_L) == 1
+                    && GLFW.glfwGetKey(window.getWindow(), GLFW.GLFW_KEY_A) == 1
+                    && (GLFW.glfwGetKey(window.getWindow(), GLFW.GLFW_KEY_Y) == 1 || GLFW.glfwGetKey(window.getWindow(), GLFW.GLFW_KEY_Z) == 1)) {
+                CraftingTweaks.isServerSideInstalled = false;
+                player.displayClientMessage(Component.literal("[CraftingTweaks] Enabled client-side testing mode"), false);
             }
         }
-
-        return false;
     }
 
     public static boolean screenMouseRelease(ScreenMouseEvent event) {
@@ -340,20 +250,6 @@ public class CraftingTweaksClient {
         }
 
         handleRightClickCrafting();
-
-        // TODO can probably be removed
-//        if (!CraftingTweaksConfig.getActive().client.hideButtonTooltips) {
-//            List<Component> tooltipList = Collections.emptyList();
-//            for (GuiEventListener button : ((ScreenAccessor) screen).balm_getChildren()) {
-//                if (button instanceof ITooltipProvider && button.isMouseOver(mouseX, mouseY)) {
-//                    tooltipList = ((ITooltipProvider) button).getTooltip();
-//                    break;
-//                }
-//            }
-//            if (!tooltipList.isEmpty()) {
-//                screen.renderTooltip(poseStack, tooltipList, Optional.empty(), mouseX, mouseY);
-//            }
-//        }
     }
 
     private static void onItemCrafted(ItemCraftedEvent event) {
