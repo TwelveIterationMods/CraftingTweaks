@@ -1,6 +1,6 @@
 package net.blay09.mods.craftingtweaks.api;
 
-import net.minecraft.world.Container;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.crafting.Recipe;
@@ -27,11 +27,11 @@ public interface InternalMethods {
 
     GridRefillHandler<AbstractContainerMenu> defaultRefillHandler();
 
-    Optional<RecipeHolder<?>> getLastCraftedRecipe(Player player);
+    Optional<RecipeHolder<?>> getLastCraftedRecipe(ServerPlayer player);
 
-    <T extends Recipe<? extends RecipeInput>> void setLastCraftedRecipe(Player player, RecipeHolder<T> recipe);
+    <T extends Recipe<? extends RecipeInput>> void setLastCraftedRecipe(ServerPlayer player, RecipeHolder<T> recipe);
 
-    <C extends RecipeInput, T extends Recipe<C>> void registerRecipeMatrixMapper(Class<T> recipeClass, RecipeMatrixMapper<T> recipeMatrixMapper);
+    <C extends RecipeInput, T extends Recipe<C>> void registerRecipeMapper(Class<T> recipeClass, RecipeMapper<T> recipeMapper);
 
-    <T extends Recipe<? extends RecipeInput>> RecipeMatrixMapper<T> getRecipeMatrixMapper(Class<T> recipeClass);
+    <T extends Recipe<? extends RecipeInput>> RecipeMapper<T> getRecipeMapper(Class<T> recipeClass);
 }

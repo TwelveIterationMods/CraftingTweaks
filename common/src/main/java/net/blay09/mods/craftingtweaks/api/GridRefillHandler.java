@@ -1,5 +1,6 @@
 package net.blay09.mods.craftingtweaks.api;
 
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -14,7 +15,7 @@ public interface GridRefillHandler<TMenu extends AbstractContainerMenu> {
      * @param player the player this is in regard to
      * @param menu   the menu the grid is part of
      */
-    default Optional<RecipeHolder<?>> getLastCrafted(CraftingGrid grid, Player player, TMenu menu) {
+    default Optional<RecipeHolder<?>> getLastCrafted(CraftingGrid grid, ServerPlayer player, TMenu menu) {
         return CraftingTweaksAPI.getLastCraftedRecipe(player);
     }
 
@@ -25,7 +26,7 @@ public interface GridRefillHandler<TMenu extends AbstractContainerMenu> {
      * @param menu   the menu the grid is part of
      * @param stack  if true, the grid will be filled to produce a stack of the last crafted recipe
      */
-    default void refillLastCrafted(CraftingGrid grid, Player player, TMenu menu, boolean stack) {
+    default void refillLastCrafted(CraftingGrid grid, ServerPlayer player, TMenu menu, boolean stack) {
         final var lastCrafted = getLastCrafted(grid, player, menu);
         lastCrafted.ifPresent(recipeHolder -> refillRecipe(grid, player, menu, recipeHolder, stack));
     }

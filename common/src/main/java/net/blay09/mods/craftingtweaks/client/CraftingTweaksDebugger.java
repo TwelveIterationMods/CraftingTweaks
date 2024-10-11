@@ -88,9 +88,7 @@ public class CraftingTweaksDebugger {
                 }
                 for (int x = startX; x <= endX; x++) {
                     for (int y = startY; y <= endY; y++) {
-                        graphics.setColor(1f, 1f, 1f, 0.1f);
-                        graphics.fillGradient(x, y, x + 16, y + 16, 0x1000FF00, 0x1000FF00);
-                        graphics.setColor(1f, 1f, 1f, 1f);
+                        graphics.fillGradient(x, y, x + 16, y + 16, 0x1900FF00, 0x1900FF00);
                     }
                 }
                 graphics.pose().popPose();

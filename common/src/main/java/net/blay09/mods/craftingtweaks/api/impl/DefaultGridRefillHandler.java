@@ -36,7 +36,7 @@ public class DefaultGridRefillHandler implements GridRefillHandler<AbstractConta
         outer:
         do {
             final var ingredientTokens = operation.getIngredientTokens();
-            final var matrixMapper = CraftingTweaksAPI.getRecipeMatrixMapper(recipe.getClass());
+            final var matrixMapper = CraftingTweaksAPI.getRecipeMapper(recipe.getClass());
 
             final var matrixDiff = new HashMap<Integer, IngredientToken>();
             for (int i = 0; i < ingredientTokens.size(); i++) {
