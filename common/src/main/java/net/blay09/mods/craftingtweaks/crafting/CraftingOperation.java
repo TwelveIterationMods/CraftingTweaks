@@ -2,33 +2,32 @@ package net.blay09.mods.craftingtweaks.crafting;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import it.unimi.dsi.fastutil.ints.IntList;
+import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
+import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class CraftingOperation {
 
-    public record IngredientTokenKey(int providerIndex, IntList stackingIds) {
+    public record IngredientTokenKey(int providerIndex, List<Holder<Item>> items) {
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             IngredientTokenKey that = (IngredientTokenKey) o;
-            return providerIndex == that.providerIndex && Objects.equals(stackingIds, that.stackingIds);
+            return providerIndex == that.providerIndex && Objects.equals(items, that.items);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(providerIndex, stackingIds);
+            return Objects.hash(providerIndex, items);
         }
     }
 
@@ -58,10 +57,11 @@ public class CraftingOperation {
         missingIngredients.clear();
         missingIngredientsMask = 0;
 
-        final var ingredients = recipe.getIngredients();
+        final var recipeMapper = CraftingTweaksAPI.getRecipeMapper(recipe.getClass());
+        final List<Optional<Ingredient>> ingredients = recipeMapper.getIngredients(recipe);
         for (int i = 0; i < ingredients.size(); i++) {
-            final var ingredient = ingredients.get(i);
-            if (ingredient.isEmpty()) {
+            final var ingredient = ingredients.get(i).orElse(null);
+            if (ingredient == null || ingredient.items().isEmpty()) {
                 ingredientTokens.add(IngredientToken.EMPTY);
                 continue;
             }
@@ -69,9 +69,9 @@ public class CraftingOperation {
             final var lockedInput = lockedInputs != null ? lockedInputs.get(i) : ItemStack.EMPTY;
             final var ingredientToken = accountForIngredient(ingredient, lockedInput);
             if (ingredientToken != null) {
-                if (ingredient.getItems().length > 1) {
+                if (ingredient.items().size() > 1) {
                     if (lockedInputs == null) {
-                        lockedInputs = NonNullList.withSize(recipe.getIngredients().size(), ItemStack.EMPTY);
+                        lockedInputs = NonNullList.withSize(ingredients.size(), ItemStack.EMPTY);
                     }
                     lockedInputs.set(i, ingredientToken.peek());
                 }
@@ -109,7 +109,7 @@ public class CraftingOperation {
 
     @Nullable
     private IngredientToken accountForIngredient(int ingredientProviderIndex, IngredientProvider ingredientProvider, Ingredient ingredient, ItemStack lockedInput, boolean useCache) {
-        final var ingredientTokenKey = new IngredientTokenKey(ingredientProviderIndex, ingredient.getStackingIds());
+        final var ingredientTokenKey = new IngredientTokenKey(ingredientProviderIndex, ingredient.items());
         final var scopedIngredientTokens = tokensByIngredient.get(ingredientTokenKey);
         final var cacheHint = useCache ? context.getCacheHintFor(ingredientTokenKey) : IngredientCacheHint.NONE;
         final var ingredientToken = findIngredient(ingredientProvider, ingredient, lockedInput, scopedIngredientTokens, cacheHint);

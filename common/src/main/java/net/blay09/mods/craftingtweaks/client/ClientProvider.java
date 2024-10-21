@@ -433,14 +433,15 @@ public class ClientProvider {
 
     @SuppressWarnings("unchecked")
     private static <T extends RecipeInput> ItemStack findMatchingResult(T craftingInventory, LocalPlayer player) {
-        for (RecipeCollection recipeList : player.getRecipeBook().getCollections()) {
-            for (RecipeHolder<?> recipe : recipeList.getRecipes()) {
-                if (recipe.value().getType() == RecipeType.CRAFTING) {
-                    final var craftingRecipe = (Recipe<RecipeInput>) recipe.value();
-                    if (craftingRecipe.matches(craftingInventory, player.level())) {
-                        return craftingRecipe.assemble(craftingInventory, player.level().registryAccess());
-                    }
-                }
+        for (final var recipeList : player.getRecipeBook().getCollections()) {
+            for (final var recipe : recipeList.getRecipes()) {
+                // TODO Recipes are no longer available on the client
+                // if (recipe.value().getType() == RecipeType.CRAFTING) {
+                //     final var craftingRecipe = (Recipe<RecipeInput>) recipe.value();
+                //     if (craftingRecipe.matches(craftingInventory, player.level())) {
+                //         return craftingRecipe.assemble(craftingInventory, player.level().registryAccess());
+                //     }
+                // }
             }
         }
 

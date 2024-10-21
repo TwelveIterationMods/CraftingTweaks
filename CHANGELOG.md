@@ -1,1 +1,2 @@
-- Fixed refilling stack only refilling a single craft
+- Updated to Minecraft 1.21.2
+- The Compress key now only works if the mod is installed on the server side 

@@ -13,6 +13,8 @@ import net.blay09.mods.craftingtweaks.registry.JsonCompatLoader;
 import net.blay09.mods.craftingtweaks.network.HelloMessage;
 import net.blay09.mods.craftingtweaks.network.ModNetworking;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.ShapedRecipe;
@@ -34,18 +36,20 @@ public class CraftingTweaks {
         Balm.addServerReloadListener(ResourceLocation.fromNamespaceAndPath(MOD_ID, "json_registry"), new JsonCompatLoader());
 
         CraftingTweaksAPI.registerCraftingGridProvider(new VanillaCraftingGridProvider());
-        CraftingTweaksAPI.registerRecipeMatrixMapper(ShapedRecipe.class, new ShapedRecipeMatrixMapper());
-        CraftingTweaksAPI.registerRecipeMatrixMapper(ShapelessRecipe.class, new ShapelessRecipeMatrixMapper());
+        CraftingTweaksAPI.registerRecipeMapper(ShapedRecipe.class, new ShapedRecipeMatrixMapper());
+        CraftingTweaksAPI.registerRecipeMapper(ShapelessRecipe.class, new ShapelessRecipeMatrixMapper());
 
         Balm.getEvents().onEvent(PlayerLoginEvent.class, event -> Balm.getNetworking().sendTo(event.getPlayer(), new HelloMessage()));
         Balm.getEvents().onEvent(ItemCraftedEvent.class, event -> {
             final var player = event.getPlayer();
             final var level = player.level();
-            final var craftMatrix = event.getCraftMatrix();
-            final var recipeManager = level.getRecipeManager();
-            if (craftMatrix instanceof CraftingContainer craftingContainer) {
-                final var optionalRecipeHolder = recipeManager.getRecipeFor(RecipeType.CRAFTING, craftingContainer.asCraftInput(), level);
-                optionalRecipeHolder.ifPresent(recipeHolder -> CraftingTweaksAPI.setLastCraftedRecipe(player, recipeHolder));
+            if (player instanceof ServerPlayer serverPlayer && level instanceof ServerLevel serverLevel) {
+                final var craftMatrix = event.getCraftMatrix();
+                final var recipeManager = serverLevel.getServer().getRecipeManager();
+                if (craftMatrix instanceof CraftingContainer craftingContainer) {
+                    final var optionalRecipeHolder = recipeManager.getRecipeFor(RecipeType.CRAFTING, craftingContainer.asCraftInput(), level);
+                    optionalRecipeHolder.ifPresent(recipeHolder -> CraftingTweaksAPI.setLastCraftedRecipe(serverPlayer, recipeHolder));
+                }
             }
         });
     }

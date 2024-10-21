@@ -170,7 +170,7 @@ public class CompressMessage implements CustomPacketPayload {
         RecipeManager recipeManager = Objects.requireNonNull(player.getServer()).getRecipeManager();
         Level level = player.level();
         RecipeHolder<CraftingRecipe> recipe = recipeManager.getRecipeFor(RecipeType.CRAFTING, recipeInput, level).orElse(null);
-        if (recipe != null && recipeCraftingHolder.setRecipeUsed(level, player, recipe)) {
+        if (recipe != null && recipeCraftingHolder.setRecipeUsed(player, recipe)) {
             return recipe.value().assemble(recipeInput, level.registryAccess());
         }
 

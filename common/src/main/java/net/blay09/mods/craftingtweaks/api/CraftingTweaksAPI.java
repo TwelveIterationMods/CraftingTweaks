@@ -1,6 +1,6 @@
 package net.blay09.mods.craftingtweaks.api;
 
-import net.minecraft.world.Container;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -30,19 +30,19 @@ public class CraftingTweaksAPI {
         internalMethods.unregisterCraftingGridProvider(provider);
     }
 
-    public static <C extends RecipeInput, T extends Recipe<C>> void registerRecipeMatrixMapper(Class<T> recipeClass, RecipeMatrixMapper<T> recipeMatrixMapper) {
-        internalMethods.registerRecipeMatrixMapper(recipeClass, recipeMatrixMapper);
+    public static <C extends RecipeInput, T extends Recipe<C>> void registerRecipeMapper(Class<T> recipeClass, RecipeMapper<T> recipeMapper) {
+        internalMethods.registerRecipeMapper(recipeClass, recipeMapper);
     }
 
-    public static <C extends RecipeInput, T extends Recipe<C>> RecipeMatrixMapper<T> getRecipeMatrixMapper(Class<T> recipe) {
-        return internalMethods.getRecipeMatrixMapper(recipe);
+    public static <C extends RecipeInput, T extends Recipe<C>> RecipeMapper<T> getRecipeMapper(Class<T> recipe) {
+        return internalMethods.getRecipeMapper(recipe);
     }
 
-    public static Optional<RecipeHolder<?>> getLastCraftedRecipe(Player player) {
+    public static Optional<RecipeHolder<?>> getLastCraftedRecipe(ServerPlayer player) {
         return internalMethods.getLastCraftedRecipe(player);
     }
 
-    public static <T extends Recipe<? extends RecipeInput>> void setLastCraftedRecipe(Player player, RecipeHolder<T> recipe) {
+    public static <T extends Recipe<? extends RecipeInput>> void setLastCraftedRecipe(ServerPlayer player, RecipeHolder<T> recipe) {
         internalMethods.setLastCraftedRecipe(player, recipe);
     }
 }
