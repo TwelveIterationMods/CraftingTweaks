@@ -1,7 +1,9 @@
 package net.blay09.mods.craftingtweaks.network;
 
 import net.blay09.mods.craftingtweaks.CraftingTweaks;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.resources.ResourceLocation;
@@ -11,24 +13,16 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
-public class CraftStackMessage implements CustomPacketPayload {
+public record CraftStackMessage(int slotNumber) implements CustomPacketPayload {
 
-    public static CustomPacketPayload.Type<CraftStackMessage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(CraftingTweaks.MOD_ID, "craft_stack"));
+    public static CustomPacketPayload.Type<CraftStackMessage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(CraftingTweaks.MOD_ID,
+            "craft_stack"));
 
-    private final int slotNumber;
-
-    public CraftStackMessage(int slotId) {
-        this.slotNumber = slotId;
-    }
-
-    public static CraftStackMessage decode(FriendlyByteBuf buf) {
-        int slotNumber = buf.readByte();
-        return new CraftStackMessage(slotNumber);
-    }
-
-    public static void encode(FriendlyByteBuf buf, CraftStackMessage message) {
-        buf.writeByte(message.slotNumber);
-    }
+    public static final StreamCodec<RegistryFriendlyByteBuf, CraftStackMessage> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.INT,
+            CraftStackMessage::slotNumber,
+            CraftStackMessage::new
+    );
 
     public static void handle(ServerPlayer player, CraftStackMessage message) {
         if (player == null) {

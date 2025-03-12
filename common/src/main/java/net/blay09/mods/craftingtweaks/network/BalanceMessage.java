@@ -2,34 +2,25 @@ package net.blay09.mods.craftingtweaks.network;
 
 import net.blay09.mods.craftingtweaks.CraftingTweaks;
 import net.blay09.mods.craftingtweaks.CraftingTweaksProviderManager;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 
-public class BalanceMessage implements CustomPacketPayload {
+public record BalanceMessage(ResourceLocation id, boolean spread) implements CustomPacketPayload {
 
     public static CustomPacketPayload.Type<BalanceMessage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(CraftingTweaks.MOD_ID, "balance"));
 
-    private final ResourceLocation id;
-    private final boolean spread;
-
-    public BalanceMessage(ResourceLocation id, boolean spread) {
-        this.id = id;
-        this.spread = spread;
-    }
-
-    public static BalanceMessage decode(FriendlyByteBuf buf) {
-        ResourceLocation id = buf.readResourceLocation();
-        boolean spread = buf.readBoolean();
-        return new BalanceMessage(id, spread);
-    }
-
-    public static void encode(FriendlyByteBuf buf, BalanceMessage message) {
-        buf.writeResourceLocation(message.id);
-        buf.writeBoolean(message.spread);
-    }
+    public static final StreamCodec<RegistryFriendlyByteBuf, BalanceMessage> STREAM_CODEC = StreamCodec.composite(
+            ResourceLocation.STREAM_CODEC,
+            BalanceMessage::id,
+            ByteBufCodecs.BOOL,
+            BalanceMessage::spread,
+            BalanceMessage::new
+    );
 
     public static void handle(ServerPlayer player, BalanceMessage message) {
         if (player == null) {

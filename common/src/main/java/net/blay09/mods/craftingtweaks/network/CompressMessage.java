@@ -4,8 +4,12 @@ import net.blay09.mods.balm.api.Balm;
 import net.blay09.mods.craftingtweaks.*;
 import net.blay09.mods.craftingtweaks.api.CraftingGrid;
 import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfig;
+import net.minecraft.core.IdMap;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -20,29 +24,18 @@ import net.minecraft.world.level.Level;
 
 import java.util.Objects;
 
-public class CompressMessage implements CustomPacketPayload {
+public record CompressMessage(int slotNumber, CompressType compressType) implements CustomPacketPayload {
 
     public static CustomPacketPayload.Type<CompressMessage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("craftingtweaks",
             "compress"));
 
-    private final int slotNumber;
-    private final CompressType type;
-
-    public CompressMessage(int slotNumber, CompressType type) {
-        this.slotNumber = slotNumber;
-        this.type = type;
-    }
-
-    public static CompressMessage decode(FriendlyByteBuf buf) {
-        int slotNumber = buf.readInt();
-        CompressType type = CompressType.values()[buf.readByte()];
-        return new CompressMessage(slotNumber, type);
-    }
-
-    public static void encode(FriendlyByteBuf buf, CompressMessage message) {
-        buf.writeInt(message.slotNumber);
-        buf.writeByte(message.type.ordinal());
-    }
+    public static StreamCodec<RegistryFriendlyByteBuf, CompressMessage> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.INT,
+            CompressMessage::slotNumber,
+            ByteBufCodecs.idMapper(it -> CompressType.values()[it], CompressType::ordinal),
+            CompressMessage::compressType,
+            CompressMessage::new
+    );
 
     public static void handle(ServerPlayer player, CompressMessage message) {
         if (player == null) {
@@ -54,7 +47,7 @@ public class CompressMessage implements CustomPacketPayload {
             return;
         }
 
-        CompressType compressType = message.type;
+        CompressType compressType = message.compressType;
         Slot mouseSlot = menu.slots.get(message.slotNumber);
         if (!(mouseSlot.container instanceof Inventory)) {
             return;

@@ -3,7 +3,9 @@ package net.blay09.mods.craftingtweaks.network;
 import net.blay09.mods.craftingtweaks.CraftingTweaks;
 import net.blay09.mods.craftingtweaks.CraftingTweaksProviderManager;
 import net.blay09.mods.craftingtweaks.api.GridTransferHandler;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -12,28 +14,17 @@ import net.minecraft.world.inventory.ResultSlot;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
-public class TransferStackMessage implements CustomPacketPayload {
+public record TransferStackMessage(ResourceLocation id, int slotNumber) implements CustomPacketPayload {
 
     public static CustomPacketPayload.Type<TransferStackMessage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(CraftingTweaks.MOD_ID, "transfer_stack"));
 
-    private final ResourceLocation id;
-    private final int slotNumber;
-
-    public TransferStackMessage(ResourceLocation id, int slotNumber) {
-        this.id = id;
-        this.slotNumber = slotNumber;
-    }
-
-    public static void encode(FriendlyByteBuf buf, TransferStackMessage message) {
-        buf.writeResourceLocation(message.id);
-        buf.writeInt(message.slotNumber);
-    }
-
-    public static TransferStackMessage decode(FriendlyByteBuf buf) {
-        ResourceLocation id = buf.readResourceLocation();
-        int slotNumber = buf.readInt();
-        return new TransferStackMessage(id, slotNumber);
-    }
+    public static final StreamCodec<RegistryFriendlyByteBuf, TransferStackMessage> STREAM_CODEC = StreamCodec.composite(
+            ResourceLocation.STREAM_CODEC,
+            TransferStackMessage::id,
+            ByteBufCodecs.INT,
+            TransferStackMessage::slotNumber,
+            TransferStackMessage::new
+    );
 
     public static void handle(ServerPlayer player, TransferStackMessage message) {
         if (player == null) {

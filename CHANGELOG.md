@@ -1,2 +1,1 @@
-- Fixed item loss when decompressing a stack
-- Fixed dupe bug
+- Updated to Minecraft 1.21.5

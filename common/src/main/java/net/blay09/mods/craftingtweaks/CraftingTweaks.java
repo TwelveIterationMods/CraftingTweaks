@@ -43,7 +43,7 @@ public class CraftingTweaks {
         CraftingTweaksAPI.registerRecipeMapper(ShapedRecipe.class, new ShapedRecipeMatrixMapper());
         CraftingTweaksAPI.registerRecipeMapper(ShapelessRecipe.class, new ShapelessRecipeMatrixMapper());
 
-        Balm.getEvents().onEvent(PlayerLoginEvent.class, event -> Balm.getNetworking().sendTo(event.getPlayer(), new HelloMessage()));
+        Balm.getEvents().onEvent(PlayerLoginEvent.class, event -> Balm.getNetworking().sendTo(event.getPlayer(), HelloMessage.INSTANCE));
         Balm.getEvents().onEvent(ItemCraftedEvent.class, event -> {
             final var player = event.getPlayer();
             final var level = player.level();

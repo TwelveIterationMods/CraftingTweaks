@@ -7,7 +7,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -71,12 +70,10 @@ public class InternalMethodsImpl implements InternalMethods {
         final var level = player.serverLevel();
         final var recipeManager = level.getServer().getRecipeManager();
         final var persistentData = Balm.getHooks().getPersistentData(player);
-        final var lastCraftedRecipeId = ResourceLocation.tryParse(persistentData.getString("LastCraftedRecipe"));
-        if (lastCraftedRecipeId != null) {
-            return recipeManager.byKey(ResourceKey.create(Registries.RECIPE, lastCraftedRecipeId));
-        }
-
-        return Optional.empty();
+        return persistentData.getString("LastCraftedRecipe")
+                .flatMap(it -> Optional.ofNullable(ResourceLocation.tryParse(it)))
+                .map(it -> ResourceKey.create(Registries.RECIPE, it))
+                .flatMap(recipeManager::byKey);
     }
 
     @Override
