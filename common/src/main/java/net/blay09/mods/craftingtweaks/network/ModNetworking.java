@@ -1,10 +1,7 @@
 package net.blay09.mods.craftingtweaks.network;
 
-
 import net.blay09.mods.balm.api.network.BalmNetworking;
-import net.blay09.mods.balm.api.network.SyncConfigMessage;
 import net.blay09.mods.craftingtweaks.CraftingTweaks;
-import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfigData;
 
 public class ModNetworking {
 
@@ -19,8 +16,6 @@ public class ModNetworking {
         networking.registerServerboundPacket(CompressMessage.TYPE, CompressMessage.class, CompressMessage.STREAM_CODEC, CompressMessage::handle);
         networking.registerServerboundPacket(CraftStackMessage.TYPE, CraftStackMessage.class, CraftStackMessage.STREAM_CODEC, CraftStackMessage::handle);
         networking.registerServerboundPacket(RefillLastCraftedMessage.TYPE, RefillLastCraftedMessage.class, RefillLastCraftedMessage.STREAM_CODEC, RefillLastCraftedMessage::handle);
-
-        SyncConfigMessage.register(SyncCraftingTweaksConfigMessage.TYPE, SyncCraftingTweaksConfigMessage.class, SyncCraftingTweaksConfigMessage::new, CraftingTweaksConfigData.class, CraftingTweaksConfigData::new);
     }
 
 }

@@ -24,9 +24,6 @@
     ],
     "client": [
       "net.blay09.mods.craftingtweaks.fabric.client.FabricCraftingTweaksClient"
-    ],
-    "modmenu": [
-      "net.blay09.mods.craftingtweaks.fabric.compat.ModMenuIntegration"
     ]
   },
   "mixins": [

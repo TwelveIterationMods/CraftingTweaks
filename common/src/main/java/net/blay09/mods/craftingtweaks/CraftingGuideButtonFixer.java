@@ -1,7 +1,6 @@
 package net.blay09.mods.craftingtweaks;
 
 import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfig;
-import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfigData;
 import net.blay09.mods.balm.mixin.AbstractContainerScreenAccessor;
 import net.blay09.mods.balm.mixin.ImageButtonAccessor;
 import net.blay09.mods.balm.mixin.ScreenAccessor;
@@ -18,7 +17,7 @@ public class CraftingGuideButtonFixer {
     public static Button fixMistakes(AbstractContainerScreen<?> screen) {
         Button button = findCraftButton(((ScreenAccessor) screen).balm_getChildren());
         if (button != null) {
-            CraftingTweaksConfigData config = CraftingTweaksConfig.getActive();
+            CraftingTweaksConfig config = CraftingTweaksConfig.getActive();
             if (config.client.hideVanillaCraftingGuide) {
                 button.visible = false;
             } else if (screen instanceof CraftingScreen) {
