@@ -4,6 +4,7 @@ import net.blay09.mods.balm.mixin.AbstractContainerScreenAccessor;
 import net.blay09.mods.balm.mixin.ImageButtonAccessor;
 import net.blay09.mods.balm.mixin.ScreenAccessor;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 
 import java.util.Optional;
@@ -33,7 +34,9 @@ public interface GridGuiHandler {
         final var buttons = ((ScreenAccessor) screen).balm_getChildren();
         return buttons
                 .stream()
-                .filter(p -> p instanceof ImageButtonAccessor imageButton && imageButton.getSprites().get(false, false).getPath().equals("recipe_book/button"))
+                .filter(p -> p instanceof ImageButton && ((ImageButtonAccessor) p).getResourceLocation() != null && ((ImageButtonAccessor) p).getResourceLocation()
+                        .getPath()
+                        .equals("textures/gui/recipe_button.png"))
                 .findFirst()
                 .map(it -> (AbstractWidget) it);
     }
