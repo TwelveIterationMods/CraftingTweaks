@@ -4,6 +4,7 @@ import net.blay09.mods.craftingtweaks.api.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.CraftingScreen;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
@@ -64,4 +65,10 @@ public class DefaultGridGuiHandler implements GridGuiHandler {
         };
     }
 
+    @Override
+    public void repositionRecipeBookButton(AbstractContainerScreen<?> screen, AbstractWidget button) {
+        if (screen instanceof CraftingScreen) {
+            GridGuiHandler.super.repositionRecipeBookButton(screen, button);
+        }
+    }
 }
