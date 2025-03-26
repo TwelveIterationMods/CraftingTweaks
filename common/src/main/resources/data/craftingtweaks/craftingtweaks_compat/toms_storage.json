@@ -1,7 +1,7 @@
 {
   "modid": "toms_storage",
   "silent": false,
-  "containerClass": "com.tom.storagemod.gui.CraftingTerminalMenu",
+  "containerClass": "com.tom.storagemod.menu.CraftingTerminalMenu",
   "containerCallbackClass": "",
   "validContainerPredicateClass": "",
   "getGridStartFunctionClass": "",
