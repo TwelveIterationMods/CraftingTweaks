@@ -1,2 +1,3 @@
-- Fixed item loss when decompressing a stack
-- Fixed dupe bug
+- Fixed Tom's Simple Storage support
+  - Note: Crafting Tweaks is only supported on the "default" mode of the Crafting Terminal
+- Added APIs for defining how to reposition or hide the recipe book button
