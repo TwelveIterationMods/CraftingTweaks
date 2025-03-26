@@ -11,17 +11,21 @@ import net.blay09.mods.balm.api.event.client.screen.ScreenDrawEvent;
 import net.blay09.mods.balm.api.event.client.screen.ScreenInitEvent;
 import net.blay09.mods.balm.api.event.client.screen.ScreenKeyEvent;
 import net.blay09.mods.balm.api.event.client.screen.ScreenMouseEvent;
-import net.blay09.mods.craftingtweaks.*;
+import net.blay09.mods.balm.mixin.AbstractContainerScreenAccessor;
+import net.blay09.mods.craftingtweaks.CraftingGuideButtonFixer;
+import net.blay09.mods.craftingtweaks.CraftingTweaks;
+import net.blay09.mods.craftingtweaks.CraftingTweaksProviderManager;
 import net.blay09.mods.craftingtweaks.api.CraftingGrid;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksClientAPI;
 import net.blay09.mods.craftingtweaks.api.GridGuiHandler;
-import net.blay09.mods.craftingtweaks.api.impl.InternalClientMethodsImpl;
 import net.blay09.mods.craftingtweaks.api.impl.DefaultGridGuiHandler;
+import net.blay09.mods.craftingtweaks.api.impl.InternalClientMethodsImpl;
 import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfig;
 import net.blay09.mods.craftingtweaks.config.CraftingTweaksMode;
-import net.blay09.mods.craftingtweaks.network.*;
-import net.blay09.mods.balm.mixin.AbstractContainerScreenAccessor;
+import net.blay09.mods.craftingtweaks.network.CraftStackMessage;
+import net.blay09.mods.craftingtweaks.network.TransferStackMessage;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -44,7 +48,7 @@ public class CraftingTweaksClient {
 
     private static boolean ignoreMouseUp;
     private static int rightClickCraftingSlot = -1;
-    private static Button unpleasantButton;
+    private static AbstractWidget unpleasantButton;
     private static int fixedUnpleasantButtonX;
 
     public static void initialize() {
@@ -160,19 +164,14 @@ public class CraftingTweaksClient {
 
     public static void screenInitialized(ScreenInitEvent event) {
         Screen screen = event.getScreen();
-        // We need to do this as soon as possible because EnderIO wraps the button and gives it a new id, completely hiding it from other mods...
-        if (screen instanceof AbstractContainerScreen<?>) {
-            unpleasantButton = CraftingGuideButtonFixer.fixMistakes((AbstractContainerScreen<?>) screen);
+        if (screen instanceof AbstractContainerScreen<?> containerScreen) {
+            GridGuiHandler guiHandler = CraftingTweaksClientProviderManager.getGridGuiHandler(containerScreen);
+            unpleasantButton = CraftingGuideButtonFixer.fixMistakes(containerScreen, guiHandler);
             if (unpleasantButton != null) {
                 fixedUnpleasantButtonX = unpleasantButton.getX();
             }
-        } else {
-            unpleasantButton = null;
-        }
 
-        if (screen instanceof AbstractContainerScreen<?> containerScreen) {
-            GridGuiHandler guiHandler = CraftingTweaksClientProviderManager.getGridGuiHandler(containerScreen);
-            List<CraftingGrid> grids = CraftingTweaksProviderManager.getCraftingGrids(((AbstractContainerScreen<?>) screen).getMenu());
+            List<CraftingGrid> grids = CraftingTweaksProviderManager.getCraftingGrids(containerScreen.getMenu());
             for (CraftingGrid grid : grids) {
                 String modId = grid.getId().getNamespace();
                 CraftingTweaksMode config = CraftingTweaksConfig.getActive().getCraftingTweaksMode(modId);
@@ -234,7 +233,8 @@ public class CraftingTweaksClient {
         if (screen instanceof AbstractContainerScreen<?> containerScreen && unpleasantButton != null) {
             int unpleasantX = unpleasantButton.getX();
             if (unpleasantX != fixedUnpleasantButtonX) {
-                unpleasantButton = CraftingGuideButtonFixer.fixMistakes(containerScreen);
+                GridGuiHandler guiHandler = CraftingTweaksClientProviderManager.getGridGuiHandler(containerScreen);
+                unpleasantButton = CraftingGuideButtonFixer.fixMistakes(containerScreen, guiHandler);
                 if (unpleasantButton != null) {
                     fixedUnpleasantButtonX = unpleasantButton.getX();
                 }
