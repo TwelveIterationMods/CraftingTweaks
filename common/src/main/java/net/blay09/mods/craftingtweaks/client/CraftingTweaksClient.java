@@ -71,6 +71,8 @@ public class CraftingTweaksClient {
         Balm.getEvents().onEvent(ScreenDrawEvent.Post.class, CraftingTweaksClient::screenDrawn);
 
         CraftingTweaksDebugger.initialize();
+
+        Balm.initializeIfLoaded("toms_storage", "net.blay09.mods.craftingtweaks.compat.TomsStorageGuiHandlers");
     }
 
     public static void screenKeyPressed(ScreenKeyEvent event) {
