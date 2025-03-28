@@ -18,57 +18,41 @@ public class IMCHandler {
             CompoundTag tagCompound = (CompoundTag) message.messageSupplier().get();
             var data = new CraftingTweaksRegistrationData();
             data.setModId(message.senderModId());
-            data.setContainerClass(tagCompound.getString("ContainerClass"));
-            data.setContainerCallbackClass(tagCompound.getString("ContainerCallback"));
-            data.setValidContainerPredicateClass(tagCompound.getString("ValidContainerPredicate"));
-            data.setGetGridStartFunctionClass(tagCompound.getString("GetGridStartFunction"));
-            data.setGridSlotNumber(getIntOr(tagCompound, "GridSlotNumber", 1));
-            data.setGridSize(getIntOr(tagCompound, "GridSize", 9));
-            if (tagCompound.contains("ButtonOffsetX")) {
-                data.setButtonOffsetX(tagCompound.getInt("ButtonOffsetX"));
-            }
-            if (tagCompound.contains("ButtonOffsetY")) {
-                data.setButtonOffsetY(tagCompound.getInt("ButtonOffsetY"));
-            }
-            data.setAlignToGrid(tagCompound.getString("AlignToGrid"));
-            data.setButtonStyle(tagCompound.getString("ButtonStyle"));
-            data.setHideButtons(tagCompound.getBoolean("HideButtons"));
-            data.setPhantomItems(tagCompound.getBoolean("PhantomItems"));
+            data.setContainerClass(tagCompound.getStringOr("ContainerClass", ""));
+            data.setContainerCallbackClass(tagCompound.getStringOr("ContainerCallback", ""));
+            data.setValidContainerPredicateClass(tagCompound.getStringOr("ValidContainerPredicate", ""));
+            data.setGetGridStartFunctionClass(tagCompound.getStringOr("GetGridStartFunction", ""));
+            data.setGridSlotNumber(tagCompound.getIntOr("GridSlotNumber", 1));
+            data.setGridSize(tagCompound.getIntOr("GridSize", 9));
+            tagCompound.getInt("ButtonOffsetX").ifPresent(data::setButtonOffsetX);
+            tagCompound.getInt("ButtonOffsetY").ifPresent(data::setButtonOffsetY);
+            data.setAlignToGrid(tagCompound.getStringOr("AlignToGrid", ""));
+            data.setButtonStyle(tagCompound.getStringOr("ButtonStyle", ""));
+            data.setHideButtons(tagCompound.getBooleanOr("HideButtons", false));
+            data.setPhantomItems(tagCompound.getBooleanOr("PhantomItems", false));
 
-            CompoundTag rotateCompound = tagCompound.getCompound("TweakRotate");
+            CompoundTag rotateCompound = tagCompound.getCompoundOrEmpty("TweakRotate");
             var rotateTweak = new CraftingTweaksRegistrationData.TweakData();
-            rotateTweak.setEnabled(getBoolOr(rotateCompound, "Enabled", true));
-            rotateTweak.setShowButton(getBoolOr(rotateCompound, "ShowButton", true));
-            if (rotateCompound.contains("ButtonX")) {
-                rotateTweak.setButtonX(rotateCompound.getInt("ButtonX"));
-            }
-            if (rotateCompound.contains("ButtonY")) {
-                rotateTweak.setButtonY(rotateCompound.getInt("ButtonY"));
-            }
+            rotateTweak.setEnabled(rotateCompound.getBooleanOr("Enabled", true));
+            rotateTweak.setShowButton(rotateCompound.getBooleanOr("ShowButton", true));
+            rotateCompound.getInt("ButtonX").ifPresent(rotateTweak::setButtonX);
+            rotateCompound.getInt("ButtonY").ifPresent(rotateTweak::setButtonY);
             data.setTweakRotate(rotateTweak);
 
-            CompoundTag balanceCompound = tagCompound.getCompound("TweakBalance");
+            CompoundTag balanceCompound = tagCompound.getCompoundOrEmpty("TweakBalance");
             var balanceTweak = new CraftingTweaksRegistrationData.TweakData();
-            balanceTweak.setEnabled(getBoolOr(balanceCompound, "Enabled", true));
-            balanceTweak.setShowButton(getBoolOr(balanceCompound, "ShowButton", true));
-            if (balanceCompound.contains("ButtonX")) {
-                balanceTweak.setButtonX(balanceCompound.getInt("ButtonX"));
-            }
-            if (balanceCompound.contains("ButtonY")) {
-                balanceTweak.setButtonY(balanceCompound.getInt("ButtonY"));
-            }
+            balanceTweak.setEnabled(balanceCompound.getBooleanOr("Enabled", true));
+            balanceTweak.setShowButton(balanceCompound.getBooleanOr("ShowButton", true));
+            balanceCompound.getInt("ButtonX").ifPresent(balanceTweak::setButtonX);
+            balanceCompound.getInt("ButtonY").ifPresent(balanceTweak::setButtonY);
             data.setTweakBalance(balanceTweak);
 
-            CompoundTag clearCompound = tagCompound.getCompound("TweakClear");
+            CompoundTag clearCompound = tagCompound.getCompoundOrEmpty("TweakClear");
             var clearTweak = new CraftingTweaksRegistrationData.TweakData();
-            clearTweak.setEnabled(getBoolOr(clearCompound, "Enabled", true));
-            clearTweak.setShowButton(getBoolOr(clearCompound, "ShowButton", true));
-            if (clearCompound.contains("ButtonX")) {
-                clearTweak.setButtonX(clearCompound.getInt("ButtonX"));
-            }
-            if (clearCompound.contains("ButtonY")) {
-                clearTweak.setButtonY(clearCompound.getInt("ButtonY"));
-            }
+            clearTweak.setEnabled(clearCompound.getBooleanOr("Enabled", true));
+            clearTweak.setShowButton(clearCompound.getBooleanOr("ShowButton", true));
+            clearCompound.getInt("ButtonX").ifPresent(clearTweak::setButtonX);
+            clearCompound.getInt("ButtonY").ifPresent(clearTweak::setButtonY);
             data.setTweakClear(clearTweak);
 
             CraftingGridProvider gridProvider = DataDrivenGridFactory.createGridProvider(data);
@@ -77,13 +61,5 @@ public class IMCHandler {
                 logger.info("{} has registered {} for CraftingTweaks via IMC", data.getModId(), data.getContainerClass());
             }
         });
-    }
-
-    private static int getIntOr(CompoundTag tagCompound, String key, int defaultVal) {
-        return (tagCompound.contains(key) ? tagCompound.getInt(key) : defaultVal);
-    }
-
-    private static boolean getBoolOr(CompoundTag tagCompound, String key, boolean defaultVal) {
-        return (tagCompound.contains(key) ? tagCompound.getBoolean(key) : defaultVal);
     }
 }
