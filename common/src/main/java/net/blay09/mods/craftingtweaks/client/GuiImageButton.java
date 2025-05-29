@@ -5,6 +5,7 @@ import net.blay09.mods.craftingtweaks.api.ButtonProperties;
 import net.blay09.mods.craftingtweaks.api.ButtonState;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -29,7 +30,7 @@ public class GuiImageButton extends Button {
             state = ButtonState.DISABLED;
         }
         var stateProperties = properties.getState(state);
-        guiGraphics.blit(RenderType::guiTextured, texture, getX(), getY(), stateProperties.getTextureX(), stateProperties.getTextureY(), width, height, 256, 256);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, getX(), getY(), stateProperties.getTextureX(), stateProperties.getTextureY(), width, height, 256, 256);
     }
 
 }

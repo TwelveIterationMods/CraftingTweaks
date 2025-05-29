@@ -1,3 +1,1 @@
-- Fixed Tom's Simple Storage support
-  - Note: Crafting Tweaks is only supported on the "default" mode of the Crafting Terminal
-- Added APIs for defining how to reposition or hide the recipe book button
+- Updated to Minecraft 1.21.6

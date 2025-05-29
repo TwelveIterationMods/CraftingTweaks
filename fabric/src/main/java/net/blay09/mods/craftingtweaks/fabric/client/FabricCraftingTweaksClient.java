@@ -10,7 +10,7 @@ public class FabricCraftingTweaksClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        BalmClient.initialize(CraftingTweaks.MOD_ID, EmptyLoadContext.INSTANCE, CraftingTweaksClient::initialize);
+        BalmClient.initializeMod(CraftingTweaks.MOD_ID, EmptyLoadContext.INSTANCE, CraftingTweaksClient::initialize);
     }
 
 }

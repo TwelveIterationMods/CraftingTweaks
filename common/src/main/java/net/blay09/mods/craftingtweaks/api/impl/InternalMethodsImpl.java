@@ -67,7 +67,7 @@ public class InternalMethodsImpl implements InternalMethods {
 
     @Override
     public Optional<RecipeHolder<?>> getLastCraftedRecipe(ServerPlayer player) {
-        final var level = player.serverLevel();
+        final var level = player.level();
         final var recipeManager = level.getServer().getRecipeManager();
         final var persistentData = Balm.getHooks().getPersistentData(player);
         return persistentData.getString("LastCraftedRecipe")

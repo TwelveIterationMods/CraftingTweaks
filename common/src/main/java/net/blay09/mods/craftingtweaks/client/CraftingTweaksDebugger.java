@@ -70,8 +70,8 @@ public class CraftingTweaksDebugger {
 
             // draw highlight on each slot from startDragSlot to endDragSlot
             if (endDragSlot != null) {
-                graphics.pose().pushPose();
-                graphics.pose().translate(accessor.getLeftPos(), accessor.getTopPos(), 0);
+                graphics.pose().pushMatrix();
+                graphics.pose().translate(accessor.getLeftPos(), accessor.getTopPos());
                 int startX = startDragSlot.x;
                 int startY = startDragSlot.y;
                 int endX = endDragSlot.x;
@@ -91,12 +91,12 @@ public class CraftingTweaksDebugger {
                         graphics.fillGradient(x, y, x + 16, y + 16, 0x1900FF00, 0x1900FF00);
                     }
                 }
-                graphics.pose().popPose();
+                graphics.pose().popMatrix();
             }
         }
 
         if (currentMenuLabel != null) {
-            graphics.renderTooltip(
+            graphics.setTooltipForNextFrame(
                     Minecraft.getInstance().font,
                     Lists.newArrayList(currentMenuLabel),
                     Optional.empty(),

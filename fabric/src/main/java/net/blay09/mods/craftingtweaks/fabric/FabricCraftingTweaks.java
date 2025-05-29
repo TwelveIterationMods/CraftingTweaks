@@ -8,6 +8,6 @@ import net.fabricmc.api.ModInitializer;
 public class FabricCraftingTweaks implements ModInitializer {
     @Override
     public void onInitialize() {
-        Balm.initialize(CraftingTweaks.MOD_ID, EmptyLoadContext.INSTANCE, CraftingTweaks::initialize);
+        Balm.initializeMod(CraftingTweaks.MOD_ID, EmptyLoadContext.INSTANCE, CraftingTweaks::initialize);
     }
 }
