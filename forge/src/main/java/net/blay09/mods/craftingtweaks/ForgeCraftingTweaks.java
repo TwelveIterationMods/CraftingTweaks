@@ -13,7 +13,7 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 public class ForgeCraftingTweaks {
     public ForgeCraftingTweaks(FMLJavaModLoadingContext context) {
         final var loadContext = new ForgeLoadContext(context.getModEventBus());
-        Balm.initialize(CraftingTweaks.MOD_ID, loadContext, CraftingTweaks::initialize);
+        Balm.initializeMod(CraftingTweaks.MOD_ID, loadContext, CraftingTweaks::initialize);
         if (FMLEnvironment.dist.isClient()) {
             BalmClient.initialize(CraftingTweaks.MOD_ID, loadContext, CraftingTweaksClient::initialize);
         }

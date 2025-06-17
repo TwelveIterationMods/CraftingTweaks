@@ -9,7 +9,7 @@ import net.neoforged.fml.common.Mod;
 public class NeoForgeCraftingTweaks {
     public NeoForgeCraftingTweaks(IEventBus modEventBus) {
         final var context = new NeoForgeLoadContext(modEventBus);
-        Balm.initialize(CraftingTweaks.MOD_ID, context, CraftingTweaks::initialize);
+        Balm.initializeMod(CraftingTweaks.MOD_ID, context, CraftingTweaks::initialize);
         modEventBus.addListener(IMCHandler::processInterMod);
     }
 
