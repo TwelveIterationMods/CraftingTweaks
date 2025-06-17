@@ -15,7 +15,7 @@ public class ForgeCraftingTweaks {
         final var loadContext = new ForgeLoadContext(context.getModEventBus());
         Balm.initializeMod(CraftingTweaks.MOD_ID, loadContext, CraftingTweaks::initialize);
         if (FMLEnvironment.dist.isClient()) {
-            BalmClient.initialize(CraftingTweaks.MOD_ID, loadContext, CraftingTweaksClient::initialize);
+            BalmClient.initializeMod(CraftingTweaks.MOD_ID, loadContext, CraftingTweaksClient::initialize);
         }
 
         context.getModEventBus().addListener(IMCHandler::processInterMod);

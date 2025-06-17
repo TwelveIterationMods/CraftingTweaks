@@ -11,7 +11,7 @@ import net.neoforged.fml.common.Mod;
 public class NeoForgeCraftingTweaksClient {
     public NeoForgeCraftingTweaksClient(IEventBus modEventBus) {
         final var context = new NeoForgeLoadContext(modEventBus);
-        BalmClient.initialize(CraftingTweaks.MOD_ID, context, CraftingTweaksClient::initialize);
+        BalmClient.initializeMod(CraftingTweaks.MOD_ID, context, CraftingTweaksClient::initialize);
     }
 
 }
