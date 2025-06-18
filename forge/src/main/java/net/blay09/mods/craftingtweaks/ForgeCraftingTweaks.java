@@ -8,17 +8,18 @@ import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 
 @Mod(CraftingTweaks.MOD_ID)
 public class ForgeCraftingTweaks {
     public ForgeCraftingTweaks(FMLJavaModLoadingContext context) {
-        final var loadContext = new ForgeLoadContext(context.getModEventBus());
+        final var loadContext = new ForgeLoadContext(context.getModBusGroup());
         Balm.initializeMod(CraftingTweaks.MOD_ID, loadContext, CraftingTweaks::initialize);
         if (FMLEnvironment.dist.isClient()) {
             BalmClient.initializeMod(CraftingTweaks.MOD_ID, loadContext, CraftingTweaksClient::initialize);
         }
 
-        context.getModEventBus().addListener(IMCHandler::processInterMod);
+        InterModProcessEvent.getBus(context.getModBusGroup()).addListener(IMCHandler::processInterMod);
         context.registerDisplayTest(IExtensionPoint.DisplayTest.IGNORE_ALL_VERSION);
     }
 
