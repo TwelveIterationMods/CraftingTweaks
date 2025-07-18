@@ -9,7 +9,10 @@ import net.blay09.mods.craftingtweaks.compat.VanillaCraftingGridProvider;
 import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfig;
 import net.blay09.mods.craftingtweaks.crafting.ShapedRecipeMatrixMapper;
 import net.blay09.mods.craftingtweaks.crafting.ShapelessRecipeMatrixMapper;
-import net.blay09.mods.craftingtweaks.registry.JsonCompatLoader;
+import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfigData;
+import net.blay09.mods.craftingtweaks.registry.ConfigJsonCompatLoader;
+import net.blay09.mods.craftingtweaks.registry.ModFileJsonCompatLoader;
+import net.blay09.mods.craftingtweaks.registry.LegacyJsonCompatLoader;
 import net.blay09.mods.craftingtweaks.network.HelloMessage;
 import net.blay09.mods.craftingtweaks.network.ModNetworking;
 import net.minecraft.resources.ResourceLocation;
@@ -37,7 +40,7 @@ public class CraftingTweaks {
 
         Balm.getCommands().register(CraftingTweaksCommand::register);
 
-        Balm.addServerReloadListener(ResourceLocation.fromNamespaceAndPath(MOD_ID, "json_registry"), new JsonCompatLoader());
+        Balm.addServerReloadListener(ResourceLocation.fromNamespaceAndPath(MOD_ID, "json_registry"), new LegacyJsonCompatLoader());
 
         CraftingTweaksAPI.registerCraftingGridProvider(new VanillaCraftingGridProvider());
         CraftingTweaksAPI.registerRecipeMapper(ShapedRecipe.class, new ShapedRecipeMatrixMapper());
@@ -55,6 +58,11 @@ public class CraftingTweaks {
                     optionalRecipeHolder.ifPresent(recipeHolder -> CraftingTweaksAPI.setLastCraftedRecipe(serverPlayer, recipeHolder));
                 }
             }
+        });
+
+        Balm.getConfig().onConfigAvailable(CraftingTweaksConfigData.class, config -> {
+            ModFileJsonCompatLoader.load();
+            ConfigJsonCompatLoader.load();
         });
     }
 
