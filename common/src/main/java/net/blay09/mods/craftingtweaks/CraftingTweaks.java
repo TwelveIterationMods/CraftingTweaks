@@ -6,7 +6,8 @@ import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
 import net.blay09.mods.craftingtweaks.command.CraftingTweaksCommand;
 import net.blay09.mods.craftingtweaks.compat.VanillaCraftingGridProvider;
 import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfig;
-import net.blay09.mods.craftingtweaks.registry.JsonCompatLoader;
+import net.blay09.mods.craftingtweaks.registry.ModFileJsonCompatLoader;
+import net.blay09.mods.craftingtweaks.registry.LegacyJsonCompatLoader;
 import net.blay09.mods.craftingtweaks.network.HelloMessage;
 import net.blay09.mods.craftingtweaks.network.ModNetworking;
 import net.minecraft.resources.ResourceLocation;
@@ -28,11 +29,13 @@ public class CraftingTweaks {
 
         Balm.getCommands().register(CraftingTweaksCommand::register);
 
-        Balm.addServerReloadListener(new ResourceLocation(MOD_ID, "json_registry"), new JsonCompatLoader());
+        Balm.addServerReloadListener(new ResourceLocation(MOD_ID, "json_registry"), new LegacyJsonCompatLoader());
 
         CraftingTweaksAPI.registerCraftingGridProvider(new VanillaCraftingGridProvider());
 
         Balm.getEvents().onEvent(PlayerLoginEvent.class, event -> Balm.getNetworking().sendTo(event.getPlayer(), new HelloMessage()));
+
+        ModFileJsonCompatLoader.load();
     }
 
 }

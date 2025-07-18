@@ -18,9 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class JsonCompatLoader implements ResourceManagerReloadListener {
+public class LegacyJsonCompatLoader implements ResourceManagerReloadListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(JsonCompatLoader.class);
+    private static final Logger logger = LoggerFactory.getLogger(LegacyJsonCompatLoader.class);
     private static final Gson gson = new Gson();
     private static final FileToIdConverter COMPAT_JSONS = FileToIdConverter.json("craftingtweaks_compat");
 
