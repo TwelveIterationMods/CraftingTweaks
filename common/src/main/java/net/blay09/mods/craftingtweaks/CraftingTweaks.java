@@ -9,7 +9,6 @@ import net.blay09.mods.craftingtweaks.compat.VanillaCraftingGridProvider;
 import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfig;
 import net.blay09.mods.craftingtweaks.crafting.ShapedRecipeMatrixMapper;
 import net.blay09.mods.craftingtweaks.crafting.ShapelessRecipeMatrixMapper;
-import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfigData;
 import net.blay09.mods.craftingtweaks.registry.ConfigJsonCompatLoader;
 import net.blay09.mods.craftingtweaks.registry.ModFileJsonCompatLoader;
 import net.blay09.mods.craftingtweaks.registry.LegacyJsonCompatLoader;
@@ -60,7 +59,7 @@ public class CraftingTweaks {
             }
         });
 
-        Balm.getConfig().onConfigAvailable(CraftingTweaksConfigData.class, config -> {
+        Balm.getConfig().onConfigAvailable(CraftingTweaksConfig.class, config -> {
             ModFileJsonCompatLoader.load();
             ConfigJsonCompatLoader.load();
         });
