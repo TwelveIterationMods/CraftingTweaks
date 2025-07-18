@@ -6,6 +6,7 @@ import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
 import net.blay09.mods.craftingtweaks.command.CraftingTweaksCommand;
 import net.blay09.mods.craftingtweaks.compat.VanillaCraftingGridProvider;
 import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfig;
+import net.blay09.mods.craftingtweaks.registry.ConfigJsonCompatLoader;
 import net.blay09.mods.craftingtweaks.registry.ModFileJsonCompatLoader;
 import net.blay09.mods.craftingtweaks.registry.LegacyJsonCompatLoader;
 import net.blay09.mods.craftingtweaks.network.HelloMessage;
@@ -36,6 +37,7 @@ public class CraftingTweaks {
         Balm.getEvents().onEvent(PlayerLoginEvent.class, event -> Balm.getNetworking().sendTo(event.getPlayer(), new HelloMessage()));
 
         ModFileJsonCompatLoader.load();
+        ConfigJsonCompatLoader.load();
     }
 
 }

@@ -27,13 +27,13 @@ public class ModFileJsonCompatLoader {
         providersFromModFiles.clear();
 
         final var modPaths = Balm.lookupAllModPaths("craftingtweaks/grids");
-        modPaths.values().forEach(path -> {
+        modPaths.entrySet().forEach(entry -> {
             try {
-                try (final var walker = Files.walk(path)) {
+                try (final var walker = Files.walk(entry.getValue())) {
                     walker.forEach(file -> {
                         if (file.toString().endsWith(".json")) {
                             try (final var reader = Files.newBufferedReader(file)) {
-                                final var gridProvider = load(gson.fromJson(reader, CraftingTweaksRegistrationData.class));
+                                final var gridProvider = load(entry.getKey(), gson.fromJson(reader, CraftingTweaksRegistrationData.class));
                                 if (gridProvider != null) {
                                     providersFromModFiles.add(gridProvider);
                                 }
@@ -45,7 +45,7 @@ public class ModFileJsonCompatLoader {
                     });
                 }
             } catch (IOException e) {
-                logger.error("Failed to load CraftingTweaks files from mod {}", path, e);
+                logger.error("Failed to load CraftingTweaks files from mod {}", entry.getKey(), e);
             }
         });
     }
@@ -54,7 +54,7 @@ public class ModFileJsonCompatLoader {
         return !CraftingTweaksConfig.getActive().client.disabledAddons.contains(modId);
     }
 
-    private static CraftingGridProvider load(CraftingTweaksRegistrationData data) {
+    private static CraftingGridProvider load(String resourceId, CraftingTweaksRegistrationData data) {
         String modId = data.getModId();
         if ((!modId.equals("minecraft") && !Balm.isModLoaded(modId)) || !isCompatEnabled(modId) || !data.isEnabled()) {
             return null;
@@ -63,7 +63,7 @@ public class ModFileJsonCompatLoader {
         CraftingGridProvider gridProvider = DataDrivenGridFactory.createGridProvider(data);
         if (gridProvider != null) {
             CraftingTweaksAPI.registerCraftingGridProvider(gridProvider);
-            logger.info("{} has registered {} for CraftingTweaks", data.getModId(), data.getContainerClass());
+            logger.info("Mod file {} has registered {} of {} with CraftingTweaks", resourceId, data.getContainerClass(), modId);
         }
         return gridProvider;
     }
