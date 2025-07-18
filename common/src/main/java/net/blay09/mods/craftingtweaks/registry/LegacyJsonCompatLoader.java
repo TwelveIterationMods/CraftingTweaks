@@ -18,9 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class JsonCompatLoader implements ResourceManagerReloadListener {
+public class LegacyJsonCompatLoader implements ResourceManagerReloadListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(JsonCompatLoader.class);
+    private static final Logger logger = LoggerFactory.getLogger(LegacyJsonCompatLoader.class);
     private static final Gson gson = new Gson();
     private static final FileToIdConverter COMPAT_JSONS = FileToIdConverter.json("craftingtweaks_compat");
 
@@ -35,7 +35,7 @@ public class JsonCompatLoader implements ResourceManagerReloadListener {
 
         for (Map.Entry<ResourceLocation, Resource> entry : COMPAT_JSONS.listMatchingResources(resourceManager).entrySet()) {
             try (BufferedReader reader = entry.getValue().openAsReader()) {
-                CraftingGridProvider gridProvider = load(gson.fromJson(reader, CraftingTweaksRegistrationData.class));
+                CraftingGridProvider gridProvider = load(entry.getKey(), gson.fromJson(reader, CraftingTweaksRegistrationData.class));
                 if (gridProvider != null) {
                     providersFromDataPacks.add(gridProvider);
                 }
@@ -49,7 +49,7 @@ public class JsonCompatLoader implements ResourceManagerReloadListener {
         return !CraftingTweaksConfig.getActive().client.disabledAddons.contains(modId);
     }
 
-    private static CraftingGridProvider load(CraftingTweaksRegistrationData data) {
+    private static CraftingGridProvider load(ResourceLocation resourceId, CraftingTweaksRegistrationData data) {
         String modId = data.getModId();
         if ((!modId.equals("minecraft") && !Balm.isModLoaded(modId)) || !isCompatEnabled(modId) || !data.isEnabled()) {
             return null;
@@ -58,7 +58,7 @@ public class JsonCompatLoader implements ResourceManagerReloadListener {
         CraftingGridProvider gridProvider = DataDrivenGridFactory.createGridProvider(data);
         if (gridProvider != null) {
             CraftingTweaksAPI.registerCraftingGridProvider(gridProvider);
-            logger.info("{} has registered {} for CraftingTweaks via data pack", data.getModId(), data.getContainerClass());
+            logger.info("Data pack file {} has registered {} of {} with CraftingTweaks", resourceId, data.getContainerClass(), modId);
         }
         return gridProvider;
     }
