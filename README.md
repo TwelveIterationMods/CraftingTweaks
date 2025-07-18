@@ -5,15 +5,10 @@ crafting window.
 
 - [Modpack Permissions](https://mods.twelveiterations.com/permissions)
 
-#### Forge
+#### Downloads
 
 [![Versions](http://cf.way2muchnoise.eu/versions/233071_latest.svg)](https://www.curseforge.com/minecraft/mc-mods/crafting-tweaks)
 [![Downloads](http://cf.way2muchnoise.eu/full_233071_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/crafting-tweaks)
-
-#### Fabric
-
-[![Versions](http://cf.way2muchnoise.eu/versions/502516_latest.svg)](https://www.curseforge.com/minecraft/mc-mods/crafting-tweaks-fabric)
-[![Downloads](http://cf.way2muchnoise.eu/full_502516_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/crafting-tweaks-fabric)
 
 ## Contributing
 
