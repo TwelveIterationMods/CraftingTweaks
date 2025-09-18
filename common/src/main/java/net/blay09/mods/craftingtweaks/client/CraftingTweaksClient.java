@@ -24,9 +24,9 @@ import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfig;
 import net.blay09.mods.craftingtweaks.config.CraftingTweaksMode;
 import net.blay09.mods.craftingtweaks.network.CraftStackMessage;
 import net.blay09.mods.craftingtweaks.network.TransferStackMessage;
+import net.blay09.mods.kuma.api.Kuma;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
@@ -79,10 +79,10 @@ public class CraftingTweaksClient {
             // Toggle client-only mode for testing if BLAY is held
             Window window = Minecraft.getInstance().getWindow();
             if (CraftingTweaks.isServerSideInstalled
-                    && GLFW.glfwGetKey(window.getWindow(), GLFW.GLFW_KEY_B) == 1
-                    && GLFW.glfwGetKey(window.getWindow(), GLFW.GLFW_KEY_L) == 1
-                    && GLFW.glfwGetKey(window.getWindow(), GLFW.GLFW_KEY_A) == 1
-                    && (GLFW.glfwGetKey(window.getWindow(), GLFW.GLFW_KEY_Y) == 1 || GLFW.glfwGetKey(window.getWindow(), GLFW.GLFW_KEY_Z) == 1)) {
+                    && GLFW.glfwGetKey(window.handle(), GLFW.GLFW_KEY_B) == 1
+                    && GLFW.glfwGetKey(window.handle(), GLFW.GLFW_KEY_L) == 1
+                    && GLFW.glfwGetKey(window.handle(), GLFW.GLFW_KEY_A) == 1
+                    && (GLFW.glfwGetKey(window.handle(), GLFW.GLFW_KEY_Y) == 1 || GLFW.glfwGetKey(window.handle(), GLFW.GLFW_KEY_Z) == 1)) {
                 CraftingTweaks.isServerSideInstalled = false;
                 player.displayClientMessage(Component.literal("[CraftingTweaks] Enabled client-side testing mode"), false);
             }
@@ -122,7 +122,7 @@ public class CraftingTweaksClient {
                 if (mouseSlot != null && mouseSlot.hasItem()) {
                     List<Slot> transferSlots = Lists.newArrayList();
                     transferSlots.add(mouseSlot);
-                    if (Screen.hasShiftDown()) {
+                    if (Kuma.hasShiftDown()) {
                         ItemStack mouseSlotStack = mouseSlot.getItem();
                         for (Slot slot : menu.slots) {
                             if (!slot.hasItem() || mouseSlot == slot) {

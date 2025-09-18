@@ -183,7 +183,7 @@ public record CompressMessage(int slotNumber, CompressType compressType) impleme
     }
 
     private static <T extends CraftingInput> ItemStack assembleResult(T recipeInput, RecipeCraftingHolder recipeCraftingHolder, ServerPlayer player) {
-        RecipeManager recipeManager = Objects.requireNonNull(player.getServer()).getRecipeManager();
+        RecipeManager recipeManager = Objects.requireNonNull(player.level().getServer()).getRecipeManager();
         Level level = player.level();
         RecipeHolder<CraftingRecipe> recipe = recipeManager.getRecipeFor(RecipeType.CRAFTING, recipeInput, level).orElse(null);
         if (recipe != null && recipeCraftingHolder.setRecipeUsed(player, recipe)) {

@@ -2,12 +2,14 @@ package net.blay09.mods.craftingtweaks.client;
 
 import net.blay09.mods.balm.mixin.AbstractContainerScreenAccessor;
 import net.blay09.mods.craftingtweaks.api.*;
+import net.blay09.mods.kuma.api.Kuma;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
@@ -48,11 +50,11 @@ public abstract class GuiTweakButton extends GuiImageButton implements ITooltipP
     }
 
     @Override
-    public void onClick(double mouseX, double mouseY) {
+    public void onPress(InputWithModifiers input) {
         playDownSound(Minecraft.getInstance().getSoundManager());
         Player player = Minecraft.getInstance().player;
         if (player != null) {
-            onTweakButtonClicked(player, screen != null ? screen.getMenu() : player.containerMenu, grid, Screen.hasShiftDown() ? altTweak : tweak);
+            onTweakButtonClicked(player, screen != null ? screen.getMenu() : player.containerMenu, grid, input.hasShiftDown() ? altTweak : tweak);
         }
     }
 
@@ -60,7 +62,7 @@ public abstract class GuiTweakButton extends GuiImageButton implements ITooltipP
 
     @Override
     public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        setTooltip(Screen.hasShiftDown() ? altTooltip : normalTooltip);
+        setTooltip(Kuma.hasShiftDown() ? altTooltip : normalTooltip);
 
         if (screen != null) {
             final int guiLeft = ((AbstractContainerScreenAccessor) screen).getLeftPos();
@@ -73,7 +75,7 @@ public abstract class GuiTweakButton extends GuiImageButton implements ITooltipP
             lastGuiTop = guiTop;
         }
 
-        if (Screen.hasShiftDown()) {
+        if (Kuma.hasShiftDown()) {
             properties = altProperties;
         } else {
             properties = normalProperties;
