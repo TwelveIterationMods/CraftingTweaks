@@ -26,28 +26,18 @@ public class ModFileJsonCompatLoader {
         }
         providersFromModFiles.clear();
 
-        final var modPaths = Balm.lookupAllModPaths("craftingtweaks/grids");
-        modPaths.entrySet().forEach(entry -> {
-            try {
-                try (final var walker = Files.walk(entry.getValue())) {
-                    walker.forEach(file -> {
-                        if (file.toString().endsWith(".json")) {
-                            try (final var reader = Files.newBufferedReader(file)) {
-                                final var gridProvider = load(entry.getKey(), gson.fromJson(reader, CraftingTweaksRegistrationData.class));
-                                if (gridProvider != null) {
-                                    providersFromModFiles.add(gridProvider);
-                                }
-                            } catch (IOException e) {
-                                logger.error("Failed to load CraftingTweaks file {}", file, e);
-                            }
-
-                        }
-                    });
+        Balm.getLoadedPrimaryModIds().forEach(modId -> Balm.visitModResources("craftingtweaks/grids", modId, (resource) -> {
+            if (resource.extension().equals("json")) {
+                try (final var reader = resource.bufferedReader()) {
+                    final var gridProvider = load(modId, gson.fromJson(reader, CraftingTweaksRegistrationData.class));
+                    if (gridProvider != null) {
+                        providersFromModFiles.add(gridProvider);
+                    }
+                } catch (IOException e) {
+                    logger.error("Failed to load CraftingTweaks file {}", resource.name(), e);
                 }
-            } catch (IOException e) {
-                logger.error("Failed to load CraftingTweaks files from mod {}", entry.getKey(), e);
             }
-        });
+        }));
     }
 
     private static boolean isCompatEnabled(String modId) {
