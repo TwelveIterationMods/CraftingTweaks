@@ -26,7 +26,7 @@ public class ModFileJsonCompatLoader {
         }
         providersFromModFiles.clear();
 
-        Balm.getLoadedPrimaryModIds().forEach(modId -> Balm.visitModResources("craftingtweaks/grids", modId, (resource) -> {
+        Balm.getLoadedPrimaryModIds().forEach(modId -> Balm.visitModResources(modId, "craftingtweaks/grids", (resource) -> {
             if (resource.extension().equals("json")) {
                 try (final var reader = resource.bufferedReader()) {
                     final var gridProvider = load(modId, gson.fromJson(reader, CraftingTweaksRegistrationData.class));
