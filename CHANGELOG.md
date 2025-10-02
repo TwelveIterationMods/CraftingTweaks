@@ -1,1 +1,1 @@
-- Updated to Minecraft 1.21.9
+- Fixed crash on startup
