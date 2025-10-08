@@ -1,1 +1,1 @@
-- Fixed crash on startup
+- Updated to Minecraft 1.21.10
