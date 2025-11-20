@@ -2,7 +2,7 @@ package net.blay09.mods.craftingtweaks.registry;
 
 import net.blay09.mods.craftingtweaks.api.*;
 import net.blay09.mods.craftingtweaks.api.impl.DefaultCraftingGrid;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import org.slf4j.Logger;
@@ -91,7 +91,7 @@ public class DataDrivenGridFactory {
 
                 CraftingGridDecorator grid;
                 if (effectiveGridStartFunction != null) {
-                    grid = new DefaultCraftingGrid(ResourceLocation.fromNamespaceAndPath(senderModId, "default"), gridSlotNumber, gridSize) {
+                    grid = new DefaultCraftingGrid(Identifier.fromNamespaceAndPath(senderModId, "default"), gridSlotNumber, gridSize) {
                         @Override
                         public int getGridStartSlot(Player player, AbstractContainerMenu menu) {
                             return effectiveGridStartFunction.apply(menu);

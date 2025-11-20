@@ -1,8 +1,9 @@
 package net.blay09.mods.craftingtweaks;
 
-import net.blay09.mods.balm.api.Balm;
-import net.blay09.mods.balm.api.event.ItemCraftedEvent;
-import net.blay09.mods.balm.api.event.PlayerLoginEvent;
+import net.blay09.mods.balm.Balm;
+import net.blay09.mods.balm.core.BalmRegistrars;
+import net.blay09.mods.balm.platform.event.callback.ItemCallback;
+import net.blay09.mods.balm.platform.event.callback.ServerPlayerCallback;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
 import net.blay09.mods.craftingtweaks.command.CraftingTweaksCommand;
 import net.blay09.mods.craftingtweaks.compat.VanillaCraftingGridProvider;
@@ -14,7 +15,6 @@ import net.blay09.mods.craftingtweaks.registry.ModFileJsonCompatLoader;
 import net.blay09.mods.craftingtweaks.registry.LegacyJsonCompatLoader;
 import net.blay09.mods.craftingtweaks.network.HelloMessage;
 import net.blay09.mods.craftingtweaks.network.ModNetworking;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.CraftingContainer;
@@ -33,24 +33,23 @@ public class CraftingTweaks {
 
     public static boolean isServerSideInstalled = true;
 
-    public static void initialize() {
+    public static void initialize(BalmRegistrars registrars) {
         CraftingTweaksConfig.initialize();
-        ModNetworking.initialize(Balm.getNetworking());
+        ModNetworking.initialize(Balm.networking());
 
-        Balm.getCommands().register(CraftingTweaksCommand::register);
+        Balm.commands().register(CraftingTweaksCommand::register);
 
-        Balm.addServerReloadListener(ResourceLocation.fromNamespaceAndPath(MOD_ID, "json_registry"), new LegacyJsonCompatLoader());
+        registrars.resourceReloadListeners(registrar
+                -> registrar.register("json_registry", new LegacyJsonCompatLoader()));
 
         CraftingTweaksAPI.registerCraftingGridProvider(new VanillaCraftingGridProvider());
         CraftingTweaksAPI.registerRecipeMapper(ShapedRecipe.class, new ShapedRecipeMatrixMapper());
         CraftingTweaksAPI.registerRecipeMapper(ShapelessRecipe.class, new ShapelessRecipeMatrixMapper());
 
-        Balm.getEvents().onEvent(PlayerLoginEvent.class, event -> Balm.getNetworking().sendTo(event.getPlayer(), HelloMessage.INSTANCE));
-        Balm.getEvents().onEvent(ItemCraftedEvent.class, event -> {
-            final var player = event.getPlayer();
+        ServerPlayerCallback.Login.EVENT.register(player -> Balm.networking().sendTo(player, HelloMessage.INSTANCE));
+        ItemCallback.Craft.EVENT.register((player, itemStack, craftMatrix) -> {
             final var level = player.level();
             if (player instanceof ServerPlayer serverPlayer && level instanceof ServerLevel serverLevel) {
-                final var craftMatrix = event.getCraftMatrix();
                 final var recipeManager = serverLevel.getServer().getRecipeManager();
                 if (craftMatrix instanceof CraftingContainer craftingContainer) {
                     final var optionalRecipeHolder = recipeManager.getRecipeFor(RecipeType.CRAFTING, craftingContainer.asCraftInput(), level);
@@ -59,7 +58,7 @@ public class CraftingTweaks {
             }
         });
 
-        Balm.getConfig().onConfigAvailable(CraftingTweaksConfig.class, config -> {
+        Balm.config().onConfigAvailable(CraftingTweaksConfig.class, config -> {
             ModFileJsonCompatLoader.load();
             ConfigJsonCompatLoader.load();
         });

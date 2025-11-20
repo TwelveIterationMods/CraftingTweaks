@@ -1,11 +1,11 @@
 package net.blay09.mods.craftingtweaks.api.impl;
 
-import net.blay09.mods.balm.api.Balm;
+import net.blay09.mods.balm.Balm;
 import net.blay09.mods.craftingtweaks.CraftingTweaksProviderManager;
 import net.blay09.mods.craftingtweaks.api.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.crafting.Recipe;
@@ -69,17 +69,17 @@ public class InternalMethodsImpl implements InternalMethods {
     public Optional<RecipeHolder<?>> getLastCraftedRecipe(ServerPlayer player) {
         final var level = player.level();
         final var recipeManager = level.getServer().getRecipeManager();
-        final var persistentData = Balm.getHooks().getPersistentData(player);
+        final var persistentData = Balm.hooks().getPersistentData(player);
         return persistentData.getString("LastCraftedRecipe")
-                .flatMap(it -> Optional.ofNullable(ResourceLocation.tryParse(it)))
+                .flatMap(it -> Optional.ofNullable(Identifier.tryParse(it)))
                 .map(it -> ResourceKey.create(Registries.RECIPE, it))
                 .flatMap(recipeManager::byKey);
     }
 
     @Override
     public <T extends Recipe<? extends RecipeInput>> void setLastCraftedRecipe(ServerPlayer player, RecipeHolder<T> recipe) {
-        final var persistentData = Balm.getHooks().getPersistentData(player);
-        persistentData.putString("LastCraftedRecipe", recipe.id().location().toString());
+        final var persistentData = Balm.hooks().getPersistentData(player);
+        persistentData.putString("LastCraftedRecipe", recipe.id().identifier().toString());
     }
 
     @Override

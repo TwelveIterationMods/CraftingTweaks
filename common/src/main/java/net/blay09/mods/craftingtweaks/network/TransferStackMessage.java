@@ -7,19 +7,19 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ResultSlot;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
-public record TransferStackMessage(ResourceLocation id, int slotNumber) implements CustomPacketPayload {
+public record TransferStackMessage(Identifier id, int slotNumber) implements CustomPacketPayload {
 
-    public static CustomPacketPayload.Type<TransferStackMessage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(CraftingTweaks.MOD_ID, "transfer_stack"));
+    public static CustomPacketPayload.Type<TransferStackMessage> TYPE = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(CraftingTweaks.MOD_ID, "transfer_stack"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, TransferStackMessage> STREAM_CODEC = StreamCodec.composite(
-            ResourceLocation.STREAM_CODEC,
+            Identifier.STREAM_CODEC,
             TransferStackMessage::id,
             ByteBufCodecs.INT,
             TransferStackMessage::slotNumber,

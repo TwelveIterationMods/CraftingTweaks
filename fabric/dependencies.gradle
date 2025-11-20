@@ -1,7 +1,5 @@
 dependencies {
-    modImplementation("net.blay09.mods:kuma-api-fabric:${kuma_version}")
-    modImplementation("net.blay09.mods:balm-fabric:${balm_version}") {
-        changing = balm_version.contains("SNAPSHOT")
+    modImplementation(libs.balmFabric) {
+        changing = libs.versions.balm.get().endsWith("SNAPSHOT")
     }
-    modCompileOnly "com.terraformersmc:modmenu:$modmenu_version"
 }

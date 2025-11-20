@@ -1,6 +1,6 @@
 package net.blay09.mods.craftingtweaks.api.impl;
 
-import net.blay09.mods.balm.api.Balm;
+import net.blay09.mods.balm.Balm;
 import net.blay09.mods.craftingtweaks.CraftingTweaks;
 import net.blay09.mods.craftingtweaks.api.*;
 import net.blay09.mods.craftingtweaks.client.ClientProvider;
@@ -36,7 +36,7 @@ public class InternalClientMethodsImpl implements InternalClientMethods {
         switch (tweak) {
             case Balance, Spread -> {
                 if (CraftingTweaks.isServerSideInstalled) {
-                    Balm.getNetworking().sendToServer(new BalanceMessage(grid.getId(), tweak == TweakType.Spread));
+                    Balm.networking().sendToServer(new BalanceMessage(grid.getId(), tweak == TweakType.Spread));
                 } else {
                     ClientProvider clientProvider = CraftingTweaksClient.getClientProvider();
                     if (tweak == TweakType.Spread) {
@@ -48,7 +48,7 @@ public class InternalClientMethodsImpl implements InternalClientMethods {
             }
             case Rotate, RotateCounterClockwise -> {
                 if (CraftingTweaks.isServerSideInstalled) {
-                    Balm.getNetworking().sendToServer(new RotateMessage(grid.getId(), tweak == TweakType.RotateCounterClockwise));
+                    Balm.networking().sendToServer(new RotateMessage(grid.getId(), tweak == TweakType.RotateCounterClockwise));
                 } else {
                     ClientProvider clientProvider = CraftingTweaksClient.getClientProvider();
                     clientProvider.rotateGrid(player, container, grid, tweak == TweakType.RotateCounterClockwise);
@@ -56,7 +56,7 @@ public class InternalClientMethodsImpl implements InternalClientMethods {
             }
             case ForceClear, Clear -> {
                 if (CraftingTweaks.isServerSideInstalled) {
-                    Balm.getNetworking().sendToServer(new ClearMessage(grid.getId(), tweak == TweakType.ForceClear));
+                    Balm.networking().sendToServer(new ClearMessage(grid.getId(), tweak == TweakType.ForceClear));
                 } else {
                     ClientProvider clientProvider = CraftingTweaksClient.getClientProvider();
                     clientProvider.clearGrid(player, container, grid, tweak == TweakType.ForceClear);

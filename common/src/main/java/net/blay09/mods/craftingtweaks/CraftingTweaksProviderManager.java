@@ -1,10 +1,10 @@
 package net.blay09.mods.craftingtweaks;
 
-import net.blay09.mods.balm.api.Balm;
+import net.blay09.mods.balm.Balm;
 import net.blay09.mods.craftingtweaks.api.CraftingGrid;
 import net.blay09.mods.craftingtweaks.api.CraftingGridProvider;
 import net.blay09.mods.craftingtweaks.api.impl.CraftingGridBuilderImpl;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ public class CraftingTweaksProviderManager {
     private static final List<CraftingGridProvider> craftingGridProviders = new ArrayList<>();
 
     public static void registerProvider(CraftingGridProvider provider) {
-        if (provider.getModId().equals("minecraft") || Balm.isModLoaded(provider.getModId())) {
+        if (provider.getModId().equals("minecraft") || Balm.platform().isModLoaded(provider.getModId())) {
             provider.onInitialize();
             craftingGridProviders.add(provider);
         }
@@ -41,10 +41,10 @@ public class CraftingTweaksProviderManager {
             return Optional.empty();
         }
 
-        return Optional.of(grids.stream().filter(it -> it.getId().getPath().equals("default")).findFirst().orElse(grids.get(0)));
+        return Optional.of(grids.stream().filter(it -> it.getId().getPath().equals("default")).findFirst().orElse(grids.getFirst()));
     }
 
-    public static Optional<CraftingGrid> getCraftingGrid(AbstractContainerMenu menu, ResourceLocation gridId) {
+    public static Optional<CraftingGrid> getCraftingGrid(AbstractContainerMenu menu, Identifier gridId) {
         return getCraftingGrids(menu).stream().filter(it -> gridId.equals(it.getId())).findFirst();
     }
 

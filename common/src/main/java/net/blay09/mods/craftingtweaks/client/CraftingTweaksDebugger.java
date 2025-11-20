@@ -3,15 +3,15 @@ package net.blay09.mods.craftingtweaks.client;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import net.blay09.mods.balm.api.Balm;
-import net.blay09.mods.balm.api.event.client.screen.ContainerScreenDrawEvent;
-import net.blay09.mods.balm.api.event.client.screen.ScreenInitEvent;
-import net.blay09.mods.balm.api.event.client.screen.ScreenMouseEvent;
+import net.blay09.mods.balm.client.platform.event.callback.ScreenCallback;
 import net.blay09.mods.balm.mixin.AbstractContainerScreenAccessor;
 import net.blay09.mods.craftingtweaks.CraftingTweaks;
 import net.blay09.mods.craftingtweaks.registry.CraftingTweaksRegistrationData;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -33,12 +33,11 @@ public class CraftingTweaksDebugger {
     private static Slot endDragSlot;
 
     public static void initialize() {
-        Balm.getEvents().onEvent(ScreenInitEvent.Post.class, event -> {
+        ScreenCallback.Init.AFTER.register(screen -> {
             if (!CraftingTweaks.debugMode) {
                 return;
             }
 
-            var screen = event.getScreen();
             if (CraftingTweaks.debugMode && screen instanceof AbstractContainerScreen<?> containerScreen) {
                 var menu = containerScreen.getMenu();
                 String modId = getModId(menu);
@@ -52,26 +51,23 @@ public class CraftingTweaksDebugger {
             }
         });
 
-        Balm.getEvents().onEvent(ScreenMouseEvent.Release.Pre.class, CraftingTweaksDebugger::onMouseRelease);
-        Balm.getEvents().onEvent(ScreenMouseEvent.Click.Pre.class, CraftingTweaksDebugger::onMouseClick);
-        Balm.getEvents().onEvent(ContainerScreenDrawEvent.Background.class, CraftingTweaksDebugger::onScreenDrawn);
+        ScreenCallback.MouseRelease.BEFORE.register(CraftingTweaksDebugger::onMouseRelease);
+        ScreenCallback.MousePress.BEFORE.register(CraftingTweaksDebugger::onMouseClick);
+        ScreenCallback.Render.AFTER_BACKGROUND.register(CraftingTweaksDebugger::onScreenDrawn);
     }
 
-    public static void onScreenDrawn(ContainerScreenDrawEvent.Background event) {
+    public static void onScreenDrawn(Screen screen, GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
         if (!CraftingTweaks.debugMode) {
             return;
         }
-
-        var screen = event.getScreen();
-        var graphics = event.getGuiGraphics();
 
         if (startDragSlot != null && screen instanceof AbstractContainerScreenAccessor accessor) {
             endDragSlot = accessor.getHoveredSlot();
 
             // draw highlight on each slot from startDragSlot to endDragSlot
             if (endDragSlot != null) {
-                graphics.pose().pushMatrix();
-                graphics.pose().translate(accessor.getLeftPos(), accessor.getTopPos());
+                guiGraphics.pose().pushMatrix();
+                guiGraphics.pose().translate(accessor.getLeftPos(), accessor.getTopPos());
                 int startX = startDragSlot.x;
                 int startY = startDragSlot.y;
                 int endX = endDragSlot.x;
@@ -88,15 +84,15 @@ public class CraftingTweaksDebugger {
                 }
                 for (int x = startX; x <= endX; x++) {
                     for (int y = startY; y <= endY; y++) {
-                        graphics.fillGradient(x, y, x + 16, y + 16, 0x1900FF00, 0x1900FF00);
+                        guiGraphics.fillGradient(x, y, x + 16, y + 16, 0x1900FF00, 0x1900FF00);
                     }
                 }
-                graphics.pose().popMatrix();
+                guiGraphics.pose().popMatrix();
             }
         }
 
         if (currentMenuLabel != null) {
-            graphics.setTooltipForNextFrame(
+            guiGraphics.setTooltipForNextFrame(
                     Minecraft.getInstance().font,
                     Lists.newArrayList(currentMenuLabel),
                     Optional.empty(),
@@ -104,37 +100,39 @@ public class CraftingTweaksDebugger {
         }
     }
 
-    private static void onMouseRelease(ScreenMouseEvent.Release.Pre event) {
+    private static boolean onMouseRelease(Screen screen, double mouseX, double mouseY, int button, boolean consumed) {
         if (!CraftingTweaks.debugMode) {
-            return;
+            return false;
         }
 
-        if (event.getScreen() instanceof AbstractContainerScreen<?> screen && event.getButton() == 0) {
+        if (screen instanceof AbstractContainerScreen<?> containerScreen && button == 0) {
             if (startDragSlot != null) {
-                var menu = screen.getMenu();
+                var menu = containerScreen.getMenu();
                 String modId = getModId(menu);
-                endDragSlot = ((AbstractContainerScreenAccessor) screen).getHoveredSlot();
+                endDragSlot = ((AbstractContainerScreenAccessor) containerScreen).getHoveredSlot();
                 if (endDragSlot != null) {
                     var gridSize = endDragSlot.index - startDragSlot.index + 1;
                     printJson(modId, menu.getClass().getName(), startDragSlot.index, gridSize);
                 }
                 startDragSlot = null;
-                event.setCanceled(true);
+                return true;
             }
         }
+
+        return false;
     }
 
-    private static void onMouseClick(ScreenMouseEvent.Click.Pre event) {
+    private static boolean onMouseClick(Screen screen, MouseButtonEvent event, boolean consumed) {
         if (!CraftingTweaks.debugMode) {
-            return;
+            return false;
         }
 
-        if (event.getScreen() instanceof AbstractContainerScreen<?> screen && event.getButton() == 0) {
-            startDragSlot = ((AbstractContainerScreenAccessor) screen).getHoveredSlot();
-            if (startDragSlot != null) {
-                event.setCanceled(true);
-            }
+        if (screen instanceof AbstractContainerScreen<?> containerScreen && event.isLeft()) {
+            startDragSlot = ((AbstractContainerScreenAccessor) containerScreen).getHoveredSlot();
+            return startDragSlot != null;
         }
+
+        return false;
     }
 
     private static String getModId(AbstractContainerMenu menu) {

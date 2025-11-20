@@ -211,7 +211,7 @@ The entry point for your plugin is going to be a class implementing `CraftingGri
 
 ```java
 import net.blay09.mods.craftingtweaks.api.*;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 
 public class YourCustomCraftingGridProvider implements CraftingGridProvider {

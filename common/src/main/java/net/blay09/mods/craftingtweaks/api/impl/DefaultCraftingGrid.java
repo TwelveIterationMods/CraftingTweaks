@@ -1,7 +1,7 @@
 package net.blay09.mods.craftingtweaks.api.impl;
 
 import net.blay09.mods.craftingtweaks.api.*;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 
@@ -9,7 +9,7 @@ import java.util.*;
 
 public class DefaultCraftingGrid implements CraftingGrid, CraftingGridDecorator, GridGuiSettings {
 
-    private final ResourceLocation id;
+    private final Identifier id;
     private final int start;
     private final int size;
 
@@ -27,14 +27,14 @@ public class DefaultCraftingGrid implements CraftingGrid, CraftingGridDecorator,
     private int buttonAlignmentOffsetX;
     private int buttonAlignmentOffsetY;
 
-    public DefaultCraftingGrid(ResourceLocation id, int start, int size) {
+    public DefaultCraftingGrid(Identifier id, int start, int size) {
         this.id = id;
         this.start = start;
         this.size = size;
     }
 
     @Override
-    public ResourceLocation getId() {
+    public Identifier getId() {
         return id;
     }
 

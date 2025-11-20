@@ -1,7 +1,7 @@
 package net.blay09.mods.craftingtweaks.crafting;
 
-import net.blay09.mods.balm.api.Balm;
-import net.blay09.mods.balm.api.container.ContainerUtils;
+import net.blay09.mods.balm.Balm;
+import net.blay09.mods.balm.world.ContainerUtils;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -91,7 +91,7 @@ public class ContainerIngredientProvider implements IngredientProvider {
         public ItemStack consume() {
             final var consumed = ContainerUtils.extractItem(container, slot, 1, false);
             if (returnRemainder) {
-                final var remainingItem = Balm.getHooks().getCraftingRemainingItem(consumed);
+                final var remainingItem = Balm.hooks().getCraftingRemainingItem(consumed);
                 ContainerUtils.insertItem(container, slot, remainingItem, false);
             }
             return consumed;

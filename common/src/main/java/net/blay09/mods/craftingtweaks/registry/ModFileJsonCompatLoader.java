@@ -1,7 +1,7 @@
 package net.blay09.mods.craftingtweaks.registry;
 
 import com.google.gson.Gson;
-import net.blay09.mods.balm.api.Balm;
+import net.blay09.mods.balm.Balm;
 import net.blay09.mods.craftingtweaks.api.CraftingGridProvider;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
 import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfig;
@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +25,7 @@ public class ModFileJsonCompatLoader {
         }
         providersFromModFiles.clear();
 
-        Balm.getLoadedPrimaryModIds().forEach(modId -> Balm.visitModResources(modId, "craftingtweaks/grids", (resource) -> {
+        Balm.platform().loadedPrimaryModIds().forEach(modId -> Balm.platform().visitModResources(modId, "craftingtweaks/grids", (resource) -> {
             if (resource.extension().equals("json")) {
                 try (final var reader = resource.bufferedReader()) {
                     final var gridProvider = load(modId, gson.fromJson(reader, CraftingTweaksRegistrationData.class));
@@ -46,7 +45,7 @@ public class ModFileJsonCompatLoader {
 
     private static CraftingGridProvider load(String resourceId, CraftingTweaksRegistrationData data) {
         String modId = data.getModId();
-        if ((!modId.equals("minecraft") && !Balm.isModLoaded(modId)) || !isCompatEnabled(modId) || !data.isEnabled()) {
+        if ((!modId.equals("minecraft") && !Balm.platform().isModLoaded(modId)) || !isCompatEnabled(modId) || !data.isEnabled()) {
             return null;
         }
 

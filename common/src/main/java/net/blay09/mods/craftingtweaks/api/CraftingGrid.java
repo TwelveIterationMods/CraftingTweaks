@@ -1,13 +1,13 @@
 package net.blay09.mods.craftingtweaks.api;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 
 public interface CraftingGrid {
 
-    ResourceLocation getId();
+    Identifier getId();
 
     default Container getCraftingMatrix(Player player, AbstractContainerMenu menu) {
         return menu.slots.get(getGridStartSlot(player, menu)).container;

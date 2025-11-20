@@ -1,7 +1,7 @@
 package net.blay09.mods.craftingtweaks.registry;
 
 import com.google.gson.Gson;
-import net.blay09.mods.balm.api.Balm;
+import net.blay09.mods.balm.Balm;
 import net.blay09.mods.craftingtweaks.api.CraftingGridProvider;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
 import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfig;
@@ -27,7 +27,7 @@ public class ConfigJsonCompatLoader {
         }
         providersFromConfig.clear();
 
-        final var configDir = new File(Balm.getConfig().getConfigDir(), "craftingtweaks/grids");
+        final var configDir = new File(Balm.config().getConfigDir(), "craftingtweaks/grids");
         if (!configDir.exists() && !configDir.mkdirs()) {
             logger.error("Failed to create CraftingTweaks config directory {}", configDir);
             return;
@@ -56,7 +56,7 @@ public class ConfigJsonCompatLoader {
 
     private static CraftingGridProvider load(File resource, CraftingTweaksRegistrationData data) {
         String modId = data.getModId();
-        if ((!modId.equals("minecraft") && !Balm.isModLoaded(modId)) || !isCompatEnabled(modId) || !data.isEnabled()) {
+        if ((!modId.equals("minecraft") && !Balm.platform().isModLoaded(modId)) || !isCompatEnabled(modId) || !data.isEnabled()) {
             return null;
         }
 

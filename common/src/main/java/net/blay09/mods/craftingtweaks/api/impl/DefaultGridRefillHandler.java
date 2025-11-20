@@ -67,7 +67,7 @@ public class DefaultGridRefillHandler implements GridRefillHandler<AbstractConta
             });
             operations++;
             if (operations > 64) {
-                CraftingTweaks.logger.warn("Something went wrong trying to refill recipe. Too many iterations. Recipe: {}", recipeHolder.id().location());
+                CraftingTweaks.logger.warn("Something went wrong trying to refill recipe. Too many iterations. Recipe: {}", recipeHolder.id().identifier());
                 break;
             }
             if (!stack || matrixDiff.isEmpty()) {

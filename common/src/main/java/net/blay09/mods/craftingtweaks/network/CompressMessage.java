@@ -1,6 +1,6 @@
 package net.blay09.mods.craftingtweaks.network;
 
-import net.blay09.mods.balm.api.Balm;
+import net.blay09.mods.balm.Balm;
 import net.blay09.mods.craftingtweaks.*;
 import net.blay09.mods.craftingtweaks.api.CraftingGrid;
 import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfig;
@@ -11,7 +11,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
@@ -26,7 +26,7 @@ import java.util.Objects;
 
 public record CompressMessage(int slotNumber, CompressType compressType) implements CustomPacketPayload {
 
-    public static CustomPacketPayload.Type<CompressMessage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("craftingtweaks",
+    public static CustomPacketPayload.Type<CompressMessage> TYPE = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath("craftingtweaks",
             "compress"));
 
     public static StreamCodec<RegistryFriendlyByteBuf, CompressMessage> STREAM_CODEC = StreamCodec.composite(
@@ -171,7 +171,7 @@ public record CompressMessage(int slotNumber, CompressType compressType) impleme
     private static void giveLeftoverItems(ServerPlayer player, ItemStack slotStack, int count) {
         for (int i = 0; i < count; i++) {
             // Must be inside loop as it's being shrunk in addItemStackToInventory
-            final ItemStack containerItem = Balm.getHooks().getCraftingRemainingItem(slotStack);
+            final ItemStack containerItem = Balm.hooks().getCraftingRemainingItem(slotStack);
             if (!player.addItem(containerItem)) {
                 ItemEntity itemEntity = player.drop(containerItem, false);
                 if (itemEntity != null) {
@@ -194,7 +194,7 @@ public record CompressMessage(int slotNumber, CompressType compressType) impleme
     }
 
     private static boolean isBlacklisted(ItemStack result) {
-        ResourceLocation registryName = BuiltInRegistries.ITEM.getKey(result.getItem());
+        Identifier registryName = BuiltInRegistries.ITEM.getKey(result.getItem());
         return CraftingTweaksConfig.getActive().common.compressDenylist.contains(registryName.toString());
     }
 

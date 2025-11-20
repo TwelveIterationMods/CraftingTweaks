@@ -30,7 +30,7 @@ public interface GridGuiHandler {
     }
 
     default Optional<AbstractWidget> findRecipeBookButton(AbstractContainerScreen<?> screen) {
-        final var buttons = ((ScreenAccessor) screen).balm_getChildren();
+        final var buttons = ((ScreenAccessor) screen).balm$getChildren();
         return buttons
                 .stream()
                 .filter(p -> p instanceof ImageButtonAccessor imageButton && imageButton.getSprites().get(false, false).getPath().equals("recipe_book/button"))

@@ -7,16 +7,16 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 
-public record RefillLastCraftedMessage(ResourceLocation id, boolean stack) implements CustomPacketPayload {
+public record RefillLastCraftedMessage(Identifier id, boolean stack) implements CustomPacketPayload {
 
-    public static Type<RefillLastCraftedMessage> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(CraftingTweaks.MOD_ID, "refill_last_crafted"));
+    public static Type<RefillLastCraftedMessage> TYPE = new Type<>(Identifier.fromNamespaceAndPath(CraftingTweaks.MOD_ID, "refill_last_crafted"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, RefillLastCraftedMessage> STREAM_CODEC = StreamCodec.composite(
-            ResourceLocation.STREAM_CODEC,
+            Identifier.STREAM_CODEC,
             RefillLastCraftedMessage::id,
             ByteBufCodecs.BOOL,
             RefillLastCraftedMessage::stack,

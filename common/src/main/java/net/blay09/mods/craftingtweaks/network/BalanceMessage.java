@@ -6,16 +6,16 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 
-public record BalanceMessage(ResourceLocation id, boolean spread) implements CustomPacketPayload {
+public record BalanceMessage(Identifier id, boolean spread) implements CustomPacketPayload {
 
-    public static CustomPacketPayload.Type<BalanceMessage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(CraftingTweaks.MOD_ID, "balance"));
+    public static CustomPacketPayload.Type<BalanceMessage> TYPE = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(CraftingTweaks.MOD_ID, "balance"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, BalanceMessage> STREAM_CODEC = StreamCodec.composite(
-            ResourceLocation.STREAM_CODEC,
+            Identifier.STREAM_CODEC,
             BalanceMessage::id,
             ByteBufCodecs.BOOL,
             BalanceMessage::spread,

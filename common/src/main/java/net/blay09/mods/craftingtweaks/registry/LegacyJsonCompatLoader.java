@@ -1,12 +1,12 @@
 package net.blay09.mods.craftingtweaks.registry;
 
 import com.google.gson.Gson;
-import net.blay09.mods.balm.api.Balm;
+import net.blay09.mods.balm.Balm;
 import net.blay09.mods.craftingtweaks.api.CraftingGridProvider;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
 import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfig;
 import net.minecraft.resources.FileToIdConverter;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
@@ -33,7 +33,7 @@ public class LegacyJsonCompatLoader implements ResourceManagerReloadListener {
         }
         providersFromDataPacks.clear();
 
-        for (Map.Entry<ResourceLocation, Resource> entry : COMPAT_JSONS.listMatchingResources(resourceManager).entrySet()) {
+        for (Map.Entry<Identifier, Resource> entry : COMPAT_JSONS.listMatchingResources(resourceManager).entrySet()) {
             try (BufferedReader reader = entry.getValue().openAsReader()) {
                 CraftingGridProvider gridProvider = load(entry.getKey(), gson.fromJson(reader, CraftingTweaksRegistrationData.class));
                 if (gridProvider != null) {
@@ -49,9 +49,9 @@ public class LegacyJsonCompatLoader implements ResourceManagerReloadListener {
         return !CraftingTweaksConfig.getActive().client.disabledAddons.contains(modId);
     }
 
-    private static CraftingGridProvider load(ResourceLocation resourceId, CraftingTweaksRegistrationData data) {
+    private static CraftingGridProvider load(Identifier resourceId, CraftingTweaksRegistrationData data) {
         String modId = data.getModId();
-        if ((!modId.equals("minecraft") && !Balm.isModLoaded(modId)) || !isCompatEnabled(modId) || !data.isEnabled()) {
+        if ((!modId.equals("minecraft") && !Balm.platform().isModLoaded(modId)) || !isCompatEnabled(modId) || !data.isEnabled()) {
             return null;
         }
 

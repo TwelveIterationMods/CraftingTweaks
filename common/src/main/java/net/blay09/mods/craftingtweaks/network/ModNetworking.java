@@ -1,6 +1,6 @@
 package net.blay09.mods.craftingtweaks.network;
 
-import net.blay09.mods.balm.api.network.BalmNetworking;
+import net.blay09.mods.balm.network.BalmNetworking;
 import net.blay09.mods.craftingtweaks.CraftingTweaks;
 
 public class ModNetworking {

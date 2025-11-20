@@ -6,13 +6,12 @@ import net.blay09.mods.craftingtweaks.api.ButtonState;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class GuiImageButton extends Button {
 
-    private static final ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(CraftingTweaks.MOD_ID, "gui.png");
+    private static final Identifier texture = Identifier.fromNamespaceAndPath(CraftingTweaks.MOD_ID, "gui.png");
 
     protected ButtonProperties properties;
 
@@ -23,7 +22,7 @@ public class GuiImageButton extends Button {
     }
 
     @Override
-    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    public void renderContents(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         isHovered = active && visible && mouseX >= getX() && mouseY >= getY() && mouseX < getX() + width && mouseY < getY() + height;
         var state = isHovered ? ButtonState.HOVER : ButtonState.NORMAL;
         if(!active) {

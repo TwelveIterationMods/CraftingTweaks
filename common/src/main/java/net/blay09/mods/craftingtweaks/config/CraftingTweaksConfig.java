@@ -1,9 +1,9 @@
 package net.blay09.mods.craftingtweaks.config;
 
-import net.blay09.mods.balm.api.Balm;
-import net.blay09.mods.balm.api.config.reflection.Comment;
-import net.blay09.mods.balm.api.config.reflection.Config;
-import net.blay09.mods.balm.api.config.reflection.NestedType;
+import net.blay09.mods.balm.Balm;
+import net.blay09.mods.balm.platform.config.reflection.Comment;
+import net.blay09.mods.balm.platform.config.reflection.Config;
+import net.blay09.mods.balm.platform.config.reflection.NestedType;
 import net.blay09.mods.craftingtweaks.CraftingTweaks;
 
 import java.util.ArrayList;
@@ -49,10 +49,10 @@ public class CraftingTweaksConfig {
     }
 
     public static CraftingTweaksConfig getActive() {
-        return Balm.getConfig().getActiveConfig(CraftingTweaksConfig.class);
+        return Balm.config().getActiveConfig(CraftingTweaksConfig.class);
     }
 
     public static void initialize() {
-        Balm.getConfig().registerConfig(CraftingTweaksConfig.class);
+        Balm.config().registerConfig(CraftingTweaksConfig.class);
     }
 }
