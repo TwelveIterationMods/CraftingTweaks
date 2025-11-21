@@ -33,7 +33,7 @@ public class CraftingTweaksDebugger {
     private static Slot endDragSlot;
 
     public static void initialize() {
-        ScreenCallback.Init.AFTER.register(screen -> {
+        ScreenCallback.Init.After.EVENT.register(screen -> {
             if (!CraftingTweaks.debugMode) {
                 return;
             }
@@ -51,8 +51,8 @@ public class CraftingTweaksDebugger {
             }
         });
 
-        ScreenCallback.MouseRelease.BEFORE.register(CraftingTweaksDebugger::onMouseRelease);
-        ScreenCallback.MousePress.BEFORE.register(CraftingTweaksDebugger::onMouseClick);
+        ScreenCallback.MouseRelease.Before.EVENT.register(CraftingTweaksDebugger::onMouseRelease);
+        ScreenCallback.MousePress.Before.EVENT.register(CraftingTweaksDebugger::onMouseClick);
         ScreenCallback.Render.AFTER_BACKGROUND.register(CraftingTweaksDebugger::onScreenDrawn);
     }
 
@@ -100,7 +100,7 @@ public class CraftingTweaksDebugger {
         }
     }
 
-    private static boolean onMouseRelease(Screen screen, double mouseX, double mouseY, int button, boolean consumed) {
+    private static boolean onMouseRelease(Screen screen, double mouseX, double mouseY, int button) {
         if (!CraftingTweaks.debugMode) {
             return false;
         }
@@ -122,7 +122,7 @@ public class CraftingTweaksDebugger {
         return false;
     }
 
-    private static boolean onMouseClick(Screen screen, MouseButtonEvent event, boolean consumed) {
+    private static boolean onMouseClick(Screen screen, MouseButtonEvent event) {
         if (!CraftingTweaks.debugMode) {
             return false;
         }

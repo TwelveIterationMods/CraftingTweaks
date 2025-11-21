@@ -46,8 +46,8 @@ public class CraftingTweaks {
         CraftingTweaksAPI.registerRecipeMapper(ShapedRecipe.class, new ShapedRecipeMatrixMapper());
         CraftingTweaksAPI.registerRecipeMapper(ShapelessRecipe.class, new ShapelessRecipeMatrixMapper());
 
-        ServerPlayerCallback.Login.EVENT.register(player -> Balm.networking().sendTo(player, HelloMessage.INSTANCE));
-        ItemCallback.Craft.EVENT.register((player, itemStack, craftMatrix) -> {
+        ServerPlayerCallback.Join.EVENT.register(player -> Balm.networking().sendTo(player, HelloMessage.INSTANCE));
+        ItemCallback.Craft.After.EVENT.register((player, itemStack, craftMatrix) -> {
             final var level = player.level();
             if (player instanceof ServerPlayer serverPlayer && level instanceof ServerLevel serverLevel) {
                 final var recipeManager = serverLevel.getServer().getRecipeManager();

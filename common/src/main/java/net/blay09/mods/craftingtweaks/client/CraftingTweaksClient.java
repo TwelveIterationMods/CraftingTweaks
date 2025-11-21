@@ -62,14 +62,14 @@ public class CraftingTweaksClient {
 
         ModKeyMappings.initialize();
 
-        ItemCallback.Craft.EVENT.register(CraftingTweaksClient::onItemCrafted);
+        ItemCallback.Craft.After.EVENT.register(CraftingTweaksClient::onItemCrafted);
 
         ClientLifecycleCallback.ConnectedToServer.EVENT.register(client -> CraftingTweaks.isServerSideInstalled = false);
 
-        ScreenCallback.Init.AFTER.register(CraftingTweaksClient::screenInitialized);
-        ScreenCallback.KeyPress.AFTER.register(CraftingTweaksClient::screenKeyPressed);
-        ScreenCallback.MousePress.BEFORE.register(CraftingTweaksClient::screenMouseClick);
-        ScreenCallback.MouseRelease.BEFORE.register(CraftingTweaksClient::screenMouseRelease);
+        ScreenCallback.Init.After.EVENT.register(CraftingTweaksClient::screenInitialized);
+        ScreenCallback.KeyPress.After.EVENT.register(CraftingTweaksClient::screenKeyPressed);
+        ScreenCallback.MousePress.Before.EVENT.register(CraftingTweaksClient::screenMouseClick);
+        ScreenCallback.MouseRelease.Before.EVENT.register(CraftingTweaksClient::screenMouseRelease);
         ScreenCallback.Render.BEFORE.register(CraftingTweaksClient::screenAboutToDraw);
         ScreenCallback.Render.AFTER.register(CraftingTweaksClient::screenDrawn);
 
@@ -94,7 +94,7 @@ public class CraftingTweaksClient {
         return false;
     }
 
-    public static boolean screenMouseRelease(Screen screen, double mouseX, double mouseY, int button, boolean consumed) {
+    public static boolean screenMouseRelease(Screen screen, double mouseX, double mouseY, int button) {
         if (ignoreMouseUp) {
             ignoreMouseUp = false;
             return true;
@@ -103,7 +103,7 @@ public class CraftingTweaksClient {
         return false;
     }
 
-    public static boolean screenMouseClick(Screen screen, MouseButtonEvent event, boolean consumed) {
+    public static boolean screenMouseClick(Screen screen, MouseButtonEvent event) {
         /// Reset right-click crafting if any click happens
         rightClickCraftingSlot = -1;
 
