@@ -80,7 +80,7 @@ public abstract class GuiTweakButton extends GuiImageButton implements ITooltipP
             properties = normalProperties;
         }
 
-        super.renderWidget(guiGraphics, mouseX, mouseY, partialTicks);
+        super.renderContents(guiGraphics, mouseX, mouseY, partialTicks);
     }
 
     private Tooltip createTooltip(TweakType tweak) {
