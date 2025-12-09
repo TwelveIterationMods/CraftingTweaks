@@ -127,7 +127,7 @@ public class CraftingTweaksDebugger {
             return false;
         }
 
-        if (screen instanceof AbstractContainerScreen<?> containerScreen && event.isLeft()) {
+        if (screen instanceof AbstractContainerScreen<?> containerScreen && event.button() == 0) {
             startDragSlot = ((AbstractContainerScreenAccessor) containerScreen).getHoveredSlot();
             return startDragSlot != null;
         }
