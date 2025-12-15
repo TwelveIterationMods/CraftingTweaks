@@ -1,8 +1,8 @@
 package net.blay09.mods.craftingtweaks;
 
 import net.blay09.mods.balm.api.Balm;
-import net.blay09.mods.balm.api.client.BalmClient;
-import net.blay09.mods.balm.forge.ForgeLoadContext;
+import net.blay09.mods.balm.client.BalmClient;
+import net.blay09.mods.balm.forge.platform.runtime.ForgeLoadContext;
 import net.blay09.mods.craftingtweaks.client.CraftingTweaksClient;
 import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.common.Mod;
