@@ -2,6 +2,7 @@ package net.blay09.mods.craftingtweaks.client;
 
 
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
 import net.blay09.mods.balm.Balm;
 import net.blay09.mods.balm.client.BalmClient;
@@ -150,7 +151,7 @@ public class CraftingTweaksClient {
 
                     return true;
                 }
-            } else if (CraftingTweaksConfig.getActive().client.rightClickCraftsStack && event.isRight() && mouseSlot instanceof ResultSlot) {
+            } else if (CraftingTweaksConfig.getActive().client.rightClickCraftsStack && event.button() == InputConstants.MOUSE_BUTTON_RIGHT && mouseSlot instanceof ResultSlot) {
                 if (CraftingTweaks.isServerSideInstalled) {
                     Balm.networking().sendToServer(new CraftStackMessage(mouseSlot.index));
                 } else {
