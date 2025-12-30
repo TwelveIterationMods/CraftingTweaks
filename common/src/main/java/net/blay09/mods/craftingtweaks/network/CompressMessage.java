@@ -83,7 +83,9 @@ public class CompressMessage {
                     ItemStack result = findMatchingResult(new InventoryCraftingDecompress(menu, slotStack), player);
                     if (!result.isEmpty() && !isBlacklisted(result) && !slotStack.isEmpty() && slotStack.getCount() >= 1) {
                         do {
-                            if (player.getInventory().add(result.copy())) {
+                            final var craftedStack = result.copy();
+                            if (player.getInventory().add(craftedStack)) {
+                                result.onCraftedBy(player, craftedStack.getCount());
                                 giveLeftoverItems(player, slotStack, 1);
                                 slot.remove(1);
                             } else {
@@ -239,6 +241,7 @@ public class CompressMessage {
             ItemStack craftedStack = result.copy();
             craftedStack.setCount(Math.min(itemsCrafted, result.getMaxStackSize()));
             itemsCrafted -= craftedStack.getCount();
+            craftedStack.onCraftedBy(player, craftedStack.getCount());
             if (!player.getInventory().add(craftedStack)) {
                 // Drop the item on the ground if the inventory is full
                 player.drop(craftedStack, true);
