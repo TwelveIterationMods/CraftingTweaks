@@ -138,6 +138,7 @@ public record CompressMessage(int slotNumber, CompressType compressType) impleme
             int itemsToRemove = craftsPossible * recipeSize;
             giveLeftoverItems(player, mouseStack, itemsToRemove);
             mouseStack.shrink(itemsToRemove);
+            mouseSlot.setChanged();
 
             // Add crafted items to the inventory
             addCraftedItemsToInventory(player, recipe.result(), craftsPossible);
