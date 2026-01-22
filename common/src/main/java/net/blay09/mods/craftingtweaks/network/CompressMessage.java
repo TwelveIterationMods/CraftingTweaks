@@ -91,7 +91,7 @@ public class CompressMessage implements CustomPacketPayload {
 
                             int suitableSlot = getSlotWithEnoughSpaceToFit(player.getInventory(), result);
                             if (suitableSlot != -1) {
-                                result.onCraftedBy(player, result.getCount());
+                                result.onCraftedBy(player.level(), player, result.getCount());
                                 if (!player.getInventory().add(result)) {
                                     player.drop(result, true);
                                 }
@@ -265,7 +265,7 @@ public class CompressMessage implements CustomPacketPayload {
             ItemStack craftedStack = result.copy();
             craftedStack.setCount(Math.min(itemsCrafted, result.getMaxStackSize()));
             itemsCrafted -= craftedStack.getCount();
-            craftedStack.onCraftedBy(player, craftedStack.getCount());
+            craftedStack.onCraftedBy(player.level(), player, craftedStack.getCount());
             if (!player.getInventory().add(craftedStack)) {
                 // Drop the item on the ground if the inventory is full
                 player.drop(craftedStack, true);
