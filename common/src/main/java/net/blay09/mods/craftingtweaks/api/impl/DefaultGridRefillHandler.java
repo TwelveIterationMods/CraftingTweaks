@@ -4,8 +4,8 @@ import net.blay09.mods.craftingtweaks.CraftingTweaks;
 import net.blay09.mods.craftingtweaks.api.CraftingGrid;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
 import net.blay09.mods.craftingtweaks.api.GridRefillHandler;
-import net.blay09.mods.craftingtweaks.crafting.CraftingContext;
 import net.blay09.mods.craftingtweaks.crafting.ContainerIngredientProvider;
+import net.blay09.mods.craftingtweaks.crafting.CraftingContext;
 import net.blay09.mods.craftingtweaks.crafting.IngredientToken;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -27,7 +27,16 @@ public class DefaultGridRefillHandler implements GridRefillHandler<AbstractConta
             return;
         }
 
+        // TODO Would be nice if our Grid API had info on width/height so this didn't need to be hardcoded
+        final var gridSize = grid.getGridSize(player, menu);
+        final var gridWidth = gridSize == 4 ? 2 : 3;
+        final var gridHeight = gridSize == 4 ? 2 : 3;
+
         final var recipe = recipeHolder.value();
+        if (!recipe.canCraftInDimensions(gridWidth, gridHeight)) {
+            return;
+        }
+
         final var context = new CraftingContext(List.of(new ContainerIngredientProvider(player.getInventory())));
         final var operation = context.createOperation((RecipeHolder<Recipe<?>>) recipeHolder).prepare();
         if (!operation.canCraft()) {
@@ -39,7 +48,6 @@ public class DefaultGridRefillHandler implements GridRefillHandler<AbstractConta
         do {
             final var ingredientTokens = operation.getIngredientTokens();
             final var matrixMapper = CraftingTweaksAPI.getRecipeMatrixMapper(recipe.getClass());
-            final var gridWidth = grid.getGridSize(player, menu) == 4 ? 2 : 3;
             final var matrixDiff = new HashMap<Integer, IngredientToken>();
             for (int i = 0; i < ingredientTokens.size(); i++) {
                 final var ingredientToken = ingredientTokens.get(i);
