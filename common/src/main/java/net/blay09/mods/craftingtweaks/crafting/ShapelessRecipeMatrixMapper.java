@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public class ShapelessRecipeMatrixMapper implements RecipeMapper<ShapelessRecipe> {
     @Override
-    public int mapToMatrixSlot(ShapelessRecipe recipe, int ingredientIndex) {
+    public int mapToMatrixSlot(ShapelessRecipe recipe, int gridWidth, int ingredientIndex) {
         return ingredientIndex;
     }
 

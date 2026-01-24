@@ -4,8 +4,8 @@ import net.blay09.mods.craftingtweaks.CraftingTweaks;
 import net.blay09.mods.craftingtweaks.api.CraftingGrid;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
 import net.blay09.mods.craftingtweaks.api.GridRefillHandler;
-import net.blay09.mods.craftingtweaks.crafting.CraftingContext;
 import net.blay09.mods.craftingtweaks.crafting.ContainerIngredientProvider;
+import net.blay09.mods.craftingtweaks.crafting.CraftingContext;
 import net.blay09.mods.craftingtweaks.crafting.IngredientToken;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -27,6 +27,11 @@ public class DefaultGridRefillHandler implements GridRefillHandler<AbstractConta
             return;
         }
 
+        // TODO Would be nice if our Grid API had info on width/height so this didn't need to be hardcoded
+        final var gridSize = grid.getGridSize(player, menu);
+        final var gridWidth = gridSize == 4 ? 2 : 3;
+        final var gridHeight = gridSize == 4 ? 2 : 3;
+
         final var recipe = recipeHolder.value();
         final var context = new CraftingContext(List.of(new ContainerIngredientProvider(player.getInventory())));
         final var operation = context.createOperation((RecipeHolder<Recipe<?>>) recipeHolder).prepare();
@@ -34,16 +39,20 @@ public class DefaultGridRefillHandler implements GridRefillHandler<AbstractConta
             return;
         }
 
+        final var matrixMapper = CraftingTweaksAPI.getRecipeMapper(recipe.getClass());
+        if (matrixMapper.getIngredients(recipe).size() > gridSize) {
+            return;
+        }
+
         int operations = 0;
         outer:
         do {
             final var ingredientTokens = operation.getIngredientTokens();
-            final var matrixMapper = CraftingTweaksAPI.getRecipeMapper(recipe.getClass());
 
             final var matrixDiff = new HashMap<Integer, IngredientToken>();
             for (int i = 0; i < ingredientTokens.size(); i++) {
                 final var ingredientToken = ingredientTokens.get(i);
-                var matrixSlot = matrixMapper.mapToMatrixSlot(recipe, i);
+                var matrixSlot = matrixMapper.mapToMatrixSlot(recipe, gridWidth, i);
                 if (matrixSlot != -1) {
                     final var itemStack = ingredientToken.peek();
                     final var slotStack = craftMatrix.getItem(matrixSlot);

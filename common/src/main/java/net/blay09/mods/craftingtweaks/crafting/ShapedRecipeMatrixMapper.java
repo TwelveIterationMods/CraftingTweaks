@@ -9,15 +9,15 @@ import java.util.Optional;
 
 public class ShapedRecipeMatrixMapper implements RecipeMapper<ShapedRecipe> {
     @Override
-    public int mapToMatrixSlot(ShapedRecipe recipe, int ingredientIndex) {
+    public int mapToMatrixSlot(ShapedRecipe recipe, int gridWidth, int ingredientIndex) {
         final int recipeWidth = recipe.getWidth();
         final int origX = ingredientIndex % recipeWidth;
         final int origY = ingredientIndex / recipeWidth;
 
-        // Offset to center the recipe if its width is 1
-        final int offsetX = recipeWidth == 1 ? 1 : 0;
+        // Offset to center the recipe if its width is 1 in a 3-wide grid
+        final int offsetX = gridWidth == 3 && recipeWidth == 1 ? 1 : 0;
 
-        return origY * 3 + origX + offsetX;
+        return origY * gridWidth + origX + offsetX;
     }
 
     @Override
