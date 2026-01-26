@@ -5,7 +5,7 @@ import net.minecraft.world.item.crafting.ShapelessRecipe;
 
 public class ShapelessRecipeMatrixMapper implements RecipeMatrixMapper<ShapelessRecipe> {
     @Override
-    public int mapToMatrixSlot(ShapelessRecipe recipe, int ingredientIndex) {
+    public int mapToMatrixSlot(ShapelessRecipe recipe, int gridWidth, int ingredientIndex) {
         return ingredientIndex;
     }
 }
