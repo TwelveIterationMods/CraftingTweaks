@@ -1,1 +1,2 @@
+- Fixed crafting refill on 2x2 grids not filling correctly and possibly voiding one slot
 - Fixed stats not updating when using compress or decompress key
