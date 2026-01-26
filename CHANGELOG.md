@@ -1,1 +1,3 @@
-- Fixed right click not being detected for `rightClickCraftsStack` option
+- Fixed crafting refill on 2x2 grids not filling correctly and possibly voiding one slot
+- Fixed slot.setChanged not being called when changing Slot's content directly
+- Fixed stats not updating when using compress or decompress key
