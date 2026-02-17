@@ -32,6 +32,12 @@ public class CraftingTweaksConfig {
         @Comment("We both know JEI is much better. This option hides Vanilla's crafting book button instead of moving it.")
         public boolean hideVanillaCraftingGuide = false;
 
+        @Comment("Offset from the right when repositioning the vanilla recipe book button.")
+        public int vanillaCraftingGuideOffsetX = -25;
+
+        @Comment("Offset from the top when repositioning the vanilla recipe book button.")
+        public int vanillaCraftingGuideOffsetY = 5;
+
         @Comment("Set to 'DEFAULT' to enable both buttons and hotkeys. Set to 'BUTTONS' to enable buttons only. Set to 'HOTKEYS' to enable hotkeys only. Set to 'DISABLED' to disable completely.")
         public CraftingTweaksMode mode = CraftingTweaksMode.DEFAULT;
 
