@@ -3,6 +3,7 @@ package net.blay09.mods.craftingtweaks.api;
 import net.blay09.mods.balm.mixin.AbstractContainerScreenAccessor;
 import net.blay09.mods.balm.mixin.ImageButtonAccessor;
 import net.blay09.mods.balm.mixin.ScreenAccessor;
+import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfig;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 
@@ -25,8 +26,9 @@ public interface GridGuiHandler {
 
     default void repositionRecipeBookButton(AbstractContainerScreen<?> screen, AbstractWidget button) {
         final var accessor = (AbstractContainerScreenAccessor) screen;
-        button.setX(accessor.getLeftPos() + accessor.getImageWidth() - 25);
-        button.setY(accessor.getTopPos() + 5);
+        final var clientConfig = CraftingTweaksConfig.getActive().client;
+        button.setX(accessor.getLeftPos() + accessor.getImageWidth() + clientConfig.vanillaCraftingGuideOffsetX);
+        button.setY(accessor.getTopPos() + clientConfig.vanillaCraftingGuideOffsetY);
     }
 
     default Optional<AbstractWidget> findRecipeBookButton(AbstractContainerScreen<?> screen) {
