@@ -2,6 +2,7 @@ package net.blay09.mods.craftingtweaks.api.impl;
 
 import net.blay09.mods.craftingtweaks.api.*;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 
@@ -12,6 +13,8 @@ public class DefaultCraftingGrid implements CraftingGrid, CraftingGridDecorator,
     private final Identifier id;
     private final int start;
     private final int size;
+    private final int width;
+    private final int height;
 
     private final Set<TweakType> disabledTweaks = new HashSet<>();
     private final Set<TweakType> hiddenButtons = new HashSet<>();
@@ -27,10 +30,37 @@ public class DefaultCraftingGrid implements CraftingGrid, CraftingGridDecorator,
     private int buttonAlignmentOffsetX;
     private int buttonAlignmentOffsetY;
 
+    public DefaultCraftingGrid(Identifier id, int start, int width, int height) {
+        this.id = id;
+        this.start = start;
+        this.width = width;
+        this.height = height;
+        this.size = width * height;
+    }
+
+    /**
+     * @deprecated Use {@link #DefaultCraftingGrid(Identifier, int, int, int)} instead.
+     */
+    @Deprecated
+    public DefaultCraftingGrid(Identifier id, int start, int size, int width, int height) {
+        this.id = id;
+        this.start = start;
+        this.size = size;
+        this.width = width;
+        this.height = height;
+    }
+
+
+    /**
+     * @deprecated Use {@link #DefaultCraftingGrid(Identifier, int, int, int)} instead.
+     */
+    @Deprecated
     public DefaultCraftingGrid(Identifier id, int start, int size) {
         this.id = id;
         this.start = start;
         this.size = size;
+        this.width = (int) Mth.sqrt(size);
+        this.height = (int) Mth.sqrt(size);
     }
 
     @Override
@@ -46,6 +76,16 @@ public class DefaultCraftingGrid implements CraftingGrid, CraftingGridDecorator,
     @Override
     public int getGridSize(Player player, AbstractContainerMenu menu) {
         return size;
+    }
+
+    @Override
+    public int getGridWidth(Player player, AbstractContainerMenu menu) {
+        return width;
+    }
+
+    @Override
+    public int getGridHeight(Player player, AbstractContainerMenu menu) {
+        return height;
     }
 
     @Override

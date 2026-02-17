@@ -24,6 +24,8 @@ public class IMCHandler {
             data.setGetGridStartFunctionClass(tagCompound.getStringOr("GetGridStartFunction", ""));
             data.setGridSlotNumber(tagCompound.getIntOr("GridSlotNumber", 1));
             data.setGridSize(tagCompound.getIntOr("GridSize", 9));
+            data.setGridWidth(tagCompound.getIntOr("GridWidth", 3));
+            data.setGridHeight(tagCompound.getIntOr("GridHeight", 3));
             tagCompound.getInt("ButtonOffsetX").ifPresent(data::setButtonOffsetX);
             tagCompound.getInt("ButtonOffsetY").ifPresent(data::setButtonOffsetY);
             data.setAlignToGrid(tagCompound.getStringOr("AlignToGrid", ""));

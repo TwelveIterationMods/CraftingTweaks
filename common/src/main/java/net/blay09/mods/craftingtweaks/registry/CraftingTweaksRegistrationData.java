@@ -55,6 +55,8 @@ public class CraftingTweaksRegistrationData {
     private String getGridStartFunctionClass = "";
     private int gridSlotNumber = 1;
     private int gridSize = 9;
+    private int gridWidth;
+    private int gridHeight;
     private Integer buttonOffsetX;
     private Integer buttonOffsetY;
     private String alignToGrid = "left";
@@ -131,6 +133,22 @@ public class CraftingTweaksRegistrationData {
 
     public void setGridSize(int gridSize) {
         this.gridSize = gridSize;
+    }
+
+    public int getGridWidth() {
+        return gridWidth;
+    }
+
+    public void setGridWidth(int gridWidth) {
+        this.gridWidth = gridWidth;
+    }
+
+    public int getGridHeight() {
+        return gridHeight;
+    }
+
+    public void setGridHeight(int gridHeight) {
+        this.gridHeight = gridHeight;
     }
 
     public Integer getButtonOffsetX() {

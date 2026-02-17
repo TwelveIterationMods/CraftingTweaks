@@ -1,6 +1,7 @@
 package net.blay09.mods.craftingtweaks.api;
 
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.Mth;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -19,6 +20,14 @@ public interface CraftingGrid {
 
     default int getGridSize(Player player, AbstractContainerMenu menu) {
         return 9;
+    }
+
+    default int getGridWidth(Player player, AbstractContainerMenu menu) {
+        return (int) Mth.sqrt(getGridSize(player, menu));
+    }
+
+    default int getGridHeight(Player player, AbstractContainerMenu menu) {
+        return (int) Mth.sqrt(getGridSize(player, menu));
     }
 
     default boolean isTweakActive(TweakType tweak) {
