@@ -1,3 +1,5 @@
-- Fixed crafting refill on 2x2 grids not filling correctly and possibly voiding one slot
-- Fixed slot.setChanged not being called when changing Slot's content directly
-- Fixed stats not updating when using compress or decompress key
+- Added `vanillaCraftingGuideOffsetX` and `vanillaCraftingGuideOffsetY` config options for slight adjustments to where the crafting guide button is repositioned
+- API: Added width and height to CraftingGrid. 
+  - Will be sqrted from size for backwards compatibility.
+  - Size is preserved separately for now in case anyone configured a non-square grid, but in 26.1 width*height must equal size, so non-squares will have to set explicit bounds then.
+  - Square grids will continue to work with just specifying size.
