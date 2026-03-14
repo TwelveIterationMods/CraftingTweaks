@@ -169,10 +169,10 @@ repositories {
 dependencies {
     // Replace ${craftingtweaks_file_id} and ${balm_file_id} with the id of the file you want to depend on.
     // You can find it in the URL of the file on CurseForge (e.g. 3914527).
-    // Forge: implementation fg.deobf("curse.maven:balm-531761:${balm_file_id}")
+    // Forge: implementation "curse.maven:balm-531761:${balm_file_id}"
     // Fabric: modImplementation "curse.maven:balm-fabric-500525:${balm_file_id}"
 
-    // Forge: implementation fg.deobf("curse.maven:crafting-tweaks-233071:${craftingtweaks_file_id}")
+    // Forge: implementation "curse.maven:crafting-tweaks-233071:${craftingtweaks_file_id}"
     // Fabric: modImplementation "curse.maven:crafting-tweaks-fabric-502516:${craftingtweaks_file_id}"
 }
 ```
@@ -196,11 +196,11 @@ dependencies {
     // Replace ${craftingtweaks_version} and ${balm_version} with the version you want to depend on. 
     // You can find the latest version for a given Minecraft version at https://maven.twelveiterations.com/service/rest/repository/browse/maven-public/net/blay09/mods/balm-common/ and https://maven.twelveiterations.com/service/rest/repository/browse/maven-public/net/blay09/mods/craftingtweaks-common/
     // Common (mojmap): implementation "net.blay09.mods:balm-common:${balm_version}"
-    // Forge: implementation fg.deobf("net.blay09.mods:balm-forge:${balm_version}")
+    // Forge: implementation "net.blay09.mods:balm-forge:${balm_version}"
     // Fabric: modImplementation "net.blay09.mods:balm-fabric:${balm_version}"
 
     // Common (mojmap): implementation "net.blay09.mods:craftingtweaks-common:${craftingtweaks_version}"
-    // Forge: implementation fg.deobf("net.blay09.mods:craftingtweaks-forge:${craftingtweaks_version}")
+    // Forge: implementation "net.blay09.mods:craftingtweaks-forge:${craftingtweaks_version}"
     // Fabric: modImplementation "net.blay09.mods:craftingtweaks-fabric:${craftingtweaks_version}"
 }
 ```
