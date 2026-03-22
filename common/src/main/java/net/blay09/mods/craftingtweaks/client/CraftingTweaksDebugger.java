@@ -8,7 +8,7 @@ import net.blay09.mods.balm.mixin.AbstractContainerScreenAccessor;
 import net.blay09.mods.craftingtweaks.CraftingTweaks;
 import net.blay09.mods.craftingtweaks.registry.CraftingTweaksRegistrationData;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -56,7 +56,7 @@ public class CraftingTweaksDebugger {
         ScreenCallback.Render.AFTER_BACKGROUND.register(CraftingTweaksDebugger::onScreenDrawn);
     }
 
-    public static void onScreenDrawn(Screen screen, GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+    public static void onScreenDrawn(Screen screen, GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
         if (!CraftingTweaks.debugMode) {
             return;
         }

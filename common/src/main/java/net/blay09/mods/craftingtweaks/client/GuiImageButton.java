@@ -3,7 +3,7 @@ package net.blay09.mods.craftingtweaks.client;
 import net.blay09.mods.craftingtweaks.CraftingTweaks;
 import net.blay09.mods.craftingtweaks.api.ButtonProperties;
 import net.blay09.mods.craftingtweaks.api.ButtonState;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
@@ -22,7 +22,7 @@ public class GuiImageButton extends Button {
     }
 
     @Override
-    public void renderContents(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    public void renderContents(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
         isHovered = active && visible && mouseX >= getX() && mouseY >= getY() && mouseX < getX() + width && mouseY < getY() + height;
         var state = isHovered ? ButtonState.HOVER : ButtonState.NORMAL;
         if(!active) {

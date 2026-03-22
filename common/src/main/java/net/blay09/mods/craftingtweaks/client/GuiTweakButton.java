@@ -5,7 +5,7 @@ import net.blay09.mods.craftingtweaks.api.*;
 import net.blay09.mods.kuma.api.Kuma;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.InputWithModifiers;
@@ -60,7 +60,7 @@ public abstract class GuiTweakButton extends GuiImageButton implements ITooltipP
     protected abstract void onTweakButtonClicked(Player player, AbstractContainerMenu container, CraftingGrid grid, TweakType tweak);
 
     @Override
-    public void renderContents(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    public void renderContents(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
         setTooltip(Kuma.hasShiftDown() ? altTooltip : normalTooltip);
 
         if (screen != null) {

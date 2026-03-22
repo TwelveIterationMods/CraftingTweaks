@@ -26,7 +26,7 @@ import net.blay09.mods.craftingtweaks.network.CraftStackMessage;
 import net.blay09.mods.craftingtweaks.network.TransferStackMessage;
 import net.blay09.mods.kuma.api.Kuma;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -224,7 +224,7 @@ public class CraftingTweaksClient {
         }
     }
 
-    public static void screenAboutToDraw(Screen screen, GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+    public static void screenAboutToDraw(Screen screen, GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
         // Detect changes on the button that shall not be named to fix its positioning
         if (screen instanceof AbstractContainerScreen<?> containerScreen && unpleasantButton != null) {
             int unpleasantX = unpleasantButton.getX();
@@ -238,7 +238,7 @@ public class CraftingTweaksClient {
         }
     }
 
-    public static void screenDrawn(Screen screen, GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+    public static void screenDrawn(Screen screen, GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
         handleRightClickCrafting();
     }
 
