@@ -48,3 +48,4 @@ artifacts {
     commonResources sourceSets.main.resources.sourceDirectories.singleFile
     commonGeneratedResources sourceSets.generated.resources.sourceDirectories.singleFile
 }
+

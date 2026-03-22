@@ -52,6 +52,7 @@ loom {
     }
 }
 
+
 tasks.register('curseforge', TaskPublishCurseForge) {
     dependsOn('build')
     description = 'Publishes the Fabric build to CurseForge.'
