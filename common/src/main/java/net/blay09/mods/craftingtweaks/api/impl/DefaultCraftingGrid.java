@@ -38,31 +38,6 @@ public class DefaultCraftingGrid implements CraftingGrid, CraftingGridDecorator,
         this.size = width * height;
     }
 
-    /**
-     * @deprecated Use {@link #DefaultCraftingGrid(Identifier, int, int, int)} instead.
-     */
-    @Deprecated
-    public DefaultCraftingGrid(Identifier id, int start, int size, int width, int height) {
-        this.id = id;
-        this.start = start;
-        this.size = size;
-        this.width = width;
-        this.height = height;
-    }
-
-
-    /**
-     * @deprecated Use {@link #DefaultCraftingGrid(Identifier, int, int, int)} instead.
-     */
-    @Deprecated
-    public DefaultCraftingGrid(Identifier id, int start, int size) {
-        this.id = id;
-        this.start = start;
-        this.size = size;
-        this.width = (int) Mth.sqrt(size);
-        this.height = (int) Mth.sqrt(size);
-    }
-
     @Override
     public Identifier getId() {
         return id;

@@ -54,9 +54,9 @@ public class CraftingTweaksRegistrationData {
     private String validContainerPredicateClass = "";
     private String getGridStartFunctionClass = "";
     private int gridSlotNumber = 1;
-    private int gridSize = 9;
-    private int gridWidth;
-    private int gridHeight;
+    private int gridSize = 0;
+    private int gridWidth = 3;
+    private int gridHeight = 3;
     private Integer buttonOffsetX;
     private Integer buttonOffsetY;
     private String alignToGrid = "left";

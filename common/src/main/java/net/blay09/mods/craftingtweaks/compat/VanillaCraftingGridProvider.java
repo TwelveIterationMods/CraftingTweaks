@@ -26,10 +26,10 @@ public class VanillaCraftingGridProvider implements CraftingGridProvider {
     @Override
     public void buildCraftingGrids(CraftingGridBuilder builder, AbstractContainerMenu menu) {
         if (menu instanceof CraftingMenu) {
-            builder.addGrid(1, 9)
+            builder.addGrid(1, 3, 3)
                     .setButtonAlignment(ButtonAlignment.LEFT);
         } else if (menu instanceof InventoryMenu) {
-            builder.addGrid(1, 4)
+            builder.addGrid(1, 2, 2)
                     .hideAllTweakButtons();
         }
     }

@@ -72,6 +72,20 @@ public class DataDrivenGridFactory {
             }
         }
 
+        final int gridSize = data.getGridSize();
+        if (data.getGridSize() != 0) {
+            if (data.getGridWidth() == 0) {
+                data.setGridWidth((int) Mth.sqrt(gridSize));
+            }
+            if (data.getGridHeight() == 0) {
+                data.setGridHeight((int) Mth.sqrt(gridSize));
+            }
+            if (data.getGridWidth() * data.getGridHeight() != data.getGridSize()) {
+                logger.error("{} specified an invalid grid size {} ({} x {})", senderModId, data.getGridSize(), data.getGridWidth(), data.getGridHeight());
+                return null;
+            }
+        }
+
         final Predicate<AbstractContainerMenu> effectiveContainerPredicate = containerPredicate;
         final Function<AbstractContainerMenu, Integer> effectiveGridStartFunction = gridStartFunction;
         return new CraftingGridProvider() {
@@ -87,20 +101,13 @@ public class DataDrivenGridFactory {
 
             @Override
             public void buildCraftingGrids(CraftingGridBuilder builder, AbstractContainerMenu menu) {
-                int gridSlotNumber = data.getGridSlotNumber();
-                int gridSize = data.getGridSize();
-                int gridWidth = data.getGridWidth();
-                if (gridWidth == 0) {
-                    gridWidth = (int) Mth.sqrt(gridSize);
-                }
-                int gridHeight = data.getGridHeight();
-                if (gridHeight == 0) {
-                    gridHeight = (int) Mth.sqrt(gridSize);
-                }
+                final int gridSlotNumber = data.getGridSlotNumber();
+                final int gridWidth = data.getGridWidth();
+                final int gridHeight = data.getGridHeight();
 
                 CraftingGridDecorator grid;
                 if (effectiveGridStartFunction != null) {
-                    grid = new DefaultCraftingGrid(Identifier.fromNamespaceAndPath(senderModId, "default"), gridSlotNumber, gridSize, gridWidth, gridHeight) {
+                    grid = new DefaultCraftingGrid(Identifier.fromNamespaceAndPath(senderModId, "default"), gridSlotNumber, gridWidth, gridHeight) {
                         @Override
                         public int getGridStartSlot(Player player, AbstractContainerMenu menu) {
                             return effectiveGridStartFunction.apply(menu);
@@ -108,7 +115,7 @@ public class DataDrivenGridFactory {
                     };
                     builder.addCustomGrid((CraftingGrid) grid);
                 } else {
-                    grid = builder.addGrid(gridSlotNumber, gridSize, gridWidth, gridHeight);
+                    grid = builder.addGrid(gridSlotNumber, gridWidth, gridHeight);
                 }
 
                 int buttonOffsetX = unwrapOr(data.getButtonOffsetX(), 0);
