@@ -173,7 +173,7 @@ public record CompressMessage(int slotNumber, CompressType compressType) impleme
     private static void giveLeftoverItems(ServerPlayer player, ItemStack slotStack, int count) {
         for (int i = 0; i < count; i++) {
             // Must be inside loop as it's being shrunk in addItemStackToInventory
-            final ItemStack containerItem = Balm.hooks().getCraftingRemainingItem(slotStack);
+            final var containerItem = Balm.hooks().getCraftingRemainingItem(slotStack).create();
             if (!player.addItem(containerItem)) {
                 ItemEntity itemEntity = player.drop(containerItem, false);
                 if (itemEntity != null) {
@@ -189,7 +189,7 @@ public record CompressMessage(int slotNumber, CompressType compressType) impleme
         Level level = player.level();
         RecipeHolder<CraftingRecipe> recipe = recipeManager.getRecipeFor(RecipeType.CRAFTING, recipeInput, level).orElse(null);
         if (recipe != null && recipeCraftingHolder.setRecipeUsed(player, recipe)) {
-            return recipe.value().assemble(recipeInput, level.registryAccess());
+            return recipe.value().assemble(recipeInput);
         }
 
         return ItemStack.EMPTY;

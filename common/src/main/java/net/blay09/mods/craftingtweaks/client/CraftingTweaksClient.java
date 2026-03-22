@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
 import net.blay09.mods.balm.Balm;
-import net.blay09.mods.balm.client.BalmClient;
 import net.blay09.mods.balm.client.BalmClientRegistrars;
 import net.blay09.mods.balm.client.gui.screens.BalmScreenUtils;
 import net.blay09.mods.balm.client.platform.event.callback.ClientLifecycleCallback;
@@ -37,7 +36,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.ResultSlot;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -88,7 +87,7 @@ public class CraftingTweaksClient {
                     && GLFW.glfwGetKey(window.handle(), GLFW.GLFW_KEY_A) == 1
                     && (GLFW.glfwGetKey(window.handle(), GLFW.GLFW_KEY_Y) == 1 || GLFW.glfwGetKey(window.handle(), GLFW.GLFW_KEY_Z) == 1)) {
                 CraftingTweaks.isServerSideInstalled = false;
-                player.displayClientMessage(Component.literal("[CraftingTweaks] Enabled client-side testing mode"), false);
+                player.sendSystemMessage(Component.literal("[CraftingTweaks] Enabled client-side testing mode"));
                 return true;
             }
         }
@@ -219,7 +218,7 @@ public class CraftingTweaksClient {
 
         ItemStack mouseStack = menu.getCarried();
         if (mouseStack.isEmpty() || mouseStack.getCount() + mouseSlot.getItem().getCount() <= mouseStack.getMaxStackSize()) {
-            playerController.handleInventoryMouseClick(menu.containerId, mouseSlot.index, 0, ClickType.PICKUP, player);
+            playerController.handleContainerInput(menu.containerId, mouseSlot.index, 0, ContainerInput.PICKUP, player);
             rightClickCraftingSlot = mouseSlot.index;
         }
     }

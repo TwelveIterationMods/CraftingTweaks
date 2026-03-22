@@ -22,7 +22,7 @@ public class GuiImageButton extends Button {
     }
 
     @Override
-    public void renderContents(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    public void extractContents(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
         isHovered = active && visible && mouseX >= getX() && mouseY >= getY() && mouseX < getX() + width && mouseY < getY() + height;
         var state = isHovered ? ButtonState.HOVER : ButtonState.NORMAL;
         if(!active) {

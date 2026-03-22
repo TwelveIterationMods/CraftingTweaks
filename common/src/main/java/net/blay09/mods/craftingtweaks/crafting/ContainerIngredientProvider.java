@@ -91,7 +91,7 @@ public class ContainerIngredientProvider implements IngredientProvider {
         public ItemStack consume() {
             final var consumed = ContainerUtils.extractItem(container, slot, 1, false);
             if (returnRemainder) {
-                final var remainingItem = Balm.hooks().getCraftingRemainingItem(consumed);
+                final var remainingItem = Balm.hooks().getCraftingRemainingItem(consumed).create();
                 ContainerUtils.insertItem(container, slot, remainingItem, false);
             }
             return consumed;

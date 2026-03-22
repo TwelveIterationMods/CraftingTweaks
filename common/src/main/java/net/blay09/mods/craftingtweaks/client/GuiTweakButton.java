@@ -60,7 +60,7 @@ public abstract class GuiTweakButton extends GuiImageButton implements ITooltipP
     protected abstract void onTweakButtonClicked(Player player, AbstractContainerMenu container, CraftingGrid grid, TweakType tweak);
 
     @Override
-    public void renderContents(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    public void extractContents(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
         setTooltip(Kuma.hasShiftDown() ? altTooltip : normalTooltip);
 
         if (screen != null) {
@@ -80,7 +80,7 @@ public abstract class GuiTweakButton extends GuiImageButton implements ITooltipP
             properties = normalProperties;
         }
 
-        super.renderContents(guiGraphics, mouseX, mouseY, partialTicks);
+        super.extractContents(guiGraphics, mouseX, mouseY, partialTicks);
     }
 
     private Tooltip createTooltip(TweakType tweak) {

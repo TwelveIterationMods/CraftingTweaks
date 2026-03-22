@@ -167,7 +167,6 @@ public class ModKeyMappings {
 
         keyCompressOne = Kuma.createKeyMapping(Identifier.fromNamespaceAndPath(CraftingTweaks.MOD_ID, "compress_one"))
                 .withDefault(InputBinding.key(InputConstants.KEY_K, KeyModifiers.of(KeyModifier.CONTROL)))
-                .withFallbackDefault(InputBinding.none()) // TODO we avoid a virtual binding for now until Kuma#1 is fixed
                 .withContext(KeyConflictContext.SCREEN)
                 .handleScreenInput(event -> handleCompression(event, CompressType.COMPRESS_ONE))
                 .build();
@@ -180,7 +179,6 @@ public class ModKeyMappings {
 
         keyCompressAll = Kuma.createKeyMapping(Identifier.fromNamespaceAndPath(CraftingTweaks.MOD_ID, "compress_all"))
                 .withDefault(InputBinding.key(InputConstants.KEY_K, KeyModifiers.of(KeyModifier.SHIFT)))
-                .withFallbackDefault(InputBinding.none()) // TODO we avoid a virtual binding for now until Kuma#1 is fixed
                 .withContext(KeyConflictContext.SCREEN)
                 .handleScreenInput(event -> handleCompression(event, CompressType.COMPRESS_ALL))
                 .build();

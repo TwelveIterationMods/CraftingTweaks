@@ -9,7 +9,7 @@ import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
@@ -39,7 +39,7 @@ public record CraftStackMessage(int slotNumber) implements CustomPacketPayload {
         int maxTries = 64;
         while (maxTries > 0 && mouseSlot.hasItem() && (mouseStack.isEmpty() || mouseStack.getCount() + mouseSlot.getItem()
                 .getCount() <= mouseStack.getMaxStackSize())) {
-            menu.clicked(mouseSlot.index, 0, ClickType.PICKUP, player);
+            menu.clicked(mouseSlot.index, 0, ContainerInput.PICKUP, player);
             mouseStack = menu.getCarried();
             maxTries--;
         }

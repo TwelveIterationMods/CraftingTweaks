@@ -67,7 +67,7 @@ public class ClientProvider {
                 if (!itemStack.isEmpty() && itemStack.getCount() > average) {
                     // Pick up item from biggest stack
                     int mouseStackSize = itemStack.getCount();
-                    getController().handleInventoryMouseClick(container.containerId, slot.index, 0, ClickType.PICKUP, entityPlayer);
+                    getController().handleContainerInput(container.containerId, slot.index, 0, ContainerInput.PICKUP, entityPlayer);
 
                     for (Slot otherSlot : slotList) {
                         if (slot == otherSlot || !otherSlot.hasItem()) {
@@ -78,7 +78,7 @@ public class ClientProvider {
                             int otherStackSize = otherStack.getCount();
                             if (otherStackSize < average) {
                                 while (otherStackSize < average && mouseStackSize > average) {
-                                    getController().handleInventoryMouseClick(container.containerId, otherSlot.index, 1, ClickType.PICKUP, entityPlayer);
+                                    getController().handleContainerInput(container.containerId, otherSlot.index, 1, ContainerInput.PICKUP, entityPlayer);
                                     mouseStackSize--;
                                     otherStackSize++;
                                 }
@@ -87,7 +87,7 @@ public class ClientProvider {
                     }
 
                     // Put the remaining stack back
-                    getController().handleInventoryMouseClick(container.containerId, slot.index, 0, ClickType.PICKUP, entityPlayer);
+                    getController().handleContainerInput(container.containerId, slot.index, 0, ContainerInput.PICKUP, entityPlayer);
                 }
             }
         }
@@ -112,7 +112,7 @@ public class ClientProvider {
             if (biggestSlot == null) {
                 return;
             }
-            getController().handleInventoryMouseClick(menu.containerId, biggestSlot.index, 0, ClickType.PICKUP, player);
+            getController().handleContainerInput(menu.containerId, biggestSlot.index, 0, ContainerInput.PICKUP, player);
             for (int i = start; i < start + size; i++) {
                 if (i == biggestSlot.index) {
                     continue;
@@ -120,7 +120,7 @@ public class ClientProvider {
                 ItemStack itemStack = menu.slots.get(i).getItem();
                 if (itemStack.isEmpty()) {
                     if (biggestSlotSize > 1) {
-                        getController().handleInventoryMouseClick(menu.containerId, i, 1, ClickType.PICKUP, player);
+                        getController().handleContainerInput(menu.containerId, i, 1, ContainerInput.PICKUP, player);
                         biggestSlotSize--;
                         if (biggestSlotSize == 1) {
                             break;
@@ -128,7 +128,7 @@ public class ClientProvider {
                     }
                 }
             }
-            getController().handleInventoryMouseClick(menu.containerId, biggestSlot.index, 0, ClickType.PICKUP, player);
+            getController().handleContainerInput(menu.containerId, biggestSlot.index, 0, ContainerInput.PICKUP, player);
         }
 
         balanceGrid(player, menu, grid);
@@ -138,10 +138,10 @@ public class ClientProvider {
         int start = grid.getGridStartSlot(player, menu);
         int size = grid.getGridSize(player, menu);
         for (int i = start; i < start + size; i++) {
-            getController().handleInventoryMouseClick(menu.containerId, i, 0, ClickType.QUICK_MOVE, player);
+            getController().handleContainerInput(menu.containerId, i, 0, ContainerInput.QUICK_MOVE, player);
             menu.quickMoveStack(player, i);
             if (forced && menu.slots.get(i).hasItem()) {
-                getController().handleInventoryMouseClick(menu.containerId, i, 0, ClickType.THROW, player);
+                getController().handleContainerInput(menu.containerId, i, 0, ContainerInput.THROW, player);
             }
         }
     }
@@ -160,11 +160,11 @@ public class ClientProvider {
         }
 
         int startSlot = grid.getGridStartSlot(player, menu);
-        getController().handleInventoryMouseClick(menu.containerId, startSlot, 0, ClickType.PICKUP, player);
+        getController().handleContainerInput(menu.containerId, startSlot, 0, ContainerInput.PICKUP, player);
         int currentSlot = startSlot;
         do {
             currentSlot = startSlot + rotateSlotId(currentSlot - startSlot, reverse);
-            getController().handleInventoryMouseClick(menu.containerId, currentSlot, 0, ClickType.PICKUP, player);
+            getController().handleContainerInput(menu.containerId, currentSlot, 0, ContainerInput.PICKUP, player);
         } while (currentSlot != startSlot);
     }
 
@@ -187,16 +187,16 @@ public class ClientProvider {
         int startSlot = grid.getGridStartSlot(player, menu);
         int currentSlot = startSlot;
         do {
-            getController().handleInventoryMouseClick(menu.containerId, currentSlot, 0, ClickType.PICKUP, player);
-            getController().handleInventoryMouseClick(menu.containerId, bufferSlot[emptyBuffer], 0, ClickType.PICKUP, player);
+            getController().handleContainerInput(menu.containerId, currentSlot, 0, ContainerInput.PICKUP, player);
+            getController().handleContainerInput(menu.containerId, bufferSlot[emptyBuffer], 0, ContainerInput.PICKUP, player);
             emptyBuffer = (emptyBuffer + 1) % 2;
-            getController().handleInventoryMouseClick(menu.containerId, bufferSlot[emptyBuffer], 0, ClickType.PICKUP, player);
-            getController().handleInventoryMouseClick(menu.containerId, currentSlot, 0, ClickType.PICKUP, player);
+            getController().handleContainerInput(menu.containerId, bufferSlot[emptyBuffer], 0, ContainerInput.PICKUP, player);
+            getController().handleContainerInput(menu.containerId, currentSlot, 0, ContainerInput.PICKUP, player);
             currentSlot = startSlot + rotateSlotId(currentSlot - startSlot, counterClockwise);
         } while (currentSlot != startSlot);
         emptyBuffer = (emptyBuffer + 1) % 2;
-        getController().handleInventoryMouseClick(menu.containerId, bufferSlot[emptyBuffer], 0, ClickType.PICKUP, player);
-        getController().handleInventoryMouseClick(menu.containerId, startSlot, 0, ClickType.PICKUP, player);
+        getController().handleContainerInput(menu.containerId, bufferSlot[emptyBuffer], 0, ContainerInput.PICKUP, player);
+        getController().handleContainerInput(menu.containerId, startSlot, 0, ContainerInput.PICKUP, player);
         return true;
     }
 
@@ -209,7 +209,7 @@ public class ClientProvider {
             return false;
         }
 
-        getController().handleInventoryMouseClick(menu.containerId, sourceSlot.index, 0, ClickType.PICKUP, player);
+        getController().handleContainerInput(menu.containerId, sourceSlot.index, 0, ContainerInput.PICKUP, player);
         ItemStack mouseStack = menu.getCarried();
         if (mouseStack.isEmpty()) {
             return false;
@@ -226,7 +226,7 @@ public class ClientProvider {
                 if (ItemStack.isSameItemSameComponents(craftStack, mouseStack)) {
                     int spaceLeft = Math.min(craftSlot.getMaxStackSize(), craftStack.getMaxStackSize()) - craftStack.getCount();
                     if (spaceLeft > 0) {
-                        getController().handleInventoryMouseClick(menu.containerId, craftSlot.index, 0, ClickType.PICKUP, player);
+                        getController().handleContainerInput(menu.containerId, craftSlot.index, 0, ContainerInput.PICKUP, player);
                         mouseStack = menu.getCarried();
                         if (mouseStack.isEmpty()) {
                             return true;
@@ -239,12 +239,12 @@ public class ClientProvider {
         }
 
         if (firstEmptySlot != -1) {
-            getController().handleInventoryMouseClick(menu.containerId, firstEmptySlot, 0, ClickType.PICKUP, player);
+            getController().handleContainerInput(menu.containerId, firstEmptySlot, 0, ContainerInput.PICKUP, player);
             itemMoved = true;
         }
 
         if (!menu.getCarried().isEmpty()) {
-            getController().handleInventoryMouseClick(menu.containerId, sourceSlot.index, 0, ClickType.PICKUP, player);
+            getController().handleContainerInput(menu.containerId, sourceSlot.index, 0, ContainerInput.PICKUP, player);
         }
 
         dropOffMouseStack(player, menu);
@@ -270,9 +270,9 @@ public class ClientProvider {
                 ItemStack mouseItem = menu.getCarried();
                 ItemStack slotStack = slot.getItem();
                 if (slotStack.isEmpty()) {
-                    getController().handleInventoryMouseClick(menu.containerId, i, 0, ClickType.PICKUP, player);
+                    getController().handleContainerInput(menu.containerId, i, 0, ContainerInput.PICKUP, player);
                 } else if (ItemStack.isSameItemSameComponents(slotStack, mouseItem)) {
-                    getController().handleInventoryMouseClick(menu.containerId, i, 0, ClickType.PICKUP, player);
+                    getController().handleContainerInput(menu.containerId, i, 0, ContainerInput.PICKUP, player);
                 }
 
                 if (menu.getCarried().isEmpty()) {
@@ -307,15 +307,15 @@ public class ClientProvider {
             }
             if (slot.container instanceof Inventory && slot.hasItem() && ItemStack.isSameItemSameComponents(slot.getItem(), mouseSlot.getItem())) {
                 // Move stack to crafting grid
-                getController().handleInventoryMouseClick(menu.containerId, mouseSlot.index, 0, ClickType.PICKUP, player);
-                getController().handleInventoryMouseClick(menu.containerId, start, 0, ClickType.PICKUP, player);
+                getController().handleContainerInput(menu.containerId, mouseSlot.index, 0, ContainerInput.PICKUP, player);
+                getController().handleContainerInput(menu.containerId, start, 0, ContainerInput.PICKUP, player);
                 for (Slot resultSlot : menu.slots) {
                     // Search for result slot and grab result
                     if (resultSlot instanceof ResultSlot && resultSlot.hasItem()) {
-                        getController().handleInventoryMouseClick(menu.containerId,
+                        getController().handleContainerInput(menu.containerId,
                                 resultSlot.index,
                                 0,
-                                decompressAll ? ClickType.QUICK_MOVE : ClickType.PICKUP,
+                                decompressAll ? ContainerInput.QUICK_MOVE : ContainerInput.PICKUP,
                                 player);
                         break;
                     }
@@ -323,8 +323,8 @@ public class ClientProvider {
 
                 dropOffMouseStack(player, menu, mouseSlot.index);
                 // Take remaining stack back out of the crafting grid
-                getController().handleInventoryMouseClick(menu.containerId, start, 0, ClickType.PICKUP, player);
-                getController().handleInventoryMouseClick(menu.containerId, mouseSlot.index, 0, ClickType.PICKUP, player);
+                getController().handleContainerInput(menu.containerId, start, 0, ContainerInput.PICKUP, player);
+                getController().handleContainerInput(menu.containerId, mouseSlot.index, 0, ContainerInput.PICKUP, player);
             }
         }
     }
@@ -363,25 +363,25 @@ public class ClientProvider {
                     final var craftingContainer3x3 = new InventoryCraftingCompress(menu, 3, mouseStack);
                     result = findMatchingResult(craftingContainer3x3.asCraftInput(), player);
                     if (!result.isEmpty() && !isCompressBlacklisted(result)) {
-                        getController().handleInventoryMouseClick(menu.containerId, slot.index, 0, ClickType.PICKUP, player);
-                        getController().handleInventoryMouseClick(menu.containerId, -999, getDragSplittingButton(0, 0), ClickType.QUICK_CRAFT, player);
+                        getController().handleContainerInput(menu.containerId, slot.index, 0, ContainerInput.PICKUP, player);
+                        getController().handleContainerInput(menu.containerId, -999, getDragSplittingButton(0, 0), ContainerInput.QUICK_CRAFT, player);
                         for (int i = start; i < start + size; i++) {
-                            getController().handleInventoryMouseClick(menu.containerId, i, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, player);
+                            getController().handleContainerInput(menu.containerId, i, getDragSplittingButton(1, 0), ContainerInput.QUICK_CRAFT, player);
                         }
-                        getController().handleInventoryMouseClick(menu.containerId, -999, getDragSplittingButton(2, 0), ClickType.QUICK_CRAFT, player);
-                        getController().handleInventoryMouseClick(menu.containerId, slot.index, 0, ClickType.PICKUP, player);
+                        getController().handleContainerInput(menu.containerId, -999, getDragSplittingButton(2, 0), ContainerInput.QUICK_CRAFT, player);
+                        getController().handleContainerInput(menu.containerId, slot.index, 0, ContainerInput.PICKUP, player);
                     } else {
                         final var craftingContainer2x2 = new InventoryCraftingCompress(menu, 2, mouseStack);
                         result = findMatchingResult(craftingContainer2x2.asCraftInput(), player);
                         if (!result.isEmpty() && !isCompressBlacklisted(result)) {
-                            getController().handleInventoryMouseClick(menu.containerId, slot.index, 0, ClickType.PICKUP, player);
-                            getController().handleInventoryMouseClick(menu.containerId, -999, getDragSplittingButton(0, 0), ClickType.QUICK_CRAFT, player);
-                            getController().handleInventoryMouseClick(menu.containerId, start, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, player);
-                            getController().handleInventoryMouseClick(menu.containerId, start + 1, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, player);
-                            getController().handleInventoryMouseClick(menu.containerId, start + 3, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, player);
-                            getController().handleInventoryMouseClick(menu.containerId, start + 4, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, player);
-                            getController().handleInventoryMouseClick(menu.containerId, -999, getDragSplittingButton(2, 0), ClickType.QUICK_CRAFT, player);
-                            getController().handleInventoryMouseClick(menu.containerId, slot.index, 0, ClickType.PICKUP, player);
+                            getController().handleContainerInput(menu.containerId, slot.index, 0, ContainerInput.PICKUP, player);
+                            getController().handleContainerInput(menu.containerId, -999, getDragSplittingButton(0, 0), ContainerInput.QUICK_CRAFT, player);
+                            getController().handleContainerInput(menu.containerId, start, getDragSplittingButton(1, 0), ContainerInput.QUICK_CRAFT, player);
+                            getController().handleContainerInput(menu.containerId, start + 1, getDragSplittingButton(1, 0), ContainerInput.QUICK_CRAFT, player);
+                            getController().handleContainerInput(menu.containerId, start + 3, getDragSplittingButton(1, 0), ContainerInput.QUICK_CRAFT, player);
+                            getController().handleContainerInput(menu.containerId, start + 4, getDragSplittingButton(1, 0), ContainerInput.QUICK_CRAFT, player);
+                            getController().handleContainerInput(menu.containerId, -999, getDragSplittingButton(2, 0), ContainerInput.QUICK_CRAFT, player);
+                            getController().handleContainerInput(menu.containerId, slot.index, 0, ContainerInput.PICKUP, player);
                         } else {
                             return;
                         }
@@ -390,30 +390,30 @@ public class ClientProvider {
                     final var craftingContainer = new InventoryCraftingCompress(menu, 2, mouseStack);
                     result = findMatchingResult(craftingContainer.asCraftInput(), player);
                     if (!result.isEmpty() && !isCompressBlacklisted(result)) {
-                        getController().handleInventoryMouseClick(menu.containerId, slot.index, 0, ClickType.PICKUP, player);
-                        getController().handleInventoryMouseClick(menu.containerId, -999, getDragSplittingButton(0, 0), ClickType.QUICK_CRAFT, player);
+                        getController().handleContainerInput(menu.containerId, slot.index, 0, ContainerInput.PICKUP, player);
+                        getController().handleContainerInput(menu.containerId, -999, getDragSplittingButton(0, 0), ContainerInput.QUICK_CRAFT, player);
                         if (size == 4) {
                             for (int i = start; i < start + size; i++) {
-                                getController().handleInventoryMouseClick(menu.containerId, i, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, player);
+                                getController().handleContainerInput(menu.containerId, i, getDragSplittingButton(1, 0), ContainerInput.QUICK_CRAFT, player);
                             }
                         } else {
-                            getController().handleInventoryMouseClick(menu.containerId, start, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, player);
-                            getController().handleInventoryMouseClick(menu.containerId, start + 1, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, player);
-                            getController().handleInventoryMouseClick(menu.containerId, start + 3, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, player);
-                            getController().handleInventoryMouseClick(menu.containerId, start + 4, getDragSplittingButton(1, 0), ClickType.QUICK_CRAFT, player);
+                            getController().handleContainerInput(menu.containerId, start, getDragSplittingButton(1, 0), ContainerInput.QUICK_CRAFT, player);
+                            getController().handleContainerInput(menu.containerId, start + 1, getDragSplittingButton(1, 0), ContainerInput.QUICK_CRAFT, player);
+                            getController().handleContainerInput(menu.containerId, start + 3, getDragSplittingButton(1, 0), ContainerInput.QUICK_CRAFT, player);
+                            getController().handleContainerInput(menu.containerId, start + 4, getDragSplittingButton(1, 0), ContainerInput.QUICK_CRAFT, player);
                         }
-                        getController().handleInventoryMouseClick(menu.containerId, -999, getDragSplittingButton(2, 0), ClickType.QUICK_CRAFT, player);
-                        getController().handleInventoryMouseClick(menu.containerId, slot.index, 0, ClickType.PICKUP, player);
+                        getController().handleContainerInput(menu.containerId, -999, getDragSplittingButton(2, 0), ContainerInput.QUICK_CRAFT, player);
+                        getController().handleContainerInput(menu.containerId, slot.index, 0, ContainerInput.PICKUP, player);
                     } else {
                         return;
                     }
                 }
                 for (Slot resultSlot : menu.slots) {
                     if (resultSlot instanceof ResultSlot && resultSlot.hasItem()) {
-                        getController().handleInventoryMouseClick(menu.containerId,
+                        getController().handleContainerInput(menu.containerId,
                                 resultSlot.index,
                                 0,
-                                compressAll ? ClickType.QUICK_MOVE : ClickType.PICKUP,
+                                compressAll ? ContainerInput.QUICK_MOVE : ContainerInput.PICKUP,
                                 player);
                         break;
                     }
@@ -421,8 +421,8 @@ public class ClientProvider {
                 dropOffMouseStack(player, menu, slot.index);
                 for (int i = start; i < start + size; i++) {
                     if (menu.slots.get(i).hasItem()) {
-                        getController().handleInventoryMouseClick(menu.containerId, i, 0, ClickType.PICKUP, player);
-                        getController().handleInventoryMouseClick(menu.containerId, slot.index, 0, ClickType.PICKUP, player);
+                        getController().handleContainerInput(menu.containerId, i, 0, ContainerInput.PICKUP, player);
+                        getController().handleContainerInput(menu.containerId, slot.index, 0, ContainerInput.PICKUP, player);
                     }
                 }
 
@@ -491,17 +491,17 @@ public class ClientProvider {
                 // Search for this item in the inventory
                 for (Slot slot : menu.slots) {
                     if (slot.container instanceof Inventory && slot.hasItem() && ItemStack.isSameItemSameComponents(slot.getItem(), itemStack)) {
-                        getController().handleInventoryMouseClick(menu.containerId, slot.index, 0, ClickType.PICKUP, player);
-                        getController().handleInventoryMouseClick(menu.containerId, gridStart + i, fullStack ? 0 : 1, ClickType.PICKUP, player);
-                        getController().handleInventoryMouseClick(menu.containerId, slot.index, 0, ClickType.PICKUP, player);
+                        getController().handleContainerInput(menu.containerId, slot.index, 0, ContainerInput.PICKUP, player);
+                        getController().handleContainerInput(menu.containerId, gridStart + i, fullStack ? 0 : 1, ContainerInput.PICKUP, player);
+                        getController().handleContainerInput(menu.containerId, slot.index, 0, ContainerInput.PICKUP, player);
                         break;
                     }
                 }
             } else {
                 if (menu.slots.get(gridStart + i).hasItem()) {
-                    getController().handleInventoryMouseClick(menu.containerId, gridStart + i, 0, ClickType.PICKUP, player);
+                    getController().handleContainerInput(menu.containerId, gridStart + i, 0, ContainerInput.PICKUP, player);
                     if (!dropOffMouseStack(player, menu)) {
-                        getController().handleInventoryMouseClick(menu.containerId, gridStart + i, 0, ClickType.PICKUP, player);
+                        getController().handleContainerInput(menu.containerId, gridStart + i, 0, ContainerInput.PICKUP, player);
                         return;
                     }
                 }
@@ -520,9 +520,9 @@ public class ClientProvider {
 
                         ItemStack gridStack = menu.slots.get(j).getItem();
                         if (gridStack.getCount() > 1 && ItemStack.isSameItemSameComponents(gridStack, itemStack)) {
-                            getController().handleInventoryMouseClick(menu.containerId, j, 0, ClickType.PICKUP, player);
-                            getController().handleInventoryMouseClick(menu.containerId, gridStart + i, 1, ClickType.PICKUP, player);
-                            getController().handleInventoryMouseClick(menu.containerId, j, 0, ClickType.PICKUP, player);
+                            getController().handleContainerInput(menu.containerId, j, 0, ContainerInput.PICKUP, player);
+                            getController().handleContainerInput(menu.containerId, gridStart + i, 1, ContainerInput.PICKUP, player);
+                            getController().handleContainerInput(menu.containerId, j, 0, ContainerInput.PICKUP, player);
                             break;
                         }
                     }
