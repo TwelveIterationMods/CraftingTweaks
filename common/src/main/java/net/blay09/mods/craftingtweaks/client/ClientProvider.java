@@ -4,10 +4,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import net.blay09.mods.craftingtweaks.CompressType;
 import net.blay09.mods.craftingtweaks.api.CraftingGrid;
-import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfig;
-import net.blay09.mods.craftingtweaks.InventoryCraftingCompress;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.recipebook.RecipeCollection;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -16,12 +13,11 @@ import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.*;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.inventory.ResultSlot;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeInput;
-import net.minecraft.world.item.crafting.RecipeType;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -332,129 +328,7 @@ public class ClientProvider {
     public void compress(LocalPlayer player, AbstractContainerMenu menu, CraftingGrid grid, Slot mouseSlot, CompressType compressType) {
         if (compressType == CompressType.DECOMPRESS_ALL || compressType == CompressType.DECOMPRESS_ONE || compressType == CompressType.DECOMPRESS_STACK) {
             decompress(player, menu, grid, mouseSlot, compressType);
-            return;
         }
-
-        if (!mouseSlot.hasItem()) {
-            return;
-        }
-
-        boolean compressAll = compressType != CompressType.COMPRESS_ONE;
-        // Clear the crafting grid
-        clearGrid(player, menu, grid, false);
-        int start = grid.getGridStartSlot(player, menu);
-        int size = grid.getGridSize(player, menu);
-        // Ensure the crafting grid is empty
-        for (int i = start; i < start + size; i++) {
-            if (menu.slots.get(i).hasItem()) {
-                return;
-            }
-        }
-
-        // Perform decompression on all valid slots
-        for (Slot slot : menu.slots) {
-            if (compressType != CompressType.COMPRESS_ALL && slot != mouseSlot) {
-                continue;
-            }
-            if (slot.container instanceof Inventory && slot.hasItem() && ItemStack.isSameItemSameComponents(slot.getItem(), mouseSlot.getItem())) {
-                ItemStack result;
-                ItemStack mouseStack = slot.getItem();
-                if (size == 9 && !mouseStack.isEmpty() && mouseStack.getCount() >= 9) {
-                    final var craftingContainer3x3 = new InventoryCraftingCompress(menu, 3, mouseStack);
-                    result = findMatchingResult(craftingContainer3x3.asCraftInput(), player);
-                    if (!result.isEmpty() && !isCompressBlacklisted(result)) {
-                        getController().handleContainerInput(menu.containerId, slot.index, 0, ContainerInput.PICKUP, player);
-                        getController().handleContainerInput(menu.containerId, -999, getDragSplittingButton(0, 0), ContainerInput.QUICK_CRAFT, player);
-                        for (int i = start; i < start + size; i++) {
-                            getController().handleContainerInput(menu.containerId, i, getDragSplittingButton(1, 0), ContainerInput.QUICK_CRAFT, player);
-                        }
-                        getController().handleContainerInput(menu.containerId, -999, getDragSplittingButton(2, 0), ContainerInput.QUICK_CRAFT, player);
-                        getController().handleContainerInput(menu.containerId, slot.index, 0, ContainerInput.PICKUP, player);
-                    } else {
-                        final var craftingContainer2x2 = new InventoryCraftingCompress(menu, 2, mouseStack);
-                        result = findMatchingResult(craftingContainer2x2.asCraftInput(), player);
-                        if (!result.isEmpty() && !isCompressBlacklisted(result)) {
-                            getController().handleContainerInput(menu.containerId, slot.index, 0, ContainerInput.PICKUP, player);
-                            getController().handleContainerInput(menu.containerId, -999, getDragSplittingButton(0, 0), ContainerInput.QUICK_CRAFT, player);
-                            getController().handleContainerInput(menu.containerId, start, getDragSplittingButton(1, 0), ContainerInput.QUICK_CRAFT, player);
-                            getController().handleContainerInput(menu.containerId, start + 1, getDragSplittingButton(1, 0), ContainerInput.QUICK_CRAFT, player);
-                            getController().handleContainerInput(menu.containerId, start + 3, getDragSplittingButton(1, 0), ContainerInput.QUICK_CRAFT, player);
-                            getController().handleContainerInput(menu.containerId, start + 4, getDragSplittingButton(1, 0), ContainerInput.QUICK_CRAFT, player);
-                            getController().handleContainerInput(menu.containerId, -999, getDragSplittingButton(2, 0), ContainerInput.QUICK_CRAFT, player);
-                            getController().handleContainerInput(menu.containerId, slot.index, 0, ContainerInput.PICKUP, player);
-                        } else {
-                            return;
-                        }
-                    }
-                } else if (size >= 4 && !mouseStack.isEmpty() && mouseStack.getCount() >= 4) {
-                    final var craftingContainer = new InventoryCraftingCompress(menu, 2, mouseStack);
-                    result = findMatchingResult(craftingContainer.asCraftInput(), player);
-                    if (!result.isEmpty() && !isCompressBlacklisted(result)) {
-                        getController().handleContainerInput(menu.containerId, slot.index, 0, ContainerInput.PICKUP, player);
-                        getController().handleContainerInput(menu.containerId, -999, getDragSplittingButton(0, 0), ContainerInput.QUICK_CRAFT, player);
-                        if (size == 4) {
-                            for (int i = start; i < start + size; i++) {
-                                getController().handleContainerInput(menu.containerId, i, getDragSplittingButton(1, 0), ContainerInput.QUICK_CRAFT, player);
-                            }
-                        } else {
-                            getController().handleContainerInput(menu.containerId, start, getDragSplittingButton(1, 0), ContainerInput.QUICK_CRAFT, player);
-                            getController().handleContainerInput(menu.containerId, start + 1, getDragSplittingButton(1, 0), ContainerInput.QUICK_CRAFT, player);
-                            getController().handleContainerInput(menu.containerId, start + 3, getDragSplittingButton(1, 0), ContainerInput.QUICK_CRAFT, player);
-                            getController().handleContainerInput(menu.containerId, start + 4, getDragSplittingButton(1, 0), ContainerInput.QUICK_CRAFT, player);
-                        }
-                        getController().handleContainerInput(menu.containerId, -999, getDragSplittingButton(2, 0), ContainerInput.QUICK_CRAFT, player);
-                        getController().handleContainerInput(menu.containerId, slot.index, 0, ContainerInput.PICKUP, player);
-                    } else {
-                        return;
-                    }
-                }
-                for (Slot resultSlot : menu.slots) {
-                    if (resultSlot instanceof ResultSlot && resultSlot.hasItem()) {
-                        getController().handleContainerInput(menu.containerId,
-                                resultSlot.index,
-                                0,
-                                compressAll ? ContainerInput.QUICK_MOVE : ContainerInput.PICKUP,
-                                player);
-                        break;
-                    }
-                }
-                dropOffMouseStack(player, menu, slot.index);
-                for (int i = start; i < start + size; i++) {
-                    if (menu.slots.get(i).hasItem()) {
-                        getController().handleContainerInput(menu.containerId, i, 0, ContainerInput.PICKUP, player);
-                        getController().handleContainerInput(menu.containerId, slot.index, 0, ContainerInput.PICKUP, player);
-                    }
-                }
-
-                dropOffMouseStack(player, menu);
-            }
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <T extends RecipeInput> ItemStack findMatchingResult(T craftingInventory, LocalPlayer player) {
-        for (final var recipeList : player.getRecipeBook().getCollections()) {
-            for (final var recipe : recipeList.getRecipes()) {
-                // TODO Recipes are no longer available on the client
-                // if (recipe.value().getType() == RecipeType.CRAFTING) {
-                //     final var craftingRecipe = (Recipe<RecipeInput>) recipe.value();
-                //     if (craftingRecipe.matches(craftingInventory, player.level())) {
-                //         return craftingRecipe.assemble(craftingInventory, player.level().registryAccess());
-                //     }
-                // }
-            }
-        }
-
-        return ItemStack.EMPTY;
-    }
-
-    private static int getDragSplittingButton(int id, int limit) {
-        return id & 3 | (limit & 3) << 2;
-    }
-
-    private boolean isCompressBlacklisted(ItemStack result) {
-        Identifier registryName = BuiltInRegistries.ITEM.getKey(result.getItem());
-        return registryName != null && CraftingTweaksConfig.getActive().common.compressDenylist.contains(registryName.toString());
     }
 
     public void onItemCrafted(Container craftMatrix) {
@@ -534,10 +408,6 @@ public class ClientProvider {
         }
 
         dropOffMouseStack(player, menu);
-    }
-
-    public boolean rotateIgnoresSlotId(int slotId) {
-        return slotId == 4;
     }
 
     public int rotateSlotId(int slotId, boolean counterClockwise) {
