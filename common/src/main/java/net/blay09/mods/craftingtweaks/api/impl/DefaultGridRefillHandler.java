@@ -27,10 +27,8 @@ public class DefaultGridRefillHandler implements GridRefillHandler<AbstractConta
             return;
         }
 
-        // TODO Would be nice if our Grid API had info on width/height so this didn't need to be hardcoded
         final var gridSize = grid.getGridSize(player, menu);
-        final var gridWidth = gridSize == 4 ? 2 : 3;
-        final var gridHeight = gridSize == 4 ? 2 : 3;
+        final var gridWidth = grid.getGridWidth(player, menu);
 
         final var recipe = recipeHolder.value();
         final var context = new CraftingContext(List.of(new ContainerIngredientProvider(player.getInventory())));
