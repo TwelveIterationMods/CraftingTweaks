@@ -15,7 +15,7 @@ import net.minecraft.world.item.ItemStack;
 
 public record CraftStackMessage(int slotNumber) implements CustomPacketPayload {
 
-    public static CustomPacketPayload.Type<CraftStackMessage> TYPE = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(CraftingTweaks.MOD_ID,
+    public static final CustomPacketPayload.Type<CraftStackMessage> TYPE = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(CraftingTweaks.MOD_ID,
             "craft_stack"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, CraftStackMessage> STREAM_CODEC = StreamCodec.composite(
@@ -25,10 +25,6 @@ public record CraftStackMessage(int slotNumber) implements CustomPacketPayload {
     );
 
     public static void handle(ServerPlayer player, CraftStackMessage message) {
-        if (player == null) {
-            return;
-        }
-
         AbstractContainerMenu menu = player.containerMenu;
         if (menu == null || message.slotNumber < 0 || message.slotNumber >= menu.slots.size()) {
             return;

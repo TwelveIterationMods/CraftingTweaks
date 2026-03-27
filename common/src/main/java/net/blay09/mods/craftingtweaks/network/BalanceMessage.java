@@ -12,7 +12,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 
 public record BalanceMessage(Identifier id, boolean spread) implements CustomPacketPayload {
 
-    public static CustomPacketPayload.Type<BalanceMessage> TYPE = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(CraftingTweaks.MOD_ID, "balance"));
+    public static final CustomPacketPayload.Type<BalanceMessage> TYPE = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(CraftingTweaks.MOD_ID, "balance"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, BalanceMessage> STREAM_CODEC = StreamCodec.composite(
             Identifier.STREAM_CODEC,
@@ -23,10 +23,6 @@ public record BalanceMessage(Identifier id, boolean spread) implements CustomPac
     );
 
     public static void handle(ServerPlayer player, BalanceMessage message) {
-        if (player == null) {
-            return;
-        }
-
         AbstractContainerMenu menu = player.containerMenu;
         if (menu != null) {
             CraftingTweaksProviderManager.getCraftingGrid(menu, message.id).ifPresent(grid -> {

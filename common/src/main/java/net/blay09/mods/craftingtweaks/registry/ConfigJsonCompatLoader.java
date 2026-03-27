@@ -5,6 +5,7 @@ import net.blay09.mods.balm.Balm;
 import net.blay09.mods.craftingtweaks.api.CraftingGridProvider;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;
 import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfig;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +55,7 @@ public class ConfigJsonCompatLoader {
         return !CraftingTweaksConfig.getActive().client.disabledAddons.contains(modId);
     }
 
-    private static CraftingGridProvider load(File resource, CraftingTweaksRegistrationData data) {
+    private static @Nullable CraftingGridProvider load(File resource, CraftingTweaksRegistrationData data) {
         String modId = data.getModId();
         if ((!modId.equals("minecraft") && !Balm.platform().isModLoaded(modId)) || !isCompatEnabled(modId) || !data.isEnabled()) {
             return null;

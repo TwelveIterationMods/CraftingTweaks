@@ -6,6 +6,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +18,7 @@ public class DataDrivenGridFactory {
     private static final Logger logger = LoggerFactory.getLogger(DataDrivenGridFactory.class);
 
     @SuppressWarnings("unchecked")
-    public static CraftingGridProvider createGridProvider(CraftingTweaksRegistrationData data) {
+    public static @Nullable CraftingGridProvider createGridProvider(CraftingTweaksRegistrationData data) {
         String senderModId = data.getModId();
 
         String containerClassName = data.getContainerClass();
@@ -121,26 +122,8 @@ public class DataDrivenGridFactory {
                 int buttonOffsetX = unwrapOr(data.getButtonOffsetX(), 0);
                 int buttonOffsetY = unwrapOr(data.getButtonOffsetY(), 0);
                 grid.setButtonAlignmentOffset(buttonOffsetX, buttonOffsetY);
-
-                ButtonAlignment alignToGrid = ButtonAlignment.LEFT;
-                String alignToGridName = data.getAlignToGrid();
-                switch (alignToGridName.toLowerCase()) {
-                    case "north", "up", "top" -> alignToGrid = ButtonAlignment.TOP;
-                    case "south", "down", "bottom" -> alignToGrid = ButtonAlignment.BOTTOM;
-                    case "east", "right" -> alignToGrid = ButtonAlignment.RIGHT;
-                    case "west", "left" -> alignToGrid = ButtonAlignment.LEFT;
-                }
-                grid.setButtonAlignment(alignToGrid);
-
-                ButtonStyle buttonStyle = CraftingTweaksButtonStyles.DEFAULT;
-                String buttonStyleName = data.getButtonStyle();
-                switch (buttonStyleName.toLowerCase()) {
-                    case "default" -> buttonStyle = CraftingTweaksButtonStyles.DEFAULT;
-                    case "small_width" -> buttonStyle = CraftingTweaksButtonStyles.SMALL_WIDTH;
-                    case "small_height" -> buttonStyle = CraftingTweaksButtonStyles.SMALL_HEIGHT;
-                    case "small" -> buttonStyle = CraftingTweaksButtonStyles.SMALL;
-                }
-                grid.setButtonStyle(buttonStyle);
+                grid.setButtonAlignment(parseButtonAlignment(data));
+                grid.setButtonStyle(parseButtonStyle(data));
 
                 if (data.isHideButtons()) {
                     grid.hideAllTweakButtons();
@@ -193,7 +176,31 @@ public class DataDrivenGridFactory {
         };
     }
 
-    private static int unwrapOr(Integer integer, int defaultValue) {
+    private static ButtonStyle parseButtonStyle(CraftingTweaksRegistrationData data) {
+        ButtonStyle buttonStyle = CraftingTweaksButtonStyles.DEFAULT;
+        String buttonStyleName = data.getButtonStyle();
+        switch (buttonStyleName.toLowerCase()) {
+            case "default" -> buttonStyle = CraftingTweaksButtonStyles.DEFAULT;
+            case "small_width" -> buttonStyle = CraftingTweaksButtonStyles.SMALL_WIDTH;
+            case "small_height" -> buttonStyle = CraftingTweaksButtonStyles.SMALL_HEIGHT;
+            case "small" -> buttonStyle = CraftingTweaksButtonStyles.SMALL;
+        }
+        return buttonStyle;
+    }
+
+    private static ButtonAlignment parseButtonAlignment(CraftingTweaksRegistrationData data) {
+        ButtonAlignment alignToGrid = ButtonAlignment.LEFT;
+        String alignToGridName = data.getAlignToGrid();
+        switch (alignToGridName.toLowerCase()) {
+            case "north", "up", "top" -> alignToGrid = ButtonAlignment.TOP;
+            case "south", "down", "bottom" -> alignToGrid = ButtonAlignment.BOTTOM;
+            case "east", "right" -> alignToGrid = ButtonAlignment.RIGHT;
+            case "west", "left" -> alignToGrid = ButtonAlignment.LEFT;
+        }
+        return alignToGrid;
+    }
+
+    private static int unwrapOr(@Nullable Integer integer, int defaultValue) {
         return integer != null ? integer : defaultValue;
     }
 }

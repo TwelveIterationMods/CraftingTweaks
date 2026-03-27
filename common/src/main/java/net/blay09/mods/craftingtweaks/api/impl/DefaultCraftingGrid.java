@@ -2,7 +2,6 @@ package net.blay09.mods.craftingtweaks.api.impl;
 
 import net.blay09.mods.craftingtweaks.api.*;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 

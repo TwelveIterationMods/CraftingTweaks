@@ -4,9 +4,7 @@ import net.blay09.mods.balm.Balm;
 import net.blay09.mods.craftingtweaks.*;
 import net.blay09.mods.craftingtweaks.api.CraftingGrid;
 import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfig;
-import net.minecraft.core.IdMap;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -21,15 +19,16 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
 
 public record CompressMessage(int slotNumber, CompressType compressType) implements CustomPacketPayload {
 
-    public static CustomPacketPayload.Type<CompressMessage> TYPE = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath("craftingtweaks",
+    public static final CustomPacketPayload.Type<CompressMessage> TYPE = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath("craftingtweaks",
             "compress"));
 
-    public static StreamCodec<RegistryFriendlyByteBuf, CompressMessage> STREAM_CODEC = StreamCodec.composite(
+    public static final StreamCodec<RegistryFriendlyByteBuf, CompressMessage> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.INT,
             CompressMessage::slotNumber,
             ByteBufCodecs.idMapper(it -> CompressType.values()[it], CompressType::ordinal),
@@ -38,10 +37,6 @@ public record CompressMessage(int slotNumber, CompressType compressType) impleme
     );
 
     public static void handle(ServerPlayer player, CompressMessage message) {
-        if (player == null) {
-            return;
-        }
-
         AbstractContainerMenu menu = player.containerMenu;
         if (menu == null) {
             return;
@@ -122,7 +117,7 @@ public record CompressMessage(int slotNumber, CompressType compressType) impleme
         return firstEmptySlot;
     }
 
-    private static void compressMouseSlot(ServerPlayer player, AbstractContainerMenu menu, Slot mouseSlot, CraftingGrid grid, boolean compressRequiresCraftingGrid, boolean wholeStack) {
+    private static void compressMouseSlot(ServerPlayer player, AbstractContainerMenu menu, Slot mouseSlot, @Nullable CraftingGrid grid, boolean compressRequiresCraftingGrid, boolean wholeStack) {
         int maxGridSize = grid != null && compressRequiresCraftingGrid ? grid.getGridSize(player, menu) : 9;
         ItemStack mouseStack = mouseSlot.getItem();
         CompressionRecipe recipe = findRecipe(menu, player, mouseStack, maxGridSize);
@@ -146,7 +141,7 @@ public record CompressMessage(int slotNumber, CompressType compressType) impleme
         }
     }
 
-    private static void compressAll(ServerPlayer player, AbstractContainerMenu menu, Slot mouseSlot, CraftingGrid grid, boolean compressRequiresCraftingGrid) {
+    private static void compressAll(ServerPlayer player, AbstractContainerMenu menu, Slot mouseSlot, @Nullable CraftingGrid grid, boolean compressRequiresCraftingGrid) {
         int maxGridSize = grid != null && compressRequiresCraftingGrid ? grid.getGridSize(player, menu) : 9;
 
         // Count the total number of source items

@@ -1,13 +1,14 @@
 package net.blay09.mods.craftingtweaks.registry;
 
 import com.google.gson.annotations.SerializedName;
+import org.jspecify.annotations.Nullable;
 
 public class CraftingTweaksRegistrationData {
     public static class TweakData {
         private boolean enabled = true;
         private boolean showButton = true;
-        private Integer buttonX;
-        private Integer buttonY;
+        private @Nullable Integer buttonX;
+        private @Nullable Integer buttonY;
 
         public boolean isEnabled() {
             return enabled;
@@ -25,7 +26,7 @@ public class CraftingTweaksRegistrationData {
             this.showButton = showButton;
         }
 
-        public Integer getButtonX() {
+        public @Nullable Integer getButtonX() {
             return buttonX;
         }
 
@@ -33,7 +34,7 @@ public class CraftingTweaksRegistrationData {
             this.buttonX = buttonX;
         }
 
-        public Integer getButtonY() {
+        public @Nullable Integer getButtonY() {
             return buttonY;
         }
 
@@ -57,8 +58,8 @@ public class CraftingTweaksRegistrationData {
     private int gridSize = 0;
     private int gridWidth = 3;
     private int gridHeight = 3;
-    private Integer buttonOffsetX;
-    private Integer buttonOffsetY;
+    private @Nullable Integer buttonOffsetX;
+    private @Nullable Integer buttonOffsetY;
     private String alignToGrid = "left";
     private String buttonStyle = "default";
     private boolean hideButtons;
@@ -151,7 +152,7 @@ public class CraftingTweaksRegistrationData {
         this.gridHeight = gridHeight;
     }
 
-    public Integer getButtonOffsetX() {
+    public @Nullable Integer getButtonOffsetX() {
         return buttonOffsetX;
     }
 
@@ -159,7 +160,7 @@ public class CraftingTweaksRegistrationData {
         this.buttonOffsetX = buttonOffsetX;
     }
 
-    public Integer getButtonOffsetY() {
+    public @Nullable Integer getButtonOffsetY() {
         return buttonOffsetY;
     }
 

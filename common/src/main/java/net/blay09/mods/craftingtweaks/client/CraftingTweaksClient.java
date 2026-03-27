@@ -40,6 +40,7 @@ import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.ResultSlot;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import org.jspecify.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
@@ -51,7 +52,7 @@ public class CraftingTweaksClient {
 
     private static boolean ignoreMouseUp;
     private static int rightClickCraftingSlot = -1;
-    private static AbstractWidget unpleasantButton;
+    private static @Nullable AbstractWidget unpleasantButton;
     private static int fixedUnpleasantButtonX;
 
     public static void initialize(BalmClientRegistrars registrars) {
@@ -104,7 +105,7 @@ public class CraftingTweaksClient {
     }
 
     public static boolean screenMouseClick(Screen screen, MouseButtonEvent event) {
-        /// Reset right-click crafting if any click happens
+        // Reset right-click crafting if any click happens
         rightClickCraftingSlot = -1;
 
         Player player = Minecraft.getInstance().player;

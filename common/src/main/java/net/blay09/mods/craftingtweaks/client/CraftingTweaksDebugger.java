@@ -1,6 +1,5 @@
 package net.blay09.mods.craftingtweaks.client;
 
-import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.blay09.mods.balm.client.platform.event.callback.ScreenCallback;
@@ -17,9 +16,11 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Optional;
 
 public class CraftingTweaksDebugger {
@@ -28,9 +29,9 @@ public class CraftingTweaksDebugger {
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private static final Rect2i currentMenuLabelRect = new Rect2i(0, 0, 0, 0);
 
-    private static Component currentMenuLabel;
-    private static Slot startDragSlot;
-    private static Slot endDragSlot;
+    private static @Nullable Component currentMenuLabel;
+    private static @Nullable Slot startDragSlot;
+    private static @Nullable Slot endDragSlot;
 
     public static void initialize() {
         ScreenCallback.Init.After.EVENT.register(screen -> {
@@ -94,7 +95,7 @@ public class CraftingTweaksDebugger {
         if (currentMenuLabel != null) {
             guiGraphics.setTooltipForNextFrame(
                     Minecraft.getInstance().font,
-                    Lists.newArrayList(currentMenuLabel),
+                    List.of(currentMenuLabel),
                     Optional.empty(),
                     currentMenuLabelRect.getX() - 12, currentMenuLabelRect.getY() + 12);
         }

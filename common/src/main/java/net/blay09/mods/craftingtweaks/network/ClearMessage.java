@@ -12,7 +12,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 
 public record ClearMessage(Identifier id, boolean forced) implements CustomPacketPayload {
 
-    public static CustomPacketPayload.Type<ClearMessage> TYPE = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(CraftingTweaks.MOD_ID, "clear"));
+    public static final CustomPacketPayload.Type<ClearMessage> TYPE = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(CraftingTweaks.MOD_ID, "clear"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ClearMessage> STREAM_CODEC = StreamCodec.composite(
             Identifier.STREAM_CODEC,
@@ -23,10 +23,6 @@ public record ClearMessage(Identifier id, boolean forced) implements CustomPacke
     );
 
     public static void handle(ServerPlayer player, ClearMessage message) {
-        if (player == null) {
-            return;
-        }
-
         AbstractContainerMenu menu = player.containerMenu;
         if (menu != null) {
             CraftingTweaksProviderManager.getCraftingGrid(menu, message.id)

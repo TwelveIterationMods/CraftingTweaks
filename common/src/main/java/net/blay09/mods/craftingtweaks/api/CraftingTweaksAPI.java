@@ -1,10 +1,10 @@
 package net.blay09.mods.craftingtweaks.api;
 
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeInput;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
@@ -34,7 +34,7 @@ public class CraftingTweaksAPI {
         internalMethods.registerRecipeMapper(recipeClass, recipeMapper);
     }
 
-    public static <C extends RecipeInput, T extends Recipe<C>> RecipeMapper<T> getRecipeMapper(Class<T> recipe) {
+    public static @Nullable <C extends RecipeInput, T extends Recipe<C>> RecipeMapper<T> getRecipeMapper(Class<T> recipe) {
         return internalMethods.getRecipeMapper(recipe);
     }
 

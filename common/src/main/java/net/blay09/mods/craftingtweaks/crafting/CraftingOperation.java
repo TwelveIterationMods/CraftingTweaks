@@ -16,7 +16,7 @@ public class CraftingOperation {
 
     public record IngredientTokenKey(int providerIndex, Ingredient ingredient) {
         @Override
-        public boolean equals(Object o) {
+        public boolean equals(@Nullable Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             IngredientTokenKey that = (IngredientTokenKey) o;
@@ -36,7 +36,7 @@ public class CraftingOperation {
     private final List<IngredientToken> ingredientTokens = new ArrayList<>();
     private final List<Ingredient> missingIngredients = new ArrayList<>();
 
-    private NonNullList<ItemStack> lockedInputs;
+    private @Nullable NonNullList<ItemStack> lockedInputs;
     private int missingIngredientsMask;
 
     public CraftingOperation(final CraftingContext context, RecipeHolder<Recipe<?>> recipe) {
@@ -135,7 +135,7 @@ public class CraftingOperation {
         return missingIngredients.isEmpty();
     }
 
-    public NonNullList<ItemStack> getLockedInputs() {
+    public @Nullable NonNullList<ItemStack> getLockedInputs() {
         return lockedInputs;
     }
 

@@ -1,4 +1,4 @@
-package net.blay09.mods.craftingtweaks;
+package net.blay09.mods.craftingtweaks.neoforge;
 
 import net.blay09.mods.craftingtweaks.api.CraftingGridProvider;
 import net.blay09.mods.craftingtweaks.api.CraftingTweaksAPI;

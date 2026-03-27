@@ -11,6 +11,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeInput;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -89,7 +90,7 @@ public class InternalMethodsImpl implements InternalMethods {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends Recipe<? extends RecipeInput>> RecipeMapper<T> getRecipeMapper(Class<T> recipeClass) {
+    public @Nullable <T extends Recipe<? extends RecipeInput>> RecipeMapper<T> getRecipeMapper(Class<T> recipeClass) {
         for (Class<? extends Recipe<?>> handlerClass : recipeMatrixMappers.keySet()) {
             if (handlerClass.isAssignableFrom(recipeClass)) {
                 return (RecipeMapper<T>) recipeMatrixMappers.get(handlerClass);

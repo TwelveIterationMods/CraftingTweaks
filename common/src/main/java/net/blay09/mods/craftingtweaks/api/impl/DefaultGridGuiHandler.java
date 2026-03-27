@@ -9,6 +9,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class DefaultGridGuiHandler implements GridGuiHandler {
@@ -52,7 +53,7 @@ public class DefaultGridGuiHandler implements GridGuiHandler {
         final var offsetX = guiSettings.getButtonAlignmentOffsetX();
         final var offsetY = guiSettings.getButtonAlignmentOffsetY();
         Player player = Minecraft.getInstance().player;
-        Slot firstSlot = menu.slots.get(grid.getGridStartSlot(player, menu));
+        Slot firstSlot = menu.slots.get(grid.getGridStartSlot(Objects.requireNonNull(player), menu));
         int gridLength = (int) Math.sqrt(grid.getGridSize(player, menu));
         return switch (alignment) {
             case TOP ->

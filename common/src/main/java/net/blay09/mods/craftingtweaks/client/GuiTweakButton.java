@@ -20,7 +20,7 @@ import java.util.List;
 
 public abstract class GuiTweakButton extends GuiImageButton implements ITooltipProvider {
 
-    private final AbstractContainerScreen<?> screen;
+    private final @Nullable AbstractContainerScreen<?> screen;
     private final CraftingGrid grid;
     private final TweakType tweak;
     private final TweakType altTweak;

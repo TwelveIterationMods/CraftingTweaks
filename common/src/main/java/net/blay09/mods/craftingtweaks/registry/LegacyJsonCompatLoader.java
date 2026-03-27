@@ -10,6 +10,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +50,7 @@ public class LegacyJsonCompatLoader implements ResourceManagerReloadListener {
         return !CraftingTweaksConfig.getActive().client.disabledAddons.contains(modId);
     }
 
-    private static CraftingGridProvider load(Identifier resourceId, CraftingTweaksRegistrationData data) {
+    private static @Nullable CraftingGridProvider load(Identifier resourceId, CraftingTweaksRegistrationData data) {
         String modId = data.getModId();
         if ((!modId.equals("minecraft") && !Balm.platform().isModLoaded(modId)) || !isCompatEnabled(modId) || !data.isEnabled()) {
             return null;

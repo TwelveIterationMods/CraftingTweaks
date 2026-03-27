@@ -3,32 +3,32 @@ loaderVersion="[1,)"
 license="${license}"
 issueTrackerURL="${issues}"
 [[mods]]
-modId="${mod_id}"
+modId="craftingtweaks"
 version="${version}"
 displayName="${mod_name}"
 displayURL="${homepage}"
 displayTest="NONE"
-logoFile="${mod_id}.png"
+logoFile="craftingtweaks.png"
 credits="BlayTheNinth"
 authors="BlayTheNinth"
 description='''${description}'''
 [[mixins]]
-config = "${mod_id}.mixins.json"
+config = "craftingtweaks.mixins.json"
 [[mixins]]
-config = "${mod_id}.neoforge.mixins.json"
-[[dependencies.${mod_id}]]
+config = "craftingtweaks.neoforge.mixins.json"
+[[dependencies.craftingtweaks]]
 modId="neoforge"
 type="required"
 versionRange="[${neoforge_version},)"
 ordering="NONE"
 side="BOTH"
-[[dependencies.${mod_id}]]
+[[dependencies.craftingtweaks]]
 modId="minecraft"
 type="required"
 versionRange="[${minecraft_version},)"
 ordering="NONE"
 side="BOTH"
-[[dependencies.${mod_id}]]
+[[dependencies.craftingtweaks]]
 modId="balm"
 type="required"
 versionRange="[${balm_version},)"

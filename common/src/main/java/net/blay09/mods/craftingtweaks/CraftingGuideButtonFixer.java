@@ -4,10 +4,11 @@ import net.blay09.mods.craftingtweaks.api.GridGuiHandler;
 import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfig;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import org.jspecify.annotations.Nullable;
 
 public class CraftingGuideButtonFixer {
 
-    public static AbstractWidget fixMistakes(AbstractContainerScreen<?> screen, GridGuiHandler guiHandler) {
+    public static @Nullable AbstractWidget fixMistakes(AbstractContainerScreen<?> screen, GridGuiHandler guiHandler) {
         final var opt = guiHandler.findRecipeBookButton(screen);
         opt.ifPresent(button -> {
             if (CraftingTweaksConfig.getActive().client.hideVanillaCraftingGuide) {

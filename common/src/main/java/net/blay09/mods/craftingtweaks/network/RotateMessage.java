@@ -12,7 +12,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 
 public record RotateMessage(Identifier id, boolean reverse) implements CustomPacketPayload {
 
-    public static CustomPacketPayload.Type<RotateMessage> TYPE = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(CraftingTweaks.MOD_ID,
+    public static final CustomPacketPayload.Type<RotateMessage> TYPE = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(CraftingTweaks.MOD_ID,
             "rotate"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, RotateMessage> STREAM_CODEC = StreamCodec.composite(
@@ -24,10 +24,6 @@ public record RotateMessage(Identifier id, boolean reverse) implements CustomPac
     );
 
     public static void handle(ServerPlayer player, RotateMessage message) {
-        if (player == null) {
-            return;
-        }
-
         AbstractContainerMenu menu = player.containerMenu;
         if (menu != null) {
             CraftingTweaksProviderManager.getCraftingGrid(menu, message.id)

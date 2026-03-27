@@ -9,7 +9,7 @@ import org.jspecify.annotations.Nullable;
 
 public class InventoryCraftingCompress extends TransientCraftingContainer implements RecipeCraftingHolder {
 
-    private RecipeHolder<?> recipeUsed;
+    private @Nullable RecipeHolder<?> recipeUsed;
 
     public InventoryCraftingCompress(AbstractContainerMenu menu, int size, ItemStack itemStack) {
         super(menu, size, size);
@@ -23,9 +23,8 @@ public class InventoryCraftingCompress extends TransientCraftingContainer implem
         this.recipeUsed = recipe;
     }
 
-    @Nullable
     @Override
-    public RecipeHolder<?> getRecipeUsed() {
+    public @Nullable RecipeHolder<?> getRecipeUsed() {
         return recipeUsed;
     }
 }

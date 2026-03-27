@@ -1,8 +1,9 @@
-package net.blay09.mods.craftingtweaks.client;
+package net.blay09.mods.craftingtweaks.neoforge.client;
 
 import net.blay09.mods.balm.client.BalmClient;
 import net.blay09.mods.balm.neoforge.platform.runtime.NeoForgeLoadContext;
 import net.blay09.mods.craftingtweaks.CraftingTweaks;
+import net.blay09.mods.craftingtweaks.client.CraftingTweaksClient;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;

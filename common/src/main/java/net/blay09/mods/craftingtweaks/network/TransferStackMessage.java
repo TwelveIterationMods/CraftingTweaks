@@ -16,7 +16,7 @@ import net.minecraft.world.item.ItemStack;
 
 public record TransferStackMessage(Identifier id, int slotNumber) implements CustomPacketPayload {
 
-    public static CustomPacketPayload.Type<TransferStackMessage> TYPE = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(CraftingTweaks.MOD_ID, "transfer_stack"));
+    public static final CustomPacketPayload.Type<TransferStackMessage> TYPE = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(CraftingTweaks.MOD_ID, "transfer_stack"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, TransferStackMessage> STREAM_CODEC = StreamCodec.composite(
             Identifier.STREAM_CODEC,
@@ -27,10 +27,6 @@ public record TransferStackMessage(Identifier id, int slotNumber) implements Cus
     );
 
     public static void handle(ServerPlayer player, TransferStackMessage message) {
-        if (player == null) {
-            return;
-        }
-
         AbstractContainerMenu menu = player.containerMenu;
         if (menu == null || message.slotNumber < 0 || message.slotNumber >= menu.slots.size()) {
             return;

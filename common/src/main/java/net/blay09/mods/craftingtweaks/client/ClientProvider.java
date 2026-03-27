@@ -28,7 +28,7 @@ public class ClientProvider {
     private boolean hasLastCraftedMatrix;
 
     private MultiPlayerGameMode getController() {
-        return Minecraft.getInstance().gameMode;
+        return Objects.requireNonNull(Minecraft.getInstance().gameMode);
     }
 
     public void balanceGrid(Player entityPlayer, AbstractContainerMenu container, CraftingGrid grid) {

@@ -2,7 +2,6 @@ package net.blay09.mods.craftingtweaks.api;
 
 import net.blay09.mods.balm.mixin.AbstractContainerScreenAccessor;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 

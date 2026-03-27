@@ -5,12 +5,13 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import org.jspecify.annotations.Nullable;
 
 public interface CraftingGrid {
 
     Identifier getId();
 
-    default Container getCraftingMatrix(Player player, AbstractContainerMenu menu) {
+    default @Nullable Container getCraftingMatrix(Player player, AbstractContainerMenu menu) {
         return menu.slots.get(getGridStartSlot(player, menu)).container;
     }
 

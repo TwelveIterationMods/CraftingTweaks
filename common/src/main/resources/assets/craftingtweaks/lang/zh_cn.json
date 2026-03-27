@@ -21,7 +21,7 @@
   "tooltip.craftingtweaks.clear": "清空网格",
   "tooltip.craftingtweaks.forceClear": "强制清空网格",
   "tooltip.craftingtweaks.forceClearInfo": "必要时丢出物品",
-  "config.craftingtweaks.title": "合成辅助",
+  "craftingtweaks.configuration.title": "合成辅助",
   "craftingtweaks.configuration.common": "通用",
   "craftingtweaks.configuration.common.compressRequiresCraftingGrid": "仅能在工作台中压缩",
   "craftingtweaks.configuration.common.compressRequiresCraftingGrid.tooltip": "将此项设为 false 时可以在背包中的四格合成格中解压/压缩配方（仅在服务端也安装本模组时生效）",
