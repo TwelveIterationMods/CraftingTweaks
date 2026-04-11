@@ -51,6 +51,10 @@ public class DefaultGridRefillHandler implements GridRefillHandler<AbstractConta
             for (int i = 0; i < ingredientTokens.size(); i++) {
                 final var ingredientToken = ingredientTokens.get(i);
                 var matrixSlot = matrixMapper.mapToMatrixSlot(recipe, gridWidth, i);
+                // Abort early if the mapped slot doesn't exist in the matrix
+                if (matrixSlot >= craftMatrix.getContainerSize()) {
+                    return;
+                }
                 if (matrixSlot != -1) {
                     final var itemStack = ingredientToken.peek();
                     final var slotStack = craftMatrix.getItem(matrixSlot);
