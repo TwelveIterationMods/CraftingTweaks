@@ -23,7 +23,7 @@ public class DefaultGridRefillHandler implements GridRefillHandler<AbstractConta
         grid.clearHandler().clearGrid(grid, player, menu, true);
 
         final var craftMatrix = grid.getCraftingMatrix(player, menu);
-        if (craftMatrix == null) {
+        if (craftMatrix == null || craftMatrix.getContainerSize() == 0) {
             return;
         }
 
