@@ -205,11 +205,11 @@ public class CraftingTweaksClient {
             return;
         }
 
-        if (craftingSlot >= menu.slots.size()) {
+        if (!menu.isValidSlotIndex(craftingSlot)) {
             return;
         }
 
-        Slot mouseSlot = menu.slots.get(craftingSlot);
+        Slot mouseSlot = menu.getSlot(craftingSlot);
         if (!mouseSlot.hasItem()) {
             rightClickCraftingSlot = mouseSlot.index;
             return;

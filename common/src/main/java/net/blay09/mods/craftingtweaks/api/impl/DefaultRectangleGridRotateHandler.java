@@ -103,12 +103,12 @@ public class DefaultRectangleGridRotateHandler implements GridRotateHandler<Abst
         int gridHeight = (int)Math.sqrt(size);
         Container matrixClone = new SimpleContainer(size);
         for (int i = 0; i < size; i++) {
-            int slotIndex = menu.slots.get(start + i).getContainerSlot();
+            int slotIndex = menu.getSlot(start + i).getContainerSlot();
             matrixClone.setItem(i, craftMatrix.getItem(slotIndex));
         }
 
         for (int i = 0; i < size; i++) {
-            int slotIndex = menu.slots.get(start + i + rotateRectangularGrid(i, gridWidth, gridHeight, !reverse)).getContainerSlot();
+            int slotIndex = menu.getSlot(start + i + rotateRectangularGrid(i, gridWidth, gridHeight, !reverse)).getContainerSlot();
             craftMatrix.setItem(slotIndex, matrixClone.getItem(i));
         }
 

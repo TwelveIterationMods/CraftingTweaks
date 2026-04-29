@@ -50,12 +50,12 @@ public class CompressMessage implements CustomPacketPayload {
         }
 
         AbstractContainerMenu menu = player.containerMenu;
-        if (menu == null) {
+        if (menu == null || !menu.isValidSlotIndex(message.slotNumber)) {
             return;
         }
 
         CompressType compressType = message.type;
-        Slot mouseSlot = menu.slots.get(message.slotNumber);
+        Slot mouseSlot = menu.getSlot(message.slotNumber);
         if (!(mouseSlot.container instanceof Inventory)) {
             return;
         }

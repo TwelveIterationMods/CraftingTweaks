@@ -10,7 +10,7 @@ public interface CraftingGrid {
     ResourceLocation getId();
 
     default Container getCraftingMatrix(Player player, AbstractContainerMenu menu) {
-        return menu.slots.get(getGridStartSlot(player, menu)).container;
+        return menu.getSlot(getGridStartSlot(player, menu)).container;
     }
 
     default int getGridStartSlot(Player player, AbstractContainerMenu menu) {

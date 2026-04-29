@@ -40,7 +40,7 @@ public class ClientProvider {
         int start = grid.getGridStartSlot(entityPlayer, container);
         int size = grid.getGridSize(entityPlayer, container);
         for (int i = start; i < start + size; i++) {
-            Slot slot = container.slots.get(i);
+            Slot slot = container.getSlot(i);
             if (slot.hasItem()) {
                 ItemStack itemStack = slot.getItem();
                 if (!itemStack.isEmpty()) {
@@ -102,7 +102,7 @@ public class ClientProvider {
             int start = grid.getGridStartSlot(player, menu);
             int size = grid.getGridSize(player, menu);
             for (int i = start; i < start + size; i++) {
-                Slot slot = menu.slots.get(i);
+                Slot slot = menu.getSlot(i);
                 ItemStack itemStack = slot.getItem();
                 if (!itemStack.isEmpty() && itemStack.getCount() > biggestSlotSize) {
                     biggestSlot = slot;
@@ -117,7 +117,7 @@ public class ClientProvider {
                 if (i == biggestSlot.index) {
                     continue;
                 }
-                ItemStack itemStack = menu.slots.get(i).getItem();
+                ItemStack itemStack = menu.getSlot(i).getItem();
                 if (itemStack.isEmpty()) {
                     if (biggestSlotSize > 1) {
                         getController().handleInventoryMouseClick(menu.containerId, i, 1, ClickType.PICKUP, player);
@@ -140,7 +140,7 @@ public class ClientProvider {
         for (int i = start; i < start + size; i++) {
             getController().handleInventoryMouseClick(menu.containerId, i, 0, ClickType.QUICK_MOVE, player);
             menu.quickMoveStack(player, i);
-            if (forced && menu.slots.get(i).hasItem()) {
+            if (forced && menu.getSlot(i).hasItem()) {
                 getController().handleInventoryMouseClick(menu.containerId, i, 0, ClickType.THROW, player);
             }
         }
@@ -220,7 +220,7 @@ public class ClientProvider {
         int start = grid.getGridStartSlot(player, menu);
         int size = grid.getGridSize(player, menu);
         for (int i = start; i < start + size; i++) {
-            Slot craftSlot = menu.slots.get(i);
+            Slot craftSlot = menu.getSlot(i);
             ItemStack craftStack = craftSlot.getItem();
             if (!craftStack.isEmpty()) {
                 if (ItemStack.isSameItemSameComponents(craftStack, mouseStack)) {
@@ -295,7 +295,7 @@ public class ClientProvider {
         int size = grid.getGridSize(player, menu);
         // Ensure the crafting grid is empty
         for (int i = start; i < start + size; i++) {
-            if (menu.slots.get(i).hasItem()) {
+            if (menu.getSlot(i).hasItem()) {
                 return;
             }
         }
@@ -346,7 +346,7 @@ public class ClientProvider {
         int size = grid.getGridSize(player, menu);
         // Ensure the crafting grid is empty
         for (int i = start; i < start + size; i++) {
-            if (menu.slots.get(i).hasItem()) {
+            if (menu.getSlot(i).hasItem()) {
                 return;
             }
         }
@@ -420,7 +420,7 @@ public class ClientProvider {
                 }
                 dropOffMouseStack(player, menu, slot.index);
                 for (int i = start; i < start + size; i++) {
-                    if (menu.slots.get(i).hasItem()) {
+                    if (menu.getSlot(i).hasItem()) {
                         getController().handleInventoryMouseClick(menu.containerId, i, 0, ClickType.PICKUP, player);
                         getController().handleInventoryMouseClick(menu.containerId, slot.index, 0, ClickType.PICKUP, player);
                     }
@@ -497,7 +497,7 @@ public class ClientProvider {
                     }
                 }
             } else {
-                if (menu.slots.get(gridStart + i).hasItem()) {
+                if (menu.getSlot(gridStart + i).hasItem()) {
                     getController().handleInventoryMouseClick(menu.containerId, gridStart + i, 0, ClickType.PICKUP, player);
                     if (!dropOffMouseStack(player, menu)) {
                         getController().handleInventoryMouseClick(menu.containerId, gridStart + i, 0, ClickType.PICKUP, player);
@@ -511,13 +511,13 @@ public class ClientProvider {
             // Check if there's items missing and if so, try to find them in the crafting grid and distribute
             for (int i = 0; i < lastCraftedMatrix.getContainerSize(); i++) {
                 ItemStack itemStack = lastCraftedMatrix.getItem(i);
-                if (!itemStack.isEmpty() && !menu.slots.get(gridStart + i).hasItem()) {
+                if (!itemStack.isEmpty() && !menu.getSlot(gridStart + i).hasItem()) {
                     for (int j = gridStart; j < gridStart + gridSize; j++) {
                         if (j == gridStart + i) {
                             continue;
                         }
 
-                        ItemStack gridStack = menu.slots.get(j).getItem();
+                        ItemStack gridStack = menu.getSlot(j).getItem();
                         if (gridStack.getCount() > 1 && ItemStack.isSameItemSameComponents(gridStack, itemStack)) {
                             getController().handleInventoryMouseClick(menu.containerId, j, 0, ClickType.PICKUP, player);
                             getController().handleInventoryMouseClick(menu.containerId, gridStart + i, 1, ClickType.PICKUP, player);

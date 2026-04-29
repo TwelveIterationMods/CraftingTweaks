@@ -52,7 +52,7 @@ public class DefaultGridGuiHandler implements GridGuiHandler {
         final var offsetX = guiSettings.getButtonAlignmentOffsetX();
         final var offsetY = guiSettings.getButtonAlignmentOffsetY();
         Player player = Minecraft.getInstance().player;
-        Slot firstSlot = menu.slots.get(grid.getGridStartSlot(player, menu));
+        Slot firstSlot = menu.getSlot(grid.getGridStartSlot(player, menu));
         int gridLength = (int) Math.sqrt(grid.getGridSize(player, menu));
         return switch (alignment) {
             case TOP ->
