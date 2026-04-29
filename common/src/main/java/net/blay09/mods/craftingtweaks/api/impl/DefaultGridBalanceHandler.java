@@ -28,7 +28,7 @@ public class DefaultGridBalanceHandler implements GridBalanceHandler<AbstractCon
         int start = grid.getGridStartSlot(player, menu);
         int size = grid.getGridSize(player, menu);
         for (int i = start; i < start + size; i++) {
-            int slotIndex = menu.slots.get(i).getContainerSlot();
+            int slotIndex = menu.getSlot(i).getContainerSlot();
             ItemStack itemStack = craftMatrix.getItem(slotIndex);
             if (!itemStack.isEmpty() && itemStack.getMaxStackSize() > 1) {
                 Identifier registryName = BuiltInRegistries.ITEM.getKey(itemStack.getItem());
@@ -82,7 +82,7 @@ public class DefaultGridBalanceHandler implements GridBalanceHandler<AbstractCon
             int start = grid.getGridStartSlot(player, menu);
             int size = grid.getGridSize(player, menu);
             for (int i = start; i < start + size; i++) {
-                int slotIndex = menu.slots.get(i).getContainerSlot();
+                int slotIndex = menu.getSlot(i).getContainerSlot();
                 ItemStack itemStack = craftMatrix.getItem(slotIndex);
                 if (!itemStack.isEmpty() && itemStack.getCount() > biggestSlotSize) {
                     biggestSlotStack = itemStack;
@@ -96,7 +96,7 @@ public class DefaultGridBalanceHandler implements GridBalanceHandler<AbstractCon
 
             boolean emptyBiggestSlot = false;
             for (int i = start; i < start + size; i++) {
-                int slotIndex = menu.slots.get(i).getContainerSlot();
+                int slotIndex = menu.getSlot(i).getContainerSlot();
                 ItemStack itemStack = craftMatrix.getItem(slotIndex);
                 if (itemStack.isEmpty()) {
                     if (biggestSlotStack.getCount() > 1) {

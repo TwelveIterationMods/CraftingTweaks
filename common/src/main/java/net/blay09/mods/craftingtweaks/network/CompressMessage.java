@@ -43,7 +43,7 @@ public record CompressMessage(int slotNumber, CompressType compressType) impleme
         }
 
         CompressType compressType = message.compressType;
-        Slot mouseSlot = menu.slots.get(message.slotNumber);
+        Slot mouseSlot = menu.getSlot(message.slotNumber);
         if (!(mouseSlot.container instanceof Inventory)) {
             return;
         }
