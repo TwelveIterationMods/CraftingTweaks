@@ -38,7 +38,7 @@ public record CompressMessage(int slotNumber, CompressType compressType) impleme
 
     public static void handle(ServerPlayer player, CompressMessage message) {
         AbstractContainerMenu menu = player.containerMenu;
-        if (menu == null) {
+        if (menu == null || !menu.isValidSlotIndex(message.slotNumber)) {
             return;
         }
 
