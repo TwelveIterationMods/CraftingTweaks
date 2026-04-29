@@ -37,14 +37,14 @@ public class TransferStackMessage {
         }
 
         AbstractContainerMenu menu = player.containerMenu;
-        if (menu == null || message.slotNumber < 0 || message.slotNumber >= menu.slots.size()) {
+        if (menu == null || !menu.isValidSlotIndex(message.slotNumber)) {
             return;
         }
 
         CraftingTweaksProviderManager.getCraftingGrid(menu, message.id).ifPresent(grid -> {
             GridTransferHandler<AbstractContainerMenu> transferHandler = grid.transferHandler();
             // Check if the slot can be transferred from. SlotCrafting is always blacklisted.
-            Slot slot = menu.slots.get(message.slotNumber);
+            Slot slot = menu.getSlot(message.slotNumber);
             if (!transferHandler.canTransferFrom(player, menu, slot, grid) || slot instanceof ResultSlot) {
                 return;
             }

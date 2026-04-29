@@ -57,7 +57,7 @@ public class DefaultGridTransferHandler implements GridTransferHandler<AbstractC
 
         int firstEmptySlot = -1;
         for (int i = start; i < start + size; i++) {
-            int slotIndex = menu.slots.get(i).getContainerSlot();
+            int slotIndex = menu.getSlot(i).getContainerSlot();
             ItemStack craftStack = craftMatrix.getItem(slotIndex);
             if (!craftStack.isEmpty()) {
                 if (ItemStack.isSameItemSameTags(craftStack, itemStack)) {

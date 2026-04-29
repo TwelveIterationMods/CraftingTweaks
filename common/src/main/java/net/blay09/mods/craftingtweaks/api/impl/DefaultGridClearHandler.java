@@ -21,7 +21,7 @@ public class DefaultGridClearHandler implements GridClearHandler<AbstractContain
         int start = grid.getGridStartSlot(player, menu);
         int size = grid.getGridSize(player, menu);
         for (int i = start; i < start + size; i++) {
-            int slotIndex = menu.slots.get(i).getContainerSlot();
+            int slotIndex = menu.getSlot(i).getContainerSlot();
             if (phantomItems) {
                 craftMatrix.setItem(slotIndex, ItemStack.EMPTY);
             } else {

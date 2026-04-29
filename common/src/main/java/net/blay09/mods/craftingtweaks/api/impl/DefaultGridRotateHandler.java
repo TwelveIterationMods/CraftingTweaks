@@ -66,7 +66,7 @@ public class DefaultGridRotateHandler implements GridRotateHandler<AbstractConta
         int size = grid.getGridSize(player, menu);
         Container matrixClone = new SimpleContainer(size);
         for (int i = 0; i < size; i++) {
-            int slotIndex = menu.slots.get(start + i).getContainerSlot();
+            int slotIndex = menu.getSlot(start + i).getContainerSlot();
             matrixClone.setItem(i, craftMatrix.getItem(slotIndex));
         }
 
@@ -75,7 +75,7 @@ public class DefaultGridRotateHandler implements GridRotateHandler<AbstractConta
                 continue;
             }
 
-            int slotIndex = menu.slots.get(start + rotateSlotId(i, reverse)).getContainerSlot();
+            int slotIndex = menu.getSlot(start + rotateSlotId(i, reverse)).getContainerSlot();
             craftMatrix.setItem(slotIndex, matrixClone.getItem(i));
         }
 

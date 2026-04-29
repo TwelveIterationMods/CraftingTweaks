@@ -31,11 +31,11 @@ public class CraftStackMessage {
         }
 
         AbstractContainerMenu menu = player.containerMenu;
-        if (menu == null || message.slotNumber < 0 || message.slotNumber >= menu.slots.size()) {
+        if (menu == null || !menu.isValidSlotIndex(message.slotNumber)) {
             return;
         }
 
-        Slot mouseSlot = menu.slots.get(message.slotNumber);
+        Slot mouseSlot = menu.getSlot(message.slotNumber);
         ItemStack mouseStack = menu.getCarried();
         int maxTries = 64;
         while (maxTries > 0 && mouseSlot.hasItem() && (mouseStack.isEmpty() || mouseStack.getCount() + mouseSlot.getItem().getCount() <= mouseStack.getMaxStackSize())) {
