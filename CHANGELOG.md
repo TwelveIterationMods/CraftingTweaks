@@ -1,3 +1,1 @@
-- Added `vanillaCraftingGuideOffsetX` and `vanillaCraftingGuideOffsetY` config options for slight adjustments to where the crafting guide button is repositioned
-- Fixed config translation keys
-- Fixed `slot.setChanged` not being called when changing slot content in compressing, which could lead to follow up errors in certain mods
+- Fixed wrong slots being sometimes affected by compress keybinds (e.g. in Sophisticated Storage with upgraded slots)
