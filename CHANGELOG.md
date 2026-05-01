@@ -1,1 +1,1 @@
-- Fixed stats not updating when using compress or decompress key
+- Fixed wrong slots being sometimes affected by compress keybinds (e.g. in Sophisticated Storage with upgraded slots)
