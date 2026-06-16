@@ -1,2 +1,1 @@
-- Fixed wrong slots being sometimes affected by compress keybinds (e.g. in Sophisticated Storage with upgraded slots)
-- Fixed error and deleted items when trying to refill last stack on containers with an invalid craft matrix
+- Updated to Minecraft 26.2
