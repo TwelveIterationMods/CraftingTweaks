@@ -1,7 +1,10 @@
 package net.blay09.mods.craftingtweaks.network;
 
 import net.blay09.mods.balm.Balm;
-import net.blay09.mods.craftingtweaks.*;
+import net.blay09.mods.craftingtweaks.CompressType;
+import net.blay09.mods.craftingtweaks.CraftingTweaksProviderManager;
+import net.blay09.mods.craftingtweaks.InventoryCraftingCompress;
+import net.blay09.mods.craftingtweaks.InventoryCraftingDecompress;
 import net.blay09.mods.craftingtweaks.api.CraftingGrid;
 import net.blay09.mods.craftingtweaks.config.CraftingTweaksConfig;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -95,8 +98,10 @@ public record CompressMessage(int slotNumber, CompressType compressType) impleme
             }
         } else {
             switch (compressType) {
-                case COMPRESS_ONE -> compressMouseSlot(player, menu, mouseSlot, grid, compressRequiresCraftingGrid, false);
-                case COMPRESS_STACK -> compressMouseSlot(player, menu, mouseSlot, grid, compressRequiresCraftingGrid, true);
+                case COMPRESS_ONE ->
+                        compressMouseSlot(player, menu, mouseSlot, grid, compressRequiresCraftingGrid, false);
+                case COMPRESS_STACK ->
+                        compressMouseSlot(player, menu, mouseSlot, grid, compressRequiresCraftingGrid, true);
                 case COMPRESS_ALL -> compressAll(player, menu, mouseSlot, grid, compressRequiresCraftingGrid);
             }
         }
@@ -168,12 +173,15 @@ public record CompressMessage(int slotNumber, CompressType compressType) impleme
     private static void giveLeftoverItems(ServerPlayer player, ItemStack slotStack, int count) {
         for (int i = 0; i < count; i++) {
             // Must be inside loop as it's being shrunk in addItemStackToInventory
-            final var containerItem = Balm.hooks().getCraftingRemainingItem(slotStack).create();
-            if (!player.addItem(containerItem)) {
-                ItemEntity itemEntity = player.drop(containerItem, false);
-                if (itemEntity != null) {
-                    itemEntity.setNoPickUpDelay();
-                    itemEntity.setTarget(player.getUUID());
+            final var remainingItem = Balm.hooks().getCraftingRemainingItem(slotStack);
+            if (remainingItem != null) {
+                final var remainingItemStack = remainingItem.create();
+                if (!player.addItem(remainingItemStack)) {
+                    ItemEntity itemEntity = player.drop(remainingItemStack, false);
+                    if (itemEntity != null) {
+                        itemEntity.setNoPickUpDelay();
+                        itemEntity.setTarget(player.getUUID());
+                    }
                 }
             }
         }
