@@ -1,1 +1,1 @@
-- Updated to Minecraft 26.2
+- Fixed crash on items with null remaining item
