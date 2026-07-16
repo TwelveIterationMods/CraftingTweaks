@@ -2,6 +2,7 @@ package net.blay09.mods.craftingtweaks.client;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.mojang.blaze3d.platform.InputConstants;
 import net.blay09.mods.balm.client.platform.event.callback.ScreenCallback;
 import net.blay09.mods.balm.mixin.AbstractContainerScreenAccessor;
 import net.blay09.mods.craftingtweaks.CraftingTweaks;
@@ -106,7 +107,7 @@ public class CraftingTweaksDebugger {
             return false;
         }
 
-        if (screen instanceof AbstractContainerScreen<?> containerScreen && button == 0) {
+        if (screen instanceof AbstractContainerScreen<?> containerScreen && button == InputConstants.MOUSE_BUTTON_LEFT) {
             if (startDragSlot != null) {
                 var menu = containerScreen.getMenu();
                 String modId = getModId(menu);
@@ -128,7 +129,7 @@ public class CraftingTweaksDebugger {
             return false;
         }
 
-        if (screen instanceof AbstractContainerScreen<?> containerScreen && event.button() == 0) {
+        if (screen instanceof AbstractContainerScreen<?> containerScreen && event.button() == InputConstants.MOUSE_BUTTON_LEFT) {
             startDragSlot = ((AbstractContainerScreenAccessor) containerScreen).getHoveredSlot();
             return startDragSlot != null;
         }
