@@ -10,8 +10,8 @@ pluginManagement {
                 }
             }
             filter {
-                includeGroup("net.fabricmc")
-                includeGroup("fabric-loom")
+                includeGroupAndSubgroups("net.fabricmc")
+                includeGroupAndSubgroups("fabric-loom")
             }
         }
         exclusiveContent {
@@ -40,16 +40,16 @@ pluginManagement {
 }
 
 plugins {
-    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.8.0'
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
 }
 
-include("common")
-if (include_fabric) {
-    include("fabric")
+include('common')
+if (include_fabric == "true") {
+    include('fabric')
 }
-if (include_neoforge) {
-    include("neoforge")
+if (include_neoforge == "true") {
+    include('neoforge')
 }
-if (include_forge) {
-    include("forge")
+if (include_forge == "true") {
+    include('forge')
 }
