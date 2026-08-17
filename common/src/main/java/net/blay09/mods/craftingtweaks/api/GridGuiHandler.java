@@ -35,7 +35,9 @@ public interface GridGuiHandler {
         final var buttons = ((ScreenAccessor) screen).balm_getChildren();
         return buttons
                 .stream()
-                .filter(p -> p instanceof ImageButtonAccessor imageButton && imageButton.getSprites().get(false, false).getPath().equals("recipe_book/button"))
+                .filter(p -> p instanceof ImageButtonAccessor imageButton
+                        && imageButton.getSprites() != null
+                        && imageButton.getSprites().get(false, false).getPath().equals("recipe_book/button"))
                 .findFirst()
                 .map(it -> (AbstractWidget) it);
     }
