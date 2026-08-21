@@ -1,1 +1,1 @@
-- Fixed wrong slots being sometimes affected by compress keybinds (e.g. in Sophisticated Storage with upgraded slots)
+- Fixed crash with abnormal ImageButtons added by other mods
