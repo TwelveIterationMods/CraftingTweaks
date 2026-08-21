@@ -1,1 +1,1 @@
-- Fixed crash on items with null remaining item
+- Fixed crash with abnormal ImageButtons added by other mods
